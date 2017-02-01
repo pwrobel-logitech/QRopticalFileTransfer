@@ -4,14 +4,14 @@
 class EncodedFrame{
 
 public:
-    EncodedFrame();
+    EncodedFrame(int RSn, int RSk);
 
     //Must be at least 4 bytes, to accomodate the frame number in the header of each frame
     virtual void set_frame_capacity(uint16_t capacity) = 0;
 
     virtual bool is_header_frame() = 0;
     virtual uint32_t get_frame_number() = 0;
-    //setting 0 implies that this is a header frame
+    //setting -1 implies that this is a header frame
     virtual void set_frame_number(uint32_t frame_number) = 0;
     virtual void set_max_frames(uint32_t max_frames) = 0;
 
@@ -57,14 +57,30 @@ private:
       For the data frame, layout of the data is:
       start (little-endian, hex):  0xNNNNNNNNDDDDD
       N's - uint32!=0xFFFFFFFF  - frame number
-
+      DD..  - data. It's the file data stored in RS code - with some redundancy
     */
     std::vector<uint8_t> framedata;
+};
+
+//file is split into the chunk of files, each one starts in an offset
+struct FileChunk{
+    char* chunkdata;
+    uint32_t chunk_length;
+    //offset into the file of this file chunk
+    uint32_t chunk_fileoffset;
 };
 
 class Encoder{
 
 public:
+
+    enum generated_frame_status{
+       Frame_OK_header = 0, //ok - produced next header frame
+       Frame_OK_data, //ok, produced next frame data
+       Frame_EOF,  //requested frame not generated, because whole file has been processed
+       Frame_error //hit some generic error - frame not produced correctly
+    };
+
     Encoder();
 
     //set the filename
@@ -86,16 +102,18 @@ public:
      this returns the next encoded frame.
      Encoder allocates that object on the heap, and responsibility to release it
      is on whoever calls that function.
+     Depending on the returned status, the decision for requesting the next
+     frame is being made
     */
-    virtual void produce_next_encoded_frame(EncodedFrame* frame) = 0;
+    virtual generated_frame_status produce_next_encoded_frame(EncodedFrame* frame) = 0;
 
 private:
 
 
-    //filename to encode
+    //filename to encode - null terminated array
     char* filename;
-    //raw binary file data
-    std::vector<uint8_t> original_file_data;
+    //raw binary file data in terms of array of file chunks
+    std::vector<FileChunk*> original_file_data;
 
     //This pair encode the redundancy of the QR frames.
     //It is the classical Reed-Solomon code of the (n,k)
