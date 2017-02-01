@@ -2,3 +2,4 @@ open_rs_encoder.cpp
 encoder.h
 main.cpp
 open_rs_encoder.h
+Makefile

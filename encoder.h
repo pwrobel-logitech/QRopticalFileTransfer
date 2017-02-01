@@ -1,4 +1,5 @@
-#include <cstdint>
+
+#include "stdint.h"
 #include <vector>
 
 class EncodedFrame{
@@ -7,6 +8,7 @@ public:
     EncodedFrame(int RSn, int RSk);
 
     //Must be at least 4 bytes, to accomodate the frame number in the header of each frame
+    //perform actual frame vector resize - allocation
     virtual void set_frame_capacity(uint16_t capacity) = 0;
 
     virtual bool is_header_frame() = 0;
@@ -74,9 +76,14 @@ class Encoder{
 
 public:
 
+    //callback for the needdata - encoder will ask for the next filechunk
+    //it will be encoder responsibility to release this filechunk
+    typedef void (*needDataCB)(FileChunk*) ;
+
     enum generated_frame_status{
        Frame_OK_header = 0, //ok - produced next header frame
        Frame_OK_data, //ok, produced next frame data
+       Frame_need_next_filechunk, //frame not produced - need to get more file data
        Frame_EOF,  //requested frame not generated, because whole file has been processed
        Frame_error //hit some generic error - frame not produced correctly
     };
@@ -86,7 +93,10 @@ public:
     //set the filename
     virtual void set_filename(char* filename) = 0;
 
-    virtual void set_filedata(uint8_t* data_to_copy, uint size) = 0;
+    virtual void set_filelength(uint32_t file_length) = 0;
+
+    //encoder will call function passed as a callback here, to request for more file chunk
+    virtual void set_datafeed_callback(needDataCB cb) = 0;
 
     virtual void set_hashlength(uint16_t hash_length) = 0;
 
@@ -109,11 +119,14 @@ public:
 
 private:
 
-
+    //Callback that the encoder uses to ask for the new file chunks
+    needDataCB needData_;
     //filename to encode - null terminated array
     char* filename;
     //raw binary file data in terms of array of file chunks
     std::vector<FileChunk*> original_file_data;
+
+    uint32_t file_length;
 
     //This pair encode the redundancy of the QR frames.
     //It is the classical Reed-Solomon code of the (n,k)
