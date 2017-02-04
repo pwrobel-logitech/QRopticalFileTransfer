@@ -3,3 +3,5 @@ encoder.h
 main.cpp
 open_rs_encoder.h
 Makefile
+ka9q_fac_test.cpp
+fec_include/fec.h

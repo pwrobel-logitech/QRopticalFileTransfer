@@ -78,7 +78,9 @@ public:
 
     //callback for the needdata - encoder will ask for the next filechunk
     //it will be encoder responsibility to release this filechunk
-    typedef void (*needDataCB)(FileChunk*) ;
+    // returned 0 - file chunk delivered properly
+    // something else than 0 - there were some error in delivering the requested file chunk
+    typedef int (*needDataCB)(FileChunk*) ;
 
     enum generated_frame_status{
        Frame_OK_header = 0, //ok - produced next header frame
