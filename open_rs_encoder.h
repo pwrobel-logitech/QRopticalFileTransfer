@@ -1,6 +1,7 @@
 #include "encoder.h"
 
 class OpenRSEncodedFrame : public EncodedFrame{
+public:
     void set_frame_capacity(uint16_t capacity);
     bool is_header_frame();
     uint32_t get_frame_number();
@@ -12,6 +13,11 @@ class OpenRSEncodedFrame : public EncodedFrame{
 
 class OpenRSEncoder : public Encoder{
 
+public:
+    OpenRSEncoder();
+
+    ~OpenRSEncoder();
+
     void set_filename(char* filename);
 
     void set_filelength(uint32_t file_length);
@@ -20,6 +26,8 @@ class OpenRSEncoder : public Encoder{
     void set_datafeed_callback(needDataCB cb);
 
     void set_hashlength(uint16_t hash_length);
+
+    void set_RS_nk(uint16_t n, uint16_t k);
 
     uint8_t* compute_hash();
 

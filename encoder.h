@@ -1,6 +1,7 @@
 
 #include "stdint.h"
 #include <vector>
+#include <string>
 
 class EncodedFrame{
 
@@ -90,7 +91,7 @@ public:
        Frame_error //hit some generic error - frame not produced correctly
     };
 
-    Encoder();
+
 
     //set the filename
     virtual void set_filename(char* filename) = 0;
@@ -119,26 +120,26 @@ public:
     */
     virtual generated_frame_status produce_next_encoded_frame(EncodedFrame* frame) = 0;
 
-private:
+protected:
 
     //Callback that the encoder uses to ask for the new file chunks
     needDataCB needData_;
     //filename to encode - null terminated array
-    char* filename;
+    std::string filename_;
     //raw binary file data in terms of array of file chunks
-    std::vector<FileChunk*> original_file_data;
+    std::vector<FileChunk*> file_data_;
 
-    uint32_t file_length;
+    uint32_t total_file_length_;
 
     //This pair encode the redundancy of the QR frames.
     //It is the classical Reed-Solomon code of the (n,k)
     //Typical code to correct up to 2 bits of errors would stand as (255,251)
     //It would correspond that each bit of the series of 255 frames encodes only
     //the 251 bits of real data - 4 frames would constitue the overhead.
-    uint8_t RSn;
-    uint8_t RSk;
+    uint8_t RSn_;
+    uint8_t RSk_;
 
     //file hash length - in bytes
-    uint16_t hash_length;
+    uint16_t hash_length_;
 
 };

@@ -6,3 +6,6 @@ Makefile
 ka9q_fac_test.cpp
 fec_include/fec.h
 single_fac_test.cpp
+qr_frame_producer.h
+qr_frame_producer.cpp
+fileutil/fileops.h
