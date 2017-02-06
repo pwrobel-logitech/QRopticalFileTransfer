@@ -2,6 +2,8 @@
 
 class OpenRSEncodedFrame : public EncodedFrame{
 public:
+    OpenRSEncodedFrame(int RSn, int RSk);
+    OpenRSEncodedFrame();
     void set_frame_capacity(uint16_t capacity);
     bool is_header_frame();
     uint32_t get_frame_number();
@@ -18,7 +20,7 @@ public:
 
     ~OpenRSEncoder();
 
-    void set_filename(char* filename);
+    void set_filename(const char* filename);
 
     void set_filelength(uint32_t file_length);
 
@@ -29,8 +31,19 @@ public:
 
     void set_RS_nk(uint16_t n, uint16_t k);
 
+    void set_nchannels_parallel(uint32_t nch);
+
     uint8_t* compute_hash();
 
     generated_frame_status produce_next_encoded_frame(EncodedFrame* frame);
+
+private:
+    int* internal_memory_;
+    //number of the sections processed in parrarell - corresponds to the
+    //number of data symbols held on, for example, single QR frame
+    uint32_t n_channels_;
+
+    uint32_t n_header_frame_processed_;
+    uint32_t n_dataframe_processed_;
 };
 

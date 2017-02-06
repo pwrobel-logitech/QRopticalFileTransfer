@@ -3,10 +3,24 @@
 #include <vector>
 #include <string>
 
+#define DEBUG
+
+#ifdef DEBUG
+#define DLOG printf
+#else
+#define DLOG (void)0
+#endif
+
 class EncodedFrame{
 
 public:
-    EncodedFrame(int RSn, int RSk);
+    EncodedFrame(int RSn, int RSk){
+        RSn_ = RSn;
+        RSk_ = RSk;
+    };
+
+    EncodedFrame(){
+    };
 
     //Must be at least 4 bytes, to accomodate the frame number in the header of each frame
     //perform actual frame vector resize - allocation
@@ -25,7 +39,7 @@ private:
     /*
       This tells the maximum numbers of the frames needed to encode data
     */
-    uint32_t max_frames;
+    uint32_t max_frames_;
     /*
       This indicates the frame number.
       Frame with the n_frame=0xFFFFFFFF corresponds to the header,
@@ -33,15 +47,15 @@ private:
       tell the filename, file length, (n,k) values over the frames
       and hash value over the true file data.
     */
-    uint32_t n_frame;
+    uint32_t n_frame_;
 
     //when n_frame=-1, we got the header info frame and this 2-byte number counts the header frames
     //starts from 0
-    uint16_t n_header_frame;
+    uint16_t n_header_frame_;
 
     //RS (n,k) info of the frames
-    uint16_t RSn;
-    uint16_t RSk;
+    uint16_t RSn_;
+    uint16_t RSk_;
 
     /*
       Raw framedata of the frame, including all the metadata - that contains the info
@@ -62,7 +76,7 @@ private:
       N's - uint32!=0xFFFFFFFF  - frame number
       DD..  - data. It's the file data stored in RS code - with some redundancy
     */
-    std::vector<uint8_t> framedata;
+    std::vector<uint8_t> framedata_;
 };
 
 //file is split into the chunk of files, each one starts in an offset
@@ -94,7 +108,7 @@ public:
 
 
     //set the filename
-    virtual void set_filename(char* filename) = 0;
+    virtual void set_filename(const char* filename) = 0;
 
     virtual void set_filelength(uint32_t file_length) = 0;
 
@@ -120,15 +134,27 @@ public:
     */
     virtual generated_frame_status produce_next_encoded_frame(EncodedFrame* frame) = 0;
 
+
+    //this sets number of parralel channels processed by encoder -
+    //number of data symbols per frame
+    virtual void set_nchannels_parallel(uint32_t nch) = 0;
+
 protected:
 
     //Callback that the encoder uses to ask for the new file chunks
+    //the length, offset field and allocated empty memory of the FileChunk
+    //struct are provided by the encoder
+    //
     needDataCB needData_;
     //filename to encode - null terminated array
     std::string filename_;
     //raw binary file data in terms of array of file chunks
     std::vector<FileChunk*> file_data_;
 
+    //encoder has requested so far this much bytes from the file
+    uint32_t bytes_currently_read_from_file_;
+
+    //encoder knows in advance how long the file is going to be
     uint32_t total_file_length_;
 
     //This pair encode the redundancy of the QR frames.

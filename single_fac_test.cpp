@@ -103,6 +103,12 @@ int go(struct etab *e){
         printf(" %d", block[i]);
     printf("\n");
 
+    //encoding done
+    free_rs_int(rs);
+
+    //now start the decoding part
+    rs = init_rs_int(e->symsize,e->genpoly,e->fcs,e->prim,e->nroots,0);
+
     //memcpy(tblock,block,sizeof(block));
 
 

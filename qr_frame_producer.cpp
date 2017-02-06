@@ -13,12 +13,42 @@ Qr_frame_producer::~Qr_frame_producer(){
 }
 
 void Qr_frame_producer::setup_encoder(){
-    printf("size %d \n", get_file_size(this->filename_.c_str()));
+    uint32_t filesize = get_file_size(this->filename_.c_str());
     this->encoder_ = new OpenRSEncoder();
+    this->encoder_->set_filename(this->filename_.c_str());
+    this->encoder_->set_filelength(filesize);
+    this->encoder_->set_datafeed_callback(Qr_frame_producer::needData);
+    ///print some test data
+    DLOG("size %d \n", filesize);
+    //print 8 bytes at offset 4
+    char textfrag[8];
+    memset(textfrag, 0, sizeof(char));
+    read_file(this->filename_.c_str(), textfrag, 4, 8);
+    DLOG("Eight bytes of text at offset 4: %s\n", textfrag);
+
+
+    if(filesize > 2000){
+        this->encoder_->set_RS_nk(511, 256);
+        this->total_chars_per_QR_ = 32;
+        this->encoder_->set_nchannels_parallel(this->total_chars_per_QR_);
+    }
 }
 
 
 int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagepath){
-    printf("Producing image..\n");
+    DLOG("Producing image..\n");
+    OpenRSEncodedFrame *frame = new OpenRSEncodedFrame();
+    this->encoder_->produce_next_encoded_frame(frame);
+    DLOG("Frame number : %d\n",frame->get_frame_number());
+    delete frame;
     return 0;
 };
+
+
+int Qr_frame_producer::needData(FileChunk *chunk){
+    Qr_frame_producer* producer = Qr_frame_producer::getQr_frame_producer();
+    read_file(producer->filename_.c_str(),
+              chunk->chunkdata,
+              chunk->chunk_fileoffset,
+              chunk->chunk_length);
+}

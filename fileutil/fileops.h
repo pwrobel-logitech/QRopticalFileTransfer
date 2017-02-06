@@ -20,8 +20,16 @@ uint32_t get_file_size(const char* filepath){
     return size;
 }
 
-int read_file(char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
-    return -1;
+int read_file(const char* filepath, char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
+    FILE * fp = fopen (filepath, "r");
+    if(fp == NULL)
+        return -1;
+    if (fseek(fp, offset, SEEK_SET) != 0)
+        return -1;
+    if (fread(data_after_read, 1, size, fp) != size)
+        return -1;
+    fclose(fp);
+    return 1;
 }
 
 
