@@ -9,6 +9,7 @@ public:
     uint32_t get_frame_number();
     void set_frame_number(uint32_t frame_number);
     void set_max_frames(uint32_t max_frames);
+    void set_frame_RSnk(uint16_t n, uint16_t k);
 };
 
 
@@ -37,7 +38,7 @@ public:
 
     generated_frame_status produce_next_encoded_frame(EncodedFrame* frame);
 
-private:
+protected:
     int* internal_memory_;
     //number of the sections processed in parrarell - corresponds to the
     //number of data symbols held on, for example, single QR frame

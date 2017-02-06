@@ -31,10 +31,11 @@ public:
     //setting -1 implies that this is a header frame
     virtual void set_frame_number(uint32_t frame_number) = 0;
     virtual void set_max_frames(uint32_t max_frames) = 0;
+    virtual void set_frame_RSnk(uint16_t n, uint16_t k) = 0;
 
 
 
-private:
+protected:
 
     /*
       This tells the maximum numbers of the frames needed to encode data
@@ -162,8 +163,8 @@ protected:
     //Typical code to correct up to 2 bits of errors would stand as (255,251)
     //It would correspond that each bit of the series of 255 frames encodes only
     //the 251 bits of real data - 4 frames would constitue the overhead.
-    uint8_t RSn_;
-    uint8_t RSk_;
+    uint16_t RSn_;
+    uint16_t RSk_;
 
     //file hash length - in bytes
     uint16_t hash_length_;
