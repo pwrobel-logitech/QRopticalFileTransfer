@@ -118,6 +118,7 @@ public:
 
     virtual void set_hashlength(uint16_t hash_length) = 0;
 
+    virtual void set_nbytes_data_per_generated_frame(uint16_t nbytes) = 0;
 
     //set the Reed-Solomon code (n,k) of the each byte in the consecutive frames
     //n>k, and n-k will directly determine the number of overhead data frames
@@ -168,5 +169,8 @@ protected:
 
     //file hash length - in bytes
     uint16_t hash_length_;
+
+    //max number of bytes for the data payload of the each encoded frame produced
+    uint16_t bytes_per_generated_frame_;
 
 };

@@ -71,6 +71,10 @@ void OpenRSEncoder::set_nchannels_parallel(uint32_t nch){
     this->n_channels_ = nch;
 }
 
+void OpenRSEncoder::set_nbytes_data_per_generated_frame(uint16_t nbytes){
+    this->bytes_per_generated_frame_ = nbytes;
+};
+
 void OpenRSEncoder::set_RS_nk(uint16_t n, uint16_t k){
     this->RSn_ = n;
     this->RSk_ = k;

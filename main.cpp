@@ -16,6 +16,16 @@ int main(int argc, char **argv){
     else
         exit(0);
 
+    {
+        uint32_t n_possible_symbols_dst = 256;
+        uint32_t n_possible_symbols_src = 511;
+        uint32_t count_symbols_src = 32;
+        printf("Test util count bytes, count_symbols_to_fit(n_possible_symbols_dst = %d, n_possible_symbols_src = %d, count_symbols_src = %d : %d\n",
+                n_possible_symbols_dst,
+                n_possible_symbols_src,
+                count_symbols_src,
+                utils::count_symbols_to_fit(n_possible_symbols_dst, n_possible_symbols_src, count_symbols_src));
+    }
 
     Qr_frame_producer frame_producer(argv[1]);
     global_frame_producer = &frame_producer;

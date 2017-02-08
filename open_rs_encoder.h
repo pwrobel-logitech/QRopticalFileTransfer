@@ -34,6 +34,8 @@ public:
 
     void set_nchannels_parallel(uint32_t nch);
 
+    void set_nbytes_data_per_generated_frame(uint16_t nbytes);
+
     uint8_t* compute_hash();
 
     generated_frame_status produce_next_encoded_frame(EncodedFrame* frame);
@@ -42,6 +44,7 @@ protected:
     int* internal_memory_;
     //number of the sections processed in parrarell - corresponds to the
     //number of data symbols held on, for example, single QR frame
+    //not the same as bytes_per_generated_frame_ - because the character can be larger than 1byte
     uint32_t n_channels_;
 
     uint32_t n_header_frame_processed_;

@@ -19,7 +19,7 @@ void Qr_frame_producer::setup_encoder(){
     this->encoder_->set_filelength(filesize);
     this->encoder_->set_datafeed_callback(Qr_frame_producer::needData);
     ///print some test data
-    DLOG("size %d \n", filesize);
+    DLOG("size of the file %d \n", filesize);
     //print 8 bytes at offset 4
     char textfrag[8];
     memset(textfrag, 0, sizeof(char));
@@ -28,9 +28,15 @@ void Qr_frame_producer::setup_encoder(){
 
 
     if(filesize > 2000){
-        this->encoder_->set_RS_nk(511, 256);
+        uint32_t n = 511;
+        this->encoder_->set_RS_nk(n, 256); //redundancy level
         this->total_chars_per_QR_ = 32;
-        this->encoder_->set_nchannels_parallel(this->total_chars_per_QR_);
+        //256 - combination, not the redundancy level below!
+        //if more than 256, then the nchannels < total_chars_per_QR_
+        this->encoder_->set_nchannels_parallel(utils::count_symbols_to_fit(n,
+                                                                           256,
+                                                                           this->total_chars_per_QR_ - 4));
+        this->encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 4);
     }
 }
 
