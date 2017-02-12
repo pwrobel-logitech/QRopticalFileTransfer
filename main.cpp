@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include <string>
+#include <string.h>
 
 #include "qr_frame_producer.h"
 

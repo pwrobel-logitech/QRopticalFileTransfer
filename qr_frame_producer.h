@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include <string>
+#include <string.h>
 #include "open_rs_encoder.h"
 #include "fileutil/fileops.h"
 
