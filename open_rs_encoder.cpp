@@ -95,7 +95,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     frame->set_frame_RSnk(this->RSn_, this->RSk_);
     //if(bytes_currently_processed_from_file_==bytes_currently_read_from_file_){
     if (this->byte_of_file_currently_processed_to_frames_ >= this->bytes_currently_read_from_file_){
-        uint32_t mem_to_read = (this->RSn_ - this->RSk_) * this->bytes_per_generated_frame_;
+        uint32_t mem_to_read = (this->RSk_) * this->bytes_per_generated_frame_;
         FileChunk* chunk = new FileChunk();
         chunk->chunkdata = new char[mem_to_read];
         chunk->chunk_length = mem_to_read;
@@ -111,7 +111,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     for (uint32_t j = 0; j<this->n_channels_; j++){ //iterate over symbols within a frame
         uint32_t* begin = this->internal_memory_ + j*this->RSn_;
         char* lbeg = file_read_start + this->bytes_per_generated_frame_;
-        for (uint32_t i = 0; i<this->RSn_-this->RSk_; i++){ //iterate over frame numbers with data
+        for (uint32_t i = 0; i<this->RSk_; i++){ //iterate over frame numbers with data
             //utils::set_data(begin, i*utils::nbits_forsymcombinationsnumber(this->RSn_),
              //               file_read_start);
             //uint32_t v = utils::get_data(lbeg, i*utils::nbits_forsymcombinationsnumber(this->RSn_),
