@@ -3,7 +3,7 @@
 #ifdef ANDROID
 #include <vector>
 #include <string>
-#include "memory.h"
+#include <memory.h>
 #else
 #include <vector>
 #include <string>

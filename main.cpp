@@ -18,7 +18,7 @@ void test_some_utils(){
                     0b00000001, 0b11110011, 0b10010101, 0b10101000 };
 
     char *data_writable = new char[sizeof(data)];
-    mempcpy(data_writable, data, sizeof(data));
+    memcpy(data_writable, data, sizeof(data));
     void *arr_begin = (void*)data_writable;
     uint32_t bits_offset_from_arrbegin = 26;
     uint32_t nbits_sym = 9;
