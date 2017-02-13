@@ -9,6 +9,7 @@
 #include <string>
 #endif
 
+#include "fileutil/fileops.h"
 
 #define DEBUG
 
@@ -179,5 +180,10 @@ protected:
 
     //max number of bytes for the data payload of the each encoded frame produced
     uint16_t bytes_per_generated_frame_;
+
+    // byte offset within the file, that we currently processed to frames. When this reach
+    // the bytes_currently_read_from_file_ - it's time to ask for new data and update the
+    // bytes_currently_read_from_file_ accordingly
+    uint32_t byte_of_file_currently_processed_to_frames_;
 
 };

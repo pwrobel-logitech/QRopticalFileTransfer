@@ -9,3 +9,4 @@ single_fac_test.cpp
 qr_frame_producer.h
 qr_frame_producer.cpp
 fileutil/fileops.h
+fileutil/fileops.cpp

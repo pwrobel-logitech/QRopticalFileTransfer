@@ -41,7 +41,7 @@ public:
     generated_frame_status produce_next_encoded_frame(EncodedFrame* frame);
 
 protected:
-    int* internal_memory_;
+    uint32_t* internal_memory_;
     //number of the sections processed in parrarell - corresponds to the
     //number of data symbols held on, for example, single QR frame
     //not the same as bytes_per_generated_frame_ - because the character can be larger than 1byte

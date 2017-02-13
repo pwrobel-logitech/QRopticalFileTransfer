@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <string.h>
 #include "open_rs_encoder.h"
-#include "fileutil/fileops.h"
+
 
 class Qr_frame_producer;
 
