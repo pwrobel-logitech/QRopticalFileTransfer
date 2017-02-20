@@ -109,14 +109,15 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
             this->byte_of_file_currently_processed_to_frames_;
     //generate frame
     for (uint32_t j = 0; j<this->n_channels_; j++){ //iterate over symbols within a frame
-        uint32_t* begin = this->internal_memory_ + j*this->RSn_;
-        char* lbeg = file_read_start + this->bytes_per_generated_frame_;
+        //uint32_t* begin = this->internal_memory_ + j*this->RSn_;
+        char* lbeg = file_read_start + j * this->bytes_per_generated_frame_;
         for (uint32_t i = 0; i<this->RSk_; i++){ //iterate over frame numbers with data
             //utils::set_data(begin, i*utils::nbits_forsymcombinationsnumber(this->RSn_),
              //               file_read_start);
-            //uint32_t v = utils::get_data(lbeg, i*utils::nbits_forsymcombinationsnumber(this->RSn_),
-              //                           );
-
+            uint32_t val = utils::get_data(lbeg, i*utils::nbits_forsymcombinationsnumber(this->RSn_),
+                                         utils::nbits_forsymcombinationsnumber(this->RSn_));
+            //uint32_t val = 0;
+            this->internal_memory_[i+j*this->RSn_] = val;
 
         }
     }
