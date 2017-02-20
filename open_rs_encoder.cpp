@@ -81,8 +81,10 @@ void OpenRSEncoder::set_nbytes_data_per_generated_frame(uint16_t nbytes){
 void OpenRSEncoder::set_RS_nk(uint16_t n, uint16_t k){
     this->RSn_ = n;
     this->RSk_ = k;
-    if(this->internal_memory_ != NULL)
+    if(this->internal_memory_ != NULL){
         delete this->internal_memory_;
+        this->internal_memory_ = NULL;
+    }
     this->internal_memory_ = new uint32_t[n*this->n_channels_];
     memset(this->internal_memory_,0 , n*this->n_channels_*sizeof(uint32_t));
 };
@@ -93,7 +95,6 @@ uint8_t* OpenRSEncoder::compute_hash(){
 
 Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(EncodedFrame* frame){
     frame->set_frame_RSnk(this->RSn_, this->RSk_);
-    //if(bytes_currently_processed_from_file_==bytes_currently_read_from_file_){
     if (this->byte_of_file_currently_processed_to_frames_ >= this->bytes_currently_read_from_file_){
         uint32_t mem_to_read = (this->RSk_) * this->bytes_per_generated_frame_;
         FileChunk* chunk = new FileChunk();
@@ -103,26 +104,23 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         this->file_data_.push_back(chunk);
         (this->needData_)(chunk);
         bytes_currently_read_from_file_+= mem_to_read;
-    }
 
-    char* file_read_start = (this->file_data_.back())->chunkdata +
+
+        char* file_read_start = (this->file_data_.back())->chunkdata +
             this->byte_of_file_currently_processed_to_frames_;
-    //generate frame
-    for (uint32_t j = 0; j<this->n_channels_; j++){ //iterate over symbols within a frame
-        //uint32_t* begin = this->internal_memory_ + j*this->RSn_;
-        char* lbeg = file_read_start + j * this->bytes_per_generated_frame_;
-        for (uint32_t i = 0; i<this->RSk_; i++){ //iterate over frame numbers with data
+
+        for (uint32_t j = 0; j<this->n_channels_; j++){ //iterate over symbols within a frame
+            for (uint32_t i = 0; i<this->RSk_; i++){ //iterate over frame numbers with data
             //utils::set_data(begin, i*utils::nbits_forsymcombinationsnumber(this->RSn_),
              //               file_read_start);
-            uint32_t val = utils::get_data(lbeg, i*utils::nbits_forsymcombinationsnumber(this->RSn_),
-                                         utils::nbits_forsymcombinationsnumber(this->RSn_));
-            //uint32_t val = 0;
-            this->internal_memory_[i+j*this->RSn_] = val;
-
+                uint32_t val = utils::get_data(file_read_start,
+                                               (j * this->RSk_+ i)*utils::nbits_forsymcombinationsnumber(this->RSn_),
+                                                utils::nbits_forsymcombinationsnumber(this->RSn_));
+                this->internal_memory_[i+j*this->RSn_] = val;
+            }
         }
     }
-
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
-    //}
+
 
 };

@@ -29,7 +29,6 @@ void Qr_frame_producer::setup_encoder(){
 
     if(filesize > 2000){
         uint32_t n = 511;
-        this->encoder_->set_RS_nk(n, 256); //redundancy level
         this->total_chars_per_QR_ = 32;
         //256 - combination, not the redundancy level below!
         //if more than 256, then the nchannels < total_chars_per_QR_
@@ -37,6 +36,7 @@ void Qr_frame_producer::setup_encoder(){
                                                                            256,
                                                                            this->total_chars_per_QR_ - 4));
         this->encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 4);
+        this->encoder_->set_RS_nk(n, 256); //redundancy level
     }
 }
 

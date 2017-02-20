@@ -95,7 +95,7 @@ namespace utils{
             return data;
        }
 
-       if(bits_offset_from_arrbegin + nbits_sym <= 32){ //no need to read data chunk2
+       if(och1 + nbits_sym <= 32){ //no need to read data chunk2
             data = (datachunk1>>(bits_offset_from_arrbegin))
                     & ((1<<nbits_sym) - 1);
             return data;
