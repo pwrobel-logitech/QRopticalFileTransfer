@@ -96,14 +96,14 @@ namespace utils{
        }
 
        if(och1 + nbits_sym <= 32){ //no need to read data chunk2
-            data = (datachunk1>>(bits_offset_from_arrbegin))
+            data = (datachunk1>>(och1))
                     & ((1<<nbits_sym) - 1);
             return data;
        }else{
             uint32_t datachunk2 = *(((uint32_t*)arr_begin)+bits_offset_from_arrbegin / 32 + 1);
-            uint32_t sym_in_chunk2 = bits_offset_from_arrbegin + nbits_sym - 32;
+            uint32_t sym_in_chunk2 = och1 + nbits_sym - 32;
             return (((datachunk2) & ((1 << sym_in_chunk2) - 1)) << (nbits_sym - sym_in_chunk2)) +
-                    ((datachunk1 >> (bits_offset_from_arrbegin))
+                    ((datachunk1 >> (och1))
                      & ((1 << (nbits_sym - sym_in_chunk2)) - 1));
        }
        return data;
@@ -121,15 +121,15 @@ namespace utils{
 
         uint32_t bits = nbits_forsymcombinationsnumber(value_to_set);
         uint32_t chunk1 = *(((uint32_t*)arr_begin) + bits_offset_from_arrbegin / 32);
-        if(bits+bits_offset_from_arrbegin <=32){//no need to write to second chunk
-            uint32_t v = (value_to_set << bits_offset_from_arrbegin);
-            uint32_t mask = (((1 << bits) - 1) << bits_offset_from_arrbegin);
+        if(bits+och1 <=32){//no need to write to second chunk
+            uint32_t v = (value_to_set << och1);
+            uint32_t mask = (((1 << bits) - 1) << och1);
             *(((uint32_t*)arr_begin) + bits_offset_from_arrbegin / 32) = (chunk1 & (~mask)) | v;
         }else{
             uint32_t chunk2 = *(((uint32_t*)arr_begin) + bits_offset_from_arrbegin / 32+1);
-            uint32_t sym_in_chunk2 = bits_offset_from_arrbegin + bits - 32;
-            uint32_t v1 = (value_to_set << bits_offset_from_arrbegin);
-            uint32_t mask1 = (((1 << (bits - sym_in_chunk2)) - 1) << bits_offset_from_arrbegin);
+            uint32_t sym_in_chunk2 = och1 + bits - 32;
+            uint32_t v1 = (value_to_set << och1);
+            uint32_t mask1 = (((1 << (bits - sym_in_chunk2)) - 1) << och1);
             *(((uint32_t*)arr_begin) + bits_offset_from_arrbegin / 32) = (chunk1 & (~mask1)) | v1;
 
             uint32_t mask2 = ((1 << (sym_in_chunk2)) - 1);
