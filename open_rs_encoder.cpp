@@ -48,10 +48,19 @@ OpenRSEncoder::OpenRSEncoder(){
     this->n_header_frame_processed_ = 0;
     this->byte_of_file_currently_processed_to_frames_ = 0;
     this->file_data_.clear();
+    this->RSfecEnc = NULL;
+    this->internal_RS_error_location_mem_ = NULL;
 };
 
 OpenRSEncoder::~OpenRSEncoder(){
-
+    if(this->RSfecEnc)
+        free_rs_int(this->RSfecEnc);
+    if(this->internal_RS_error_location_mem_ != NULL)
+        delete []this->internal_RS_error_location_mem_;
+    if(this->internal_memory_ != NULL){
+        delete this->internal_memory_;
+        this->internal_memory_ = NULL;
+    }
 }
 
 void OpenRSEncoder::set_filename(const char* name){
@@ -87,6 +96,22 @@ void OpenRSEncoder::set_RS_nk(uint16_t n, uint16_t k){
     }
     this->internal_memory_ = new uint32_t[n*this->n_channels_];
     memset(this->internal_memory_,0 , n*this->n_channels_*sizeof(uint32_t));
+
+    int i = 0;
+    while ((1<<OpenRSEncoder::RSfecCodeConsts[i].symsize) != n+1)
+        i++;
+    this->RSfecCodeConsts_index_ = i;
+    this->RSfecEnc = init_rs_int(
+            OpenRSEncoder::RSfecCodeConsts[this->RSfecCodeConsts_index_].symsize,
+            OpenRSEncoder::RSfecCodeConsts[this->RSfecCodeConsts_index_].genpoly,
+            OpenRSEncoder::RSfecCodeConsts[this->RSfecCodeConsts_index_].fcs,
+            OpenRSEncoder::RSfecCodeConsts[this->RSfecCodeConsts_index_].prim,
+            n - k,
+            0);
+    if(this->internal_RS_error_location_mem_ != NULL){
+        delete []this->internal_RS_error_location_mem_;
+        this->internal_RS_error_location_mem_ = new int[this->RSn_];
+    }
 };
 
 uint8_t* OpenRSEncoder::compute_hash(){
@@ -121,6 +146,16 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
                 this->internal_memory_[i+j*this->RSn_] = val;
             }
         }
+        this->apply_RS_code_to_internal_memory();
+
+        // apply few errors/erasures - without the RS decode, that would generate some errors, because the recreated array would
+        // differ to the original
+        this->internal_memory_[5]=0;
+        this->internal_memory_[8]=0;
+        this->internal_memory_[250]=0;
+        this->internal_memory_[514]=0;
+
+        this->apply_RS_decode_to_internal_memory();
         char* test_data;
         uint32_t length_of_test_data = 0;
         this->recreate_original_arr(this->internal_memory_, &test_data, &length_of_test_data);
@@ -128,6 +163,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
             if (test_data[k] != file_read_start[k])
                 DLOG("Error - difference of processed data on the %d position\n", k);
         }
+
     }
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
 
@@ -146,3 +182,39 @@ bool OpenRSEncoder::recreate_original_arr(uint32_t *symbols_arr, char **data_pro
     int k=0;
     return true;
 }
+
+
+bool OpenRSEncoder::apply_RS_code_to_internal_memory(){
+    for (uint32_t j = 0; j < this->n_channels_; j++){
+        encode_rs_int(this->RSfecEnc, j*this->RSn_ + (int*)this->internal_memory_,
+                      j*this->RSn_ + (int*) &this->internal_memory_[this->RSk_]);
+    }
+    return true;
+}
+
+bool OpenRSEncoder::apply_RS_decode_to_internal_memory(){
+    for (uint32_t j = 0; j < this->n_channels_; j++){
+        int num_of_errors = decode_rs_int(this->RSfecEnc, j*this->RSn_ + (int*)this->internal_memory_,
+                                         this->internal_RS_error_location_mem_, 0);
+    }
+};
+
+
+
+OpenRSEncoder::codeconst OpenRSEncoder::RSfecCodeConsts[] = {
+ {2, 0x7,     1,   1, 1, 10 },
+ {3, 0xb,     1,   1, 2, 10 },
+ {4, 0x13,    1,   1, 4, 10 },
+ {5, 0x25,    1,   1, 6, 10 },
+ {6, 0x43,    1,   1, 8, 10 },
+ {7, 0x89,    1,   1, 10, 10 },
+ {8, 0x11d,   1,   1, 32, 10 },
+ {9, 0x211,   1,   1, 32, 10 },
+ {10,0x409,   1,   1, 32, 10 },
+ {11,0x805,   1,   1, 32, 10 },
+ {12,0x1053,  1,   1, 32, 5 },
+ {13,0x201b,  1,   1, 32, 2 },
+ {14,0x4443,  1,   1, 32, 1 },
+ {15,0x8003,  1,   1, 32, 1 },
+ {16,0x1100b, 1,   1, 32, 1 },
+};

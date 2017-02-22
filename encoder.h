@@ -11,6 +11,10 @@
 
 #include "fileutil/fileops.h"
 
+extern "C"{
+#include "fec_include/fec.h"
+}
+
 #define DEBUG
 
 #ifdef DEBUG

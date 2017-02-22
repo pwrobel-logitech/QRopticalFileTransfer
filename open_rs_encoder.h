@@ -40,7 +40,17 @@ public:
 
     generated_frame_status produce_next_encoded_frame(EncodedFrame* frame);
 
+    static struct codeconst {
+        int symsize;
+        int genpoly;
+        int fcs;
+        int prim;
+        int nroots;
+        int ntrials;
+      } RSfecCodeConsts[];
+
 protected:
+    // used to store symbols containing the data for the series of frames + the RS redundancy symbols
     uint32_t* internal_memory_;
     //number of the sections processed in parrarell - corresponds to the
     //number of data symbols held on, for example, single QR frame
@@ -49,6 +59,15 @@ protected:
 
     uint32_t n_header_frame_processed_;
     uint32_t n_dataframe_processed_;
+
+    //RS encode
+    bool apply_RS_code_to_internal_memory();
+    uint32_t RSfecCodeConsts_index_; //which index is currently used.
+    void* RSfecEnc;
+    // RS decode
+    bool apply_RS_decode_to_internal_memory();
+    int* internal_RS_error_location_mem_;
+
 
     //to test if the created data matches the original
     bool recreate_original_arr(uint32_t* symbols_arr, char** data_produced, uint32_t* length_produced);
