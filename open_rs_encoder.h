@@ -50,6 +50,7 @@ protected:
     uint32_t n_header_frame_processed_;
     uint32_t n_dataframe_processed_;
 
-    bool recreate_original_arr(uint32_t* symbols_arr, char* data_produced, uint32_t* length_produced);
+    //to test if the created data matches the original
+    bool recreate_original_arr(uint32_t* symbols_arr, char** data_produced, uint32_t* length_produced);
 };
 

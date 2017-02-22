@@ -123,7 +123,11 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         }
         char* test_data;
         uint32_t length_of_test_data = 0;
-        this->recreate_original_arr(this->internal_memory_, test_data, &length_of_test_data);
+        this->recreate_original_arr(this->internal_memory_, &test_data, &length_of_test_data);
+        for (uint32_t k = 0; k < length_of_test_data; k++){
+            if (test_data[k] != file_read_start[k])
+                DLOG("Error - difference of processed data on the %d position\n", k);
+        }
     }
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
 
@@ -131,13 +135,13 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
 };
 
 
-bool OpenRSEncoder::recreate_original_arr(uint32_t *symbols_arr, char *data_produced, uint32_t* length_produced){
+bool OpenRSEncoder::recreate_original_arr(uint32_t *symbols_arr, char **data_produced, uint32_t* length_produced){
     *length_produced = this->bytes_per_generated_frame_ * this->RSk_;
-    data_produced = new char[*length_produced];
-    memset(data_produced, 0, *length_produced);
+    *data_produced = new char[*length_produced];
+    memset(*data_produced, 0, *length_produced);
     for (uint32_t j = 0; j<this->n_channels_; j++)
         for (uint32_t i = 0; i<this->RSk_; i++){
-            utils::set_data((void*)data_produced, (j * this->RSk_+ i)*utils::nbits_forsymcombinationsnumber(this->RSn_), symbols_arr[i+j*this->RSn_]);
+            utils::set_data((void*)*data_produced, (j * this->RSk_+ i)*utils::nbits_forsymcombinationsnumber(this->RSn_), symbols_arr[i+j*this->RSn_]);
         }
     int k=0;
     return true;
