@@ -7,6 +7,7 @@ BASE=/home/pwrobel/Android/Sdk/my_toolchain
 STRIP=$(BASE)/bin/arm-linux-androideabi-strip
 CFLAGS_ARM=-I. -I$(BASE)/include/c++/4.9.x/bits/ -Wall
 CPP_ARM=$(BASE)/bin/arm-linux-androideabi-g++
+LIBQRENCODER_LIBFOLDERNAME=libqrencode
 
 x86_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp
 	g++ -I$(current_dir) -fPIC -O0 -g -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/bin_fec_x64 -lfec
@@ -24,6 +25,9 @@ arm_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp
 	$(STRIP) $(current_dir)/bin_fec_arm/libRSencoder.so
 main_arm: main.cpp
 	$(CPP_ARM) $(CFLAGS_ARM) -DANDROID -pie -I$(current_dir) -g -O0 main.cpp -o bin_fec_arm/main_arm -Wl,-rpath=\$$ORIGIN -L$(current_dir)/bin_fec_arm -lRSencoder
+	
+libqrencode_wrapper:
+	g++ -g -O0 -I$(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper.cpp -fPIC -shared -o $(current_dir)/bin_fec_x64/libqrencoder_wrapper.so
 all: x86_lib fec_x86_test fec_arm_test main arm_lib main_arm
 
 

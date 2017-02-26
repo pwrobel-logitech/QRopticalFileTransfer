@@ -160,19 +160,21 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         }
         double t = currmili();
         this->apply_RS_code_to_internal_memory();
-        DLOG("Time to encode %d frames is %f ms\n", this->n_channels_, currmili()-t);
+        DLOG("Time to encode %d frames is %f ms\n", this->RSn_, currmili()-t);
 
         // apply few errors/erasures - without the RS decode, that would generate some errors, because the recreated array would
         // differ to the original
         this->internal_memory_[5]=0;
         this->internal_memory_[8]=0;
+        this->internal_memory_[300]=0;
+        this->internal_memory_[600]=0;
         this->internal_memory_[250]=0;
         this->internal_memory_[514]=0;
         //
 
         t = currmili();
         this->apply_RS_decode_to_internal_memory();
-        DLOG("Time to decode %d frames is %f ms\n", this->n_channels_, currmili()-t);
+        DLOG("Time to decode %d frames is %f ms\n", this->RSn_, currmili()-t);
         //
         char* test_data;
         uint32_t length_of_test_data = 0;
