@@ -12,3 +12,4 @@ fileutil/fileops.h
 fileutil/fileops.cpp
 libqrencoder_wrapper/libqrencoder_wrapper.cpp
 libqrencoder_wrapper/libqrencoder_wrapper.h
+libqrencoder_wrapper/libqrencoder_wrapper_test.cpp

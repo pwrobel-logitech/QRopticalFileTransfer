@@ -2,3 +2,4 @@
 fec_include
 fileutil
 libqrencoder_wrapper
+../libqrencode

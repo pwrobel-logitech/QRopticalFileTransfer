@@ -1,4 +1,6 @@
 
+#include "qrencode.h"
+
 extern "C" {
 
 enum image_type{
@@ -17,7 +19,7 @@ void finish_libqrencoder();
 // for given data of input length, allocate and generate the data of the image
 // responsibility to release allocated memory for the generated image data lies
 // on whoever called that function
-void generate_image_data(const char* input_data, int input_length, char* out_image_data, int *out_image_data_size);
+void generate_image_data(const unsigned char* input_data, int input_length, unsigned char** out_image_data, int *out_image_data_size);
 
 
 }
