@@ -28,7 +28,7 @@ main_arm: main.cpp
 	
 libqrencode_wrapper:
 	g++ -g -O0 -DSTATIC_IN_RELEASE=static -DMAJOR_VERSION=1 -DMINOR_VERSION=1 -DVERSION=\"1\" -DMICRO_VERSION=1 -I$(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper.cpp $(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME)/*.c -fPIC -shared -o $(current_dir)/bin_fec_x64/libqrencoder_wrapper.so
-	g++ -g -O0 -I$(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper_test.cpp -fPIC -pie -o $(current_dir)/bin_fec_x64/libqrencoder_test -L$(current_dir)/bin_fec_x64 -lqrencoder_wrapper
+	g++ -g -O0 -I$(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper_test.cpp -fPIC -pie -o $(current_dir)/bin_fec_x64/libqrencoder_test -L$(current_dir)/bin_fec_x64 -lqrencoder_wrapper -ljpeg
 all: x86_lib fec_x86_test fec_arm_test main arm_lib main_arm
 
 
