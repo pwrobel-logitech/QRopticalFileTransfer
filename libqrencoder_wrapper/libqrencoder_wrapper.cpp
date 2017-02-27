@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <jpeglib.h>
-
+ #include <string.h>
 JSAMPLE  image_buffer[] = {0x00,0x00,0x00, 0xff,0xff,0xff, 0x00,0xff,0xff, 0x00,0,0};	/* Points to large array of R,G,B-order data */
 int image_height=2;	/* Number of rows in image */
 int image_width=2;		/* Number of columns in image */
@@ -118,6 +118,47 @@ printf("QQ %d %d %d\n", *created_jpeg_length, created_jpeg, *created_jpeg);
 
 
 
+size_t compressImage(char* buffer, size_t width, size_t height, unsigned char* outputBuffer, int quality){
+
+  unsigned char* bits = (unsigned char*) buffer;
+  unsigned char* outp = new unsigned char[60000];
+  memset(outp, '0', (size_t)(60000));
+
+  struct jpeg_compress_struct cinfo;
+  struct jpeg_error_mgr jerr;
+
+  JSAMPROW row_pointer[1];  //Pointer to JSAMPLE row[s]
+
+  int row_stride = width * 3; //Physical row width in image buffer
+  cinfo.err      = jpeg_std_error(&jerr);
+
+  jpeg_create_compress(&cinfo);
+
+  cinfo.image_width        = width;
+  cinfo.image_height       = height;
+  cinfo.input_components   = 3;
+  cinfo.in_color_space     = JCS_RGB;
+  size_t outlen            = 0;
+
+  jpeg_mem_dest(&cinfo, &outp, &outlen);
+
+  jpeg_set_defaults(&cinfo);
+  jpeg_set_quality(&cinfo, quality, true);
+  jpeg_start_compress(&cinfo, true);
+
+  while(cinfo.next_scanline < cinfo.image_height){
+    row_pointer[0] = &bits[cinfo.next_scanline * row_stride];
+    jpeg_write_scanlines(&cinfo, row_pointer, 1);
+  }
+
+  jpeg_finish_compress(&cinfo);
+  jpeg_destroy_compress(&cinfo);
+
+  memcpy(outputBuffer, outp, outlen);
+
+  return outlen;
+}
+
 
 void init_libqrencoder(int size){
 
@@ -135,12 +176,15 @@ void generate_image_data(const unsigned char* input_data, int input_length, unsi
       *out_image_data_size = generatedQR->width * generatedQR->width;
   }
   FILE *my_file = fopen("dump11.jpg", "wb");
-  char* out_jpeg=NULL;
+  char out_jpeg[6000];
+  char out_b[6000];
   int outsize = 0;
   int* out_jpeg_size = &outsize;
-  write_JPEG_to_mem ((char**)&out_jpeg, out_jpeg_size, image_width, image_height, (const char*)image_buffer, 100);
+  //write_JPEG_to_mem ((char**)&out_jpeg, out_jpeg_size, image_width, image_height, (const char*)image_buffer, 100);
 
-  fwrite(out_jpeg, *out_jpeg_size, 1, my_file);
+compressImage(out_jpeg, image_width,image_height,(unsigned char*) out_b, 100);
+
+  fwrite(out_b, 743, 1, my_file);
   fclose(my_file);
 }
 
