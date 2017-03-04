@@ -17,9 +17,9 @@ double currmili(){
 
 char* raw_img_mem = NULL;
 
-JSAMPLE  image_buffer[] = {0x00,0x00,0x00, 0xff,0xff,0xff, 0xff,0xff,0xff, 0x00,0,0};	/* Points to large array of R,G,B-order data */
-int image_height=2;	/* Number of rows in image */
-int image_width=2;		/* Number of columns in image */
+//JSAMPLE  image_buffer[] = {0x00,0x00,0x00, 0xff,0xff,0xff, 0xff,0xff,0xff, 0x00,0,0};	/* Points to large array of R,G,B-order data */
+//int image_height=2;	/* Number of rows in image */
+//int image_width=2;		/* Number of columns in image */
 
 const int static_workbuffer_size = (int)1.5*1024*1024; //1.5MB
 char static_workbuffer1[static_workbuffer_size]; //for processing jpeg - reduces number of allocations
@@ -114,13 +114,12 @@ void generate_image_data(const unsigned char* input_data, int input_length, char
   unsigned char* out_jpeg_buff; //pointer to the generated data in the static buffer
   int jpegsize = compressImage(out_target_rgb_image, target_width, target_width, &out_jpeg_buff, 100);
 
+  *out_image_data_size = jpegsize;
+  *out_image_data = (char*)out_jpeg_buff;
   //delete []out_target_rgb_image;
 
   printf("MS genQR %f\n", currmili() - t);
 
-  FILE *my_file = fopen("dump11.jpg", "wb");
-  fwrite(out_jpeg_buff, jpegsize , 1, my_file);
-  fclose(my_file);
 }
 
 
