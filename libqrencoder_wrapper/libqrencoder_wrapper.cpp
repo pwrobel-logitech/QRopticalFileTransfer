@@ -15,7 +15,7 @@ double currmili(){
     return mtime;
 }
 
-
+char* raw_img_mem = NULL;
 
 JSAMPLE  image_buffer[] = {0x00,0x00,0x00, 0xff,0xff,0xff, 0xff,0xff,0xff, 0x00,0,0};	/* Points to large array of R,G,B-order data */
 int image_height=2;	/* Number of rows in image */
@@ -67,17 +67,20 @@ size_t compressImage(char* buffer, size_t width, size_t height, unsigned char** 
 
 
 void init_libqrencoder(int size){
-
+    if(raw_img_mem == NULL){
+        raw_img_mem = new char[size];
+    }
 }
 
 void finish_libqrencoder(){
-
+    if(raw_img_mem != NULL)
+        delete []raw_img_mem;
 }
 
 void generate_image_data(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size,
                          int *max_target_width){
 
-    double t = currmili();
+  double t = currmili();
   QRcode *generatedQR = NULL;
   generatedQR = QRcode_encodeData(input_length, input_data, 1, QR_ECLEVEL_M);
   unsigned char* QR_pixeldata = NULL;
@@ -98,8 +101,8 @@ void generate_image_data(const unsigned char* input_data, int input_length, char
   int target_width = *max_target_width;
 
 
-  char* out_target_rgb_image = new char[target_width*target_width];
-  memset(out_target_rgb_image, 0, target_width*target_width);
+  char* out_target_rgb_image = raw_img_mem;//new char[target_width*target_width];
+  //memset(out_target_rgb_image, 0, target_width*target_width);
 
   for (int i = 0; i<target_width; i++) {
       for (int j = 0; j<target_width; j++) {
@@ -111,7 +114,7 @@ void generate_image_data(const unsigned char* input_data, int input_length, char
   unsigned char* out_jpeg_buff; //pointer to the generated data in the static buffer
   int jpegsize = compressImage(out_target_rgb_image, target_width, target_width, &out_jpeg_buff, 100);
 
-  delete []out_target_rgb_image;
+  //delete []out_target_rgb_image;
 
   printf("MS genQR %f\n", currmili() - t);
 
