@@ -12,6 +12,7 @@ int main(){
   int len = strlen((const char*)data);
   int out_len;
   char** out_data;
-  generate_image_data(data, len, out_data, &out_len, 200);
+  int max_target_width = 200;
+  generate_image_data(data, len, out_data, &out_len, &max_target_width);
   return 1;
 }

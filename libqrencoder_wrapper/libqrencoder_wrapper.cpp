@@ -60,7 +60,7 @@ void finish_libqrencoder(){
 }
 
 void generate_image_data(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size,
-                         int target_width){
+                         int *max_target_width){
 
   QRcode *generatedQR = NULL;
   generatedQR = QRcode_encodeData(input_length, input_data, 1, QR_ECLEVEL_M);
@@ -70,13 +70,49 @@ void generate_image_data(const unsigned char* input_data, int input_length, char
       QR_pixeldata = generatedQR->data;
       QR_pixeldata_size = generatedQR->width * generatedQR->width;
   }
-  *out_image_data_size = target_width * target_width * 3; // RGB buffer size
-  *out_image_data = new char[*out_image_data_size]; //RGB buffer as an input for jpeg creation
 
-  memcpy(*out_image_data, image_buffer, 12);
+  int w = generatedQR->width;
+  int i = 1;
+  do {
+      w = generatedQR->width * i;
+      i++;
+  }
+  while (generatedQR->width * i<=*max_target_width);
+  *max_target_width = w;
+  int target_width = *max_target_width;
 
+
+  //*out_image_data_size = target_width * target_width * 3; // RGB buffer size
+  //*out_image_data = new char[*out_image_data_size]; //RGB buffer as an input for jpeg creation
+
+
+  char* out_target_rgb_image = new char[target_width*target_width*3];
+  memset(out_target_rgb_image, 0, target_width*target_width*3);
+
+  for (int i = 0; i<target_width; i++) {
+      for (int j = 0; j<target_width; j++) {
+          char val = ((QR_pixeldata[(int)(i*(((float)generatedQR->width)/target_width))*generatedQR->width+(int)(j*((((float)generatedQR->width)/target_width)))] & 1) ? 0 : 0xff);
+          out_target_rgb_image[3*(i*target_width+j)+0] = val;
+          out_target_rgb_image[3*(i*target_width+j)+1] = val;
+          out_target_rgb_image[3*(i*target_width+j)+2] = val;
+          if(i==0)printf(" %02x", val);
+      }
+  }
+
+  /*
+  printf("\n");
+  for (int i = 0; i<generatedQR->width; i++) {
+      for (int j = 0; j<generatedQR->width; j++) {
+          printf("%02x ", QR_pixeldata[i*generatedQR->width+j]);
+      }
+      printf("\n");
+  }
+  //memcpy(*out_image_data, image_buffer, 12);
+  */
   unsigned char* out_jpeg_buff; //pointer to the generated data in the static buffer
-  int jpegsize = compressImage(*out_image_data, image_width, image_height, &out_jpeg_buff, 100);
+  int jpegsize = compressImage(out_target_rgb_image, target_width, target_width, &out_jpeg_buff, 100);
+
+  delete []out_target_rgb_image;
 
   FILE *my_file = fopen("dump11.jpg", "wb");
   fwrite(out_jpeg_buff, jpegsize , 1, my_file);
