@@ -4,3 +4,5 @@ fileutil
 libqrencoder_wrapper
 ../libqrencode
 bin_jpeg
+../zxing-cpp/core/src
+zxing_lib

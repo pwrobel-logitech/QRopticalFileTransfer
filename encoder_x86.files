@@ -14,3 +14,5 @@ libqrencoder_wrapper/libqrencoder_wrapper.cpp
 libqrencoder_wrapper/libqrencoder_wrapper.h
 libqrencoder_wrapper/libqrencoder_wrapper_test.cpp
 bin_jpeg/jpeglib.h
+zxing_lib/BufferBitmapSource.cpp
+zxing_lib/BufferBitmapSource.h

@@ -6,6 +6,43 @@
 #include <stdlib.h>
 
 
+void test_gen_qr_and_decode(){
+    char* in = new char[14];
+    snprintf(in, 5+1, "aBcdeFGhij");
+
+    char* out_qr_bmp;
+    int outw;
+    printf("Buff START %s \n", in);
+    for (int i = 0 ;i < 5 ; i++){
+        printf("%d\n", in[i]);
+    }
+    generate_qr_greyscale_bitmap_data((const unsigned char*)in, 5, &out_qr_bmp, &outw, 3);
+
+
+/*
+    printf("\n");
+    for (int i = 0; i<outw; i++) {
+        for (int j = 0; j<outw; j++) {
+            printf("%01x ", 0xf & out_qr_bmp[i*outw+j]);
+        }
+        printf("\n");
+    }
+*/
+
+    int out_datal;
+    char *outdata;
+    generate_data_from_qr_greyscalebuffer(&out_datal, &outdata, out_qr_bmp,
+                                               outw);
+
+    printf("libzxing returned outl %d\n", out_datal);
+    for (int i = 0 ;i < 5 ; i++){
+        printf("%d\n", outdata[i]);
+    }
+
+    delete []in;
+}
+
+
 int main(){
   const unsigned char* data = (const unsigned char*)
           "In computing, plain text is the data (e.g. file contents) "
@@ -42,6 +79,10 @@ int main(){
 
 
   }
+
+  test_gen_qr_and_decode();
+
+
   finish_libqrencoder();
   return 1;
 }
