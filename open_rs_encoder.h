@@ -71,5 +71,9 @@ protected:
 
     //to test if the created data matches the original
     bool recreate_original_arr(uint32_t* symbols_arr, char** data_produced, uint32_t* length_produced);
+
+    // create byte data for a single QR frame to encode onto actual QR code image
+    // created data must be of the size of bytes_per_generated_frame_
+    bool create_data_for_QR(char **data);
 };
 
