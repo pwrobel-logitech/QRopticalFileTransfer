@@ -30,5 +30,10 @@ void finish_libqrencoder();
 // pass max target width - function will write the actual choosen width for the image
 void generate_image_data(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size, int *max_target_width);
 
+// the same as above - but only it creates smallest possible jpeg, and return size to target_width
+// it also supports width multiplier - for smallest image it will be 1
+void generate_small_image_data(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size, int *target_width,
+                               int width_multiplier);
+
 
 }

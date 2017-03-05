@@ -24,5 +24,23 @@ int main(){
   fclose(my_file);
 
   finish_libqrencoder();
+
+  init_libqrencoder(1200*1200*2);
+
+  char str[40];
+  for(int i = 1; i<20; i++){
+
+    snprintf(str, sizeof(str), "dumpQR_sizemult%d.jpg", i);
+
+
+    generate_small_image_data(data, len, &out_data, &out_len, &max_target_width, i);
+
+    my_file = fopen(str, "wb");
+    fwrite(out_data, out_len , 1, my_file);
+    fclose(my_file);
+
+
+  }
+  finish_libqrencoder();
   return 1;
 }

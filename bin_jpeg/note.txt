@@ -1,0 +1,33 @@
+use the libjpeg from the https://github.com/LuaDist/libjpeg - compile it with the -fPIC, then take the static version and link with the program.
+for the arm, first create the custom toolchain from the adroind NDK, and then configure libjpeg as (you might also add -O2 flags to optimize):
+
+CFLAGS="-fPIC" CPPFLAGS="-fPIC" ./configure --host=arm-linux CC=/home/pwrobel/Android/Sdk/my_toolchain/bin/arm-linux-androideabi-g++
+make:
+
+it might be necessary to make some changes for the compilation to finish, like castin some bool to boolean in some c files.
+
+
+benchmark of the jpeg encode speed on my moto3g:
+root@osprey_umts:/xbin/tmp # ./libqrencoder_test                               
+MS genQR 87.912842
+MS genQR small mult 1 - 1.903076 ms
+MS genQR small mult 2 - 2.930908 ms
+MS genQR small mult 3 - 6.223877 ms
+MS genQR small mult 4 - 7.002930 ms
+MS genQR small mult 5 - 13.309082 ms
+MS genQR small mult 6 - 16.989014 ms
+MS genQR small mult 7 - 23.265869 ms
+MS genQR small mult 8 - 19.227051 ms
+MS genQR small mult 9 - 35.281982 ms
+MS genQR small mult 10 - 40.915039 ms
+MS genQR small mult 11 - 50.080078 ms
+MS genQR small mult 12 - 55.026855 ms
+MS genQR small mult 13 - 68.151855 ms
+MS genQR small mult 14 - 76.167969 ms
+MS genQR small mult 15 - 89.041016 ms
+MS genQR small mult 16 - 73.310059 ms
+MS genQR small mult 17 - 112.343994 ms
+MS genQR small mult 18 - 123.515869 ms
+MS genQR small mult 19 - 138.193115 ms
+base qr resolution for the multiplier 1 was 21x21
+
