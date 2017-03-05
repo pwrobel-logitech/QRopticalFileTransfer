@@ -162,4 +162,65 @@ void generate_small_image_data(const unsigned char* input_data, int input_length
 }
 
 
+void generate_small_image_data_margin(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size,
+                         int *target_width, int width_multiplier, int margin){
+
+  double t = currmili();
+  QRcode *generatedQR = NULL;
+  generatedQR = QRcode_encodeData(input_length, input_data, 1, QR_ECLEVEL_M);
+  unsigned char* QR_pixeldata = NULL;
+  int QR_pixeldata_size = -1;
+  if (generatedQR != NULL){
+      QR_pixeldata = generatedQR->data;
+      QR_pixeldata_size = generatedQR->width * generatedQR->width;
+  }
+
+  *target_width = (generatedQR->width + 2*margin) * width_multiplier;
+  int w = *target_width;
+
+  char* out_target_rgb_image = raw_img_mem;//new char[target_width*target_width];
+  //memset(out_target_rgb_image, 0xff, w*w);
+
+  // fill white margin 4 times
+
+  for (int i = 0; i < w; i++) {
+      for (int j = 0; j < width_multiplier * margin; j++)
+          out_target_rgb_image[(i*w+j)] = 0xff;
+  }
+
+  for (int i = 0; i < w; i++) {
+      for (int j = w - margin * width_multiplier; j < w; j++)
+          out_target_rgb_image[(i*w+j)] = 0xff;
+  }
+
+
+  for (int j = 0; j < w; j++) {
+      for (int i = w - margin * width_multiplier; i < w; i++)
+          out_target_rgb_image[(i*w+j)] = 0xff;
+  }
+
+  for (int j = 0; j < w; j++) {
+      for (int i = 0; i < margin * width_multiplier; i++)
+          out_target_rgb_image[(i*w+j)] = 0xff;
+  }
+
+  // main qr image
+  for (int i = width_multiplier*margin; i<w-width_multiplier*margin; i++) {
+      for (int j = width_multiplier*margin; j<w-width_multiplier*margin; j++) {
+          char val = ((QR_pixeldata[(int)((i-width_multiplier*margin)*(((float)generatedQR->width)/(w-2*width_multiplier*margin)))*generatedQR->width+(int)((j-width_multiplier*margin)*((((float)generatedQR->width)/(w-2*width_multiplier*margin))))] & 1) ? 0 : 0xff);
+          out_target_rgb_image[(i*w+j)] = val;
+      }
+  }
+
+  unsigned char* out_jpeg_buff; //pointer to the generated data in the static buffer
+  int jpegsize = compressImage(out_target_rgb_image, w, w, &out_jpeg_buff, 100);
+
+  *out_image_data_size = jpegsize;
+  *out_image_data = (char*)out_jpeg_buff;
+  //delete []out_target_rgb_image;
+
+  printf("MS genQR small mult %d, margin %d - %f ms\n", width_multiplier, margin, currmili() - t);
+
+}
+
 

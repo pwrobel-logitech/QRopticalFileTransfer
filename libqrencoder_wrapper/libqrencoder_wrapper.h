@@ -35,5 +35,9 @@ void generate_image_data(const unsigned char* input_data, int input_length, char
 void generate_small_image_data(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size, int *target_width,
                                int width_multiplier);
 
+// same as above - but adds some white margin of size 'margin' - in units of generated smallest qr image pixel (get multiplied by the multiplier as well)
+void generate_small_image_data_margin(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size, int *target_width,
+                               int width_multiplier, int margin);
+
 
 }
