@@ -187,6 +187,9 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     }
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
 
+    char *data_for_qr;
+    this->create_data_for_QR(&data_for_qr);
+
 
     this->n_dataframe_processed_++;
 };

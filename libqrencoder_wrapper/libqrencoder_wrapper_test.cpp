@@ -4,8 +4,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <jpeglib.h>
 
+#define JPEG_LIB_VERSION        90	/* Compatibility version 9.0 */
+#define JPEG_LIB_VERSION_MAJOR  9
+#define JPEG_LIB_VERSION_MINOR  1
 
 int main(){
   const unsigned char* data = (const unsigned char*)"In computing, plain text is the data (e.g. file contents) that represent only characters of readable material but not its";

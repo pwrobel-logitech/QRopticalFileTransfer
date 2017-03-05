@@ -1,9 +1,9 @@
 
 #include "libqrencoder_wrapper.h"
-
+#include "qrencode.h"
 
 #include <sys/time.h>
-
+#include "bin_jpeg/jpeglib.h"
 
 double currmili(){
     struct timeval start;
@@ -48,8 +48,8 @@ size_t compressImage(char* buffer, size_t width, size_t height, unsigned char** 
   jpeg_mem_dest(&cinfo, &outp, &outlen);
 
   jpeg_set_defaults(&cinfo);
-  jpeg_set_quality(&cinfo, quality, true);
-  jpeg_start_compress(&cinfo, true);
+  jpeg_set_quality(&cinfo, quality, (boolean)true);
+  jpeg_start_compress(&cinfo, (boolean)true);
 
   while(cinfo.next_scanline < cinfo.image_height){
     row_pointer[0] = &bits[cinfo.next_scanline * row_stride];

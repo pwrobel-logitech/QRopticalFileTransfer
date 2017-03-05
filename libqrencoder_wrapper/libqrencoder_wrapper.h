@@ -1,9 +1,9 @@
 
-#include "qrencode.h"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <jpeglib.h>
+
 #include <string.h>
 
 

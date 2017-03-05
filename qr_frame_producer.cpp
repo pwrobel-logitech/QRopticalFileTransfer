@@ -1,15 +1,18 @@
 #include "qr_frame_producer.h"
-
+#include <libqrencoder_wrapper.h>
 
 Qr_frame_producer::Qr_frame_producer(const char* file)
 {
     this->filename_ = file;
     this->setup_encoder();
+    int max_target_width = 1300;
+    init_libqrencoder(max_target_width*max_target_width*2);
 }
 
 Qr_frame_producer::~Qr_frame_producer(){
     if(this->encoder_!=NULL)
         delete this->encoder_;
+    finish_libqrencoder();
 }
 
 void Qr_frame_producer::setup_encoder(){

@@ -22,9 +22,9 @@
  */
 
 #ifndef JCONFIG_INCLUDED	/* in case jinclude.h already did */
-#include "jconfig.h"		/* widely used configuration options */
+#include "libjpeg/jconfig.h"		/* widely used configuration options */
 #endif
-#include "jmorecfg.h"		/* seldom changed options */
+#include "libjpeg/jmorecfg.h"		/* seldom changed options */
 
 
 #ifdef __cplusplus

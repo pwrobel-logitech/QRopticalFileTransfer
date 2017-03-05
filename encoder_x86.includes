@@ -3,3 +3,4 @@ fec_include
 fileutil
 libqrencoder_wrapper
 ../libqrencode
+bin_jpeg
