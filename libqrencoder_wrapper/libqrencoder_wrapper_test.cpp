@@ -9,7 +9,7 @@
 void test_gen_qr_and_decode(){
     char* in = new char[14];
     snprintf(in, 5+1, "aBcdeFGhij");
-
+in[2] = 0;
     char* out_qr_bmp;
     int outw;
     printf("Buff START %s \n", in);

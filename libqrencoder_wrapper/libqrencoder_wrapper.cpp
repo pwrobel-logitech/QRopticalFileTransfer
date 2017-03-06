@@ -326,20 +326,19 @@ void generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** gen
 
     // Perform the decoding.
     QRCodeReader reader;
-    Ref<Result> result(reader.decode(image, hints));
+    std::vector<char> bitres;
+    Ref<Result> result(reader.decode(image, hints, bitres));
 
-    ArrayRef<unsigned char> arrref = result->getRawBytes();
-    Array<unsigned char> ar = *(arrref.array_);
 
-    *generated_datalength = ar.size();
+    *generated_datalength = bitres.size();
     *generated_data = new char [*generated_datalength];
 
     //http://stackoverflow.com/questions/17973641/how-to-decode-data-using-zxing-c
 
     for (int i = 0; i < *generated_datalength; i++)
-      (*generated_data)[i] = (char) ar[i];
+      (*generated_data)[i] = bitres[i];
     // Output the result.
-    cout << "zxing res : " << result->getText()->getText() << endl;
+    //cout << "zxing res : " << result->getText()->getText() << endl;
     printf ("TXT %c\n", result->getText()->getText().c_str()[0]);
 
 }
