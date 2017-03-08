@@ -307,7 +307,7 @@ void generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** gen
                                            int width){
 
 
-
+    double t = currmili();
     // A buffer containing an image. In your code, this would be an image from your camera. In this
     // example, it's just an array containing the code for "Hello!".
     char *buffer = input_greyscale_buffer;
@@ -339,6 +339,6 @@ void generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** gen
       (*generated_data)[i] = bitres[i];
     // Output the result.
     //cout << "zxing res : " << result->getText()->getText() << endl;
-    printf ("TXT %c\n", result->getText()->getText().c_str()[0]);
+    printf ("TXT dt %f ms %c\n",currmili()-t, result->getText()->getText().c_str()[0]);
 
 }

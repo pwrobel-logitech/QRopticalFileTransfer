@@ -187,23 +187,20 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     }
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
 
-    char *data_for_qr;
-    this->create_data_for_QR(&data_for_qr);
+    this->create_data_for_QR(*frame);
 
 
     this->n_dataframe_processed_++;
 };
 
-bool OpenRSEncoder::create_data_for_QR(char **data){
-    int length_produced = this->bytes_per_generated_frame_;
-    *data = new char[length_produced];
-    if(*data == NULL)
-        return false;
-    memset(*data, 0, length_produced);
+bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
+    frame.framedata_.resize(this->bytes_per_generated_frame_);
+    unsigned char* data = &(frame.framedata_[0]);
+    memset(data, 0, this->bytes_per_generated_frame_);
     int i = this->n_dataframe_processed_ % this->RSn_;
     for (uint32_t j = 0; j<this->n_channels_; j++)
         //for (uint32_t i = 0; i<this->RSk_; i++){
-            utils::set_data((void*)*data, j *utils::nbits_forsymcombinationsnumber(this->RSn_),
+            utils::set_data((void*)data, j *utils::nbits_forsymcombinationsnumber(this->RSn_),
                             this->internal_memory_[i+j*this->RSn_]);
         //}
     return true;

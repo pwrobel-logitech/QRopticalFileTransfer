@@ -89,6 +89,7 @@ protected:
       N's - uint32!=0xFFFFFFFF  - frame number
       DD..  - data. It's the file data stored in RS code - with some redundancy
     */
+public:
     std::vector<uint8_t> framedata_;
 };
 
