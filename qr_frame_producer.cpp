@@ -43,12 +43,28 @@ void Qr_frame_producer::setup_encoder(){
     }
 }
 
+int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_image, int *produced_width){
+    // not implemented
+    return 0;
+};
 
-int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagepath){
+int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagename){
     DLOG("Producing image..\n");
     OpenRSEncodedFrame *frame = new OpenRSEncodedFrame();
     this->encoder_->produce_next_encoded_frame(frame);
-    DLOG("Frame number : %d\n",frame->get_frame_number());
+    DLOG("Frame number : %d\n", (int)frame->get_frame_number());
+    int resulting_width;
+    char* generated_grayscale_data;
+    generate_qr_greyscale_bitmap_data(&frame->framedata_[0],
+                                           frame->framedata_.size(),
+                                           &generated_grayscale_data,
+                                           &resulting_width,
+                                           1);
+    char namebuf[60];
+    snprintf(namebuf, sizeof(namebuf), imagename, frame->get_frame_number());
+    FILE *f = fopen(namebuf, "wb");
+    fwrite(generated_grayscale_data, resulting_width*resulting_width, 1, f);
+    fclose(f);
     delete frame;
     return 0;
 };

@@ -38,11 +38,11 @@ bool OpenRSEncodedFrame::is_header_frame(){
 };
 
 uint32_t OpenRSEncodedFrame::get_frame_number(){
-
+    return this->n_frame_;
 };
 
 void OpenRSEncodedFrame::set_frame_number(uint32_t frame_number){
-
+    this->n_frame_ = frame_number;
 };
 
 void OpenRSEncodedFrame::set_max_frames(uint32_t max_frames){
@@ -131,6 +131,7 @@ uint8_t* OpenRSEncoder::compute_hash(){
 };
 
 Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(EncodedFrame* frame){
+    generated_frame_status status = Frame_error;
     frame->set_frame_RSnk(this->RSn_, this->RSk_);
     if (this->byte_of_file_currently_processed_to_frames_ >= this->bytes_currently_read_from_file_){
         uint32_t mem_to_read = (this->RSk_) * this->bytes_per_generated_frame_;
@@ -187,6 +188,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     }
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
 
+    frame->set_frame_number(this->n_dataframe_processed_);
     this->create_data_for_QR(*frame);
 
 

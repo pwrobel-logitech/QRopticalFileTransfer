@@ -19,7 +19,9 @@ public:
     Qr_frame_producer(const char* file);
     ~Qr_frame_producer();
     //-1 = error, 0 - ok, 1 - finished
-    int produce_next_qr_image_to_file(const char* imagepath);
+    // image template - "dump_%d" = will generate dump_1, dump_2, dump_3.. files
+    int produce_next_qr_image_to_file(const char* imagetemplate);
+    int produce_next_qr_grayscale_image_to_mem(char** produced_image, int *produced_width);
     static Qr_frame_producer* getQr_frame_producer(){ //get singleton
         return global_frame_producer;
     }

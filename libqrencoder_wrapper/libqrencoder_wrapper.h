@@ -46,7 +46,7 @@ void generate_small_image_data_margin(const unsigned char* input_data, int input
 /// so far implemented with the usage of the CPP port of the xzing lib
 /// under the 	https://github.com/embarkmobile/zxing-cpp
 ///
-
+/// TODO  : make it return the status to tell if the decoding was successfull or not
 void generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, char* input_greyscale_buffer,
                                            int width);
 

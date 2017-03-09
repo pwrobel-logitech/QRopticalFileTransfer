@@ -70,7 +70,9 @@ int main(int argc, char **argv){
     Qr_frame_producer frame_producer(argv[1]);
     global_frame_producer = &frame_producer;
 
-    frame_producer.produce_next_qr_image_to_file("k.bmp");
+    frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
+    frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
+    frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
 
 
 
