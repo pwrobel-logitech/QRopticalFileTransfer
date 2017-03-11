@@ -7,16 +7,16 @@
 #include <string.h>
 
 
+//returned status after we pass the qr image data
+enum immediate_status {
+    NOT_RECOGNIZED, // on the passed image, there were no detected qr image
+    AMBUGUOUS, // more than one qr image detected
+    RECOGNIZED // some qr code has been recognized for sure
+};
+
 size_t compressImage(char* buffer, size_t width, size_t height, unsigned char** outputBuffer, int quality);
 
 extern "C" {
-
-enum image_type{
-    IMAGE_TYPE_PNG,
-    IMAGE_TYPE_JPEG,
-    IMAGE_TYPE_BMP,
-    IMAGE_TYPE_RAW,
-};
 
 // init libqrencoder - prepare to use with data of given fixed size
 void init_libqrencoder(int size);
@@ -47,7 +47,7 @@ void generate_small_image_data_margin(const unsigned char* input_data, int input
 /// under the 	https://github.com/embarkmobile/zxing-cpp
 ///
 /// TODO  : make it return the status to tell if the decoding was successfull or not
-void generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, char* input_greyscale_buffer,
+immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, char* input_greyscale_buffer,
                                            int width);
 
 // compatible decoder to the encoder described above

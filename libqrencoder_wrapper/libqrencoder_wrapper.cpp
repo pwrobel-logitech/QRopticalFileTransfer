@@ -303,11 +303,12 @@ using namespace zxing;
 using namespace zxing::qrcode;
 using namespace qrviddec;
 
-void generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, char* input_greyscale_buffer,
+immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, char* input_greyscale_buffer,
                                            int width){
 
-
+    immediate_status ret = RECOGNIZED;
     double t = currmili();
+    try{
     // A buffer containing an image. In your code, this would be an image from your camera. In this
     // example, it's just an array containing the code for "Hello!".
     char *buffer = input_greyscale_buffer;
@@ -340,5 +341,15 @@ void generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** gen
     // Output the result.
     //cout << "zxing res : " << result->getText()->getText() << endl;
     printf ("TXT dt %f ms %c\n",currmili()-t, result->getText()->getText().c_str()[0]);
+    }
+    catch (zxing::Exception& e)
+    {
+#ifdef ANDROID
+
+#endif
+        cerr << "Error zxing, not recognized qr code : " << e.what() << endl;
+        ret = NOT_RECOGNIZED;
+    }
+    return ret;
 
 }
