@@ -303,16 +303,15 @@ using namespace zxing;
 using namespace zxing::qrcode;
 using namespace qrviddec;
 
-immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, char* input_greyscale_buffer,
-                                           int width){
+immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, const char* input_greyscale_buffer,
+                                           int width, int height){
 
     immediate_status ret = RECOGNIZED;
     double t = currmili();
     try{
     // A buffer containing an image. In your code, this would be an image from your camera. In this
     // example, it's just an array containing the code for "Hello!".
-    char *buffer = input_greyscale_buffer;
-    int height = width;
+    char *buffer = (char*)input_greyscale_buffer;
 
     // Convert the buffer to something that the library understands.
     Ref<LuminanceSource> source (new BufferBitmapSource(width, height, (unsigned char*)buffer));

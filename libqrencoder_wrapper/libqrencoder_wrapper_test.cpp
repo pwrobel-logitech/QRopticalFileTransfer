@@ -32,7 +32,7 @@ in[2] = 0;
     int out_datal;
     char *outdata;
     generate_data_from_qr_greyscalebuffer(&out_datal, &outdata, out_qr_bmp,
-                                               outw);
+                                               outw, outw);
 
     printf("libzxing returned outl %d\n", out_datal);
     for (int i = 0 ;i < 5 ; i++){
