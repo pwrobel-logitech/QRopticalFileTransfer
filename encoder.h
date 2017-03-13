@@ -47,6 +47,7 @@ public:
 
 
 
+
 protected:
 
     /*
@@ -64,7 +65,7 @@ protected:
 
     //when n_frame=-1, we got the header info frame and this 2-byte number counts the header frames
     //starts from 0
-    uint16_t n_header_frame_;
+    uint8_t n_header_frame_;
 
     //RS (n,k) info of the frames
     uint16_t RSn_;
@@ -153,6 +154,9 @@ public:
     //this sets number of parralel channels processed by encoder -
     //number of data symbols per frame
     virtual void set_nchannels_parallel(uint32_t nch) = 0;
+
+    //set whether we are encoding header or the actual data
+    virtual void set_is_header_frame_generating(bool header) = 0;
 
 protected:
 

@@ -29,6 +29,7 @@ void Qr_frame_producer::setup_encoder(){
     read_file(this->filename_.c_str(), textfrag, 4, 8);
     DLOG("Eight bytes of text at offset 4: %s\n", textfrag);
 
+    this->encoder_->set_is_header_frame_generating(false);
 
     if(filesize > 2000){
         uint32_t n = 511;
@@ -44,7 +45,20 @@ void Qr_frame_producer::setup_encoder(){
 }
 
 int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_image, int *produced_width){
-    // not implemented
+    DLOG("Producing image to mem..\n");
+    OpenRSEncodedFrame *frame = new OpenRSEncodedFrame();
+    this->encoder_->produce_next_encoded_frame(frame);
+    DLOG("Frame number mem : %d\n", (int)frame->get_frame_number());
+    int resulting_width;
+    char* generated_grayscale_data;
+    generate_qr_greyscale_bitmap_data(&frame->framedata_[0],
+                                           frame->framedata_.size(),
+                                           &generated_grayscale_data,
+                                           &resulting_width,
+                                           1);
+    *produced_image = generated_grayscale_data;
+    *produced_width = resulting_width;
+    delete []frame;
     return 0;
 };
 

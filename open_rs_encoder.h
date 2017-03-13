@@ -36,6 +36,8 @@ public:
 
     void set_nbytes_data_per_generated_frame(uint16_t nbytes);
 
+    void set_is_header_frame_generating(bool header);//{ this->is_header_frame_generating_ = header;}
+
     uint8_t* compute_hash();
 
     generated_frame_status produce_next_encoded_frame(EncodedFrame* frame);
@@ -48,6 +50,8 @@ public:
         int nroots;
         int ntrials;
       } RSfecCodeConsts[];
+
+
 
 protected:
     // used to store symbols containing the data for the series of frames + the RS redundancy symbols
@@ -68,6 +72,7 @@ protected:
     bool apply_RS_decode_to_internal_memory();
     int* internal_RS_error_location_mem_;
 
+    bool is_header_frame_generating_;
 
     //to test if the created data matches the original
     bool recreate_original_arr(uint32_t* symbols_arr, char** data_produced, uint32_t* length_produced);

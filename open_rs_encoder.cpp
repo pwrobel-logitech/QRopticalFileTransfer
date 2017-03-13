@@ -130,6 +130,10 @@ uint8_t* OpenRSEncoder::compute_hash(){
 
 };
 
+void OpenRSEncoder::set_is_header_frame_generating(bool header){
+    this->is_header_frame_generating_ = header;
+}
+
 Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(EncodedFrame* frame){
     generated_frame_status status = Frame_error;
     frame->set_frame_RSnk(this->RSn_, this->RSk_);
@@ -196,8 +200,14 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
 };
 
 bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
-    frame.framedata_.resize(this->bytes_per_generated_frame_);
-    unsigned char* data = &(frame.framedata_[0]);
+    frame.framedata_.resize(this->bytes_per_generated_frame_+4);
+    //generate header containing the frame number on every frame
+    if(is_header_frame_generating_)
+        *((uint32_t*)&(frame.framedata_[0])) = 0xffffff;
+    else
+        *((uint32_t*)&(frame.framedata_[0])) = this->n_dataframe_processed_;
+    frame.set_frame_number(this->n_dataframe_processed_);
+    unsigned char* data = &(frame.framedata_[4]);
     memset(data, 0, this->bytes_per_generated_frame_);
     int i = this->n_dataframe_processed_ % this->RSn_;
     for (uint32_t j = 0; j<this->n_channels_; j++)
