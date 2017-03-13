@@ -70,7 +70,7 @@ OpenRSEncoder::~OpenRSEncoder(){
     if(this->internal_RS_error_location_mem_ != NULL)
         delete []this->internal_RS_error_location_mem_;
     if(this->internal_memory_ != NULL){
-        delete this->internal_memory_;
+        delete []this->internal_memory_;
         this->internal_memory_ = NULL;
     }
 }

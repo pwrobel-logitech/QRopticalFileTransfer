@@ -12,6 +12,9 @@ public:
     immediate_status send_next_grayscale_qr_frame(const char* grayscale_qr_data,
                                                   int image_width, int image_height);
 
+
+
 protected:
-    RS_decoder* decoder_;
+    uint32_t RSn_, RSk_;
+    Decoder* decoder_;
 };

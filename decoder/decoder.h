@@ -23,14 +23,26 @@ public:
     // any more - the status_ will tell us of TOO_MUCH_ERRORS by the get_detector_status() call
     // it is advisable to ask the status after sending RSn of frames - then the RS decoding will be done
     // and the status send to status_
-    virtual void send_next_frame(const EncodedFrame* frame) = 0;
+    virtual void send_next_frame(EncodedFrame* frame) = 0;
 
     // as explained above
     virtual detector_status get_detector_status() = 0;
+
+    virtual void set_RS_nk(uint16_t n, uint16_t k) = 0;
+
+    //number of the current frame index - 0 - first
+    virtual uint32_t get_nframe() = 0;
+
+    virtual uint16_t get_RSn() = 0;
+    virtual uint16_t get_RSk() = 0;
 
 protected:
     // this will keep the current status of the detector
     // if ever returns TOO_MUCH_ERRORS then the file is not
     // recoverable any more and the whole decoding process should be aborted
     detector_status status_;
+
+    //RS code (n,k)
+    uint16_t RSn_, RSk_;
+
 };
