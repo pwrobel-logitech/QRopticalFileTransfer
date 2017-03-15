@@ -73,7 +73,7 @@ int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagename){
                                            frame->framedata_.size(),
                                            &generated_grayscale_data,
                                            &resulting_width,
-                                           1);
+                                          1);
     char namebuf[60];
     snprintf(namebuf, sizeof(namebuf), imagename, frame->get_frame_number());
     FILE *f = fopen(namebuf, "wb");

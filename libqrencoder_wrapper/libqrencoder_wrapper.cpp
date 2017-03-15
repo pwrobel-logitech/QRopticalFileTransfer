@@ -292,7 +292,7 @@ void generate_qr_greyscale_bitmap_data(const unsigned char* input_data, int inpu
 
     *out_image_data = (char*)out_target_rgb_image;
     //delete []out_target_rgb_image;
-
+    QRcode_free(generatedQR);
 
 };
 
