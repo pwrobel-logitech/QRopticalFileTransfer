@@ -4,6 +4,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->decoder_ = new RS_decoder();
     this->RSn_ = 511;
     this->RSk_ = 256;
+    this->decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_, 256, 32-4));
     this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
 }
 

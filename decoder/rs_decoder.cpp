@@ -64,17 +64,23 @@ void RS_decoder::send_next_frame(EncodedFrame* frame){
 
     int nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
 
-    int32_t numsym = utils::count_symbols_to_fit(this->RSn_, 256, frame->framedata_.size());
+    int32_t numsym = utils::count_symbols_to_fit(this->RSn_, 256, frame->framedata_.size()-4);
+
+    DCHECK(numsym==this->n_channels_);
 
     for (uint32_t j = 0; j < numsym; j++){ //iterate over symbols within a frame
-        uint32_t val = utils::get_data(&(frame->framedata_[4]), (j * this->RSk_+ ipos)*nbits, nbits);
+        uint32_t val = utils::get_data(&(frame->framedata_[4]), j*nbits, nbits);
         if(val>this->RSn_)
             DLOG("ERROR decoder - value bigger than allowed symbol value !!!!\n");
+        DCHECK(ipos+j*this->RSn_>=this->RSn_*this->n_channels_);
         this->internal_memory_[ipos+j*this->RSn_] = val;
     }
 
 };
 
+void RS_decoder::set_nchannels_parallel(uint32_t nch){
+    this->n_channels_ = nch;
+};
 
 Decoder::detector_status RS_decoder::get_detector_status(){
 

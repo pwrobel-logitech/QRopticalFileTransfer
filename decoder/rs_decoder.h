@@ -26,6 +26,8 @@ public:
 
     void send_next_frame(EncodedFrame* frame);
 
+    void set_nchannels_parallel(uint32_t nch);
+
     // as explained above
     detector_status get_detector_status();
 

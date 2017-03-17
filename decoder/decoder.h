@@ -1,6 +1,9 @@
 #include "encoder.h"
 #include "libqrencoder_wrapper/libqrencoder_wrapper.h"
 
+#ifdef DEBUG
+#define DCHECK(a) if(!a)printf("Condition "#a" failed in line %d, file %s !\n", __LINE__, __FILE__);
+#endif
 // interface for the decoder class being able to decode the data from the delivered images
 // containing the qr frames produced by the encoder class
 class Decoder {
@@ -24,6 +27,10 @@ public:
     // it is advisable to ask the status after sending RSn of frames - then the RS decoding will be done
     // and the status send to status_
     virtual void send_next_frame(EncodedFrame* frame) = 0;
+
+    //this sets number of parralel channels processed by encoder -
+    //number of data symbols per frame
+    virtual void set_nchannels_parallel(uint32_t nch) = 0;
 
     // as explained above
     virtual detector_status get_detector_status() = 0;

@@ -56,7 +56,7 @@ int main(int argc, char **argv){
     }
 
 
-    {
+
         uint32_t n_possible_symbols_dst = 256;
         uint32_t n_possible_symbols_src = 511;
         uint32_t count_symbols_src = 32;
@@ -65,12 +65,12 @@ int main(int argc, char **argv){
                 n_possible_symbols_src,
                 count_symbols_src,
                 utils::count_symbols_to_fit(n_possible_symbols_dst, n_possible_symbols_src, count_symbols_src));
-    }
+
 
     Qr_frame_producer frame_producer(argv[1]);
     global_frame_producer = &frame_producer;
 
-    for(int i=0; i<512; i++){
+    for(int i=0; i<n_possible_symbols_src; i++){
         frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
     }
 

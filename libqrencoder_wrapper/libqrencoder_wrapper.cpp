@@ -339,7 +339,7 @@ immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength
       (*generated_data)[i] = bitres[i];
     // Output the result.
     //cout << "zxing res : " << result->getText()->getText() << endl;
-    printf ("TXT dt %f ms %c\n",currmili()-t, result->getText()->getText().c_str()[0]);
+    printf ("TXT dt %f ms\n",currmili()-t/*, result->getText()->getText().c_str()+4*/);
     }
     catch (zxing::Exception& e)
     {
