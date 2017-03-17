@@ -6,6 +6,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->RSk_ = 256;
     this->decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_, 256, 32-4));
     this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
+    this->decoder_->set_bytes_per_generated_frame(32-4);
 }
 
 QR_frame_decoder::~QR_frame_decoder(){
@@ -13,6 +14,13 @@ QR_frame_decoder::~QR_frame_decoder(){
         delete this->decoder_;
 }
 
+immediate_status QR_frame_decoder::tell_no_more_qr(){
+    immediate_status stat = RECOGNIZED;
+    if (this->decoder_){
+        this->decoder_->tell_no_more_qr();
+    }
+    return stat;
+};
 
 immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *grayscale_qr_data,
                                                                 int image_width, int image_height){
@@ -41,6 +49,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     memcpy(&(fr->framedata_[0]), generated_data, generated_datalength);
     fr->set_frame_RSnk(this->decoder_->get_RSn(), this->decoder_->get_RSk());
 
+    printf("frame set %d\n",nfr);
     this->decoder_->send_next_frame(fr);
 
     delete []generated_data;

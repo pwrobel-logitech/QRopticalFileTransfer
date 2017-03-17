@@ -26,6 +26,8 @@ public:
 
     void send_next_frame(EncodedFrame* frame);
 
+    void tell_no_more_qr();
+
     void set_nchannels_parallel(uint32_t nch);
 
     // as explained above
@@ -49,6 +51,11 @@ public:
 
     uint16_t get_RSn(){return RSn_;}
     uint16_t get_RSk(){return RSk_;}
+
+    bool recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
+                                   char **data_produced, uint32_t* length_produced);
+
+    void set_bytes_per_generated_frame(uint32_t nb);
 
 protected:
 
@@ -75,6 +82,11 @@ protected:
     //raw binary file data in terms of array of file chunks
     std::vector<FileChunk*> file_data_;
 
+
+
+    // each chunk fits into the whole internal memory of the detector - what was the last chunk
+    // used to measure if the chunk has increased - then it's time to do the decoding
+    uint32_t old_chunk_number_;
 
     //This pair encode the redundancy of the QR frames.
     //It is the classical Reed-Solomon code of the (n,k)

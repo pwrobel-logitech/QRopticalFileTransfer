@@ -28,8 +28,13 @@ public:
     // and the status send to status_
     virtual void send_next_frame(EncodedFrame* frame) = 0;
 
+    // we already know there will be no more frames send - tell decoder to finish all the decoding -
+    // try to decode what we alread have  - and unpack bits to get the original array
+    virtual void tell_no_more_qr() = 0;
+
+
     //this sets number of parralel channels processed by encoder -
-    //number of data symbols per frame
+    //number of data symbols per frame - does not include 4 first bytes
     virtual void set_nchannels_parallel(uint32_t nch) = 0;
 
     // as explained above
@@ -43,6 +48,15 @@ public:
     virtual uint16_t get_RSn() = 0;
     virtual uint16_t get_RSk() = 0;
 
+    // this recreates the original data of the chunk from the internal_memory_
+    // that contains the int symbols - usually 9bits [0..511] - by allocating new array
+    // and informing about its length - caller of that function is responsible for
+    // deallocating this array
+    virtual bool recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
+                               char **data_produced, uint32_t* length_produced) = 0;
+
+    virtual void set_bytes_per_generated_frame(uint32_t num_bytes) = 0;
+
 protected:
     // this will keep the current status of the detector
     // if ever returns TOO_MUCH_ERRORS then the file is not
@@ -51,5 +65,9 @@ protected:
 
     //RS code (n,k)
     uint16_t RSn_, RSk_;
+
+    //max number of bytes for the data payload of the each encoded frame produced - does not include
+    //first 4 bytes designed for holding the frame number
+    uint16_t bytes_per_generated_frame_;
 
 };

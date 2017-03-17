@@ -12,7 +12,7 @@ public:
     immediate_status send_next_grayscale_qr_frame(const char* grayscale_qr_data,
                                                   int image_width, int image_height);
 
-
+    immediate_status tell_no_more_qr();
 
 protected:
     uint32_t RSn_, RSk_;

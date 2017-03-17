@@ -45,6 +45,7 @@ RS_decoder::RS_decoder(){
     this->file_data_.clear();
     this->RSfecDec = NULL;
     this->internal_RS_error_location_mem_ = NULL;
+    this->old_chunk_number_ = 0;
 }
 
 RS_decoder::~RS_decoder(){
@@ -58,10 +59,31 @@ RS_decoder::~RS_decoder(){
     }
 }
 
-void RS_decoder::send_next_frame(EncodedFrame* frame){
+void RS_decoder::tell_no_more_qr(){
+    char* data;
+    uint32_t length=0;
+    this->recreate_original_arr(this->internal_memory_, &data, &length);
+    int k;
+    if(length > 0)
+        delete []data;
+};
 
+void RS_decoder::send_next_frame(EncodedFrame* frame){
+    /////////////////// first action to recover previous chunk from the internal memory
     int ipos = (frame->get_frame_number()) % this->RSn_;
 
+    uint32_t curr_chunk = (frame->get_frame_number()) / this->RSn_;
+
+    if (curr_chunk > this->old_chunk_number_){ // time to decode the internal_memory_ + pack bits back to the original array
+        //TODO : start with the RS decode, to correct for the errors
+        char* data;
+        uint32_t length=0;
+        this->recreate_original_arr(this->internal_memory_, &data, &length);
+        int k;
+        if(length > 0)
+            delete []data;
+    }
+    /////////////////////////// action for the new frame that was actally send
     int nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
 
     int32_t numsym = utils::count_symbols_to_fit(this->RSn_, 256, frame->framedata_.size()-4);
@@ -76,11 +98,17 @@ void RS_decoder::send_next_frame(EncodedFrame* frame){
         this->internal_memory_[ipos+j*this->RSn_] = val;
     }
 
+    this->old_chunk_number_ = curr_chunk;
+
 };
 
 void RS_decoder::set_nchannels_parallel(uint32_t nch){
     this->n_channels_ = nch;
 };
+
+void RS_decoder::set_bytes_per_generated_frame(uint32_t nb){
+    this->bytes_per_generated_frame_ = nb;
+}
 
 Decoder::detector_status RS_decoder::get_detector_status(){
 
@@ -113,6 +141,20 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
     }
 };
 
+
+bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
+                                       char **data_produced, uint32_t* length_produced){
+    *length_produced = this->bytes_per_generated_frame_ * this->RSk_;
+    *data_produced = new char[*length_produced];
+    if(*data_produced == NULL)
+        return false;
+    memset(*data_produced, 0, *length_produced);
+    for (uint32_t j = 0; j<this->n_channels_; j++)
+        for (uint32_t i = 0; i<this->RSk_; i++){
+            utils::set_data((void*)*data_produced, (j * this->RSk_+ i)*utils::nbits_forsymcombinationsnumber(this->RSn_), symbols_arr[i+j*this->RSn_]);
+        }
+    return true;
+}
 
 RS_decoder::codeconst RS_decoder::RSfecCodeConsts[] = {
  {2, 0x7,     1,   1, 1, 10 },

@@ -31,6 +31,7 @@ int main(int argc, char** argv){
     };
 
 
+    framedecoder.tell_no_more_qr();
 
     return 1;
 }
