@@ -1,6 +1,12 @@
 #include "fileops.h"
 
 
+#include <sys/time.h>
+
+#include <iostream>
+#include <stdlib.h>
+#include <stdint.h>
+
 uint32_t get_file_size(const char* filepath){
     uint32_t size = 0;
     FILE * fp;
@@ -36,6 +42,16 @@ int read_file(char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
 #endif
 
 namespace utils{
+
+    double currmili(){
+        struct timeval start;
+        double mtime, seconds, useconds;
+        gettimeofday(&start, NULL);
+        seconds  = start.tv_sec;
+        useconds = start.tv_usec;
+        mtime = ((seconds) * 1000.0 + useconds/1000.0) + 0.5;
+        return mtime;
+    }
 
    uint32_t nbits_forsymcombinationsnumber(uint32_t ncomb){
        uint32_t mlt = 1;

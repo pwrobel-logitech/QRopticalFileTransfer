@@ -28,6 +28,8 @@ int read_file(char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
 
 namespace utils{
 
+   double currmili();
+
    uint32_t nbits_forsymcombinationsnumber(uint32_t ncomb);
 
 

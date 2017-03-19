@@ -24,9 +24,9 @@ public:
     RS_decoder();
     ~RS_decoder();
 
-    void send_next_frame(EncodedFrame* frame);
+    detector_status send_next_frame(EncodedFrame* frame);
 
-    void tell_no_more_qr();
+    detector_status tell_no_more_qr();
 
     void set_nchannels_parallel(uint32_t nch);
 
@@ -95,4 +95,13 @@ protected:
     //the 251 bits of real data - 4 frames would constitue the overhead.
     uint16_t RSn_;
     uint16_t RSk_;
+
+    //this will apply RS code to each of the n-length section of the internal_memory
+    //it's what makes possible to lose some frame, while still making the decoding possible
+    //returns number of errors detected - if bigger than (n-k)/2 - the recovery of the original
+    //data is not possible, and further processing by the decoder should be immediately stopped
+    //telling the reason of why it's so
+    uint32_t apply_RS_decode_to_internal_memory();
+
+    void internal_getdata_from_internal_memory();
 };

@@ -26,11 +26,11 @@ public:
     // any more - the status_ will tell us of TOO_MUCH_ERRORS by the get_detector_status() call
     // it is advisable to ask the status after sending RSn of frames - then the RS decoding will be done
     // and the status send to status_
-    virtual void send_next_frame(EncodedFrame* frame) = 0;
+    virtual detector_status send_next_frame(EncodedFrame* frame) = 0;
 
     // we already know there will be no more frames send - tell decoder to finish all the decoding -
     // try to decode what we alread have  - and unpack bits to get the original array
-    virtual void tell_no_more_qr() = 0;
+    virtual detector_status tell_no_more_qr() = 0;
 
 
     //this sets number of parralel channels processed by encoder -

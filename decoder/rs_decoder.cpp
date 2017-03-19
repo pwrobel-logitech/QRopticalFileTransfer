@@ -46,6 +46,7 @@ RS_decoder::RS_decoder(){
     this->RSfecDec = NULL;
     this->internal_RS_error_location_mem_ = NULL;
     this->old_chunk_number_ = 0;
+    this->status_ = RS_decoder::STILL_OK;
 }
 
 RS_decoder::~RS_decoder(){
@@ -59,29 +60,37 @@ RS_decoder::~RS_decoder(){
     }
 }
 
-void RS_decoder::tell_no_more_qr(){
+void RS_decoder::internal_getdata_from_internal_memory(){
     char* data;
     uint32_t length=0;
+    double t = utils::currmili();
+    uint32_t nerr = this->apply_RS_decode_to_internal_memory();
+    printf("Decode time %f\n", utils::currmili()-t);
+    if(nerr>0)
+        DLOG("Warning, nerr = %d\n", nerr);
+    if (nerr>(this->get_RSn()-this->get_RSk())/2)
+        status_ = RS_decoder::TOO_MUCH_ERRORS;
+
     this->recreate_original_arr(this->internal_memory_, &data, &length);
     int k;
+    printf("Trying to printf chunk: %s\n", data);
     if(length > 0)
         delete []data;
+}
+
+RS_decoder::detector_status RS_decoder::tell_no_more_qr(){
+    this->internal_getdata_from_internal_memory();
+    return status_;
 };
 
-void RS_decoder::send_next_frame(EncodedFrame* frame){
+RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
     /////////////////// first action to recover previous chunk from the internal memory
     int ipos = (frame->get_frame_number()) % this->RSn_;
 
     uint32_t curr_chunk = (frame->get_frame_number()) / this->RSn_;
 
     if (curr_chunk > this->old_chunk_number_){ // time to decode the internal_memory_ + pack bits back to the original array
-        //TODO : start with the RS decode, to correct for the errors
-        char* data;
-        uint32_t length=0;
-        this->recreate_original_arr(this->internal_memory_, &data, &length);
-        int k;
-        if(length > 0)
-            delete []data;
+        this->internal_getdata_from_internal_memory();
     }
     /////////////////////////// action for the new frame that was actally send
     int nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
@@ -117,6 +126,7 @@ Decoder::detector_status RS_decoder::get_detector_status(){
 void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
     this->RSn_ = n;
     this->RSk_ = k;
+    this->status_ = RS_decoder::STILL_OK;
     if(this->internal_memory_ != NULL){
         delete this->internal_memory_;
         this->internal_memory_ = NULL;
@@ -155,6 +165,20 @@ bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
         }
     return true;
 }
+
+uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
+    uint32_t nerr = 0;
+    printf("\n");
+    for (uint32_t j = 0; j < this->n_channels_; j++){
+        uint32_t e = decode_rs_int(this->RSfecDec, j*this->RSn_ + (int*)this->internal_memory_,
+                             this->internal_RS_error_location_mem_, 0);
+        printf("%d ",e);
+        if (e > nerr)
+            nerr = e;
+    }
+    printf("\n");
+    return nerr;
+};
 
 RS_decoder::codeconst RS_decoder::RSfecCodeConsts[] = {
  {2, 0x7,     1,   1, 1, 10 },

@@ -12,9 +12,13 @@ int main(int argc, char** argv){
 
     FILE *f;
     char namebuf[100];
-    int i = 0;
-    snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", i);
-    while ((f = fopen(namebuf, "rb")) != NULL){
+
+
+    for (int j = 0; j<511; j++) {
+        snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", j);
+        f = fopen(namebuf, "rb");
+        if (f == NULL)
+            continue;
         // obtain file size
         fseek (f , 0 , SEEK_END);
         int fsize = ftell (f);
@@ -25,8 +29,7 @@ int main(int argc, char** argv){
         int width = (int)sqrt(fsize);
         framedecoder.send_next_grayscale_qr_frame(buf, width, width);
         delete []buf;
-        i++;
-        snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", i);
+
         fclose(f);
     };
 
