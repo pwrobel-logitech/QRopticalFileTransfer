@@ -61,11 +61,21 @@ RS_decoder::~RS_decoder(){
 }
 
 void RS_decoder::internal_getdata_from_internal_memory(){
+
+    for(int k = 0; k<this->RSn_*this->n_channels_; k++)
+        printf("indbdec %d, val %d\n",k, this->internal_memory_[k]);
+    //
+
     char* data;
     uint32_t length=0;
     double t = utils::currmili();
     uint32_t nerr = this->apply_RS_decode_to_internal_memory();
     printf("Decode time %f\n", utils::currmili()-t);
+
+    for(int k = 0; k<this->RSn_*this->n_channels_; k++)
+        printf("indadec %d, val %d\n",k, this->internal_memory_[k]);
+    //
+
     if(nerr>0)
         DLOG("Warning, nerr = %d\n", nerr);
     if (nerr>(this->get_RSn()-this->get_RSk())/2)
@@ -73,7 +83,9 @@ void RS_decoder::internal_getdata_from_internal_memory(){
 
     this->recreate_original_arr(this->internal_memory_, &data, &length);
     int k;
-    printf("Trying to printf chunk: %s\n", data);
+    printf("Trying to printf chunk: \n", data);
+    for(int q=0;q<length;q++)printf("%c",data[q]);
+    printf("\n");
     if(length > 0)
         delete []data;
 }
@@ -147,8 +159,8 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
             0);
     if(this->internal_RS_error_location_mem_ != NULL){
         delete []this->internal_RS_error_location_mem_;
-        this->internal_RS_error_location_mem_ = new int[this->RSn_];
     }
+    this->internal_RS_error_location_mem_ = new int[this->RSn_];
 };
 
 

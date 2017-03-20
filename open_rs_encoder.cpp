@@ -122,8 +122,8 @@ void OpenRSEncoder::set_RS_nk(uint16_t n, uint16_t k){
             0);
     if(this->internal_RS_error_location_mem_ != NULL){
         delete []this->internal_RS_error_location_mem_;
-        this->internal_RS_error_location_mem_ = new int[this->RSn_];
     }
+    this->internal_RS_error_location_mem_ = new int[this->RSn_];
 };
 
 uint8_t* OpenRSEncoder::compute_hash(){
@@ -137,7 +137,8 @@ void OpenRSEncoder::set_is_header_frame_generating(bool header){
 Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(EncodedFrame* frame){
     generated_frame_status status = Frame_error;
     frame->set_frame_RSnk(this->RSn_, this->RSk_);
-    if (this->byte_of_file_currently_processed_to_frames_ >= this->bytes_currently_read_from_file_){
+    if ((this->byte_of_file_currently_processed_to_frames_ >= this->bytes_currently_read_from_file_)
+            && (this->n_dataframe_processed_ % this->RSn_ == 0)){
         uint32_t mem_to_read = (this->RSk_) * this->bytes_per_generated_frame_;
         FileChunk* chunk = new FileChunk();
         chunk->chunkdata = new char[mem_to_read];
@@ -181,7 +182,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         t = currmili();
         this->apply_RS_decode_to_internal_memory();
         DLOG("Time to decode %d frames is %f ms\n", this->RSn_, currmili()-t);
-        */
+
         //
         char* test_data;
         uint32_t length_of_test_data = 0;
@@ -190,6 +191,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
             if (test_data[k] != file_read_start[k])
                 DLOG("Error - difference of processed data on the %d position\n", k);
         }
+        */
 
     }
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
@@ -236,10 +238,21 @@ bool OpenRSEncoder::recreate_original_arr(uint32_t *symbols_arr, char **data_pro
 
 
 bool OpenRSEncoder::apply_RS_code_to_internal_memory(){
+
+
+    //
+    for(int k = 0; k<this->RSn_*this->n_channels_; k++)
+        printf("indbenc %d, val %d\n",k, this->internal_memory_[k]);
+    //
+
     for (uint32_t j = 0; j < this->n_channels_; j++){
         encode_rs_int(this->RSfecEnc, j*this->RSn_ + (int*)this->internal_memory_,
                       j*this->RSn_ + (int*) &this->internal_memory_[this->RSk_]);
     }
+    //
+    for(int k = 0; k<this->RSn_*this->n_channels_; k++)
+        printf("indaenc %d, val %d\n",k, this->internal_memory_[k]);
+    //
     return true;
 }
 
