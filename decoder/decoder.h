@@ -1,9 +1,9 @@
 #include "encoder.h"
 #include "libqrencoder_wrapper/libqrencoder_wrapper.h"
 
-#ifdef DEBUG
-#define DCHECK(a) if(!a)printf("Condition "#a" failed in line %d, file %s !\n", __LINE__, __FILE__);
-#endif
+//#ifdef DEBUG
+//#define DCHECK(a) if(!(a))printf("Condition "#a" failed in line %d, file %s !\n", __LINE__, __FILE__);
+//#endif
 // interface for the decoder class being able to decode the data from the delivered images
 // containing the qr frames produced by the encoder class
 class Decoder {

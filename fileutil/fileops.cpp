@@ -135,7 +135,7 @@ namespace utils{
             return;
         }
 
-        uint32_t bits = nbits_forsymcombinationsnumber(value_to_set);
+        uint32_t bits = nbits_forsymcombinationsnumber(value_to_set + 1); //if val=2^n it should return n+1 bits
         uint32_t chunk1 = *(((uint32_t*)arr_begin) + bits_offset_from_arrbegin / 32);
         if(bits+och1 <=32){//no need to write to second chunk
             uint32_t v = (value_to_set << och1);

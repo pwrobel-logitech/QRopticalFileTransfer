@@ -124,6 +124,7 @@ void OpenRSEncoder::set_RS_nk(uint16_t n, uint16_t k){
         delete []this->internal_RS_error_location_mem_;
     }
     this->internal_RS_error_location_mem_ = new int[this->RSn_];
+    memset(this->internal_RS_error_location_mem_, 0, sizeof(int) * this->RSn_);
 };
 
 uint8_t* OpenRSEncoder::compute_hash(){
@@ -142,6 +143,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         uint32_t mem_to_read = (this->RSk_) * this->bytes_per_generated_frame_;
         FileChunk* chunk = new FileChunk();
         chunk->chunkdata = new char[mem_to_read];
+        memset(chunk->chunkdata, 0, mem_to_read);
         chunk->chunk_length = mem_to_read;
         chunk->chunk_fileoffset = bytes_currently_read_from_file_;
         this->file_data_.push_back(chunk);
@@ -156,9 +158,15 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
             for (uint32_t i = 0; i<this->RSk_; i++){ //iterate over frame numbers with data
             //utils::set_data(begin, i*utils::nbits_forsymcombinationsnumber(this->RSn_),
              //               file_read_start);
-                uint32_t val = utils::get_data(file_read_start,
-                                               (j * this->RSk_+ i)*utils::nbits_forsymcombinationsnumber(this->RSn_),
-                                                utils::nbits_forsymcombinationsnumber(this->RSn_));
+                uint32_t val = 0;
+                int nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
+                if((j * this->RSk_+ i)*nbits + nbits <= mem_to_read * sizeof(char) * 8){
+                    val = utils::get_data(file_read_start, (j * this->RSk_+ i)*nbits, nbits);
+                }else{
+                    val = 0;
+                }
+                //if(i+j*this->RSn_ == 12507)
+                //    printf("XXQval12507, fs %d, %d\n",file_read_start, val);
                 if(val>this->RSn_)
                     DLOG("ERROR - value bigger than allowed symbol value !!!!\n");
                 this->internal_memory_[i+j*this->RSn_] = val;
@@ -214,11 +222,21 @@ bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
     unsigned char* data = &(frame.framedata_[4]);
     memset(data, 0, this->bytes_per_generated_frame_);
     int i = this->n_dataframe_processed_ % this->RSn_;
-    for (uint32_t j = 0; j<this->n_channels_; j++)
+    for (uint32_t j = 0; j<this->n_channels_; j++){
         //for (uint32_t i = 0; i<this->RSk_; i++){
-            utils::set_data((void*)data, j *utils::nbits_forsymcombinationsnumber(this->RSn_),
-                            this->internal_memory_[i+j*this->RSn_]);
+            uint32_t valset = this->internal_memory_[i+j*this->RSn_];
+            uint32_t nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
+            utils::set_data((void*)data, j * nbits, valset);
+            uint32_t valget = utils::get_data((void*) data,j *nbits, nbits);
+            DCHECK(valget==valset);
+            if(valset!=valget){
+                printf("Failed set/get arr, jnch %d, i %d\n", j, i);
+            }
         //}
+    }
+    printf("qqr %d, ",this->n_dataframe_processed_);
+    for(int k = 0; k<this->bytes_per_generated_frame_;k++)printf("0x%02hhx ", data[k]);
+    printf("\n");
     return true;
 }
 
@@ -227,7 +245,7 @@ bool OpenRSEncoder::recreate_original_arr(uint32_t *symbols_arr, char **data_pro
     *data_produced = new char[*length_produced];
     if(*data_produced == NULL)
         return false;
-    memset(*data_produced, 0, *length_produced);
+    memset(*data_produced, 0, *length_produced * sizeof(char));
     for (uint32_t j = 0; j<this->n_channels_; j++)
         for (uint32_t i = 0; i<this->RSk_; i++){
             utils::set_data((void*)*data_produced, (j * this->RSk_+ i)*utils::nbits_forsymcombinationsnumber(this->RSn_), symbols_arr[i+j*this->RSn_]);
@@ -242,16 +260,16 @@ bool OpenRSEncoder::apply_RS_code_to_internal_memory(){
 
     //
     for(int k = 0; k<this->RSn_*this->n_channels_; k++)
-        printf("indbenc %d, val %d\n",k, this->internal_memory_[k]);
+        printf("ino %d, val %d\n",k, this->internal_memory_[k]);
     //
 
     for (uint32_t j = 0; j < this->n_channels_; j++){
         encode_rs_int(this->RSfecEnc, j*this->RSn_ + (int*)this->internal_memory_,
-                      j*this->RSn_ + (int*) &this->internal_memory_[this->RSk_]);
+                      j*this->RSn_ + (int*)this->internal_memory_ + this->RSk_);
     }
     //
     for(int k = 0; k<this->RSn_*this->n_channels_; k++)
-        printf("indaenc %d, val %d\n",k, this->internal_memory_[k]);
+        printf("ind %d, val %d\n",k, this->internal_memory_[k]);
     //
     return true;
 }

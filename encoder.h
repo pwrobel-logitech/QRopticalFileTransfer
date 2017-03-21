@@ -18,6 +18,10 @@ extern "C"{
 #define DEBUG
 
 #ifdef DEBUG
+#define DCHECK(a) if(!(a))printf("Condition "#a" failed in line %d, file %s !\n", __LINE__, __FILE__);
+#endif
+
+#ifdef DEBUG
 #define DLOG printf
 #else
 #define DLOG (void)0

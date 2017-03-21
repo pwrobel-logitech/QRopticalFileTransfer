@@ -63,7 +63,7 @@ RS_decoder::~RS_decoder(){
 void RS_decoder::internal_getdata_from_internal_memory(){
 
     for(int k = 0; k<this->RSn_*this->n_channels_; k++)
-        printf("indbdec %d, val %d\n",k, this->internal_memory_[k]);
+        printf("ind %d, val %d\n",k, this->internal_memory_[k]);
     //
 
     char* data;
@@ -72,8 +72,8 @@ void RS_decoder::internal_getdata_from_internal_memory(){
     uint32_t nerr = this->apply_RS_decode_to_internal_memory();
     printf("Decode time %f\n", utils::currmili()-t);
 
-    for(int k = 0; k<this->RSn_*this->n_channels_; k++)
-        printf("indadec %d, val %d\n",k, this->internal_memory_[k]);
+    //for(int k = 0; k<this->RSn_*this->n_channels_; k++)
+    //    printf("indadec %d, val %d\n",k, this->internal_memory_[k]);
     //
 
     if(nerr>0)
@@ -107,9 +107,9 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
     /////////////////////////// action for the new frame that was actally send
     int nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
 
-    int32_t numsym = utils::count_symbols_to_fit(this->RSn_, 256, frame->framedata_.size()-4);
+    int32_t numsym = this->n_channels_;
 
-    DCHECK(numsym==this->n_channels_);
+    //DCHECK(numsym==this->n_channels_);
 
     for (uint32_t j = 0; j < numsym; j++){ //iterate over symbols within a frame
         uint32_t val = utils::get_data(&(frame->framedata_[4]), j*nbits, nbits);
@@ -183,7 +183,7 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
     printf("\n");
     for (uint32_t j = 0; j < this->n_channels_; j++){
         uint32_t e = decode_rs_int(this->RSfecDec, j*this->RSn_ + (int*)this->internal_memory_,
-                             this->internal_RS_error_location_mem_, 0);
+                             NULL, 0);
         printf("%d ",e);
         if (e > nerr)
             nerr = e;
