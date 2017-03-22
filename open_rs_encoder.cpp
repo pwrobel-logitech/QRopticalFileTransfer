@@ -140,7 +140,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     frame->set_frame_RSnk(this->RSn_, this->RSk_);
     if ((this->byte_of_file_currently_processed_to_frames_ >= this->bytes_currently_read_from_file_)
             && (this->n_dataframe_processed_ % this->RSn_ == 0)){
-        uint32_t mem_to_read = (this->RSk_) * this->bytes_per_generated_frame_;
+        uint32_t mem_to_read = this->RSk_ * this->n_channels_ * utils::nbits_forsymcombinationsnumber(this->RSn_) / 8;//(this->RSk_) * this->bytes_per_generated_frame_;
         FileChunk* chunk = new FileChunk();
         chunk->chunkdata = new char[mem_to_read];
         memset(chunk->chunkdata, 0, mem_to_read);

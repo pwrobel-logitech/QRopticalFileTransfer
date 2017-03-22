@@ -166,7 +166,7 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
 
 bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
                                        char **data_produced, uint32_t* length_produced){
-    *length_produced = this->bytes_per_generated_frame_ * this->RSk_;
+    *length_produced = this->RSk_ * this->n_channels_ * utils::nbits_forsymcombinationsnumber(this->RSn_) / 8;
     *data_produced = new char[*length_produced];
     if(*data_produced == NULL)
         return false;
