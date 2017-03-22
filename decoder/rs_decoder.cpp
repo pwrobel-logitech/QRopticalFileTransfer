@@ -115,7 +115,7 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
         uint32_t val = utils::get_data(&(frame->framedata_[4]), j*nbits, nbits);
         if(val>this->RSn_)
             DLOG("ERROR decoder - value bigger than allowed symbol value !!!!\n");
-        DCHECK(ipos+j*this->RSn_>=this->RSn_*this->n_channels_);
+        DCHECK(ipos+j*this->RSn_<this->RSn_*this->n_channels_);
         this->internal_memory_[ipos+j*this->RSn_] = val;
     }
 

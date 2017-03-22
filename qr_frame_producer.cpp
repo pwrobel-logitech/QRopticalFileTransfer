@@ -84,9 +84,10 @@ int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagename){
 };
 
 
+char* Qr_frame_producer::file;
+
 int Qr_frame_producer::needData(FileChunk *chunk){
-    Qr_frame_producer* producer = Qr_frame_producer::getQr_frame_producer();
-    read_file(producer->filename_.c_str(),
+    read_file(Qr_frame_producer::file,
               chunk->chunkdata,
               chunk->chunk_fileoffset,
               chunk->chunk_length);
