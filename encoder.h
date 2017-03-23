@@ -110,6 +110,11 @@ class Encoder{
 
 public:
 
+    const uint32_t header_length = 512; // length of the header payload. Both the decoder and the encoder
+    //know that constant. Payload starts at qr frame begin after the 0xffffffff - after sufficiently
+    //qr frames with the payload has been emitted, the proces starts over continuously to give detector
+    //more chance to pick it up
+
     //callback for the needdata - encoder will ask for the next filechunk
     //it will be encoder responsibility to release this filechunk
     // returned 0 - file chunk delivered properly

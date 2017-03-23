@@ -27,6 +27,8 @@ private:
 
     std::string filename_;
     Encoder* encoder_;
+    Encoder* metadata_encoder_;//this stores filename, length, hash, main RS(n,k) and remainded RS(n,k) -
+                               //for the shorter file end
     uint16_t total_chars_per_QR_;
 };
 

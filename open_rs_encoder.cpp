@@ -62,6 +62,7 @@ OpenRSEncoder::OpenRSEncoder(){
     this->file_data_.clear();
     this->RSfecEnc = NULL;
     this->internal_RS_error_location_mem_ = NULL;
+    this->is_header_frame_generating_ = true;
 };
 
 OpenRSEncoder::~OpenRSEncoder(){
@@ -135,7 +136,25 @@ void OpenRSEncoder::set_is_header_frame_generating(bool header){
     this->is_header_frame_generating_ = header;
 }
 
+void OpenRSEncoder::create_header_frame_data(EncodedFrame* frame){
+    frame->framedata_.resize(this->bytes_per_generated_frame_+4);
+    DCHECK(this->bytes_per_generated_frame_ >= 4);
+    *((uint32_t*)&(frame->framedata_[0])) = 0xffffff;
+    *((uint16_t*)&(frame->framedata_[4])) = this->n_header_frame_processed_;
+    // TODO: create payload for each of the metadata frame here
+
+    this->n_header_frame_processed_++;
+};
+
 Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(EncodedFrame* frame){
+    //header generation
+    if(this->is_header_frame_generating_){
+        this->create_header_frame_data(frame);
+        if(this->n_header_frame_processed_ >= 100)
+            this->is_header_frame_generating_ = false;
+        return Frame_OK_header;
+    }
+    // now, we are generating data
     generated_frame_status status = Frame_error;
     frame->set_frame_RSnk(this->RSn_, this->RSk_);
     if ((this->byte_of_file_currently_processed_to_frames_ >= this->bytes_currently_read_from_file_)

@@ -80,5 +80,9 @@ protected:
     // create byte data for a single QR frame to encode onto actual QR code image
     // created data must be of the size of bytes_per_generated_frame_
     bool create_data_for_QR(EncodedFrame &frame);
+
+
+    //generate header data for the metadata frame - next one in the row
+    void create_header_frame_data(EncodedFrame* frame);
 };
 
