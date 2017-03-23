@@ -78,7 +78,7 @@ void RS_decoder::internal_getdata_from_internal_memory(){
 
     if(nerr>0)
         DLOG("Warning, nerr = %d\n", nerr);
-    if (nerr>(this->get_RSn()-this->get_RSk())/2)
+    if ((nerr>(this->get_RSn()-this->get_RSk())/2) || (nerr==-1))
         status_ = RS_decoder::TOO_MUCH_ERRORS;
 
     this->recreate_original_arr(this->internal_memory_, &data, &length);
@@ -88,6 +88,7 @@ void RS_decoder::internal_getdata_from_internal_memory(){
     printf("\n");
     if(length > 0)
         delete []data;
+    memset(this->internal_memory_, 0, sizeof(uint32_t)*this->n_channels_*this->RSn_);
 }
 
 RS_decoder::detector_status RS_decoder::tell_no_more_qr(){
@@ -120,7 +121,7 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
     }
 
     this->old_chunk_number_ = curr_chunk;
-
+    return this->status_;
 };
 
 void RS_decoder::set_nchannels_parallel(uint32_t nch){

@@ -151,8 +151,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         bytes_currently_read_from_file_+= mem_to_read;
 
 
-        char* file_read_start = (this->file_data_.back())->chunkdata +
-            this->byte_of_file_currently_processed_to_frames_;
+        char* file_read_start = (this->file_data_.back())->chunkdata;// + this->byte_of_file_currently_processed_to_frames_;
 
         for (uint32_t j = 0; j<this->n_channels_; j++){ //iterate over symbols within a frame
             for (uint32_t i = 0; i<this->RSk_; i++){ //iterate over frame numbers with data

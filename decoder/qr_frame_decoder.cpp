@@ -36,7 +36,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     printf("qqr %d, ",nfr);
     for(int k = 0; k<generated_datalength-4;k++)printf("0x%02hhx ", (generated_data+4)[k]);
     printf("\n");
-
+    /*
     if(nfr < this->decoder_->get_nframe()){ //impossible - we got less than previously received
         ret_status = ERRONEUS;
         return ret_status;
@@ -46,6 +46,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         ret_status = ERRONEUS;
         return ret_status;
     }
+    */
     int ipos = nfr % this->RSn_;
 
     EncodedFrame* fr = new OpenRSEncodedFrame();
@@ -55,7 +56,9 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     fr->set_frame_RSnk(this->decoder_->get_RSn(), this->decoder_->get_RSk());
 
     printf("frame set %d\n",nfr);
-    this->decoder_->send_next_frame(fr);
+    RS_decoder::detector_status dec_status = this->decoder_->send_next_frame(fr);
+    if (dec_status == Decoder::TOO_MUCH_ERRORS)
+        ret_status = ERRONEUS;
 
     delete []generated_data;
     return ret_status;

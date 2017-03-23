@@ -70,7 +70,7 @@ int main(int argc, char **argv){
     Qr_frame_producer frame_producer(argv[1]);
     Qr_frame_producer::file = argv[1];
 
-    for(int i=0; i<n_possible_symbols_src; i++){
+    for(int i=0; i<n_possible_symbols_src*2; i++){
         frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
     }
 
