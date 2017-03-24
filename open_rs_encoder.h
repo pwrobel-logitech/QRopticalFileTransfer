@@ -25,8 +25,7 @@ public:
 
     void set_filelength(uint32_t file_length);
 
-    //encoder will call function passed as a callback here, to request for more file chunk
-    void set_datafeed_callback(needDataCB cb);
+    void set_datafeed_provider(FileDataProvider* provider);
 
     void set_hashlength(uint16_t hash_length);
 
@@ -84,5 +83,7 @@ protected:
 
     //generate header data for the metadata frame - next one in the row
     void create_header_frame_data(EncodedFrame* frame);
+
+
 };
 

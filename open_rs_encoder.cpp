@@ -84,8 +84,8 @@ void OpenRSEncoder::set_filelength(uint32_t file_length){
     this->total_file_length_ = file_length;
 };
 
-void OpenRSEncoder::set_datafeed_callback(needDataCB cb){
-    this->needData_ = cb;
+void OpenRSEncoder::set_datafeed_provider(FileDataProvider* provider){
+    this->filedata_provider_ = provider;
 };
 
 void OpenRSEncoder::set_hashlength(uint16_t hash_length){
@@ -137,23 +137,23 @@ void OpenRSEncoder::set_is_header_frame_generating(bool header){
 }
 
 void OpenRSEncoder::create_header_frame_data(EncodedFrame* frame){
-    frame->framedata_.resize(this->bytes_per_generated_frame_+4);
-    DCHECK(this->bytes_per_generated_frame_ >= 4);
-    *((uint32_t*)&(frame->framedata_[0])) = 0xffffff;
-    *((uint16_t*)&(frame->framedata_[4])) = this->n_header_frame_processed_;
+    //frame->framedata_.resize(this->bytes_per_generated_frame_+4);
+    //DCHECK(this->bytes_per_generated_frame_ >= 4);
+    //*((uint32_t*)&(frame->framedata_[0])) = 0xffffff;
+    //*((uint16_t*)&(frame->framedata_[4])) = this->n_header_frame_processed_;
     // TODO: create payload for each of the metadata frame here
 
-    this->n_header_frame_processed_++;
+    //this->n_header_frame_processed_++;
 };
 
 Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(EncodedFrame* frame){
     //header generation
-    if(this->is_header_frame_generating_){
-        this->create_header_frame_data(frame);
-        if(this->n_header_frame_processed_ >= 100)
-            this->is_header_frame_generating_ = false;
-        return Frame_OK_header;
-    }
+    //if(this->is_header_frame_generating_){
+        //this->create_header_frame_data(frame);
+        //if(this->n_header_frame_processed_ >= 100)
+            //this->is_header_frame_generating_ = false;
+        //return Frame_OK_header;
+    //}
     // now, we are generating data
     generated_frame_status status = Frame_error;
     frame->set_frame_RSnk(this->RSn_, this->RSk_);
@@ -164,9 +164,11 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         chunk->chunkdata = new char[mem_to_read];
         memset(chunk->chunkdata, 0, mem_to_read);
         chunk->chunk_length = mem_to_read;
+        chunk->reason = 0;
         chunk->chunk_fileoffset = bytes_currently_read_from_file_;
         this->file_data_.push_back(chunk);
-        (this->needData_)(chunk);
+        //(this->needData_)(chunk);
+        this->filedata_provider_->getFileData(chunk);
         bytes_currently_read_from_file_+= mem_to_read;
 
 

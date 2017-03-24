@@ -4,6 +4,7 @@
 Qr_frame_producer::Qr_frame_producer(const char* file)
 {
     this->filename_ = file;
+    this->setup_metadata_encoder();
     this->setup_encoder();
     int max_target_width = 1300;
     init_libqrencoder(max_target_width*max_target_width*2);
@@ -12,7 +13,27 @@ Qr_frame_producer::Qr_frame_producer(const char* file)
 Qr_frame_producer::~Qr_frame_producer(){
     if(this->encoder_!=NULL)
         delete this->encoder_;
+    if(this->metadata_encoder_!=NULL)
+        delete this->metadata_encoder_;
     finish_libqrencoder();
+}
+
+void Qr_frame_producer::setup_metadata_encoder(){
+    this->metadata_.resize(256);
+    memset(&(this->metadata_[0]), 'a', 256 * sizeof(char));
+    this->metadata_encoder_ = new OpenRSEncoder();
+    this->metadata_encoder_->set_filename("");
+    this->metadata_encoder_->set_filelength(0);
+    this->metadata_encoder_->set_datafeed_provider(this);
+    this->metadata_encoder_->set_is_header_frame_generating(true);
+    uint32_t n = 7;
+    this->total_chars_per_QR_ = 33;
+
+    this->metadata_encoder_->set_nchannels_parallel(utils::count_symbols_to_fit(n,
+                                                                       256,
+                                                                       this->total_chars_per_QR_ - 4)-1);
+    this->metadata_encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 4);
+    this->metadata_encoder_->set_RS_nk(n, 3); //redundancy level
 }
 
 void Qr_frame_producer::setup_encoder(){
@@ -20,7 +41,8 @@ void Qr_frame_producer::setup_encoder(){
     this->encoder_ = new OpenRSEncoder();
     this->encoder_->set_filename(this->filename_.c_str());
     this->encoder_->set_filelength(filesize);
-    this->encoder_->set_datafeed_callback(Qr_frame_producer::needData);
+    this->encoder_->set_datafeed_provider(this);
+    this->encoder_->set_is_header_frame_generating(false);
     ///print some test data
     DLOG("size of the file %d \n", filesize);
     //print 8 bytes at offset 4
@@ -86,9 +108,15 @@ int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagename){
 
 char* Qr_frame_producer::file;
 
-int Qr_frame_producer::needData(FileChunk *chunk){
-    read_file(Qr_frame_producer::file,
-              chunk->chunkdata,
-              chunk->chunk_fileoffset,
-              chunk->chunk_length);
+
+int Qr_frame_producer::getFileData(FileChunk *chunk){
+    if(chunk->reason == 0){
+        read_file(Qr_frame_producer::file,
+                  chunk->chunkdata,
+                  chunk->chunk_fileoffset,
+                  chunk->chunk_length);
+    }else if (chunk->reason == 1){
+        char* metadata = &(this->metadata_[chunk->chunk_fileoffset]);
+        chunk->chunkdata = metadata;
+    }
 }

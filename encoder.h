@@ -27,6 +27,18 @@ extern "C"{
 #define DLOG (void)0
 #endif
 
+struct FileChunk;
+
+//interface to provide the raw file fragments for the encoder
+class FileDataProvider{
+public:
+    // provide readonly data for the encoder
+    // returned value indicates status
+    // chunk has requested size and length - fill its data - space is already allocated.
+    virtual int getFileData(FileChunk* chunk) = 0;
+};
+
+
 class EncodedFrame{
 
 public:
@@ -104,6 +116,7 @@ struct FileChunk{
     uint32_t chunk_length;
     //offset into the file of this file chunk
     uint32_t chunk_fileoffset;
+    short reason; // 0 - file, 1 - metadata, 2 - trailing chunk
 };
 
 class Encoder{
@@ -115,11 +128,6 @@ public:
     //qr frames with the payload has been emitted, the proces starts over continuously to give detector
     //more chance to pick it up
 
-    //callback for the needdata - encoder will ask for the next filechunk
-    //it will be encoder responsibility to release this filechunk
-    // returned 0 - file chunk delivered properly
-    // something else than 0 - there were some error in delivering the requested file chunk
-    typedef int (*needDataCB)(FileChunk*) ;
 
     enum generated_frame_status{
        Frame_OK_header = 0, //ok - produced next header frame
@@ -136,8 +144,7 @@ public:
 
     virtual void set_filelength(uint32_t file_length) = 0;
 
-    //encoder will call function passed as a callback here, to request for more file chunk
-    virtual void set_datafeed_callback(needDataCB cb) = 0;
+    virtual void set_datafeed_provider(FileDataProvider* provider) = 0;
 
     virtual void set_hashlength(uint16_t hash_length) = 0;
 
@@ -169,11 +176,12 @@ public:
 
 protected:
 
-    //Callback that the encoder uses to ask for the new file chunks
-    //the length, offset field and allocated empty memory of the FileChunk
-    //struct are provided by the encoder
-    //
-    needDataCB needData_;
+
+    // data provider
+    // returned 0 - file chunk delivered properly
+    // something else than 0 - there were some error in delivering the requested file chunk
+    FileDataProvider* filedata_provider_;
+
     //filename to encode - null terminated array
     std::string filename_;
     //raw binary file data in terms of array of file chunks
