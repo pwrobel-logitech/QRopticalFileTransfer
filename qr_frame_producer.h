@@ -8,11 +8,23 @@
 #include <string.h>
 #include "open_rs_encoder.h"
 
+struct FileInfo{
+    std::string filename;
+    std::string filepath;
+    uint32_t filelength;
+    int RSn;//for main part of the file
+    int RSk;
+    int RSn_residual; //for the residual part of the file
+    int RSk_residual;
+    std::vector<char> hash;
+    //internal, system dependent file descriptor - on linux that's valid pointer for FILE struct
+    void* fp;
+};
 
 class Qr_frame_producer : public FileDataProvider
 {
 public:
-    Qr_frame_producer(const char* file);
+    Qr_frame_producer();
     ~Qr_frame_producer();
     //-1 = error, 0 - ok, 1 - finished
     // image template - "dump_%d" = will generate dump_1, dump_2, dump_3.. files
@@ -23,7 +35,10 @@ public:
     //static int needData(FileChunk*);
     static char* file;
 
-    std::vector<char> metadata_;
+    std::vector<char> metadata_; //metadata for the file is held here
+
+    int set_external_file_info(const char* filename, const char* filepath, int suggested_qr_payload_length);
+
 private:
     int getFileData(FileChunk* chunk);
     void setup_metadata_encoder();
@@ -45,7 +60,14 @@ private:
 
     //default qr data length size
     uint16_t total_chars_per_QR_;
+
+    FileInfo file_info_;
+
+    void produce_metadata();
 };
+
+
+
 
 
 

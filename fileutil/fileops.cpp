@@ -17,6 +17,22 @@ uint32_t get_file_size(const char* filepath){
     return size;
 }
 
+uint32_t get_file_size_fp(void* fp){
+    uint32_t size = 0;
+    fseek((FILE*)fp, 0L, SEEK_END);
+    size = ftell((FILE*)fp);
+    return size;
+}
+
+// system-dependent file manipulation functions
+void* FileOpenToRead(const char* fn){
+    return (void*)fopen(fn, "r");
+}
+
+void FileClose(void* fn){
+    fclose((FILE*)fn);
+}
+
 int read_file(const char* filepath, char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
     FILE * fp = fopen (filepath, "r");
     if(fp == NULL)
@@ -29,7 +45,16 @@ int read_file(const char* filepath, char* data_after_read, uint32_t offset, uint
     return 1;
 }
 
-
+//reads already opened file
+int read_file_fp(void* fp, char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
+    if(fp == NULL)
+        return -1;
+    if (fseek((FILE*)fp, offset, SEEK_SET) != 0)
+        return -1;
+    if (fread(data_after_read, 1, size, (FILE*)fp) != size)
+        return -1;
+    return 1;
+}
 
 #ifdef OS_WIN
 uint32_t get_file_size(char* filepath){

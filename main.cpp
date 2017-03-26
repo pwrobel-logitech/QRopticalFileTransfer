@@ -46,14 +46,11 @@ void test_some_utils(){
 
 
 int main(int argc, char **argv){
-    if(argc>1)
-        printf("Parsing %s file\n", argv[1]);
-    else
-        exit(0);
 
-    {
-        test_some_utils();
-    }
+
+    //{
+    //    test_some_utils();
+    //}
 
 
 
@@ -67,10 +64,12 @@ int main(int argc, char **argv){
                 utils::count_symbols_to_fit(n_possible_symbols_dst, n_possible_symbols_src, count_symbols_src));
 
 
-    Qr_frame_producer frame_producer(argv[1]);
-    Qr_frame_producer::file = argv[1];
+    Qr_frame_producer frame_producer;
 
-    for(int i=0; i<14; i++){
+
+    frame_producer.set_external_file_info("textmy.txt", "/repos/qr/", 31);
+
+    for(int i=0; i<21; i++){
         frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
     }
 
