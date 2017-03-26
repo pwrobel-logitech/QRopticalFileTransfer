@@ -3,7 +3,7 @@
 
 Qr_frame_producer::Qr_frame_producer(const char* file)
 {
-    this->total_chars_per_QR_ = 33;
+    this->total_chars_per_QR_ = 31;
     this->is_header_frame_generating_ = true;
     this->filename_ = file;
     this->setup_metadata_encoder();
@@ -21,8 +21,8 @@ Qr_frame_producer::~Qr_frame_producer(){
 }
 
 void Qr_frame_producer::setup_metadata_encoder(){
-    this->metadata_.resize(4096);
-    memset(&(this->metadata_[0]), 'a', 4096 * sizeof(char));
+    this->metadata_.resize(4*4096);
+    memset(&(this->metadata_[0]), 'a', 4*4096 * sizeof(char));
     this->metadata_encoder_ = new OpenRSEncoder();
     this->metadata_encoder_->set_filename("");
     this->metadata_encoder_->set_filelength(0);
@@ -31,9 +31,10 @@ void Qr_frame_producer::setup_metadata_encoder(){
     uint32_t n = 7;
 
 
-    this->metadata_encoder_->set_nchannels_parallel(utils::count_symbols_to_fit(n,
-                                                                       256,
-                                                                       this->total_chars_per_QR_ - 6)-1);
+    int bestfit = utils::count_symbols_to_fit(n,
+                                              256,
+                                              this->total_chars_per_QR_ - 6)-1;
+    this->metadata_encoder_->set_nchannels_parallel(bestfit);
     this->metadata_encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 6);
     this->metadata_encoder_->set_RS_nk(n, 3); //redundancy level
 }

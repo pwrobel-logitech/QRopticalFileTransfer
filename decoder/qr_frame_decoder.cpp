@@ -33,13 +33,20 @@ void QR_frame_decoder::reconfigure_qr_size(int qrlen){
 QR_frame_decoder::~QR_frame_decoder(){
     if (this->decoder_ != NULL)
         delete this->decoder_;
+    if (this->header_decoder_ != NULL)
+        delete this->header_decoder_;
 }
 
 immediate_status QR_frame_decoder::tell_no_more_qr(){
     immediate_status stat = RECOGNIZED;
-    if (this->decoder_){
-        this->decoder_->tell_no_more_qr();
-    }
+    if(this->is_header_generating_){
+        if (this->header_decoder_){
+            this->header_decoder_->tell_no_more_qr();
+        }
+    }else
+        if (this->decoder_){
+            this->decoder_->tell_no_more_qr();
+        }
     return stat;
 };
 
@@ -58,16 +65,18 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         this->is_header_generating_ = true;
         DCHECK(generated_datalength > 8);
         this->reconfigure_qr_size(generated_datalength);
+        this->header_decoder_->set_configured(true);
     }
 
+    uint32_t nhfr = *((uint16_t*)(generated_data+4));
 
     if(this->is_header_generating_){
-        printf("qqr %d, ",nfr);
-        for(int k = 0; k<generated_datalength-6;k++)printf("0x%02hhx ", (generated_data+6)[k]);
+        printf("qqrh %d, ",nhfr);
+        for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
         printf("\n");
     }else{
         printf("qqr %d, ",nfr);
-        for(int k = 0; k<generated_datalength-4;k++)printf("0x%02hhx ", (generated_data+4)[k]);
+        for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
         printf("\n");
     }
     /*
@@ -81,9 +90,9 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         return ret_status;
     }
     */
-    int ipos = nfr % this->RSn_;
+    //int ipos = nfr % this->RSn_;
 
-    uint32_t nhfr = *((uint16_t*)(generated_data+4));
+
 
     EncodedFrame* fr = new OpenRSEncodedFrame();
 
@@ -94,9 +103,13 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         fr->set_frame_RSnk(this->header_decoder_->get_RSn(), this->header_decoder_->get_RSk());
 
         printf("header frame set %d\n",nfr);
+        printf("FR send : \n");
+        for(int q=0;q<fr->framedata_.size();q++){
+            printf("%d ", fr->framedata_[q]);
+        }
         RS_decoder::detector_status dec_status = this->header_decoder_->send_next_frame(fr);
-        if (dec_status == Decoder::TOO_MUCH_ERRORS)
-            ret_status = ERRONEUS;
+        //if (dec_status == Decoder::TOO_MUCH_ERRORS)
+        //    ret_status = ERRONEUS;
     }else{
 
         fr->set_frame_number(nfr);
@@ -105,6 +118,10 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         fr->set_frame_RSnk(this->decoder_->get_RSn(), this->decoder_->get_RSk());
 
         printf("frame set %d\n",nfr);
+        printf("FR send : \n");
+        for(int q=0;q<fr->framedata_.size();fr++){
+            printf("%d ", fr->framedata_[q]);
+        }
         RS_decoder::detector_status dec_status = this->decoder_->send_next_frame(fr);
         if (dec_status == Decoder::TOO_MUCH_ERRORS)
             ret_status = ERRONEUS;

@@ -95,9 +95,9 @@ void RS_decoder::internal_getdata_from_internal_memory(){
 
     this->recreate_original_arr(this->internal_memory_, &data, &length);
     int k;
-    printf("Trying to printf chunk: \n", data);
-    for(int q=0;q<length;q++)printf("%c",data[q]);
-    printf("\n");
+    //printf("Trying to printf chunk: \n", data);
+    //for(int q=0;q<length;q++)printf("%c",data[q]);
+    //printf("\n");
     if(length > 0)
         delete []data;
     memset(this->internal_memory_, 0, sizeof(uint32_t)*this->n_channels_*this->RSn_);
@@ -124,12 +124,18 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
 
     //DCHECK(numsym==this->n_channels_);
 
+    int offset = 4;
+    if(this->is_header_frame_generating_){
+        offset = 6;
+    }
+
     for (uint32_t j = 0; j < numsym; j++){ //iterate over symbols within a frame
-        uint32_t val = utils::get_data(&(frame->framedata_[4]), j*nbits, nbits);
+        uint32_t val = utils::get_data(&(frame->framedata_[offset]), j*nbits, nbits);
         if(val>this->RSn_)
             DLOG("ERROR decoder - value bigger than allowed symbol value !!!!\n");
         DCHECK(ipos+j*this->RSn_<this->RSn_*this->n_channels_);
         this->internal_memory_[ipos+j*this->RSn_] = val;
+        //printf("QQQx indw %d, valw %d\n", ipos+j*this->RSn_, val);
     }
 
     this->old_chunk_number_ = curr_chunk;
