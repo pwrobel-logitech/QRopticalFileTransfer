@@ -35,6 +35,13 @@ void OpenRSEncodedFrame::set_max_frames(uint32_t max_frames){
 };
 
 
+void RS_decoder::set_configured(bool configured){
+    this->configured_ = configured;
+};
+
+bool RS_decoder::get_configured(){
+    return this->configured_;
+};
 
 RS_decoder::RS_decoder(){
     //this->bytes_currently_read_from_file_ = 0;
@@ -47,6 +54,7 @@ RS_decoder::RS_decoder(){
     this->internal_RS_error_location_mem_ = NULL;
     this->old_chunk_number_ = 0;
     this->status_ = RS_decoder::STILL_OK;
+    this->configured_ = false;
 }
 
 RS_decoder::~RS_decoder(){
@@ -59,6 +67,10 @@ RS_decoder::~RS_decoder(){
         this->internal_memory_ = NULL;
     }
 }
+
+void RS_decoder::set_header_frame_generating(bool isheader){
+    this->is_header_frame_generating_ = isheader;
+};
 
 void RS_decoder::internal_getdata_from_internal_memory(){
 

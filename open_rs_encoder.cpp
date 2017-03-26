@@ -164,7 +164,11 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         chunk->chunkdata = new char[mem_to_read];
         memset(chunk->chunkdata, 0, mem_to_read);
         chunk->chunk_length = mem_to_read;
-        chunk->reason = 0;
+        if(this->is_header_frame_generating_){
+            chunk->reason = 1;
+        } else {
+            chunk->reason = 0;
+        }
         chunk->chunk_fileoffset = bytes_currently_read_from_file_;
         this->file_data_.push_back(chunk);
         //(this->needData_)(chunk);
@@ -224,22 +228,36 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     }
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
 
-    frame->set_frame_number(this->n_dataframe_processed_);
+    if(this->is_header_frame_generating_)
+        frame->set_frame_number(this->n_dataframe_processed_);
+    else
+        frame->set_frame_number(this->n_dataframe_processed_);
     this->create_data_for_QR(*frame);
 
 
-    this->n_dataframe_processed_++;
+    if(this->is_header_frame_generating_){
+        this->n_header_frame_processed_++;
+    }else{
+        this->n_dataframe_processed_++;
+    }
+    return Frame_OK_data;
 };
 
 bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
     frame.framedata_.resize(this->bytes_per_generated_frame_+4);
     //generate header containing the frame number on every frame
     if(is_header_frame_generating_)
-        *((uint32_t*)&(frame.framedata_[0])) = 0xffffff;
+        *((uint32_t*)&(frame.framedata_[0])) = 0xffffffff;
     else
         *((uint32_t*)&(frame.framedata_[0])) = this->n_dataframe_processed_;
     frame.set_frame_number(this->n_dataframe_processed_);
-    unsigned char* data = &(frame.framedata_[4]);
+    int data_offset = 4;
+    if(this->is_header_frame_generating_){
+        data_offset = 6;
+        *((uint16_t*)&(frame.framedata_[4])) = this->n_header_frame_processed_;
+        frame.set_frame_number(this->n_header_frame_processed_);
+    }
+    unsigned char* data = &(frame.framedata_[data_offset]);
     memset(data, 0, this->bytes_per_generated_frame_);
     int i = this->n_dataframe_processed_ % this->RSn_;
     for (uint32_t j = 0; j<this->n_channels_; j++){
@@ -254,8 +272,10 @@ bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
             }
         //}
     }
-    printf("qqr %d, ",this->n_dataframe_processed_);
-    for(int k = 0; k<this->bytes_per_generated_frame_;k++)printf("0x%02hhx ", data[k]);
+    int num = this->is_header_frame_generating_ ? this->n_header_frame_processed_ : this->n_dataframe_processed_;
+    printf("qqr %d, ",num);
+    int qrlen = frame.framedata_.size();
+    for(int k = 0; k<qrlen;k++)printf("0x%02hhx ", frame.framedata_[k]);
     printf("\n");
     return true;
 }

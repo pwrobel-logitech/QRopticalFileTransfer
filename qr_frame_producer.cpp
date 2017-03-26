@@ -3,6 +3,8 @@
 
 Qr_frame_producer::Qr_frame_producer(const char* file)
 {
+    this->total_chars_per_QR_ = 33;
+    this->is_header_frame_generating_ = true;
     this->filename_ = file;
     this->setup_metadata_encoder();
     this->setup_encoder();
@@ -19,20 +21,20 @@ Qr_frame_producer::~Qr_frame_producer(){
 }
 
 void Qr_frame_producer::setup_metadata_encoder(){
-    this->metadata_.resize(256);
-    memset(&(this->metadata_[0]), 'a', 256 * sizeof(char));
+    this->metadata_.resize(4096);
+    memset(&(this->metadata_[0]), 'a', 4096 * sizeof(char));
     this->metadata_encoder_ = new OpenRSEncoder();
     this->metadata_encoder_->set_filename("");
     this->metadata_encoder_->set_filelength(0);
     this->metadata_encoder_->set_datafeed_provider(this);
     this->metadata_encoder_->set_is_header_frame_generating(true);
     uint32_t n = 7;
-    this->total_chars_per_QR_ = 33;
+
 
     this->metadata_encoder_->set_nchannels_parallel(utils::count_symbols_to_fit(n,
                                                                        256,
-                                                                       this->total_chars_per_QR_ - 4)-1);
-    this->metadata_encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 4);
+                                                                       this->total_chars_per_QR_ - 6)-1);
+    this->metadata_encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 6);
     this->metadata_encoder_->set_RS_nk(n, 3); //redundancy level
 }
 
@@ -55,7 +57,7 @@ void Qr_frame_producer::setup_encoder(){
 
     if(filesize > 2000){
         uint32_t n = 511;
-        this->total_chars_per_QR_ = 33;
+
         //256 - combination, not the redundancy level below!
         //if more than 256, then the nchannels < total_chars_per_QR_
         this->encoder_->set_nchannels_parallel(utils::count_symbols_to_fit(n,
@@ -85,9 +87,16 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
 };
 
 int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagename){
+
     DLOG("Producing image..\n");
     OpenRSEncodedFrame *frame = new OpenRSEncodedFrame();
-    this->encoder_->produce_next_encoded_frame(frame);
+    if(this->is_header_frame_generating_){
+        this->metadata_encoder_->set_is_header_frame_generating(true);
+        this->metadata_encoder_->produce_next_encoded_frame(frame);
+    }else{
+        this->encoder_->set_is_header_frame_generating(false);
+        this->encoder_->produce_next_encoded_frame(frame);
+    }
     DLOG("Frame number : %d\n", (int)frame->get_frame_number());
     int resulting_width;
     char* generated_grayscale_data;

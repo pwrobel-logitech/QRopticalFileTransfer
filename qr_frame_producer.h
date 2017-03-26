@@ -37,6 +37,13 @@ private:
     Encoder* metadata_encoder_;//this stores filename, length, hash, main RS(n,k) and remainded RS(n,k) -
                                //for the shorter file end
             
+
+
+    // describes whether we are generating the header frame now.
+    bool is_header_frame_generating_;
+
+
+    //default qr data length size
     uint16_t total_chars_per_QR_;
 };
 

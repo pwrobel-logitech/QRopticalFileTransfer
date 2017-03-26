@@ -14,7 +14,11 @@ public:
 
     immediate_status tell_no_more_qr();
 
+
 protected:
     uint32_t RSn_, RSk_;
     Decoder* decoder_;
+    Decoder* header_decoder_;
+    void reconfigure_qr_size(int qrlen); // only header frame, starting with the 0xffffffff can trigger the reconfiguration
+    bool is_header_generating_;
 };

@@ -57,6 +57,11 @@ public:
 
     void set_bytes_per_generated_frame(uint32_t nb);
 
+    void set_header_frame_generating(bool isheader);
+
+    void set_configured(bool configured);
+    bool get_configured();
+
 protected:
 
     bool mode_header_parsing_;

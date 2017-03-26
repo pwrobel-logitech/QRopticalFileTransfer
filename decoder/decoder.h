@@ -57,6 +57,12 @@ public:
 
     virtual void set_bytes_per_generated_frame(uint32_t num_bytes) = 0;
 
+    virtual void set_header_frame_generating(bool isheader) = 0;
+
+    virtual void set_configured(bool configured) = 0;
+    virtual bool get_configured() = 0;
+
+
 protected:
     // this will keep the current status of the detector
     // if ever returns TOO_MUCH_ERRORS then the file is not
@@ -69,5 +75,9 @@ protected:
     //max number of bytes for the data payload of the each encoded frame produced - does not include
     //first 4 bytes designed for holding the frame number
     uint16_t bytes_per_generated_frame_;
+
+    bool is_header_frame_generating_;
+
+    bool configured_;
 
 };
