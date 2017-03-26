@@ -14,7 +14,7 @@ int main(int argc, char** argv){
     char namebuf[100];
 
 
-    for (int j = 0; j<7; j++) {
+    for (int j = 0; j<14; j++) {
         snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", j);
         f = fopen(namebuf, "rb");
         if (f == NULL)
@@ -35,6 +35,9 @@ int main(int argc, char** argv){
 
 
     framedecoder.tell_no_more_qr();
+
+    framedecoder.print_current_header();
+    framedecoder.print_current_maindata();
 
     return 1;
 }

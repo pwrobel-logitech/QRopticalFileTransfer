@@ -1,6 +1,10 @@
 #include "qr_frame_decoder.h"
 
 QR_frame_decoder::QR_frame_decoder(){
+    this->header_data_.resize(0);
+    this->header_data_tmp_.resize(0);
+    this->main_chunk_data_.resize(0);
+    this->main_chunk_data_tmp_.resize(0);
     this->decoder_ = new RS_decoder();
     this->RSn_ = 511;
     this->RSk_ = 256;
@@ -21,12 +25,14 @@ void QR_frame_decoder::reconfigure_qr_size(int qrlen){
     this->header_decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(headerRSn, 256, qrlen-6)-1);
     this->header_decoder_->set_bytes_per_generated_frame(qrlen-6);
     this->header_decoder_->set_RS_nk(headerRSn, headerRSk);
+    this->header_decoder_->set_chunk_listener(this);
 
 
     this->decoder_->set_header_frame_generating(false);
     this->decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_, 256, qrlen-4)-1);
     this->decoder_->set_bytes_per_generated_frame(qrlen-4);
     this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
+    this->decoder_->set_chunk_listener(this);
     this->decoder_->set_configured(true);
 }
 
@@ -129,3 +135,34 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     delete []generated_data;
     return ret_status;
 }
+
+int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int context){
+    DCHECK(chunklength>=0);
+    if(chunklength==0)
+        DLOG("Warn, chunklength is zero\n");
+    if(context == 1){
+        for(int i = 0; i<chunklength; i++){
+            this->header_data_tmp_.push_back(chunkdata[i]);
+        }
+        printf("New header temp chunkdata currently saved is %d \n", this->header_data_tmp_.size());
+    }else if(context == 0){
+        for(int i = 0; i<chunklength; i++){
+            this->main_chunk_data_tmp_.push_back(chunkdata[i]);
+        }
+        printf("New temp chunkdata currently saved is %d \n", this->main_chunk_data_tmp_.size());
+    }
+
+    return 0;
+}
+
+void QR_frame_decoder::print_current_header(){
+    printf("Curr header tmp, size %d : \n", this->header_data_tmp_.size());
+    for(int i=0; i<this->header_data_tmp_.size(); i++)
+        printf("%c", this->header_data_tmp_[i]);
+};
+
+void QR_frame_decoder::print_current_maindata(){
+    printf("Curr maindata tmp , size %d : \n", this->main_chunk_data_tmp_.size());
+    for(int i=0; i<this->main_chunk_data_tmp_.size(); i++)
+        printf("%c", this->main_chunk_data_tmp_[i]);
+};

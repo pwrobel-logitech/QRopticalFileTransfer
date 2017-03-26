@@ -62,6 +62,8 @@ public:
     void set_configured(bool configured);
     bool get_configured();
 
+    void set_chunk_listener(ChunkListener* l);
+
 protected:
 
     bool mode_header_parsing_;

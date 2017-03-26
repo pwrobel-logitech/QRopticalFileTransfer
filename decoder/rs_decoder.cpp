@@ -35,6 +35,10 @@ void OpenRSEncodedFrame::set_max_frames(uint32_t max_frames){
 };
 
 
+void RS_decoder::set_chunk_listener(ChunkListener* l){
+    this->chunk_listener_ = l;
+};
+
 void RS_decoder::set_configured(bool configured){
     this->configured_ = configured;
 };
@@ -98,6 +102,17 @@ void RS_decoder::internal_getdata_from_internal_memory(){
     //printf("Trying to printf chunk: \n", data);
     //for(int q=0;q<length;q++)printf("%c",data[q]);
     //printf("\n");
+    if(this->chunk_listener_){
+        int context;
+        if(this->is_header_frame_generating_){
+            context = 1;
+        } else {
+            context = 0;
+        }
+        this->chunk_listener_->notifyNewChunk(length, data, context);
+    }else{
+        DLOG("Warn: no chunk listener to pass the decoded data to..\n");
+    }
     if(length > 0)
         delete []data;
     memset(this->internal_memory_, 0, sizeof(uint32_t)*this->n_channels_*this->RSn_);

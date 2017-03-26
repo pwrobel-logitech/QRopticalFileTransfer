@@ -4,6 +4,17 @@
 //#ifdef DEBUG
 //#define DCHECK(a) if(!(a))printf("Condition "#a" failed in line %d, file %s !\n", __LINE__, __FILE__);
 //#endif
+
+//interface for the class listening for the ready chunk and appending to the chunk pool
+class ChunkListener{
+public:
+    // context : 0 - file, 1 - metadata, 2 - trailing chunk
+    // returns additional status info
+    virtual int notifyNewChunk(int chunklength, const char* chunkdata, int context) = 0;
+
+};
+
+
 // interface for the decoder class being able to decode the data from the delivered images
 // containing the qr frames produced by the encoder class
 class Decoder {
@@ -62,6 +73,8 @@ public:
     virtual void set_configured(bool configured) = 0;
     virtual bool get_configured() = 0;
 
+    virtual void set_chunk_listener(ChunkListener* l) = 0;
+
 
 protected:
     // this will keep the current status of the detector
@@ -79,5 +92,8 @@ protected:
     bool is_header_frame_generating_;
 
     bool configured_;
+
+    //once we done with the decoding,
+    ChunkListener* chunk_listener_;
 
 };
