@@ -64,15 +64,68 @@ void Qr_frame_producer::setup_metadata_encoder(){
     this->metadata_encoder_->set_RS_nk(n, 3); //redundancy level
 }
 
+int Qr_frame_producer::estimate_capacity(int N, int K, int charperQR){
+    int bytes = 0;
+    int bestfit = utils::count_symbols_to_fit(N,
+                                              256,
+                                              charperQR - 4) - 1;
+    bytes = K * bestfit * utils::nbits_forsymcombinationsnumber(N) / 8;
+    return bytes;
+}
+
+//medatada DD pattern
+// MMMMTTLHHH..HH|NNKKnnkkLLcc..cccLhhhh..hh
+// MM - 0xdeadbeef - magic byte seq
+// 2byte length total, 2 byte length of hash, XB hash metadata |
+// 4B (N,K), 4B (n,k), 2B length fname, XB file name, 1B hash length, XB file hash content
+
 void Qr_frame_producer::produce_metadata(){
-    int pos = 0;
+    int spos = 0;
     bool cont = true;
     int optimal_rsn = 511;
     int optimal_rsk = 256;
+    // estimate remain (n,k)
+    int nch = utils::count_symbols_to_fit(optimal_rsn, 256, this->total_chars_per_QR_ - 4) - 1;
+    int datalength_per_chunk = optimal_rsk * nch * utils::nbits_forsymcombinationsnumber(optimal_rsn) / 8;
+    int remain_length = this->file_info_.filelength % datalength_per_chunk;
+    int chunk_length = this->file_info_.filelength / datalength_per_chunk;
+    int curr_size = 0;
+    int curr_power = 2;
+    do{
+        curr_size = this->estimate_capacity((1 << curr_power) - 1, (1 << curr_power) / 2, this->total_chars_per_QR_);
+        curr_power += 1;
+    }while(curr_size<remain_length);
+    int remN = (1 << curr_power) - 1;
+    int remK = (1 << curr_power) / 2;
+    // fill metadata array
     while (cont){
-        char* start = &this->metadata_[pos];
-        pos++;
-        if(pos > fixed_metadata_arr_size - 512)
+        char* start = &this->metadata_[spos];
+        ///first run
+        int pos = 0;
+        *((uint32_t*)start) = 0xdeadbeef; // magic bytes
+        pos+=4; // skip magic bytes
+        pos+=2; //skip total length
+        *((uint8_t*) (start+pos)) = 8; //save hash length
+        pos++; //skip over hash length field
+        char* header_hash = start + pos;
+        pos += 8;//skip over header hash
+        char* NKpos = start + pos;
+        *((uint16_t*) NKpos) = optimal_rsn;
+        *((uint16_t*) (NKpos+2)) = optimal_rsk;
+        pos += 4; //skip over main (N,K) field
+        *((uint16_t*) (pos+start)) = remN;
+        *((uint16_t*) (pos+2+start)) = remK;
+        pos += 4; //skip over remain (N,K) field
+        *((uint16_t*) (pos+start)) = this->file_info_.filename.length();
+        pos += 2; //skip over filenamelength field
+        memcpy(start+pos, this->file_info_.filename.c_str(), this->file_info_.filename.length());
+        pos += this->file_info_.filename.length(); // skip all filename characters for now
+        *((uint8_t*) (start+pos)) = 8; // set length of the file hash
+        pos += 8;//skip over filedata hash
+        *((uint16_t*) (start+4)) = pos;//save total length
+        spos += pos;
+        ///
+        if(spos > fixed_metadata_arr_size - 512)
             cont = false;
     }
 

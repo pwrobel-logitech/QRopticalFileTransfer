@@ -64,6 +64,9 @@ private:
     FileInfo file_info_;
 
     void produce_metadata();
+
+    //in bytes
+    int estimate_capacity(int N, int K, int charperQR);
 };
 
 
