@@ -30,4 +30,10 @@ protected:
 
     std::vector<char> main_chunk_data_;
     std::vector<char> main_chunk_data_tmp_;
+
+    // 1 - detected correct metadata - can stop any further header data processing
+    // 0 - not yet processed the metadata, continue as normal
+    // -1 - error
+    int analyze_header();
+    int last_analyzed_header_pos_; // to speed up the detection process
 };

@@ -14,6 +14,7 @@ QR_frame_decoder::QR_frame_decoder(){
 
     //
     this->header_decoder_ = new RS_decoder();
+    this->last_analyzed_header_pos_ = 0;
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -55,6 +56,26 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
         }
     return stat;
 };
+
+int QR_frame_decoder::analyze_header(){
+    int status = 0;
+    if(this->header_data_tmp_.size() - this->last_analyzed_header_pos_ < 16)
+        return 0;
+    int spos = this->last_analyzed_header_pos_;
+    int pos = spos;
+    while (pos < this->header_data_tmp_.size() - 16){
+        char* start = &this->header_data_tmp_[pos];
+        uint32_t potential_magic = *((uint32_t*)start);
+            if(potential_magic != 0xdeadbeef){
+                pos++;
+                continue;
+            }
+    //we have magic header start - check further
+    //end
+    }
+    this->last_analyzed_header_pos_ = pos;
+    return status;
+}
 
 immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *grayscale_qr_data,
                                                                 int image_width, int image_height){
@@ -116,6 +137,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         RS_decoder::detector_status dec_status = this->header_decoder_->send_next_frame(fr);
         //if (dec_status == Decoder::TOO_MUCH_ERRORS)
         //    ret_status = ERRONEUS;
+        this->analyze_header();
     }else{
 
         fr->set_frame_number(nfr);
