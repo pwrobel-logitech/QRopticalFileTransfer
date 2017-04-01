@@ -3,7 +3,7 @@
 #    --arch arm --api 14 --install-dir /tmp/my-android-toolchain
 
 current_dir = $(shell pwd)
-BASE=/home/pwrobel/Android/Sdk/my_toolchain
+BASE=/home/pwrobel/toolchains/arm-14
 STRIP=$(BASE)/bin/arm-linux-androideabi-strip
 CFLAGS_ARM=-I. -I$(BASE)/include/c++/4.9.x/bits/ -Wall
 CPP_ARM=$(BASE)/bin/arm-linux-androideabi-g++
