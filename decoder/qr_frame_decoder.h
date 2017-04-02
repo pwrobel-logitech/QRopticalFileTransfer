@@ -1,3 +1,4 @@
+#include "../common_decoder_encoder.h"
 #include "rs_decoder.h"
 
 
@@ -36,4 +37,7 @@ protected:
     // -1 - error
     int analyze_header();
     int last_analyzed_header_pos_; // to speed up the detection process
+    bool header_detection_done_; // once the header has been checked to be processed
+                                 // and all the hashes match, finish the detection
+    FileInfo file_info_; //file info the info from the header is being saved to
 };

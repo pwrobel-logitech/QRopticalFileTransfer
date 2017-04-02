@@ -1,5 +1,7 @@
 #include "qr_frame_producer.h"
 #include <libqrencoder_wrapper.h>
+#include "hash-library/sha256.h"
+#include <iostream>
 
 const int fixed_metadata_arr_size = 16*4096;
 
@@ -125,6 +127,34 @@ void Qr_frame_producer::produce_metadata(){
         pos += this->file_info_.filename.length(); // skip all filename characters for now
 
         *((uint16_t*) (start+4)) = pos;//save total length
+
+        //hash small hash - not the filename content and not the hashes itself
+        SHA256 sha256stream;
+        sha256stream.add(start, 6); //hash
+        sha256stream.add(start + 22, 23);
+        std::string h_small = sha256stream.getHash();
+
+        std::string hs_low  = std::string(h_small.c_str(), 8);
+        uint32_t hs_wlow = (uint32_t)strtol(hs_low.c_str(), NULL, 16);
+        *((uint32_t*)(start + 6)) = hs_wlow;
+        std::string hs_high = std::string(h_small.c_str() + 8, 8);
+        uint32_t hs_whigh = (uint32_t)strtol(hs_high.c_str(), NULL, 16);
+        *((uint32_t*)(start + 10)) = hs_whigh;
+
+        //hash big - file name text as well
+        SHA256 sha256streamB;
+        sha256streamB.add(start, 6); //hash
+        sha256streamB.add(start + 22, 23);
+        sha256streamB.add(start + 45, this->file_info_.filename.length());
+        std::string h_big = sha256streamB.getHash();
+
+        std::string hb_low  = std::string(h_big.c_str(), 8);
+        uint32_t hb_wlow = (uint32_t)strtol(hb_low.c_str(), NULL, 16);
+        *((uint32_t*)(start + 6 + 8)) = hb_wlow;
+        std::string hb_high = std::string(h_big.c_str() + 8, 8);
+        uint32_t hb_whigh = (uint32_t)strtol(hb_high.c_str(), NULL, 16);
+        *((uint32_t*)(start + 10 + 8)) = hb_whigh;
+
         spos += pos;
         ///
         if(spos > fixed_metadata_arr_size - 512)

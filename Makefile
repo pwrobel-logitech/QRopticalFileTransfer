@@ -12,7 +12,7 @@ LIBQRENCODER_LIBFOLDERNAME=libqrencode
 LIBZXING=../zxing-cpp/core/src
 
 x86_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper
-	g++ -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -O0 -g -shared open_rs_encoder.cpp qr_frame_producer.cpp $(current_dir)/fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
+	g++ -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -O0 -g -shared open_rs_encoder.cpp qr_frame_producer.cpp hash-library/sha256.cpp $(current_dir)/fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
 fec_x86_test: ka9q_fac_test.cpp single_fac_test.cpp fileutil/fileops.cpp
 	g++ -g -O0 ka9q_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o bin_fec_x64/fec_x86_test -L$(current_dir)/bin_fec_x64 -lfec
 	g++ -g -O0 single_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o bin_fec_x64/test_single -L$(current_dir)/bin_fec_x64 -lfec
@@ -23,7 +23,7 @@ fec_arm_test: single_fac_test.cpp
 main: main.cpp
 	g++ -I$(current_dir) -g -O0 main.cpp -o main -L$(current_dir) -lRSencoder -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
 arm_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper_arm
-	$(CPP_ARM) $(CFLAGS_ARM) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -DANDROID -O2 -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp -o bin_fec_arm/libRSencoder.so -L$(current_dir)/bin_fec_arm -lfec -lqrencoder_wrapper
+	$(CPP_ARM) $(CFLAGS_ARM) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -DANDROID -O2 -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp hash-library/sha256.cpp -o bin_fec_arm/libRSencoder.so -L$(current_dir)/bin_fec_arm -lfec -lqrencoder_wrapper
 	$(STRIP) $(current_dir)/bin_fec_arm/libRSencoder.so
 main_arm: main.cpp
 	$(CPP_ARM) $(CFLAGS_ARM) -DANDROID -pie -I$(current_dir) -O2 main.cpp -o bin_fec_arm/main_arm -Wl,-rpath=\$$ORIGIN -L$(current_dir)/bin_fec_arm -lRSencoder
@@ -37,13 +37,13 @@ libqrencode_wrapper_arm:
 	$(CPP_ARM) $(CFLAGS_ARM)  -O2 -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper_test.cpp -pie -o $(current_dir)/bin_fec_arm/libqrencoder_test -L$(current_dir)/bin_fec_arm -lqrencoder_wrapper
 
 arm_decoder_lib: libqrencode_wrapper decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp
-	$(CPP_ARM) $(CFLAGS_ARM) -O2 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp -shared -fPIC -o $(current_dir)/bin_fec_arm/libRSdecoder.so -L$(current_dir)/bin_fec_arm -lfec -lqrencoder_wrapper
+	$(CPP_ARM) $(CFLAGS_ARM) -O2 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/bin_fec_arm/libRSdecoder.so -L$(current_dir)/bin_fec_arm -lfec -lqrencoder_wrapper
 	$(STRIP) $(current_dir)/bin_fec_arm/libRSdecoder.so
 arm_decoder_test: arm_decoder_lib decoder/decoder_test.cpp 
 	$(CPP_ARM) $(CFLAGS_ARM) -O2 -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -pie -o $(current_dir)/bin_fec_arm/decoder_test -L$(current_dir)/bin_fec_arm -lRSdecoder -lqrencoder_wrapper
 	
 x86_decoder_lib: libqrencode_wrapper decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp
-	g++ -g -O0 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp -shared -fPIC -o $(current_dir)/bin_fec_x64/libRSdecoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
+	g++ -g -O0 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/bin_fec_x64/libRSdecoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
 x86_decoder_test: x86_decoder_lib decoder/decoder_test.cpp 
 	g++ -g -O0 -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -fPIC -o $(current_dir)/bin_fec_x64/decoder_test -L$(current_dir)/bin_fec_x64 -lRSdecoder -lqrencoder_wrapper
 all: x86_lib fec_x86_test fec_arm_test main arm_lib main_arm libqrencode_wrapper_arm x86_decoder_test arm_decoder_test

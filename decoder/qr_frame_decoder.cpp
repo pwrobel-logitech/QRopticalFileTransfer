@@ -1,4 +1,6 @@
 #include "qr_frame_decoder.h"
+#include "hash-library/sha256.h"
+#include <iostream>
 
 QR_frame_decoder::QR_frame_decoder(){
     this->header_data_.resize(0);
@@ -15,6 +17,7 @@ QR_frame_decoder::QR_frame_decoder(){
     //
     this->header_decoder_ = new RS_decoder();
     this->last_analyzed_header_pos_ = 0;
+    this->header_detection_done_ = false;
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -65,6 +68,8 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
 // 4B (N,K), 4B (n,k), 5Bfilelength(Q), 2B length fname, 1B hash length, XB file name, XB file hash content
 
 int QR_frame_decoder::analyze_header(){
+    if(this->header_detection_done_) //detection already succeeded earlier
+        return 1;
     int status = 0;
     if(this->header_data_tmp_.size() - this->last_analyzed_header_pos_ < 32)
         return 0;
@@ -98,8 +103,56 @@ int QR_frame_decoder::analyze_header(){
         uint16_t fcontent_hash = *((uint16_t*)(start+pos));
         pos += 8; //skip file content hash
         /// now, before proceeding with reading file name, we first check correctness of the
-        /// firs header hash
+        /// first header hash
 
+        //hash small hash - not the filename content and not the hashes itself
+        SHA256 sha256stream;
+        sha256stream.add(start, 6); //hash
+        sha256stream.add(start + 22, 23);
+        std::string h_small = sha256stream.getHash();
+
+        std::string hs_low  = std::string(h_small.c_str(), 8);
+        uint32_t hs_wlow = (uint32_t)strtol(hs_low.c_str(), NULL, 16);
+        std::string hs_high = std::string(h_small.c_str() + 8, 8);
+        uint32_t hs_whigh = (uint32_t)strtol(hs_high.c_str(), NULL, 16);
+        uint32_t writen_hs_wlow  = *((uint32_t*)(start + 6));
+        uint32_t writen_hs_whigh = *((uint32_t*)(start + 10));
+        if ((hs_wlow != writen_hs_wlow) || (hs_whigh != writen_hs_whigh)) {
+            continue; // if first hash over header does not match, ingnore this batch and go further
+        }
+
+        // now we trust all the header fields, if the hashes match - file name lenth included
+
+        //hash big - file name text as well
+        SHA256 sha256streamB;
+        sha256streamB.add(start, 6); //hash
+        sha256streamB.add(start + 22, 23);
+        sha256streamB.add(start + 45, fname_length);
+        std::string h_big = sha256streamB.getHash();
+
+        std::string hb_low  = std::string(h_big.c_str(), 8);
+        uint32_t hb_wlow = (uint32_t)strtol(hb_low.c_str(), NULL, 16);
+        uint32_t written_hb_wlow = *((uint32_t*)(start + 6 + 8));
+        std::string hb_high = std::string(h_big.c_str() + 8, 8);
+        uint32_t hb_whigh = (uint32_t)strtol(hb_high.c_str(), NULL, 16);
+        uint32_t written_hb_whigh = *((uint32_t*)(start + 10 + 8));
+        if ((hb_wlow != written_hb_wlow) || (hb_whigh != written_hb_whigh)) {  //big hash mismatch
+            continue;
+        }
+        //now, here we are sure(hash collision unlikely) based on all the hashes, that we
+        //have the correct metadata guessed, we can save it and not bother to analyze it further
+
+        this->file_info_.RSn = N;
+        this->file_info_.RSk = K;
+        this->file_info_.RSn_residual = n;
+        this->file_info_.RSk_residual = k;
+        this->file_info_.filelength = flength;
+        this->file_info_.filename = std::string(start + 45, fname_length);
+        this->file_info_.hash.resize(8);
+        for(int q = 0; q < 8; q++)
+            this->file_info_.hash[q] = ((char*)(start + 37))[q];
+
+        this->header_detection_done_ = true;
     }
     this->last_analyzed_header_pos_ = pos;
     return status;

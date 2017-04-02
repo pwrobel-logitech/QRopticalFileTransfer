@@ -7,3 +7,4 @@ bin_jpeg
 ../zxing-cpp/core/src
 zxing_lib
 decoder
+hash-library

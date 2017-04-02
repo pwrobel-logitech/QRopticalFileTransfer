@@ -16,7 +16,7 @@ clean:
 fec_arm_test: single_fac_test.cpp
 	$(CPP_ARM) $(CFLAGS_ARM) -DANDROID -pie single_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o bin_fec_armv7a/test_single -L$(current_dir)/bin_fec_armv7a -lfec 
 arm_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper_arm
-	$(CPP_ARM) $(CFLAGS_ARM) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -DANDROID -O2 -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp -o bin_fec_armv7a/libRSencoder.so -L$(current_dir)/bin_fec_armv7a -lfec -lqrencoder_wrapper
+	$(CPP_ARM) $(CFLAGS_ARM) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -DANDROID -O2 -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp hash-library/sha256.cpp -o bin_fec_armv7a/libRSencoder.so -L$(current_dir)/bin_fec_armv7a -lfec -lqrencoder_wrapper
 	$(STRIP) $(current_dir)/bin_fec_armv7a/libRSencoder.so
 main_arm: arm_lib main.cpp
 	$(CPP_ARM) $(CFLAGS_ARM) -DANDROID -pie -I$(current_dir) -O2 main.cpp -o bin_fec_armv7a/main_arm -Wl,-rpath=\$$ORIGIN -L$(current_dir)/bin_fec_armv7a -lRSencoder
@@ -27,7 +27,7 @@ libqrencode_wrapper_arm:
 	$(CPP_ARM) $(CFLAGS_ARM)  -O2 -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper_test.cpp -pie -o $(current_dir)/bin_fec_armv7a/libqrencoder_test -L$(current_dir)/bin_fec_armv7a -lqrencoder_wrapper
 
 arm_decoder_lib: libqrencode_wrapper_arm decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp
-	$(CPP_ARM) $(CFLAGS_ARM) -O2 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp -shared -fPIC -o $(current_dir)/bin_fec_armv7a/libRSdecoder.so -L$(current_dir)/bin_fec_armv7a -lfec -lqrencoder_wrapper
+	$(CPP_ARM) $(CFLAGS_ARM) -O2 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/bin_fec_armv7a/libRSdecoder.so -L$(current_dir)/bin_fec_armv7a -lfec -lqrencoder_wrapper
 	$(STRIP) $(current_dir)/bin_fec_armv7a/libRSdecoder.so
 arm_decoder_test: arm_decoder_lib decoder/decoder_test.cpp 
 	$(CPP_ARM) $(CFLAGS_ARM) -O2 -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -pie -o $(current_dir)/bin_fec_armv7a/decoder_test -L$(current_dir)/bin_fec_armv7a -lRSdecoder -lqrencoder_wrapper
