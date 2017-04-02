@@ -57,21 +57,49 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
     return stat;
 };
 
+
+//medatada DD pattern
+// MMMMTThhh..hhHHH..HH|NNKKnnkkQQQQQLLhhhh..hhcc..ccc
+// MM - 0xBAADA551 - magic byte seq
+// 2byte length total, 1 byte length of hash, XB hash metadata, XB hash metadata + variable length content |
+// 4B (N,K), 4B (n,k), 5Bfilelength(Q), 2B length fname, 1B hash length, XB file name, XB file hash content
+
 int QR_frame_decoder::analyze_header(){
     int status = 0;
-    if(this->header_data_tmp_.size() - this->last_analyzed_header_pos_ < 16)
+    if(this->header_data_tmp_.size() - this->last_analyzed_header_pos_ < 32)
         return 0;
     int spos = this->last_analyzed_header_pos_;
     int pos = spos;
-    while (pos < this->header_data_tmp_.size() - 16){
+    while (pos < this->header_data_tmp_.size() - 32){
         char* start = &this->header_data_tmp_[pos];
         uint32_t potential_magic = *((uint32_t*)start);
-            if(potential_magic != 0xdeadbeef){
+            if(potential_magic != 0xBAADA551){
                 pos++;
                 continue;
             }
-    //we have magic header start - check further
-    //end
+        //we have magic header start - check further
+        //end
+        pos += 4; //skip over magic bytes
+        uint16_t totalL = *((uint16_t*) (start + pos));
+        pos += 2; //skip over total length
+        char* header_hash = start + pos;
+        pos += 8; //skip over the header hash content
+        char* header_hash_varL = start + pos;
+        pos += 8; //skip over the header hash content with variable length
+        uint16_t N = *((uint16_t*)(start+pos+0));
+        uint16_t K = *((uint16_t*)(start+pos+2));
+        uint16_t n = *((uint16_t*)(start+pos+4));
+        uint16_t k = *((uint16_t*)(start+pos+6));
+        pos += 8; //skip over nk fields
+        uint32_t flength = *((uint32_t*)(pos+start));
+        pos += 5; //skip over the file length
+        uint16_t fname_length = *((uint16_t*)(start+pos));
+        pos += 2; //skip the file name length field
+        uint16_t fcontent_hash = *((uint16_t*)(start+pos));
+        pos += 8; //skip file content hash
+        /// now, before proceeding with reading file name, we first check correctness of the
+        /// firs header hash
+
     }
     this->last_analyzed_header_pos_ = pos;
     return status;

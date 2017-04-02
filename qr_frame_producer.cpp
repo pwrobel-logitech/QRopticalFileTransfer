@@ -74,10 +74,10 @@ int Qr_frame_producer::estimate_capacity(int N, int K, int charperQR){
 }
 
 //medatada DD pattern
-// MMMMTTLHHH..HH|NNKKnnkkLLcc..cccLhhhh..hh
-// MM - 0xdeadbeef - magic byte seq
-// 2byte length total, 2 byte length of hash, XB hash metadata |
-// 4B (N,K), 4B (n,k), 2B length fname, XB file name, 1B hash length, XB file hash content
+// MMMMTThhh..hhHHH..HH|NNKKnnkkQQQQQLLhhhh..hhcc..ccc
+// MM - 0xBAADA551 - magic byte seq
+// 2byte length total, 1 byte length of hash, XB hash metadata, XB hash metadata + variable length content |
+// 4B (N,K), 4B (n,k), 5Bfilelength(Q), 2B length fname, 1B hash length, XB file name, XB file hash content
 
 void Qr_frame_producer::produce_metadata(){
     int spos = 0;
@@ -102,13 +102,12 @@ void Qr_frame_producer::produce_metadata(){
         char* start = &this->metadata_[spos];
         ///first run
         int pos = 0;
-        *((uint32_t*)start) = 0xdeadbeef; // magic bytes
+        *((uint32_t*)start) = 0xBAADA551; // magic bytes
         pos+=4; // skip magic bytes
         pos+=2; //skip total length
-        *((uint8_t*) (start+pos)) = 8; //save hash length
-        pos++; //skip over hash length field
         char* header_hash = start + pos;
         pos += 8;//skip over header hash
+        pos += 8;//skip over header hash with variable length content
         char* NKpos = start + pos;
         *((uint16_t*) NKpos) = optimal_rsn;
         *((uint16_t*) (NKpos+2)) = optimal_rsk;
@@ -116,12 +115,15 @@ void Qr_frame_producer::produce_metadata(){
         *((uint16_t*) (pos+start)) = remN;
         *((uint16_t*) (pos+2+start)) = remK;
         pos += 4; //skip over remain (N,K) field
+        *((uint32_t*)(start+pos)) = this->file_info_.filelength;
+        *((uint8_t*)(start+pos+4)) = 0; //remain
+        pos += 5; //skip over the filelength field
         *((uint16_t*) (pos+start)) = this->file_info_.filename.length();
         pos += 2; //skip over filenamelength field
+        pos += 8;//skip over filedata hash
         memcpy(start+pos, this->file_info_.filename.c_str(), this->file_info_.filename.length());
         pos += this->file_info_.filename.length(); // skip all filename characters for now
-        *((uint8_t*) (start+pos)) = 8; // set length of the file hash
-        pos += 8;//skip over filedata hash
+
         *((uint16_t*) (start+4)) = pos;//save total length
         spos += pos;
         ///
