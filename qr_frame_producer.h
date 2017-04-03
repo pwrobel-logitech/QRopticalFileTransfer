@@ -52,6 +52,7 @@ private:
     FileInfo file_info_;
 
     void produce_metadata();
+    void calculate_file_content_hash(int hash_chunk_size);
 
     //in bytes
     int estimate_capacity(int N, int K, int charperQR);

@@ -3,7 +3,7 @@
 #include "hash-library/sha256.h"
 #include <iostream>
 
-const int fixed_metadata_arr_size = 16*4096;
+
 
 Qr_frame_producer::Qr_frame_producer()
 {
@@ -29,6 +29,41 @@ Qr_frame_producer::~Qr_frame_producer(){
         FileClose(this->file_info_.fp);
 }
 
+void Qr_frame_producer::calculate_file_content_hash(int hash_chunk_size){
+    if (this->file_info_.fp == NULL)
+        return;
+    int chunk_num = this->file_info_.filelength / hash_chunk_size;
+    int bytes_remain = this->file_info_.filelength % hash_chunk_size;
+    SHA256 sha256stream;
+    uint32_t lastpos = 0;
+    for(int i = 0; i < chunk_num; i++){
+        if(read_file_fp(this->file_info_.fp, fixed_filehash_buff,
+                        i*fixed_filehash_buff_size, fixed_filehash_buff_size) == -1){
+                            DLOG("ERR, failed to read file !\n");
+                            return;
+                        }
+        sha256stream.add(fixed_filehash_buff, fixed_filehash_buff_size); //hash
+        lastpos += fixed_filehash_buff_size;
+    }
+    if (bytes_remain > 0){
+        if(read_file_fp(this->file_info_.fp, fixed_filehash_buff,
+                        lastpos, bytes_remain) == -1){
+                            DLOG("ERR, failed to read file !\n");
+                            return;
+                        }
+        sha256stream.add(fixed_filehash_buff, bytes_remain); //hash
+    }
+    std::string h_small = sha256stream.getHash();
+
+    this->file_info_.hash.resize(8);
+    std::string hs_low  = std::string(h_small.c_str(), 8);
+    uint32_t hs_wlow = (uint32_t)strtol(hs_low.c_str(), NULL, 16);
+    *((uint32_t*)(&this->file_info_.hash[0])) = hs_wlow;
+    std::string hs_high = std::string(h_small.c_str() + 8, 8);
+    uint32_t hs_whigh = (uint32_t)strtol(hs_high.c_str(), NULL, 16);
+    *((uint32_t*)(&this->file_info_.hash[4])) = hs_whigh;
+};
+
 int Qr_frame_producer::set_external_file_info(const char* filename, const char* filepath, int suggested_qr_payload_length){
     this->total_chars_per_QR_ = suggested_qr_payload_length;
     this->file_info_.filename = std::string(filename);
@@ -41,8 +76,11 @@ int Qr_frame_producer::set_external_file_info(const char* filename, const char* 
         return -1;
 
     uint32_t fsize = get_file_size_fp(this->file_info_.fp);
-    if(fsize > 0)
+    if(fsize > 0) {
         this->file_info_.filelength = fsize;
+        //hash file
+        this->calculate_file_content_hash(fixed_filehash_buff_size);
+    }
     this->produce_metadata();
     return 1;
 };
@@ -122,6 +160,8 @@ void Qr_frame_producer::produce_metadata(){
         pos += 5; //skip over the filelength field
         *((uint16_t*) (pos+start)) = this->file_info_.filename.length();
         pos += 2; //skip over filenamelength field
+        *((uint32_t*)(start+pos)) = *((uint32_t*)(&this->file_info_.hash[0]));
+        *((uint32_t*)(start+pos+4)) = *((uint32_t*)(&this->file_info_.hash[4]));
         pos += 8;//skip over filedata hash
         memcpy(start+pos, this->file_info_.filename.c_str(), this->file_info_.filename.length());
         pos += this->file_info_.filename.length(); // skip all filename characters for now
