@@ -8,12 +8,8 @@ QR_frame_decoder::QR_frame_decoder(){
     this->main_chunk_data_.resize(0);
     this->main_chunk_data_tmp_.resize(0);
     this->decoder_ = new RS_decoder();
-    this->RSn_ = 511;
-    this->RSk_ = 256;
-    this->decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_, 256, 33-4)-1);
-    this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
-    this->decoder_->set_bytes_per_generated_frame(33-4);
 
+    this->qr_byte_length = 0;
     //
     this->header_decoder_ = new RS_decoder();
     this->last_analyzed_header_pos_ = 0;
@@ -21,6 +17,8 @@ QR_frame_decoder::QR_frame_decoder(){
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
+
+    this->qr_byte_length = qrlen;
 
     int headerRSn = 7;
     int headerRSk = 3;
@@ -31,13 +29,6 @@ void QR_frame_decoder::reconfigure_qr_size(int qrlen){
     this->header_decoder_->set_RS_nk(headerRSn, headerRSk);
     this->header_decoder_->set_chunk_listener(this);
 
-
-    this->decoder_->set_header_frame_generating(false);
-    this->decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_, 256, qrlen-4)-1);
-    this->decoder_->set_bytes_per_generated_frame(qrlen-4);
-    this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
-    this->decoder_->set_chunk_listener(this);
-    this->decoder_->set_configured(true);
 }
 
 QR_frame_decoder::~QR_frame_decoder(){
@@ -58,6 +49,20 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
             this->decoder_->tell_no_more_qr();
         }
     return stat;
+};
+
+void QR_frame_decoder::setup_detector_after_header_recognized(){
+    uint32_t qrlen = this->qr_byte_length;
+    this->RSn_ = this->file_info_.RSn;
+    this->RSk_ = this->file_info_.RSk;
+    this->RSn_rem_ = this->file_info_.RSn_residual;
+    this->RSk_rem_ = this->file_info_.RSk_residual;
+    this->decoder_->set_header_frame_generating(false);
+    this->decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_, 256, qrlen-4)-1);
+    this->decoder_->set_bytes_per_generated_frame(qrlen-4);
+    this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
+    this->decoder_->set_chunk_listener(this);
+    this->decoder_->set_configured(true);
 };
 
 
@@ -153,6 +158,8 @@ int QR_frame_decoder::analyze_header(){
             this->file_info_.hash[q] = ((char*)(start + 37))[q];
 
         this->header_detection_done_ = true;
+        this->setup_detector_after_header_recognized();
+        return 1;
     }
     this->last_analyzed_header_pos_ = pos;
     return status;

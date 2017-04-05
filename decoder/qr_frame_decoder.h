@@ -20,7 +20,12 @@ public:
     int notifyNewChunk(int chunklength, const char* chunkdata, int context);
 
 protected:
+
+    uint32_t qr_byte_length; // how many bytes one single qr frame stores
+                             // must be uniform across the different frames
+
     uint32_t RSn_, RSk_;
+    uint32_t RSn_rem_, RSk_rem_;
     Decoder* decoder_;
     Decoder* header_decoder_;
     void reconfigure_qr_size(int qrlen); // only header frame, starting with the 0xffffffff can trigger the reconfiguration
@@ -39,5 +44,7 @@ protected:
     int last_analyzed_header_pos_; // to speed up the detection process
     bool header_detection_done_; // once the header has been checked to be processed
                                  // and all the hashes match, finish the detection
+    void setup_detector_after_header_recognized(); // when correct header is detected
+                                                   // do the RK setup
     FileInfo file_info_; //file info the info from the header is being saved to
 };
