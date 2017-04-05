@@ -52,6 +52,8 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
 };
 
 void QR_frame_decoder::setup_detector_after_header_recognized(){
+    //printf("QQQFL : %d\n", this->file_info_.filelength);
+    //exit(0);
     uint32_t qrlen = this->qr_byte_length;
     this->RSn_ = this->file_info_.RSn;
     this->RSk_ = this->file_info_.RSk;
@@ -82,6 +84,7 @@ int QR_frame_decoder::analyze_header(){
     int pos = spos;
     while (pos < this->header_data_tmp_.size() - 32){
         char* start = &this->header_data_tmp_[pos];
+        uint32_t pos_start = pos;
         uint32_t potential_magic = *((uint32_t*)start);
             if(potential_magic != 0xBAADA551){
                 pos++;
@@ -89,23 +92,24 @@ int QR_frame_decoder::analyze_header(){
             }
         //we have magic header start - check further
         //end
+
         pos += 4; //skip over magic bytes
-        uint16_t totalL = *((uint16_t*) (start + pos));
+        uint16_t totalL = *((uint16_t*) (start + pos-pos_start));
         pos += 2; //skip over total length
         char* header_hash = start + pos;
         pos += 8; //skip over the header hash content
         char* header_hash_varL = start + pos;
         pos += 8; //skip over the header hash content with variable length
-        uint16_t N = *((uint16_t*)(start+pos+0));
-        uint16_t K = *((uint16_t*)(start+pos+2));
-        uint16_t n = *((uint16_t*)(start+pos+4));
-        uint16_t k = *((uint16_t*)(start+pos+6));
+        uint16_t N = *((uint16_t*)(start+pos-pos_start+0));
+        uint16_t K = *((uint16_t*)(start+pos-pos_start+2));
+        uint16_t n = *((uint16_t*)(start+pos-pos_start+4));
+        uint16_t k = *((uint16_t*)(start+pos-pos_start+6));
         pos += 8; //skip over nk fields
-        uint32_t flength = *((uint32_t*)(pos+start));
+        uint32_t flength = *((uint32_t*)(pos-pos_start+start));
         pos += 5; //skip over the file length
-        uint16_t fname_length = *((uint16_t*)(start+pos));
+        uint16_t fname_length = *((uint16_t*)(start+pos-pos_start));
         pos += 2; //skip the file name length field
-        uint16_t fcontent_hash = *((uint16_t*)(start+pos));
+        uint16_t fcontent_hash = *((uint16_t*)(start+pos-pos_start));
         pos += 8; //skip file content hash
         /// now, before proceeding with reading file name, we first check correctness of the
         /// first header hash
@@ -161,7 +165,8 @@ int QR_frame_decoder::analyze_header(){
         this->setup_detector_after_header_recognized();
         return 1;
     }
-    this->last_analyzed_header_pos_ = pos;
+    if (pos - this->last_analyzed_header_pos_ > 1024)
+        this->last_analyzed_header_pos_ = pos;
     return status;
 }
 

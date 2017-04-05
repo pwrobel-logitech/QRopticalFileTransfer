@@ -69,7 +69,7 @@ int main(int argc, char **argv){
 
     frame_producer.set_external_file_info("textmy.txt", "/repos/qr/", 31);
 
-    for(int i=0; i<21; i++){
+    for(int i=0; i<7*20; i++){
         frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
     }
 
