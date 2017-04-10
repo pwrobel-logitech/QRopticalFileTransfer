@@ -26,6 +26,8 @@ protected:
 
     uint32_t RSn_, RSk_;
     uint32_t RSn_rem_, RSk_rem_;
+    uint32_t decoder_bytes_len_;
+    uint32_t decoder_res_bytes_len_;
     Decoder* decoder_;
     Decoder* res_decoder_; //residual decoder for the last (RSn_rem_, RSk_rem_) pair
     Decoder* header_decoder_;

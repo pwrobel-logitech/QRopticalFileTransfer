@@ -10,7 +10,7 @@ Qr_frame_producer::Qr_frame_producer()
     this->total_chars_per_QR_ = 31;
     this->is_header_frame_generating_ = true;
     this->setup_metadata_encoder();
-    this->setup_encoder();
+    //this->setup_encoder();
     int max_target_width = 1300;
     init_libqrencoder(max_target_width*max_target_width*2);
     this->file_info_.filelength = 0;
@@ -138,6 +138,7 @@ void Qr_frame_producer::produce_metadata(){
     }while(curr_size<remain_length);
     int remN = (1 << curr_power) - 1;
     int remK = (1 << curr_power) / 2;
+    this->setup_encoder(optimal_rsn, optimal_rsk, remN, remK);
     // fill metadata array
     while (cont){
         char* start = &this->metadata_[spos];
@@ -204,34 +205,39 @@ void Qr_frame_producer::produce_metadata(){
 
 }
 
-void Qr_frame_producer::setup_encoder(){
+void Qr_frame_producer::setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint32_t rK){
 
     this->encoder_ = new OpenRSEncoder();
     this->encoder_->set_filename(this->filename_.c_str());
     this->encoder_->set_filelength(this->file_info_.filelength);
     this->encoder_->set_datafeed_provider(this);
     this->encoder_->set_is_header_frame_generating(false);
-    ///print some test data
-    DLOG("size of the file %d \n", this->file_info_.filelength);
-    //print 8 bytes at offset 4
-    char textfrag[8];
-    memset(textfrag, 0, sizeof(char));
-    read_file(this->filename_.c_str(), textfrag, 4, 8);
-    DLOG("Eight bytes of text at offset 4: %s\n", textfrag);
-
     this->encoder_->set_is_header_frame_generating(false);
 
-    //if(filesize > 2000){
-        uint32_t n = 511;
+    //256 - combination, not the redundancy level below!
+    //if more than 256, then the nchannels < total_chars_per_QR_
+    this->encoder_->set_nchannels_parallel(utils::count_symbols_to_fit(N,
+                                                                       256,
+                                                                       this->total_chars_per_QR_ - 4)-1);
+    this->encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 4);
+    this->encoder_->set_RS_nk(N, K); //redundancy level
 
-        //256 - combination, not the redundancy level below!
-        //if more than 256, then the nchannels < total_chars_per_QR_
-        this->encoder_->set_nchannels_parallel(utils::count_symbols_to_fit(n,
+
+    this->encoder_res_ = new OpenRSEncoder();
+    this->encoder_res_->set_filename(this->filename_.c_str());
+    this->encoder_res_->set_filelength(this->file_info_.filelength);
+    this->encoder_res_->set_datafeed_provider(this);
+    this->encoder_res_->set_is_header_frame_generating(false);
+    this->encoder_res_->set_is_header_frame_generating(false);
+
+
+   //256 - combination, not the redundancy level below!
+   //if more than 256, then the nchannels < total_chars_per_QR_
+    this->encoder_res_->set_nchannels_parallel(utils::count_symbols_to_fit(rN,
                                                                            256,
                                                                            this->total_chars_per_QR_ - 4)-1);
-        this->encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 4);
-        this->encoder_->set_RS_nk(n, 256); //redundancy level
-    //}
+    this->encoder_res_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 4);
+    this->encoder_res_->set_RS_nk(rN, rK); //redundancy level
 }
 
 int Qr_frame_producer::tell_no_more_generating_header(){
@@ -283,10 +289,12 @@ char* Qr_frame_producer::file;
 
 int Qr_frame_producer::getFileData(FileChunk *chunk){
     if(chunk->reason == 0){
-        return read_file_fp(this->file_info_.fp,
-                  chunk->chunkdata,
-                  chunk->chunk_fileoffset,
-                  chunk->chunk_length);
+        uint32_t nread =
+            read_file_fp(this->file_info_.fp,
+                         chunk->chunkdata,
+                         chunk->chunk_fileoffset,
+                         chunk->chunk_length);
+        return nread;
     }else if (chunk->reason == 1){
         char* metadata = &(this->metadata_[chunk->chunk_fileoffset]);
         chunk->chunkdata = metadata;

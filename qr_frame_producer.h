@@ -31,11 +31,12 @@ public:
 private:
     int getFileData(FileChunk* chunk);
     void setup_metadata_encoder();
-    void setup_encoder();
+    void setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint32_t rK);
     ///we will pass it for the encoder as the data feeding callback
 
     std::string filename_;
     Encoder* encoder_;
+    Encoder* encoder_res_;
     uint32_t iframe_counter_;
 
     // metadata encoder on its own is a decoder with a fixed RS()

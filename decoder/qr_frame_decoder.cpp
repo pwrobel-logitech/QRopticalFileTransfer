@@ -15,6 +15,8 @@ QR_frame_decoder::QR_frame_decoder(){
     this->header_decoder_ = new RS_decoder();
     this->last_analyzed_header_pos_ = 0;
     this->header_detection_done_ = false;
+    this->decoder_res_bytes_len_ = 0;
+    this->decoder_bytes_len_ = 0;
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -67,18 +69,26 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
     this->RSn_rem_ = this->file_info_.RSn_residual;
     this->RSk_rem_ = this->file_info_.RSk_residual;
     this->decoder_->set_header_frame_generating(false);
-    this->decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_, 256, qrlen-4)-1);
+    int nchp = utils::count_symbols_to_fit(this->RSn_, 256, qrlen-4)-1;
+    this->decoder_->set_nchannels_parallel(nchp);
     this->decoder_->set_bytes_per_generated_frame(qrlen-4);
     this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
     this->decoder_->set_chunk_listener(this);
     this->decoder_->set_configured(true);
 
     this->res_decoder_->set_header_frame_generating(false);
-    this->res_decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_rem_, 256, qrlen-4)-1);
+    int nchpr = utils::count_symbols_to_fit(this->RSn_rem_, 256, qrlen-4)-1;
+    this->res_decoder_->set_nchannels_parallel(nchpr);
     this->res_decoder_->set_bytes_per_generated_frame(qrlen-4);
     this->res_decoder_->set_RS_nk(this->RSn_rem_, this->RSk_rem_);
     this->res_decoder_->set_chunk_listener(this);
     this->res_decoder_->set_configured(true);
+
+    uint32_t chun_len = this->RSk_ * nchp * utils::nbits_forsymcombinationsnumber(this->RSn_) / 8;
+    uint32_t chun_len_res = this->RSk_rem_ * nchpr * utils::nbits_forsymcombinationsnumber(this->RSn_rem_) / 8;
+
+    this->decoder_bytes_len_ = chun_len;
+    this->decoder_res_bytes_len_ = chun_len_res;
 };
 
 
