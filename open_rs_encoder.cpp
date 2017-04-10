@@ -243,6 +243,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     }else{
         this->n_dataframe_processed_++;
     }
+
     return Frame_OK_data;
 };
 

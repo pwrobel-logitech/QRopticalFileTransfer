@@ -27,6 +27,7 @@ protected:
     uint32_t RSn_, RSk_;
     uint32_t RSn_rem_, RSk_rem_;
     Decoder* decoder_;
+    Decoder* res_decoder_; //residual decoder for the last (RSn_rem_, RSk_rem_) pair
     Decoder* header_decoder_;
     void reconfigure_qr_size(int qrlen); // only header frame, starting with the 0xffffffff can trigger the reconfiguration
     bool is_header_generating_;

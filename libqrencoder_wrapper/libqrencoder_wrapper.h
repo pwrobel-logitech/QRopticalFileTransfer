@@ -13,6 +13,7 @@ enum immediate_status {
     AMBUGUOUS, // more than one qr image detected
     ERRONEUS, // detected, but the frame number is wrong or missed too many frames
               // if received only once, the whole detection is revoked and resources must be released
+    ERR_DATAFRAME_TOO_EARLY, // got data frame, without recognizing the header first from previous frames
     RECOGNIZED // some qr code has been recognized for sure
 };
 

@@ -14,7 +14,7 @@ int main(int argc, char** argv){
     char namebuf[100];
 
 
-    for (int j = 0; j<7*20; j++) {
+    for (int j = 0; j<7*20+511*2; j++) {
         snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", j);
         f = fopen(namebuf, "rb");
         if (f == NULL)

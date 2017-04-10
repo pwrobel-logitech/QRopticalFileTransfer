@@ -8,6 +8,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->main_chunk_data_.resize(0);
     this->main_chunk_data_tmp_.resize(0);
     this->decoder_ = new RS_decoder();
+    this->res_decoder_ = new RS_decoder();
 
     this->qr_byte_length = 0;
     //
@@ -34,6 +35,8 @@ void QR_frame_decoder::reconfigure_qr_size(int qrlen){
 QR_frame_decoder::~QR_frame_decoder(){
     if (this->decoder_ != NULL)
         delete this->decoder_;
+    if (this->res_decoder_ != NULL)
+        delete this->res_decoder_;
     if (this->header_decoder_ != NULL)
         delete this->header_decoder_;
 }
@@ -44,10 +47,14 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
         if (this->header_decoder_){
             this->header_decoder_->tell_no_more_qr();
         }
-    }else
+    }else{
         if (this->decoder_){
             this->decoder_->tell_no_more_qr();
         }
+        if (this->res_decoder_){
+            this->res_decoder_->tell_no_more_qr();
+        }
+    }
     return stat;
 };
 
@@ -65,6 +72,13 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
     this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
     this->decoder_->set_chunk_listener(this);
     this->decoder_->set_configured(true);
+
+    this->res_decoder_->set_header_frame_generating(false);
+    this->res_decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(this->RSn_rem_, 256, qrlen-4)-1);
+    this->res_decoder_->set_bytes_per_generated_frame(qrlen-4);
+    this->res_decoder_->set_RS_nk(this->RSn_rem_, this->RSk_rem_);
+    this->res_decoder_->set_chunk_listener(this);
+    this->res_decoder_->set_configured(true);
 };
 
 
@@ -181,6 +195,13 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     ////////////////////////// process generated_data = extract frame number
     uint32_t nfr = *((uint32_t*)generated_data);
 
+    if((nfr != 0xffffffff) && (!this->header_detection_done_))
+        return ERR_DATAFRAME_TOO_EARLY;
+
+    if((nfr != 0xffffffff) && (this->header_detection_done_)){
+        this->is_header_generating_ = false; //switch to data detection
+    }
+
     if(nfr==0xffffffff && (this->header_decoder_->get_configured()==false)){
         this->is_header_generating_ = true;
         DCHECK(generated_datalength > 8);
@@ -240,7 +261,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 
         printf("frame set %d\n",nfr);
         printf("FR send : \n");
-        for(int q=0;q<fr->framedata_.size();fr++){
+        for(int q=0;q<fr->framedata_.size();q++){
             printf("%d ", fr->framedata_[q]);
         }
         RS_decoder::detector_status dec_status = this->decoder_->send_next_frame(fr);

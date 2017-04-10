@@ -73,6 +73,12 @@ int main(int argc, char **argv){
         frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
     }
 
+    frame_producer.tell_no_more_generating_header();
+
+    for(int i=0; i<511*2; i++){
+        frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
+    }
+
 
 
     return 1;
