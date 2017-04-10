@@ -18,6 +18,7 @@ public:
     // image template - "dump_%d" = will generate dump_1, dump_2, dump_3.. files
     int produce_next_qr_image_to_file(const char* imagetemplate);
     int produce_next_qr_grayscale_image_to_mem(char** produced_image, int *produced_width);
+    int tell_no_more_generating_header(); // will generate header frame no more, -1 if the not enough header generated
 
     //static int needMetaData(FileChunk*);
     //static int needData(FileChunk*);
@@ -35,6 +36,7 @@ private:
 
     std::string filename_;
     Encoder* encoder_;
+    uint32_t iframe_counter_;
 
     // metadata encoder on its own is a decoder with a fixed RS()
     Encoder* metadata_encoder_;//this stores filename, length, hash, main RS(n,k) and remainded RS(n,k) -
