@@ -53,6 +53,20 @@ private:
 
     FileInfo file_info_;
 
+    //data used to split the file into the main part handled by the main decoder and the residual part
+    //handled by the residual decoder with padding of the data
+    //big decoder handles this much bytes per chunk
+    uint32_t datalength_per_chunk_;
+    //this is the number of bytes the small decoder will receive in its one chunk
+    //Pad with 0s if it requests for more bytes
+    uint32_t remain_length_;
+    //number of chunks in the big decoder
+    uint32_t chunk_length_;
+
+
+    //keeps the current position within the file the encoders are so far processed
+    uint32_t current_position_of_file_to_process_;
+
     void produce_metadata();
     void calculate_file_content_hash(int hash_chunk_size);
 

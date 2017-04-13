@@ -63,6 +63,8 @@ OpenRSEncoder::OpenRSEncoder(){
     this->RSfecEnc = NULL;
     this->internal_RS_error_location_mem_ = NULL;
     this->is_header_frame_generating_ = true;
+    this->total_file_length_ = 0;
+    this->offset_in_file_reading_starts_ = 0;
 };
 
 OpenRSEncoder::~OpenRSEncoder(){
@@ -82,6 +84,10 @@ void OpenRSEncoder::set_filename(const char* name){
 
 void OpenRSEncoder::set_filelength(uint32_t file_length){
     this->total_file_length_ = file_length;
+};
+
+void OpenRSEncoder::set_fileread_start_offset(uint32_t offset){
+    this->offset_in_file_reading_starts_ = offset;
 };
 
 void OpenRSEncoder::set_datafeed_provider(FileDataProvider* provider){
@@ -172,7 +178,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         } else {
             chunk->reason = 0;
         }
-        chunk->chunk_fileoffset = bytes_currently_read_from_file_;
+        chunk->chunk_fileoffset = this->offset_in_file_reading_starts_ + bytes_currently_read_from_file_;
         this->file_data_.push_back(chunk);
         //(this->needData_)(chunk);
         this->filedata_provider_->getFileData(chunk);

@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-const int fixed_metadata_arr_size = 16*4096;
+const int fixed_metadata_arr_size = 32*4096;
 const int fixed_filehash_buff_size = 32*1024;
 char fixed_filehash_buff[fixed_filehash_buff_size];
 

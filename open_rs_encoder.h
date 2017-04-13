@@ -37,6 +37,8 @@ public:
 
     void set_is_header_frame_generating(bool header);//{ this->is_header_frame_generating_ = header;}
 
+    void set_fileread_start_offset(uint32_t offset);
+
     uint8_t* compute_hash();
 
     generated_frame_status produce_next_encoded_frame(EncodedFrame* frame);

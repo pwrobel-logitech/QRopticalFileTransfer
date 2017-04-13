@@ -174,6 +174,10 @@ public:
     //set whether we are encoding header or the actual data
     virtual void set_is_header_frame_generating(bool header) = 0;
 
+    //set the offset of file the decoder will start asking the data from. Is 0 by default (begin of the file)
+    //complementatory to the set_filelength
+    virtual void set_fileread_start_offset(uint32_t offset) = 0;
+
 protected:
 
 
@@ -192,6 +196,11 @@ protected:
 
     //encoder knows in advance how long the file is going to be
     uint32_t total_file_length_;
+
+    //encoder might also use some offset within the file to ask the data from
+    //is being 0 by default
+    //set from the interface as well
+    uint32_t offset_in_file_reading_starts_;
 
     //This pair encode the redundancy of the QR frames.
     //It is the classical Reed-Solomon code of the (n,k)

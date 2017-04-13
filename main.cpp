@@ -70,7 +70,7 @@ int main(int argc, char **argv){
     Qr_frame_producer frame_producer;
 
 
-    frame_producer.set_external_file_info("textmy.txt", "/repos/qr/", 31);
+    frame_producer.set_external_file_info("textshort.txt", "/repos/qr/", 31);
 
     int num = 0;
     for(int i=0; i<7*20; i++){
@@ -81,7 +81,7 @@ int main(int argc, char **argv){
 
     frame_producer.tell_no_more_generating_header();
 
-    for(int i=0; i<511*2; i++){
+    for(int i=0; i<511*4; i++){
         snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", num);
         frame_producer.produce_next_qr_image_to_file(namebuf);
         num++;

@@ -17,6 +17,7 @@ Qr_frame_producer::Qr_frame_producer()
     this->file_info_.filename = std::string("");
     this->file_info_.filepath = std::string("");
     this->file_info_.fp = NULL;
+    this->current_position_of_file_to_process_ = 0;
 }
 
 Qr_frame_producer::~Qr_frame_producer(){
@@ -129,6 +130,9 @@ void Qr_frame_producer::produce_metadata(){
     int datalength_per_chunk = optimal_rsk * nch * utils::nbits_forsymcombinationsnumber(optimal_rsn) / 8;
     int remain_length = this->file_info_.filelength % datalength_per_chunk;
     int chunk_length = this->file_info_.filelength / datalength_per_chunk;
+    this->datalength_per_chunk_ = datalength_per_chunk;
+    this->remain_length_ = remain_length;
+    this->chunk_length_ = chunk_length;
     int curr_size = 0;
     int curr_power = 2;
     do{
@@ -209,6 +213,7 @@ void Qr_frame_producer::setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint3
     this->encoder_ = new OpenRSEncoder();
     this->encoder_->set_filename(this->filename_.c_str());
     this->encoder_->set_filelength(this->file_info_.filelength);
+    this->encoder_->set_fileread_start_offset(0);
     this->encoder_->set_datafeed_provider(this);
     this->encoder_->set_is_header_frame_generating(false);
     this->encoder_->set_is_header_frame_generating(false);
@@ -225,6 +230,7 @@ void Qr_frame_producer::setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint3
     this->encoder_res_ = new OpenRSEncoder();
     this->encoder_res_->set_filename(this->filename_.c_str());
     this->encoder_res_->set_filelength(this->file_info_.filelength);
+    this->encoder_res_->set_fileread_start_offset(this->datalength_per_chunk_ * this->chunk_length_);
     this->encoder_res_->set_datafeed_provider(this);
     this->encoder_res_->set_is_header_frame_generating(false);
     this->encoder_res_->set_is_header_frame_generating(false);
@@ -251,8 +257,13 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
         this->metadata_encoder_->set_is_header_frame_generating(true);
         this->metadata_encoder_->produce_next_encoded_frame(frame);
     }else{
-        this->encoder_->set_is_header_frame_generating(false);
-        this->encoder_->produce_next_encoded_frame(frame);
+        Encoder* current_encoder;
+       // if(this->current_position_of_file_to_process_ < this->chunk_length_ * this->datalength_per_chunk_)
+            current_encoder = this->encoder_;
+        //else
+        //    current_encoder = this->encoder_res_;//fixme///todo - using this fails decoder
+        current_encoder->set_is_header_frame_generating(false);
+        current_encoder->produce_next_encoded_frame(frame);
     }
     DLOG("Frame number : %d\n", (int)frame->get_frame_number());
     int resulting_width;
@@ -290,6 +301,7 @@ int Qr_frame_producer::getFileData(FileChunk *chunk){
                          chunk->chunkdata,
                          chunk->chunk_fileoffset,
                          chunk->chunk_length);
+        this->current_position_of_file_to_process_ += chunk->chunk_length;
         return nread;
     }else if (chunk->reason == 1){
         char* metadata = &(this->metadata_[chunk->chunk_fileoffset]);
