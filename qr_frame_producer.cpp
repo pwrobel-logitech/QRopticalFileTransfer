@@ -17,7 +17,6 @@ Qr_frame_producer::Qr_frame_producer()
     this->file_info_.filename = std::string("");
     this->file_info_.filepath = std::string("");
     this->file_info_.fp = NULL;
-    this->iframe_counter_ = 0;
 }
 
 Qr_frame_producer::~Qr_frame_producer(){
@@ -266,18 +265,15 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     *produced_image = generated_grayscale_data;
     *produced_width = resulting_width;
     delete frame;
-    this->iframe_counter_++;
     return 0;
 };
 
 int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagename){
     DLOG("Producing image..\n");
-    char namebuf[60];
-    snprintf(namebuf, sizeof(namebuf), imagename, this->iframe_counter_);
     int resw;
     char* res_graybuf;
     this->produce_next_qr_grayscale_image_to_mem(&res_graybuf, &resw);
-    FILE *f = fopen(namebuf, "wb");
+    FILE *f = fopen(imagename, "wb");
     fwrite(res_graybuf, resw*resw, 1, f);
     fclose(f);
     return 0;

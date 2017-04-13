@@ -37,7 +37,6 @@ private:
     std::string filename_;
     Encoder* encoder_;
     Encoder* encoder_res_;
-    uint32_t iframe_counter_;
 
     // metadata encoder on its own is a decoder with a fixed RS()
     Encoder* metadata_encoder_;//this stores filename, length, hash, main RS(n,k) and remainded RS(n,k) -

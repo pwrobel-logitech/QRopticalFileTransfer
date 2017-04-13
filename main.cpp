@@ -64,19 +64,27 @@ int main(int argc, char **argv){
                 utils::count_symbols_to_fit(n_possible_symbols_dst, n_possible_symbols_src, count_symbols_src));
 
 
+    char namebuf[60];
+
+
     Qr_frame_producer frame_producer;
 
 
     frame_producer.set_external_file_info("textmy.txt", "/repos/qr/", 31);
 
+    int num = 0;
     for(int i=0; i<7*20; i++){
-        frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
+        snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", num);
+        frame_producer.produce_next_qr_image_to_file(namebuf);
+        num++;
     }
 
     frame_producer.tell_no_more_generating_header();
 
     for(int i=0; i<511*2; i++){
-        frame_producer.produce_next_qr_image_to_file("QRNE_%d_frame");
+        snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", num);
+        frame_producer.produce_next_qr_image_to_file(namebuf);
+        num++;
     }
 
 
