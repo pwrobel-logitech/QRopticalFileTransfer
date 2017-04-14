@@ -67,6 +67,9 @@ private:
     //keeps the current position within the file the encoders are so far processed
     uint32_t current_position_of_file_to_process_;
 
+    //last framenumber produced by the main encoder or the res encoder if used
+    uint32_t last_frame_num_produced_by_encoder_;
+
     void produce_metadata();
     void calculate_file_content_hash(int hash_chunk_size);
 

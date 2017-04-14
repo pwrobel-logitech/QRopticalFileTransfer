@@ -43,6 +43,11 @@ public:
 
     generated_frame_status produce_next_encoded_frame(EncodedFrame* frame);
 
+
+    void set_first_dataframe_number_offset(uint32_t numoffset);
+    uint32_t get_last_produced_dataframe_number();
+
+
     static struct codeconst {
         int symsize;
         int genpoly;
@@ -64,6 +69,8 @@ protected:
 
     uint32_t n_header_frame_processed_;
     uint32_t n_dataframe_processed_;
+    //usually 0, used when residual decoder starts producing from the non-zero frame
+    uint32_t n_dataframe_first_frame_number_produced_by_the_encoder_;
 
     //RS encode
     bool apply_RS_code_to_internal_memory();

@@ -65,6 +65,7 @@ OpenRSEncoder::OpenRSEncoder(){
     this->is_header_frame_generating_ = true;
     this->total_file_length_ = 0;
     this->offset_in_file_reading_starts_ = 0;
+    this->n_dataframe_first_frame_number_produced_by_the_encoder_ = 0;
 };
 
 OpenRSEncoder::~OpenRSEncoder(){
@@ -152,6 +153,15 @@ void OpenRSEncoder::create_header_frame_data(EncodedFrame* frame){
     //this->n_header_frame_processed_++;
 };
 
+void OpenRSEncoder::set_first_dataframe_number_offset(uint32_t numoffset){
+    this->n_dataframe_processed_ = numoffset;
+    n_dataframe_first_frame_number_produced_by_the_encoder_ = numoffset;
+};
+
+uint32_t OpenRSEncoder::get_last_produced_dataframe_number(){
+    return this->n_dataframe_processed_;
+};
+
 Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(EncodedFrame* frame){
     //header generation
     //if(this->is_header_frame_generating_){
@@ -167,7 +177,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     if(this->is_header_frame_generating_)
         ifr=this->n_header_frame_processed_;
     if ((this->byte_of_file_currently_processed_to_frames_ >= this->bytes_currently_read_from_file_)
-            && (ifr % this->RSn_ == 0)){
+            && ((ifr - this->n_dataframe_first_frame_number_produced_by_the_encoder_) % this->RSn_ == 0)){
         uint32_t mem_to_read = this->RSk_ * this->n_channels_ * utils::nbits_forsymcombinationsnumber(this->RSn_) / 8;//(this->RSk_) * this->bytes_per_generated_frame_;
         FileChunk* chunk = new FileChunk();
         chunk->chunkdata = new char[mem_to_read];
