@@ -264,14 +264,15 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
         this->metadata_encoder_->produce_next_encoded_frame(frame);
     }else{
         Encoder* current_encoder;
-        if(this->encoder_->get_last_produced_dataframe_number() < this->chunk_length_ * this->file_info_.RSn){
+        uint32_t will_frame = 1 + this->encoder_->get_last_produced_dataframe_number();
+        if(will_frame < this->chunk_length_ * this->file_info_.RSn){
             current_encoder = this->encoder_;
-            this->last_frame_num_produced_by_encoder_ = this->encoder_->get_last_produced_dataframe_number();
+            //this->last_frame_num_produced_by_encoder_ = this->encoder_->get_last_produced_dataframe_number();
         }
         else{
             current_encoder = this->encoder_res_;
             if(this->encoder_res_->get_last_produced_dataframe_number() == 0)
-                this->encoder_res_->set_first_dataframe_number_offset(1 + this->last_frame_num_produced_by_encoder_);
+                this->encoder_res_->set_first_dataframe_number_offset(will_frame);
         }
         current_encoder->set_is_header_frame_generating(false);
         current_encoder->produce_next_encoded_frame(frame);
