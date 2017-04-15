@@ -59,6 +59,7 @@ RS_decoder::RS_decoder(){
     this->old_chunk_number_ = 0;
     this->status_ = RS_decoder::STILL_OK;
     this->configured_ = false;
+    this->fist_proper_framedata_number_for_this_decoder_ = 0;
 }
 
 RS_decoder::~RS_decoder(){
@@ -74,6 +75,10 @@ RS_decoder::~RS_decoder(){
 
 void RS_decoder::set_header_frame_generating(bool isheader){
     this->is_header_frame_generating_ = isheader;
+};
+
+void RS_decoder::fist_proper_framedata_number_for_this_decoder(uint32_t first){
+    this->fist_proper_framedata_number_for_this_decoder_ = first;
 };
 
 void RS_decoder::internal_getdata_from_internal_memory(){
@@ -128,9 +133,13 @@ RS_decoder::detector_status RS_decoder::tell_no_more_qr(){
 
 RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
     /////////////////// first action to recover previous chunk from the internal memory
-    int ipos = (frame->get_frame_number()) % this->RSn_;
+    int ipos = (frame->get_frame_number() - this->fist_proper_framedata_number_for_this_decoder_) % this->RSn_;
 
-    uint32_t curr_chunk = (frame->get_frame_number()) / this->RSn_;
+    DCHECK(ipos >= 0);
+
+    uint32_t curr_chunk = (frame->get_frame_number() - this->fist_proper_framedata_number_for_this_decoder_) / this->RSn_;
+
+    DCHECK(curr_chunk >= 0);
 
     if (curr_chunk > this->old_chunk_number_){ // time to decode the internal_memory_ + pack bits back to the original array
         this->internal_getdata_from_internal_memory();

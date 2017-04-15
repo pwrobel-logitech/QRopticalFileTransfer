@@ -71,6 +71,8 @@ protected:
     uint32_t n_dataframe_processed_;
     //usually 0, used when residual decoder starts producing from the non-zero frame
     uint32_t n_dataframe_first_frame_number_produced_by_the_encoder_;
+    //encoded frame number into last dataframe produced
+    uint32_t n_dataframe_last_produced_;
 
     //RS encode
     bool apply_RS_code_to_internal_memory();

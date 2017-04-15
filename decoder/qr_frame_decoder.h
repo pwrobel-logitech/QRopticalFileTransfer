@@ -28,6 +28,10 @@ protected:
     uint32_t RSn_rem_, RSk_rem_;
     uint32_t decoder_bytes_len_;
     uint32_t decoder_res_bytes_len_;
+
+    //what the res decoder should use as a first framenumber
+    uint32_t first_proper_framenumber_into_res_decoder_;
+
     Decoder* decoder_;
     Decoder* res_decoder_; //residual decoder for the last (RSn_rem_, RSk_rem_) pair
     Decoder* header_decoder_;

@@ -75,6 +75,11 @@ public:
 
     virtual void set_chunk_listener(ChunkListener* l) = 0;
 
+    //the first number of frame this decoder should use - serves as an offset
+    //note this is not necessarily the first received frame number - because the first frame that
+    //should have been received may have been not passed - so needed to tell the decoder manually
+    virtual void fist_proper_framedata_number_for_this_decoder(uint32_t first) = 0;
+
 
 protected:
     // this will keep the current status of the detector

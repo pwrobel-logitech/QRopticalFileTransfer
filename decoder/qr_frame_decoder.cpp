@@ -17,6 +17,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->header_detection_done_ = false;
     this->decoder_res_bytes_len_ = 0;
     this->decoder_bytes_len_ = 0;
+    this->first_proper_framenumber_into_res_decoder_ = 0;
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -75,6 +76,7 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
     this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
     this->decoder_->set_chunk_listener(this);
     this->decoder_->set_configured(true);
+    this->decoder_->fist_proper_framedata_number_for_this_decoder(0);
 
     this->res_decoder_->set_header_frame_generating(false);
     int nchpr = utils::count_symbols_to_fit(this->RSn_rem_, 256, qrlen-4)-1;
@@ -89,6 +91,11 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
 
     this->decoder_bytes_len_ = chun_len;
     this->decoder_res_bytes_len_ = chun_len_res;
+
+    int nchunk_main = this->file_info_.filelength / chun_len;
+    //offset on the remainder decoder
+    this->first_proper_framenumber_into_res_decoder_ = nchunk_main*this->RSn_;
+    this->res_decoder_->fist_proper_framedata_number_for_this_decoder(nchunk_main*this->RSn_);
 };
 
 
@@ -264,17 +271,29 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         this->analyze_header();
     }else{
 
+        Decoder* final_decoder;
+        int chosenRSn, chosenRSk;
+
+        if(nfr < first_proper_framenumber_into_res_decoder_){
+            final_decoder = this->decoder_;
+        }else{
+            this->decoder_->tell_no_more_qr();
+            final_decoder = this->res_decoder_;
+        }
+        chosenRSn = final_decoder->get_RSn();
+        chosenRSk = final_decoder->get_RSk();
+
         fr->set_frame_number(nfr);
         fr->framedata_.resize(generated_datalength);
         memcpy(&(fr->framedata_[0]), generated_data, generated_datalength);
-        fr->set_frame_RSnk(this->decoder_->get_RSn(), this->decoder_->get_RSk());
+        fr->set_frame_RSnk(chosenRSn, chosenRSk);
 
         printf("frame set %d\n",nfr);
         printf("FR send : \n");
         for(int q=0;q<fr->framedata_.size();q++){
             printf("%d ", fr->framedata_[q]);
         }
-        RS_decoder::detector_status dec_status = this->decoder_->send_next_frame(fr);
+        RS_decoder::detector_status dec_status = final_decoder->send_next_frame(fr);
         if (dec_status == Decoder::TOO_MUCH_ERRORS)
             ret_status = ERRONEUS;
     }

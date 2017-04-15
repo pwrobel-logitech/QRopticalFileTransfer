@@ -159,7 +159,7 @@ void OpenRSEncoder::set_first_dataframe_number_offset(uint32_t numoffset){
 };
 
 uint32_t OpenRSEncoder::get_last_produced_dataframe_number(){
-    return this->n_dataframe_processed_;
+    return this->n_dataframe_last_produced_;
 };
 
 Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(EncodedFrame* frame){
@@ -252,6 +252,7 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
     else
         frame->set_frame_number(this->n_dataframe_processed_);
     this->create_data_for_QR(*frame);
+    this->n_dataframe_last_produced_ = this->n_dataframe_processed_;
 
 
     if(this->is_header_frame_generating_){

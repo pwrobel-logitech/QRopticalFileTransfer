@@ -211,6 +211,11 @@ void Qr_frame_producer::produce_metadata(){
 
 void Qr_frame_producer::setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint32_t rK){
 
+    this->file_info_.RSn = N;
+    this->file_info_.RSk = K;
+    this->file_info_.RSn_residual = rN;
+    this->file_info_.RSk_residual = rK;
+
     this->encoder_ = new OpenRSEncoder();
     this->encoder_->set_filename(this->filename_.c_str());
     this->encoder_->set_filelength(this->file_info_.filelength);
@@ -259,14 +264,14 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
         this->metadata_encoder_->produce_next_encoded_frame(frame);
     }else{
         Encoder* current_encoder;
-        if(this->current_position_of_file_to_process_ <= this->chunk_length_ * this->datalength_per_chunk_){
+        if(this->encoder_->get_last_produced_dataframe_number() < this->chunk_length_ * this->file_info_.RSn){
             current_encoder = this->encoder_;
             this->last_frame_num_produced_by_encoder_ = this->encoder_->get_last_produced_dataframe_number();
         }
         else{
-            current_encoder = this->encoder_res_;//fixme
+            current_encoder = this->encoder_res_;
             if(this->encoder_res_->get_last_produced_dataframe_number() == 0)
-                this->encoder_res_->set_first_dataframe_number_offset(this->last_frame_num_produced_by_encoder_);
+                this->encoder_res_->set_first_dataframe_number_offset(1 + this->last_frame_num_produced_by_encoder_);
         }
         current_encoder->set_is_header_frame_generating(false);
         current_encoder->produce_next_encoded_frame(frame);
