@@ -16,8 +16,12 @@ uint32_t get_file_size_fp(void* fp);
 int read_file(const char* filepath, char* data_after_read, uint32_t offset, uint32_t size);
 
 int read_file_fp(void* fp, char* data_after_read, uint32_t offset, uint32_t size);
+int write_file_fp(void* fp, const char* data_to_write, uint32_t offset, uint32_t size);
+int remove_file(const char* filenamefull);
 void FileClose(void* fn);
 void* FileOpenToRead(const char* fn);
+void* FileOpenToWrite(const char* fn);
+
 
 #ifdef OS_WIN
 uint32_t get_file_size(char* filepath){

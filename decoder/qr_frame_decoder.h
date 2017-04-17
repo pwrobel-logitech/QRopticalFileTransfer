@@ -1,13 +1,12 @@
 #include "../common_decoder_encoder.h"
 #include "rs_decoder.h"
 
-
 class QR_frame_decoder : public ChunkListener {
 public:
 
     QR_frame_decoder();
     ~QR_frame_decoder();
-
+    ///////////API
     // deliver next qr image data
     // detector should itself recognize which frame number does it corresponds to
     immediate_status send_next_grayscale_qr_frame(const char* grayscale_qr_data,
@@ -16,6 +15,10 @@ public:
     immediate_status tell_no_more_qr();
     void print_current_header();
     void print_current_maindata();
+
+    void tell_file_generation_path(const char* filepath);
+
+    ////////////End API
 
     int notifyNewChunk(int chunklength, const char* chunkdata, int context);
 
@@ -56,4 +59,24 @@ protected:
     void setup_detector_after_header_recognized(); // when correct header is detected
                                                    // do the RK setup
     FileInfo file_info_; //file info the info from the header is being saved to
+
+    std::string api_told_filepath_;
+
+
+    //flush it to the file detected in the fileinfo
+    void flush_data_to_file(const char* data, uint32_t datalen);
+
+    //flush according to this current offset
+    uint32_t position_in_file_to_flush_;
+
+    // check the hash of the written file to the one we were told in the header. True if the hash is OK
+    bool is_file_hash_correct();
+
+
+    //false when producing data. True, when all the file was flushed - no matter if it was confirmed to be correct or not
+    bool is_all_file_processing_done_;
+    //set to true only when the previous processing has been done, and the hash has been confirmed to be correct
+    bool is_hash_of_flushed_file_correct_;
+
+
 };

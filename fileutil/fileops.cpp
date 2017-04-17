@@ -29,6 +29,10 @@ void* FileOpenToRead(const char* fn){
     return (void*)fopen(fn, "r");
 }
 
+void* FileOpenToWrite(const char* fn){
+    return (void*)fopen(fn, "w");
+}
+
 void FileClose(void* fn){
     fclose((FILE*)fn);
 }
@@ -45,6 +49,10 @@ int read_file(const char* filepath, char* data_after_read, uint32_t offset, uint
     return 1;
 }
 
+int remove_file(const char* filenamefull){
+    return remove(filenamefull);
+};
+
 //reads already opened file
 int read_file_fp(void* fp, char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
     if(fp == NULL)
@@ -55,6 +63,18 @@ int read_file_fp(void* fp, char* data_after_read, uint32_t offset, uint32_t size
         return -1;
     return 1;
 }
+
+//writes to already opened file
+int write_file_fp(void* fp, const char* data_to_write, uint32_t offset, uint32_t size){
+    if(fp == NULL)
+        return -1;
+    if (fseek((FILE*)fp, offset, SEEK_SET) != 0)
+        return -1;
+    if (fwrite (data_to_write, size, 1, (FILE*)fp) != size)
+        return -1;
+    return 1;
+}
+
 
 #ifdef OS_WIN
 uint32_t get_file_size(char* filepath){

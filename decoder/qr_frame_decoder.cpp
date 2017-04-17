@@ -19,6 +19,10 @@ QR_frame_decoder::QR_frame_decoder(){
     this->decoder_bytes_len_ = 0;
     this->first_proper_framenumber_into_res_decoder_ = 0;
     this->is_switched_to_residual_data_decoder_ = false;
+    this->position_in_file_to_flush_ = 0;
+    this->api_told_filepath_ = std::string("");
+    this->is_all_file_processing_done_ = false;
+    this->is_hash_of_flushed_file_correct_ = false;
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -43,6 +47,10 @@ QR_frame_decoder::~QR_frame_decoder(){
         delete this->res_decoder_;
     if (this->header_decoder_ != NULL)
         delete this->header_decoder_;
+    if(this->file_info_.fp)
+        if(this->file_info_.fp != NULL)
+            FileClose(this->file_info_.fp);
+
 }
 
 immediate_status QR_frame_decoder::tell_no_more_qr(){
@@ -60,6 +68,10 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
         }
     }
     return stat;
+};
+
+void QR_frame_decoder::tell_file_generation_path(const char* filepath){
+    this->api_told_filepath_ = std::string(filepath);
 };
 
 void QR_frame_decoder::setup_detector_after_header_recognized(){
@@ -189,6 +201,11 @@ int QR_frame_decoder::analyze_header(){
         this->file_info_.RSk_residual = k;
         this->file_info_.filelength = flength;
         this->file_info_.filename = std::string(start + 45, fname_length);
+        this->file_info_.filepath = this->api_told_filepath_;
+        if(this->file_info_.fp != NULL)
+            FileClose(this->file_info_.fp);
+        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename;
+        this->file_info_.fp = FileOpenToWrite(fullpathname.c_str());
         this->file_info_.hash.resize(8);
         for(int q = 0; q < 8; q++)
             this->file_info_.hash[q] = ((char*)(start + 37))[q];
@@ -279,8 +296,8 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
             final_decoder = this->decoder_;
         }else{
             if(!this->is_switched_to_residual_data_decoder_){
-                this->is_switched_to_residual_data_decoder_ = true;
                 this->decoder_->tell_no_more_qr();
+                this->is_switched_to_residual_data_decoder_ = true;
             }
             final_decoder = this->res_decoder_;
         }
@@ -300,6 +317,12 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         RS_decoder::detector_status dec_status = final_decoder->send_next_frame(fr);
         if (dec_status == Decoder::TOO_MUCH_ERRORS)
             ret_status = ERRONEUS;
+        if (ret_status != ERRONEUS){
+            if (this->is_all_file_processing_done_ && (!this->is_hash_of_flushed_file_correct_))
+                ret_status = ERRONEUS_HASH_WRONG;
+            if (this->is_all_file_processing_done_ && (this->is_hash_of_flushed_file_correct_))
+                ret_status = ALREADY_CORRECTLY_TRANSFERRED;
+        }
     }
     delete []generated_data;
     return ret_status;
@@ -319,10 +342,76 @@ int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int
             this->main_chunk_data_tmp_.push_back(chunkdata[i]);
         }
         printf("New temp chunkdata currently saved is %d \n", this->main_chunk_data_tmp_.size());
+        uint32_t datalen = chunklength;
+        if (this->is_switched_to_residual_data_decoder_){
+            datalen = this->file_info_.filelength % this->decoder_bytes_len_;
+            if (datalen > chunklength)
+                datalen = chunklength;
+        }
+        if(this->position_in_file_to_flush_ + datalen <= this->file_info_.filelength)
+            this->flush_data_to_file(chunkdata, datalen);
     }
 
     return 0;
 }
+
+void QR_frame_decoder::flush_data_to_file(const char *data, uint32_t datalen){
+    int stat = 0;
+    if(this->file_info_.fp)
+        stat = write_file_fp(this->file_info_.fp, data, this->position_in_file_to_flush_, datalen);
+    this->position_in_file_to_flush_ += datalen;
+    if(this->is_switched_to_residual_data_decoder_){ //last remaining part of file was saved, check hash
+        if(this->file_info_.fp != NULL)
+            FileClose(this->file_info_.fp);
+        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename;
+        this->file_info_.fp = FileOpenToRead(fullpathname.c_str());
+        bool is_hash_ok = this->is_file_hash_correct();
+        FileClose(this->file_info_.fp);
+        if(!is_hash_ok)
+            remove_file(fullpathname.c_str());
+        this->file_info_.fp = NULL;
+        this->is_all_file_processing_done_ = true;
+        this->is_hash_of_flushed_file_correct_ = is_hash_ok;
+    }
+}
+
+bool QR_frame_decoder::is_file_hash_correct(){
+    uint32_t hash_chunk_size = fixed_filehash_buff_size;
+    if (this->file_info_.fp == NULL)
+        return false;
+    int chunk_num = this->file_info_.filelength / hash_chunk_size;
+    int bytes_remain = this->file_info_.filelength % hash_chunk_size;
+    SHA256 sha256stream;
+    uint32_t lastpos = 0;
+    for(int i = 0; i < chunk_num; i++){
+        if(read_file_fp(this->file_info_.fp, fixed_filehash_buff,
+                        i*hash_chunk_size, hash_chunk_size) == -1){
+                            DLOG("ERR, failed to read file !\n");
+                            return false;
+                        }
+        sha256stream.add(fixed_filehash_buff, hash_chunk_size); //hash
+        lastpos += hash_chunk_size;
+    }
+    if (bytes_remain > 0){
+        if(read_file_fp(this->file_info_.fp, fixed_filehash_buff,
+                        lastpos, bytes_remain) == -1){
+                            DLOG("ERR, failed to read file !\n");
+                            return false;
+                        }
+        sha256stream.add(fixed_filehash_buff, bytes_remain); //hash
+    }
+    std::string h_small = sha256stream.getHash();
+
+
+
+    std::string hs_low  = std::string(h_small.c_str(), 8);
+    uint32_t hs_wlow = (uint32_t)strtol(hs_low.c_str(), NULL, 16);
+    uint32_t hs_wlow_from_header =*((uint32_t*)(&this->file_info_.hash[0]));
+    std::string hs_high = std::string(h_small.c_str() + 8, 8);
+    uint32_t hs_whigh = (uint32_t)strtol(hs_high.c_str(), NULL, 16);
+    uint32_t hs_whigh_from_header = *((uint32_t*)(&this->file_info_.hash[4]));
+    return ((hs_wlow == hs_wlow_from_header) && (hs_whigh == hs_whigh_from_header));
+};
 
 void QR_frame_decoder::print_current_header(){
     printf("Curr header tmp, size %d : \n", this->header_data_tmp_.size());
