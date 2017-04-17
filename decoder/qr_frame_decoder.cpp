@@ -233,6 +233,10 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     if((nfr != 0xffffffff) && (!this->header_detection_done_))
         return ERR_DATAFRAME_TOO_EARLY;
 
+    if((nfr == 0xffffffff) && (this->header_detection_done_)){
+        return HEADER_ALREADY_DETECTED;
+    }
+
     if((nfr != 0xffffffff) && (this->header_detection_done_)){
         this->is_header_generating_ = false; //switch to data detection
     }
@@ -296,7 +300,8 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
             final_decoder = this->decoder_;
         }else{
             if(!this->is_switched_to_residual_data_decoder_){
-                this->decoder_->tell_no_more_qr();
+                if(this->file_info_.filelength >= this->decoder_bytes_len_)
+                    this->decoder_->tell_no_more_qr();
                 this->is_switched_to_residual_data_decoder_ = true;
             }
             final_decoder = this->res_decoder_;

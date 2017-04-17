@@ -70,7 +70,7 @@ int main(int argc, char **argv){
     Qr_frame_producer frame_producer;
 
 
-    frame_producer.set_external_file_info("textshort.txt", "/repos/qr/", 31);
+    frame_producer.set_external_file_info("t.txt", "/repos/qr/", 31);
 
     int num = 0;
     for(int i=0; i<7*20; i++){

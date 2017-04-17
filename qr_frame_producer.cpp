@@ -141,7 +141,7 @@ void Qr_frame_producer::produce_metadata(){
         curr_power += 1;
     }while(curr_size<remain_length);
     int remN = (1 << curr_power) - 1;
-    int remK = (1 << curr_power) / 2;
+    int remK = remN - ((1 << curr_power) / 2);
     this->setup_encoder(optimal_rsn, optimal_rsk, remN, remK);
     // fill metadata array
     while (cont){
