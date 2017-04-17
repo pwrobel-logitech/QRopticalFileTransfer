@@ -287,7 +287,7 @@ bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
     unsigned char* data = &(frame.framedata_[data_offset]);
     memset(data, 0, this->bytes_per_generated_frame_);
     int nf = this->is_header_frame_generating_ ? this->n_header_frame_processed_ : this->n_dataframe_processed_;
-    int i = nf % this->RSn_;
+    int i = (nf - this->n_dataframe_first_frame_number_produced_by_the_encoder_) % this->RSn_;
     for (uint32_t j = 0; j<this->n_channels_; j++){
         //for (uint32_t i = 0; i<this->RSk_; i++){
             uint32_t valset = this->internal_memory_[i+j*this->RSn_];
