@@ -18,6 +18,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->decoder_res_bytes_len_ = 0;
     this->decoder_bytes_len_ = 0;
     this->first_proper_framenumber_into_res_decoder_ = 0;
+    this->is_switched_to_residual_data_decoder_ = false;
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -277,7 +278,10 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         if(nfr < first_proper_framenumber_into_res_decoder_){
             final_decoder = this->decoder_;
         }else{
-            this->decoder_->tell_no_more_qr();
+            if(!this->is_switched_to_residual_data_decoder_){
+                this->is_switched_to_residual_data_decoder_ = true;
+                this->decoder_->tell_no_more_qr();
+            }
             final_decoder = this->res_decoder_;
         }
         chosenRSn = final_decoder->get_RSn();

@@ -38,6 +38,8 @@ protected:
     void reconfigure_qr_size(int qrlen); // only header frame, starting with the 0xffffffff can trigger the reconfiguration
     bool is_header_generating_;
 
+    bool is_switched_to_residual_data_decoder_;
+
     std::vector<char> header_data_;
     std::vector<char> header_data_tmp_;
 
