@@ -38,6 +38,8 @@ private:
     Encoder* encoder_;
     Encoder* encoder_res_;
 
+    bool is_first_dataframe_number_offset_reconfigured_on_the_res_decoder_;
+
     // metadata encoder on its own is a decoder with a fixed RS()
     Encoder* metadata_encoder_;//this stores filename, length, hash, main RS(n,k) and remainded RS(n,k) -
                                //for the shorter file end

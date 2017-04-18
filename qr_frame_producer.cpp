@@ -19,6 +19,7 @@ Qr_frame_producer::Qr_frame_producer()
     this->file_info_.fp = NULL;
     this->current_position_of_file_to_process_ = 0;
     this->last_frame_num_produced_by_encoder_ = 0;
+    this->is_first_dataframe_number_offset_reconfigured_on_the_res_decoder_ = false;
 }
 
 Qr_frame_producer::~Qr_frame_producer(){
@@ -265,14 +266,20 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     }else{
         Encoder* current_encoder;
         uint32_t will_frame = 1 + this->encoder_->get_last_produced_dataframe_number();
+
         if(will_frame < this->chunk_length_ * this->file_info_.RSn){
             current_encoder = this->encoder_;
             //this->last_frame_num_produced_by_encoder_ = this->encoder_->get_last_produced_dataframe_number();
         }
         else{
             current_encoder = this->encoder_res_;
-            if(this->encoder_res_->get_last_produced_dataframe_number() == 0)
+            if(this->chunk_length_ == 0)
+                will_frame = 0;
+            if(this->encoder_res_->get_last_produced_dataframe_number() == 0 &&
+               !this->is_first_dataframe_number_offset_reconfigured_on_the_res_decoder_){
                 this->encoder_res_->set_first_dataframe_number_offset(will_frame);
+                this->is_first_dataframe_number_offset_reconfigured_on_the_res_decoder_ = true;
+            }
         }
         current_encoder->set_is_header_frame_generating(false);
         current_encoder->produce_next_encoded_frame(frame);
