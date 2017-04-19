@@ -16,7 +16,7 @@ int main(int argc, char** argv){
 
     immediate_status last_status;
 
-    for (int j = 0; j<7*20+511*3; j++) {
+    for (int j = 0; j<7*20+511*30; j++) {
         snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", j);
         f = fopen(namebuf, "rb");
         if (f == NULL)

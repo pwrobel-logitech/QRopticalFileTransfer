@@ -222,11 +222,17 @@ int QR_frame_decoder::analyze_header(){
 immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *grayscale_qr_data,
                                                                 int image_width, int image_height){
     int generated_datalength;
-    char* generated_data;
+    char* generated_data = NULL;
     immediate_status ret_status =
             generate_data_from_qr_greyscalebuffer(&generated_datalength, &generated_data,
                                                   grayscale_qr_data,
                                                   image_width, image_height);
+
+    if(generated_data == NULL)
+        return NOT_RECOGNIZED;
+
+    if(ret_status == NOT_RECOGNIZED)
+        return NOT_RECOGNIZED;
     ////////////////////////// process generated_data = extract frame number
     uint32_t nfr = *((uint32_t*)generated_data);
 

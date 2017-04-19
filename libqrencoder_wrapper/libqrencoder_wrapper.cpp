@@ -37,7 +37,7 @@ const int static_workbuffer_size = (int)1.5*1024*1024; //1.5MB
 char static_workbuffer1[static_workbuffer_size]; //for processing jpeg - reduces number of allocations
 
 size_t compressImage(char* buffer, size_t width, size_t height, unsigned char** outputBuffer, int quality){
-
+/*
   unsigned char* bits = (unsigned char*) buffer;
   unsigned char* outp = (unsigned char*) static_workbuffer1;
 
@@ -60,8 +60,8 @@ size_t compressImage(char* buffer, size_t width, size_t height, unsigned char** 
   jpeg_mem_dest(&cinfo, &outp,(long unsigned int*) &outlen);
 
   jpeg_set_defaults(&cinfo);
-  jpeg_set_quality(&cinfo, quality, (boolean)true);
-  jpeg_start_compress(&cinfo, (boolean)true);
+  jpeg_set_quality(&cinfo, quality, (boolean)1);
+  jpeg_start_compress(&cinfo, (boolean)1);
 
   while(cinfo.next_scanline < cinfo.image_height){
     row_pointer[0] = &bits[cinfo.next_scanline * row_stride];
@@ -74,7 +74,8 @@ size_t compressImage(char* buffer, size_t width, size_t height, unsigned char** 
   *outputBuffer = outp;
   //memcpy(outputBuffer, outp, outlen);
 
-  return outlen;
+  return outlen;*/
+    return 0;
 }
 
 
@@ -305,7 +306,7 @@ using namespace qrviddec;
 
 immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, const char* input_greyscale_buffer,
                                            int width, int height){
-
+//GLOBAL DEFAULT   20 zxing::qrcode::QRCodeReader::decode(zxing::Ref<zxing::BinaryBitmap>, zxing::DecodeHints)
     immediate_status ret = RECOGNIZED;
     double t = currmili();
     try{
@@ -348,6 +349,7 @@ immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength
 #endif
         cerr << "Error zxing, not recognized qr code : " << e.what() << endl;
         ret = NOT_RECOGNIZED;
+        *generated_data = NULL;
     }
     return ret;
 

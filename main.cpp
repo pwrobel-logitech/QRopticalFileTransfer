@@ -81,7 +81,7 @@ int main(int argc, char **argv){
 
     frame_producer.tell_no_more_generating_header();
 
-    for(int i=0; i<511*3; i++){
+    for(int i=0; i<511*30; i++){
         snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", num);
         frame_producer.produce_next_qr_image_to_file(namebuf);
         num++;

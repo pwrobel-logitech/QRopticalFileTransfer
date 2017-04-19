@@ -9,7 +9,7 @@ CFLAGS_ARM=-I. -I$(BASE)/include/c++/4.9.x/bits/ -Wall
 CPP_ARM=$(BASE)/bin/arm-linux-androideabi-g++
 STRIP_ARM=$(BASE)/bin/arm-linux-androideabi-strip
 LIBQRENCODER_LIBFOLDERNAME=libqrencode
-LIBZXING=../zxing-cpp/core/src
+LIBZXING=zxing_lib/zxing-newcpp/zxing-cpp/core/src
 
 x86_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper
 	g++ -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -O0 -g -shared open_rs_encoder.cpp qr_frame_producer.cpp hash-library/sha256.cpp $(current_dir)/fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper

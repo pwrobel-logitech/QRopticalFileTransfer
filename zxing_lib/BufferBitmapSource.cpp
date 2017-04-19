@@ -3,12 +3,14 @@
  
 namespace qrviddec {
  
-BufferBitmapSource::BufferBitmapSource(int inWidth, int inHeight, unsigned char * inBuffer) 
+BufferBitmapSource::BufferBitmapSource(int inWidth, int inHeight, unsigned char* v)
+    : LuminanceSource(inWidth, inHeight)
 {
 	width = inWidth; 
 	height = inHeight; 
-	buffer = inBuffer; 
+    buffer = v;
 }
+
  
 BufferBitmapSource::~BufferBitmapSource()
 {
@@ -24,7 +26,7 @@ int BufferBitmapSource::getHeight() const
 	return height; 
 }
  
-unsigned char * BufferBitmapSource::getRow(int y, unsigned char * row)
+zxing::ArrayRef<char> BufferBitmapSource::getRow(int y, zxing::ArrayRef<char> row) const
 {
 	if (y < 0 || y >= height) 
 	{
@@ -32,17 +34,22 @@ unsigned char * BufferBitmapSource::getRow(int y, unsigned char * row)
 		return NULL; 
 	}
 	// WARNING: NO ERROR CHECKING! You will want to add some in your code. 
-	if (row == NULL) row = new unsigned char[width]; 
+    ArrayRef<char> arrout(width);
 	for (int x = 0; x < width; x ++)
 	{
-		row[x] = buffer[y*width+x]; 
+        arrout[x] = buffer[y*width+x];
 	}
-	return row; 
+    const ArrayRef<char> resrow = arrout;
+    return resrow;
 }
  
-unsigned char * BufferBitmapSource::getMatrix()
+zxing::ArrayRef<char> BufferBitmapSource::getMatrix() const
 {
-	return buffer; 
+   ArrayRef<char> arrout(width*height);
+   for(int q = 0; q < width * height; q++)
+       arrout[q] = buffer[q];
+   const ArrayRef<char> res = arrout;
+   return res;
 }
  
 }
