@@ -291,7 +291,7 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
                                            frame->framedata_.size(),
                                            &generated_grayscale_data,
                                            &resulting_width,
-                                          1);
+                                           3);
     *produced_image = generated_grayscale_data;
     *produced_width = resulting_width;
     delete frame;
