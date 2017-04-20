@@ -3,7 +3,7 @@
 #include "qrencode.h"
 
 #include <sys/time.h>
-#include "bin_jpeg/jpeglib.h"
+//#include "bin_jpeg/jpeglib.h"
 
 
 #include <iostream>
@@ -91,6 +91,7 @@ void finish_libqrencoder(){
     raw_img_mem = NULL;
 }
 
+/*
 void generate_image_data(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size,
                          int *max_target_width){
 
@@ -172,9 +173,9 @@ void generate_small_image_data(const unsigned char* input_data, int input_length
 
   printf("MS genQR small mult %d - %f ms\n", width_multiplier, currmili() - t);
 
-}
+}*/
 
-
+/*
 void generate_small_image_data_margin(const unsigned char* input_data, int input_length, char** out_image_data, int *out_image_data_size,
                          int *target_width, int width_multiplier, int margin){
 
@@ -235,6 +236,7 @@ void generate_small_image_data_margin(const unsigned char* input_data, int input
   printf("MS genQR small mult %d, margin %d - %f ms\n", width_multiplier, margin, currmili() - t);
 
 }
+*/
 
 // generate qr grayscale bitmap
 void generate_qr_greyscale_bitmap_data(const unsigned char* input_data, int input_length,

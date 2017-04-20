@@ -39,3 +39,8 @@ hash-library/sha3.h
 hash-library/sha256.cpp
 hash-library/sha256.h
 common_decoder_encoder.h
+Makefile_arm
+Makefile_arm64
+Makefile_armv7a
+Makefile_mips
+Makefile_x86_64
