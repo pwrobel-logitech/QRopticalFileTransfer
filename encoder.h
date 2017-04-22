@@ -112,6 +112,15 @@ public:
 
 //file is split into the chunk of files, each one starts in an offset
 struct FileChunk{
+    FileChunk(){
+        chunkdata = NULL;
+    }
+    ~FileChunk(){
+        if(chunkdata != NULL){
+            delete []chunkdata;
+            chunkdata = NULL;
+        }
+    }
     char* chunkdata;
     uint32_t chunk_length;
     //offset into the file of this file chunk

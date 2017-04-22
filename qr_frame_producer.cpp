@@ -324,6 +324,9 @@ int Qr_frame_producer::getFileData(FileChunk *chunk){
         return nread;
     }else if (chunk->reason == 1){
         char* metadata = &(this->metadata_[chunk->chunk_fileoffset]);
-        chunk->chunkdata = metadata;
+        if (chunk->chunkdata != NULL)
+            memcpy(chunk->chunkdata, metadata, chunk->chunk_length);
+        else
+            chunk->chunkdata = metadata;
     }
 }

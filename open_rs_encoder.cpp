@@ -244,6 +244,12 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         }
         */
 
+        for (std::vector<FileChunk*>::iterator it = this->file_data_.begin() ;
+             it != this->file_data_.end(); ++it){
+            delete (*it);
+        }
+        this->file_data_.resize(0);
+
     }
     this->byte_of_file_currently_processed_to_frames_ += this->bytes_per_generated_frame_;
 
