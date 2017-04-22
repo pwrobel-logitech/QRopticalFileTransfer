@@ -66,9 +66,9 @@ int main(int argc, char **argv){
 
     char namebuf[60];
 
+    //test single
 
     Qr_frame_producer frame_producer;
-
 
     frame_producer.set_external_file_info("textmy.txt", "/repos/qr/", 31);
 
@@ -87,6 +87,34 @@ int main(int argc, char **argv){
         num++;
     }
 
+    exit(0);
+
+
+    //test different file sizes
+    for (int b = 1; b < 128; b++){
+    Qr_frame_producer frame_producer;
+
+    char fname[9];
+    memset(fname, 0, sizeof(fname));
+    snprintf(fname, sizeof(fname), "%d.txt", b);
+
+    frame_producer.set_external_file_info(fname, "/repos/qr/qrenctestfiles/", 31);
+
+    int num = 0;
+    for(int i=0; i<7*20; i++){
+        snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame_batch%d", num, b);
+        frame_producer.produce_next_qr_image_to_file(namebuf);
+        num++;
+    }
+
+    frame_producer.tell_no_more_generating_header();
+
+    for(int i=0; i<511*1; i++){
+        snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame_batch%d", num, b);
+        frame_producer.produce_next_qr_image_to_file(namebuf);
+        num++;
+    }
+    }
 
 
     return 1;
