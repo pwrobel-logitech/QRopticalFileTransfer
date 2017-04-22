@@ -326,6 +326,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
             printf("%d ", fr->framedata_[q]);
         }
         RS_decoder::detector_status dec_status = final_decoder->send_next_frame(fr);
+        delete fr;
         if (dec_status == Decoder::TOO_MUCH_ERRORS)
             ret_status = ERRONEUS;
         if (ret_status != ERRONEUS){
@@ -361,6 +362,7 @@ int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int
         }
         if(this->position_in_file_to_flush_ + datalen <= this->file_info_.filelength)
             this->flush_data_to_file(chunkdata, datalen);
+        this->main_chunk_data_tmp_.resize(0); // eradicate, after flushing to file
     }
 
     return 0;
