@@ -8,3 +8,4 @@ bin_jpeg
 zxing_lib
 decoder
 hash-library
+linux_qrgen

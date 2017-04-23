@@ -44,3 +44,4 @@ Makefile_arm64
 Makefile_armv7a
 Makefile_mips
 Makefile_x86_64
+linux_qrgen/main_qrgen.cpp
