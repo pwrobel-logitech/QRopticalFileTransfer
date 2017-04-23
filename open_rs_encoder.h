@@ -78,8 +78,6 @@ protected:
     bool apply_RS_code_to_internal_memory();
     uint32_t RSfecCodeConsts_index_; //which index is currently used.
     void* RSfecEnc;
-    // RS decode
-    bool apply_RS_decode_to_internal_memory();
     int* internal_RS_error_location_mem_;
 
     bool is_header_frame_generating_;

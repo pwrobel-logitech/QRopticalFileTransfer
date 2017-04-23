@@ -348,13 +348,6 @@ bool OpenRSEncoder::apply_RS_code_to_internal_memory(){
     return true;
 }
 
-bool OpenRSEncoder::apply_RS_decode_to_internal_memory(){
-    for (uint32_t j = 0; j < this->n_channels_; j++){
-        int num_of_errors = decode_rs_int(this->RSfecEnc, j*this->RSn_ + (int*)this->internal_memory_,
-                                         this->internal_RS_error_location_mem_, 0);
-    }
-};
-
 
 
 OpenRSEncoder::codeconst OpenRSEncoder::RSfecCodeConsts[] = {
