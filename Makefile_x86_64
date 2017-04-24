@@ -8,7 +8,7 @@ LIBZXING=zxing_lib/zxing-cpp/core/src
 
 x86_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper
 	g++ -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -O0 -g -shared open_rs_encoder.cpp qr_frame_producer.cpp hash-library/sha256.cpp $(current_dir)/fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
-
+	cp $(current_dir)/libRSencoder.so $(current_dir)/bin_fec_x64
 fec_x86_test: ka9q_fac_test.cpp single_fac_test.cpp fileutil/fileops.cpp
 	g++ -g -O0 ka9q_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o bin_fec_x64/fec_x86_test -L$(current_dir)/bin_fec_x64 -lfec
 	g++ -g -O0 single_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o bin_fec_x64/test_single -L$(current_dir)/bin_fec_x64 -lfec
@@ -30,7 +30,7 @@ x86_decoder_test: x86_decoder_lib decoder/decoder_test.cpp
 	g++ -g -O0 -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -fPIC -o $(current_dir)/bin_fec_x64/decoder_test -L$(current_dir)/bin_fec_x64 -lRSdecoder -lqrencoder_wrapper
 
 main_linuxqr: x86_lib libqrencode_wrapper
-	g++ -g -O0 -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -I$(current_dir)/linux_qrgen -I/usr/include/SDL2 -Wl,-rpath=\$$ORIGIN linux_qrgen/main_qrgen.cpp linux_qrgen/glrenderer.cpp -o bin_fec_x64/sendqr -lSDL2 -lGL
+	g++ -g -O0 -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -I$(current_dir)/linux_qrgen -I/usr/include/SDL2 -Wl,-rpath=\$$ORIGIN linux_qrgen/main_qrgen.cpp linux_qrgen/glrenderer.cpp -o bin_fec_x64/sendqr -L$(current_dir)/bin_fec_x64 -lRSencoder -lSDL2 -lGL
 
 all: x86_lib fec_x86_test x86_decoder_test main main_linuxqr
 

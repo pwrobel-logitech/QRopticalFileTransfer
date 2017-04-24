@@ -20,6 +20,8 @@ Qr_frame_producer::Qr_frame_producer()
     this->current_position_of_file_to_process_ = 0;
     this->last_frame_num_produced_by_encoder_ = 0;
     this->is_first_dataframe_number_offset_reconfigured_on_the_res_decoder_ = false;
+    this->total_frame_numbers_that_will_be_produced_ = 0;
+    this->nfr_done_ = 0;
 }
 
 Qr_frame_producer::~Qr_frame_producer(){
@@ -250,6 +252,8 @@ void Qr_frame_producer::setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint3
                                                                            this->total_chars_per_QR_ - 4)-1);
     this->encoder_res_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 4);
     this->encoder_res_->set_RS_nk(rN, rK); //redundancy level
+
+    this->total_frame_numbers_that_will_be_produced_ = this->chunk_length_ * N + rN;
 }
 
 int Qr_frame_producer::tell_no_more_generating_header(){
@@ -295,18 +299,20 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     *produced_image = generated_grayscale_data;
     *produced_width = resulting_width;
     delete frame;
-    return 0;
+    this->nfr_done_++;
+    int status = (this->nfr_done_ >= this->total_frame_numbers_that_will_be_produced_);
+    return status;
 };
 
 int Qr_frame_producer::produce_next_qr_image_to_file(const char* imagename){
     DLOG("Producing image..\n");
     int resw;
     char* res_graybuf;
-    this->produce_next_qr_grayscale_image_to_mem(&res_graybuf, &resw);
+    int status = this->produce_next_qr_grayscale_image_to_mem(&res_graybuf, &resw);
     FILE *f = fopen(imagename, "wb");
     fwrite(res_graybuf, resw*resw, 1, f);
     fclose(f);
-    return 0;
+    return status;
 };
 
 

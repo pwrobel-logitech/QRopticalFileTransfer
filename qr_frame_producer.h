@@ -77,6 +77,10 @@ private:
 
     //in bytes
     int estimate_capacity(int N, int K, int charperQR);
+
+    //used to estimate if we are done with the frame generation
+    uint32_t total_frame_numbers_that_will_be_produced_;
+    uint32_t nfr_done_; //how many we have processed so far
 };
 
 

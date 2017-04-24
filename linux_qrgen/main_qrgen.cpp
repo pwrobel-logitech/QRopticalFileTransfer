@@ -10,6 +10,8 @@
 #include "SDL2/SDL.h"
 #include <stdio.h>
 
+#include <qr_frame_producer.h>
+
 using namespace TCLAP;
 using namespace std;
 
@@ -36,6 +38,22 @@ int screen_counter = 0;
 int sizeX = 0;
 int sizeY = 0;
 
+///////////////////////////system info
+std::string executable_path;
+
+//////////////////////////// QR info
+//current QR buffer size
+int QRbuffw=0, QRbuffh=0;
+char* QRbuffer;
+unsigned int Nframe=0;
+unsigned int Nheader_frame=0;
+
+Qr_frame_producer* frame_producer = NULL;
+vector<string> fileNames;
+int qrbytesize = 0;
+int current_file_index = 0;
+////////////////////////////
+
 bool is_displaychange_requested = false;
 bool is_fullscreenchange_requested = false;
 bool is_requested_reread_winsize = false;
@@ -46,6 +64,47 @@ int draw_frame();
 bool is_thread_running = true;
 SDL_Thread *thread;
 SDL_mutex *mutex;
+
+
+int syscommand(string aCommand, string & result) {
+    FILE * f;
+    if ( !(f = popen( aCommand.c_str(), "r" )) ) {
+            cout << "Can not open file" << endl;
+            return -1;
+        }
+        const int BUFSIZE = 4096;
+        char buf[ BUFSIZE ];
+        if (fgets(buf,BUFSIZE,f)!=NULL) {
+            result = buf;
+        }
+        pclose( f );
+        return 1;
+    }
+
+
+string getBundleName () {
+    pid_t procpid = getpid();
+    stringstream toCom;
+    toCom << "cat /proc/" << procpid << "/comm";
+    string fRes="";
+    syscommand(toCom.str(),fRes);
+    size_t last_pos = fRes.find_last_not_of(" \n\r\t") + 1;
+    if (last_pos != string::npos) {
+        fRes.erase(last_pos);
+    }
+    return fRes;
+}
+
+
+string getBundlePath () {
+pid_t procpid = getpid();
+string appName = getBundleName();
+stringstream command;
+command <<  "readlink /proc/" << procpid << "/exe | sed \"s/\\(\\/" << appName << "\\)$//\"";
+string fRes;
+syscommand(command.str(),fRes);
+return fRes;
+}
 
 //lock sdl mutex
 bool lock_mutex(){
@@ -87,6 +146,35 @@ void create_thread(){
     }
 }
 
+int produce_next_QR_frame_to_buffer(){
+    if(current_file_index < fileNames.size()){
+        if(Nframe == 0){
+            if(frame_producer == NULL){
+                frame_producer = new Qr_frame_producer;
+                frame_producer->set_external_file_info(fileNames[current_file_index].c_str(), ".", qrbytesize);
+            }
+            if(frame_producer){
+                int status = frame_producer->produce_next_qr_grayscale_image_to_mem(&QRbuffer, &QRbuffw);
+                QRbuffh = QRbuffw;
+                Nframe++;
+                if (status == 1){
+                    delete frame_producer;
+                    frame_producer = NULL;
+                    current_file_index++;
+                    Nframe = 0;
+                }
+
+            }
+
+        }
+        return 0;
+    } else {
+        if(frame_producer != NULL)
+            delete frame_producer;
+        return 1;
+    }
+}
+
 bool init(bool is_fullscreen)
 {
     //gl sdl stuff
@@ -105,7 +193,7 @@ bool init(bool is_fullscreen)
             printf( "Unable to initialize OpenGL!\n" );
         }
         //render gl
-        glrenderer::renderGL();
+        glrenderer::renderGL(QRbuffw, QRbuffh, QRbuffer);
     }
     int numdisplays = SDL_GetNumVideoDisplays();
     printf("Numdisplays %d \n", numdisplays);
@@ -152,8 +240,9 @@ int MyThread(void *ptr)
         unlock_mutex();
 
         //printf("\nThread counter: %d", cnt);
-        SDL_Delay(1);
+        SDL_Delay(200);
         if (!is_screen_valid){
+            produce_next_QR_frame_to_buffer();
             draw_frame();
             is_screen_valid = true;
         }
@@ -186,7 +275,7 @@ int draw_frame(){
     lock_mutex();
     SDL_GetWindowSize(gWindow, &sizeX, &sizeY);
     glrenderer::set_viewport_size(sizeX, sizeY);
-    glrenderer::renderGL();
+    glrenderer::renderGL(QRbuffw, QRbuffh, QRbuffer);
     SDL_GL_SwapWindow( gWindow );
     unlock_mutex();
     return 0;
@@ -347,7 +436,8 @@ int main(int argc, char** argv)
 	// Get the value parsed by each arg. 
     //string name = nameArg.getValue();
     //bool reverseName = reverseSwitch.getValue();
-    vector<string>  fileNames = multi.getValue();
+    fileNames = multi.getValue();
+    qrbytesize = QRsizeArg.getValue();
 
     printf("QR size : %d\n", QRsizeArg.getValue());
 
@@ -360,6 +450,25 @@ int main(int argc, char** argv)
         cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
         exit(0);
     }
+
+    string tmp = getBundlePath();
+    for(int i=1; i<tmp.size(); i++){
+        if(tmp[i] == '\n'){
+            tmp[i] = 0;
+            if(tmp[i-1] == '/')
+                tmp[i-1] = 0;
+        }
+    }
+    executable_path = std::string(tmp.c_str());
+
+
+    printf("path : %s \n", executable_path.c_str());
+    if (qrbytesize < 16)
+        qrbytesize = 16;
+
+    frame_producer = NULL;
+
+    //frame_producer.set_external_file_info("textmy.txt", "/repos/qr/", qrbytesize);
 
     do_SDL_setup();
 

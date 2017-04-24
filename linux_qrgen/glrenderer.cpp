@@ -54,7 +54,7 @@ void render_subscreen()
 
 }
 
-void glrenderer::renderGL()
+void glrenderer::renderGL(int w, int h, const char* buff)
 {
 	
 	//Clear color buffer and depth buffer

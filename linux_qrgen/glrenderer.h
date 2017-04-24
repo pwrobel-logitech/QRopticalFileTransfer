@@ -15,7 +15,7 @@ namespace glrenderer {
 
 	//Call only from the render thread only !
 	bool initGL(int sx, int sy);//init displaylists and pass window size
-    void renderGL();
+    void renderGL(int w, int h, const char* buff);
 	void set_viewport_size(int x, int y);
     void setup_projection();
     void setup_scene();
