@@ -34,7 +34,7 @@ bool glrenderer::initGL(int sx, int sy)
     bmask = 0x0000ff00;
     amask = 0x000000ff;
 
-    glrenderer::surf = SDL_CreateRGBSurface(0, 44, 44, 32,
+    glrenderer::surf = SDL_CreateRGBSurface(0, 1024, 1024, 32,
                                       rmask, gmask, bmask, amask);
 
 	glEnable(GL_DEPTH_TEST);
@@ -73,21 +73,39 @@ void glrenderer::renderGL(int w, int h, const char* buff)
 
     int Mode = GL_RGBA;
 
-    memset(glrenderer::surf->pixels, 0xff, glrenderer::surf->w * glrenderer::surf->h * 4);
+    SDL_LockSurface(glrenderer::surf);
 
-    SDL_UnlockSurface(glrenderer::surf);
+    memset(glrenderer::surf->pixels, 0x7f, glrenderer::surf->w * glrenderer::surf->h * 4);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, Mode, glrenderer::surf->w, glrenderer::surf->h, 0, Mode, GL_UNSIGNED_BYTE, glrenderer::surf->pixels);
+    for(int j=0;j<h;j++)
+        for (int i=0;i<w;i++)
+        {
+            ((char*)glrenderer::surf->pixels)[(i+glrenderer::surf->pitch*j/4)*4] = buff[i+j*w];
+            ((char*)glrenderer::surf->pixels)[(i+glrenderer::surf->pitch*j/4)*4+1] = buff[i+j*w];
+            ((char*)glrenderer::surf->pixels)[(i+glrenderer::surf->pitch*j/4)*4+2] = buff[i+j*w];
+            ((char*)glrenderer::surf->pixels)[(i+glrenderer::surf->pitch*j/4)*4+3] = buff[i+j*w];
+        }
+
+
+
+
+    glTexImage2D(GL_TEXTURE_2D, 0, Mode, glrenderer::surf->w, glrenderer::surf->h,
+                 0, Mode, GL_UNSIGNED_BYTE, glrenderer::surf->pixels);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+    SDL_UnlockSurface(glrenderer::surf);
+
+    float tex_fractw = (float) w / (float)glrenderer::surf->w;
+    float tex_fracth = (float) h / (float)glrenderer::surf->h;
+
     glBegin(GL_QUADS);
-        glTexCoord2f(0,1);
+        glTexCoord2f(0,tex_fracth);
         glVertex2f(-x,-y);
-        glTexCoord2f(1,1);
+        glTexCoord2f(tex_fractw,tex_fracth);
         glVertex2f(x,-y);
-        glTexCoord2f(1,0);
+        glTexCoord2f(tex_fractw,0);
         glVertex2f(x,y);
         glTexCoord2f(0,0);
         glVertex2f(-x,y);

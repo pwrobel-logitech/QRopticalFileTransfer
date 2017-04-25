@@ -75,7 +75,11 @@ int Qr_frame_producer::set_external_file_info(const char* filename, const char* 
     this->file_info_.filepath = std::string(filepath);
     if(this->file_info_.fp != NULL)
         FileClose(this->file_info_.fp);
-    std::string fullname = this->file_info_.filepath + this->file_info_.filename;
+    std::string fullname;
+    if(strlen(filepath) > 0)
+        fullname = this->file_info_.filepath + "/" + this->file_info_.filename;
+    else
+        fullname = this->file_info_.filename;
     this->file_info_.fp = FileOpenToRead(fullname.c_str());
     if(this->file_info_.fp == NULL)
         return -1;

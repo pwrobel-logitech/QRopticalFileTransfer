@@ -151,21 +151,23 @@ int produce_next_QR_frame_to_buffer(){
         if(Nframe == 0){
             if(frame_producer == NULL){
                 frame_producer = new Qr_frame_producer;
-                frame_producer->set_external_file_info(fileNames[current_file_index].c_str(), ".", qrbytesize);
-            }
-            if(frame_producer){
-                int status = frame_producer->produce_next_qr_grayscale_image_to_mem(&QRbuffer, &QRbuffw);
-                QRbuffh = QRbuffw;
-                Nframe++;
-                if (status == 1){
-                    delete frame_producer;
-                    frame_producer = NULL;
-                    current_file_index++;
-                    Nframe = 0;
-                }
-
+                std::string path = executable_path;
+                if (fileNames[current_file_index].c_str()[0] == '/')
+                    path = std::string("");
+                frame_producer->set_external_file_info(fileNames[current_file_index].c_str(), path.c_str(), qrbytesize);
             }
 
+        }
+        if(frame_producer){
+            int status = frame_producer->produce_next_qr_grayscale_image_to_mem(&QRbuffer, &QRbuffw);
+            QRbuffh = QRbuffw;
+            Nframe++;
+            if (status == 1){
+                delete frame_producer;
+                frame_producer = NULL;
+                current_file_index++;
+                Nframe = 0;
+            }
         }
         return 0;
     } else {
@@ -451,6 +453,7 @@ int main(int argc, char** argv)
         exit(0);
     }
 
+    /*
     string tmp = getBundlePath();
     for(int i=1; i<tmp.size(); i++){
         if(tmp[i] == '\n'){
@@ -460,7 +463,14 @@ int main(int argc, char** argv)
         }
     }
     executable_path = std::string(tmp.c_str());
+    */
 
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+
+    if(cwd[strlen(cwd) - 1] == '/')
+      cwd[strlen(cwd) - 1] = 0;
+    executable_path = std::string(cwd);
 
     printf("path : %s \n", executable_path.c_str());
     if (qrbytesize < 16)
