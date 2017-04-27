@@ -2,11 +2,11 @@
 #include <libqrencoder_wrapper.h>
 #include "hash-library/sha256.h"
 #include <iostream>
-
-
+#include <math.h>
 
 Qr_frame_producer::Qr_frame_producer()
 {
+    this->metadata_encoder_ = NULL;
     this->total_chars_per_QR_ = 31;
     this->is_header_frame_generating_ = true;
     this->setup_metadata_encoder();
@@ -71,6 +71,7 @@ void Qr_frame_producer::calculate_file_content_hash(int hash_chunk_size){
 
 int Qr_frame_producer::set_external_file_info(const char* filename, const char* filepath, int suggested_qr_payload_length){
     this->total_chars_per_QR_ = suggested_qr_payload_length;
+    this->setup_metadata_encoder();
     this->file_info_.filename = std::string(filename);
     this->file_info_.filepath = std::string(filepath);
     if(this->file_info_.fp != NULL)
@@ -95,6 +96,8 @@ int Qr_frame_producer::set_external_file_info(const char* filename, const char* 
 };
 
 void Qr_frame_producer::setup_metadata_encoder(){
+    if(this->metadata_encoder_ != NULL)
+        delete this->metadata_encoder_;
     this->metadata_.resize(fixed_metadata_arr_size);
     memset(&(this->metadata_[0]), 'a', fixed_metadata_arr_size * sizeof(char));
     this->metadata_encoder_ = new OpenRSEncoder();
@@ -295,11 +298,13 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     DLOG("Frame number : %d\n", (int)frame->get_frame_number());
     int resulting_width;
     char* generated_grayscale_data;
+    int size = frame->framedata_.size();
+    int margin = 3;
     generate_qr_greyscale_bitmap_data(&frame->framedata_[0],
-                                           frame->framedata_.size(),
+                                           size,
                                            &generated_grayscale_data,
                                            &resulting_width,
-                                           3);
+                                           margin);
     *produced_image = generated_grayscale_data;
     *produced_width = resulting_width;
     delete frame;

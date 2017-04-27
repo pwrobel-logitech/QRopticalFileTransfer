@@ -121,6 +121,8 @@ void OpenRSEncoder::set_RS_nk(uint16_t n, uint16_t k){
     while ((1<<OpenRSEncoder::RSfecCodeConsts[i].symsize) != n+1)
         i++;
     this->RSfecCodeConsts_index_ = i;
+    if(this->RSfecEnc != NULL)
+        free_rs_int(this->RSfecEnc);
     this->RSfecEnc = init_rs_int(
             OpenRSEncoder::RSfecCodeConsts[this->RSfecCodeConsts_index_].symsize,
             OpenRSEncoder::RSfecCodeConsts[this->RSfecCodeConsts_index_].genpoly,
