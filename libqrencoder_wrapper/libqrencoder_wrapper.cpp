@@ -246,7 +246,7 @@ void generate_qr_greyscale_bitmap_data(const unsigned char* input_data, int inpu
 
     //double t = currmili();
     QRcode *generatedQR = NULL;
-    generatedQR = QRcode_encodeData(input_length, input_data, 1, QR_ECLEVEL_M);
+    generatedQR = QRcode_encodeData(input_length, input_data, 1, QR_ECLEVEL_L);
     unsigned char* QR_pixeldata = NULL;
     int QR_pixeldata_size = -1;
     if (generatedQR != NULL){
@@ -323,9 +323,12 @@ immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength
     Ref<Binarizer> binarizer (new GlobalHistogramBinarizer(source));
     Ref<BinaryBitmap> image(new BinaryBitmap(binarizer));
 
-    // Tell the decoder to try as hard as possible.
-    DecodeHints hints(DecodeHints::DEFAULT_HINT);
-    hints.setTryHarder(true);
+    // Tell the decoder not to try as hard as possible.
+    DecodeHints hints;
+    hints.clear();
+    hints.setTryHarder(false);
+    //hints.addFormat(BarcodeFormat::QR_CODE);
+
 
     // Perform the decoding.
     QRCodeReader reader;
@@ -342,7 +345,7 @@ immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength
       (*generated_data)[i] = bitres[i];
     // Output the result.
     //cout << "zxing res : " << result->getText()->getText() << endl;
-    printf ("TXT dt %f ms\n",currmili()-t/*, result->getText()->getText().c_str()+4*/);
+    printf ("TXTDONE dt %f ms\n",currmili()-t/*, result->getText()->getText().c_str()+4*/);
     }
     catch (zxing::Exception& e)
     {

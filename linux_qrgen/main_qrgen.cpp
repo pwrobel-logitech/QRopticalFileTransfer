@@ -243,11 +243,11 @@ int MyThread(void *ptr)
 
         //printf("\nThread counter: %d", cnt);
         SDL_Delay(200);
-        if (!is_screen_valid){
+        //if (!is_screen_valid){
             produce_next_QR_frame_to_buffer();
             draw_frame();
             is_screen_valid = true;
-        }
+        //}
         cnt++;
     }
     return cnt;
