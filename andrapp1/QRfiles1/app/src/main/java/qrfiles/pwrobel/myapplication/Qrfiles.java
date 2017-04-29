@@ -1,6 +1,8 @@
 package qrfiles.pwrobel.myapplication;
 
 import android.os.Bundle;
+import android.os.Process;
+import android.util.Log;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +14,11 @@ import android.view.MenuItem;
 
 public class Qrfiles extends AppCompatActivity {
 
+
+    CameraWorker camworker;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +26,7 @@ public class Qrfiles extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -28,9 +35,11 @@ public class Qrfiles extends AppCompatActivity {
             }
         });
 
+        this.init();
+
     // Example of a call to a native method
-    TextView tv = (TextView) findViewById(R.id.sample_text);
-    tv.setText(stringFromJNI());
+    //TextView tv = (TextView) findViewById(R.id.sample_text);
+    //tv.setText(stringFromJNI());
     }
 
     @Override
@@ -53,6 +62,21 @@ public class Qrfiles extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private synchronized void init(){
+        Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
+        this.camworker = new CameraWorker("CameraDetectorThread");
+        this.camworker.start();
+        this.camworker.waitUntilReady();
+
+        //this.camworker.waitUntilReady();
+        this.camworker.handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("CamThr", "executed on the camera thread, id: " + android.os.Process.myTid());
+            }
+        });
     }
 
     /**
