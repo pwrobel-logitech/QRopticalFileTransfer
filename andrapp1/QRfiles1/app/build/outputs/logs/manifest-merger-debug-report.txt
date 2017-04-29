@@ -1,0 +1,123 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:2:1-32:12
+	package
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:3:5-44
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:2:11-69
+	android:versionCode
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+uses-permission#android.permission.CAMERA
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:5:5-64
+	android:name
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:5:22-62
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:6:5-80
+	android:name
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:6:22-78
+uses-feature#android.hardware.camera
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:8:5-83
+	android:required
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:8:58-81
+	android:name
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:8:19-57
+uses-feature#android.hardware.camera.autofocus
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:9:5-94
+	android:required
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:9:68-92
+	android:name
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:9:19-67
+application
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:11:5-30:19
+MERGED from [com.android.support.constraint:constraint-layout:1.0.2] /home/pwrobel/.android/build-cache/d7f9e2375bf35208a2e8d8e90c4d1a1b75d794bc/output/AndroidManifest.xml:9:5-20
+MERGED from [com.android.support:design:25.3.1] /home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:appcompat-v7:25.3.1] /home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /home/pwrobel/.android/build-cache/829442c7dae9239f8b468acebfe71bd0df191dce/output/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /home/pwrobel/.android/build-cache/9ee9e47934f504347c98672bbb1164e29eb09730/output/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:transition:25.3.1] /home/pwrobel/.android/build-cache/4b0b9d4e37f08126e12908b30b9c049e654dc036/output/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-v4:25.3.1] /home/pwrobel/.android/build-cache/a0b8615964cef876e5cf160dec4ed714abc1414b/output/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-fragment:25.3.1] /home/pwrobel/.android/build-cache/745876ef432f7c338b9e32a335e789a33d4fd6f1/output/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-media-compat:25.3.1] /home/pwrobel/.android/build-cache/4bb0017398b7de888662bace1952bee75c421ee9/output/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-ui:25.3.1] /home/pwrobel/.android/build-cache/749d85515e0d9f551061c36d6442ebef3af46360/output/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-utils:25.3.1] /home/pwrobel/.android/build-cache/95672701366215e0c7c77cb320f8c32c84ad7956/output/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-compat:25.3.1] /home/pwrobel/.android/build-cache/8ec3a609aa61af2741bec2da488a42702dd85537/output/AndroidManifest.xml:29:5-20
+	android:label
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:15:9-41
+	android:supportsRtl
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:17:9-35
+	android:roundIcon
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:16:9-54
+	android:allowBackup
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:13:9-35
+	android:icon
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:14:9-43
+	android:largeHeap
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:12:9-33
+	android:theme
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:18:9-40
+activity#qrfiles.pwrobel.myapplication.Qrfiles
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:19:9-29:20
+	android:screenOrientation
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:23:13-49
+	android:label
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:21:13-45
+	android:theme
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:22:13-56
+	android:name
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:20:13-36
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:24:13-28:29
+action#android.intent.action.MAIN
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:25:17-69
+	android:name
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:25:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:27:17-77
+	android:name
+		ADDED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml:27:27-74
+uses-sdk
+INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support.constraint:constraint-layout:1.0.2] /home/pwrobel/.android/build-cache/d7f9e2375bf35208a2e8d8e90c4d1a1b75d794bc/output/AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:design:25.3.1] /home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/AndroidManifest.xml:21:5-23:62
+MERGED from [com.android.support:appcompat-v7:25.3.1] /home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /home/pwrobel/.android/build-cache/829442c7dae9239f8b468acebfe71bd0df191dce/output/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /home/pwrobel/.android/build-cache/9ee9e47934f504347c98672bbb1164e29eb09730/output/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:recyclerview-v7:25.3.1] /home/pwrobel/.android/build-cache/6d1883f75bdbe68b47e938d9419f68a22919545f/output/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:transition:25.3.1] /home/pwrobel/.android/build-cache/4b0b9d4e37f08126e12908b30b9c049e654dc036/output/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:25.3.1] /home/pwrobel/.android/build-cache/a0b8615964cef876e5cf160dec4ed714abc1414b/output/AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-fragment:25.3.1] /home/pwrobel/.android/build-cache/745876ef432f7c338b9e32a335e789a33d4fd6f1/output/AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-media-compat:25.3.1] /home/pwrobel/.android/build-cache/4bb0017398b7de888662bace1952bee75c421ee9/output/AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-core-ui:25.3.1] /home/pwrobel/.android/build-cache/749d85515e0d9f551061c36d6442ebef3af46360/output/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-core-utils:25.3.1] /home/pwrobel/.android/build-cache/95672701366215e0c7c77cb320f8c32c84ad7956/output/AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:support-compat:25.3.1] /home/pwrobel/.android/build-cache/8ec3a609aa61af2741bec2da488a42702dd85537/output/AndroidManifest.xml:21:5-23:58
+	tools:overrideLibrary
+		ADDED from [com.android.support:design:25.3.1] /home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/AndroidManifest.xml:23:9-59
+	android:targetSdkVersion
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+		INJECTED from /repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/AndroidManifest.xml
+meta-data#android.support.VERSION
+ADDED from [com.android.support:design:25.3.1] /home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:appcompat-v7:25.3.1] /home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /home/pwrobel/.android/build-cache/829442c7dae9239f8b468acebfe71bd0df191dce/output/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /home/pwrobel/.android/build-cache/9ee9e47934f504347c98672bbb1164e29eb09730/output/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:recyclerview-v7:25.3.1] /home/pwrobel/.android/build-cache/6d1883f75bdbe68b47e938d9419f68a22919545f/output/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:transition:25.3.1] /home/pwrobel/.android/build-cache/4b0b9d4e37f08126e12908b30b9c049e654dc036/output/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-v4:25.3.1] /home/pwrobel/.android/build-cache/a0b8615964cef876e5cf160dec4ed714abc1414b/output/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-fragment:25.3.1] /home/pwrobel/.android/build-cache/745876ef432f7c338b9e32a335e789a33d4fd6f1/output/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-media-compat:25.3.1] /home/pwrobel/.android/build-cache/4bb0017398b7de888662bace1952bee75c421ee9/output/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-core-ui:25.3.1] /home/pwrobel/.android/build-cache/749d85515e0d9f551061c36d6442ebef3af46360/output/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-core-utils:25.3.1] /home/pwrobel/.android/build-cache/95672701366215e0c7c77cb320f8c32c84ad7956/output/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-compat:25.3.1] /home/pwrobel/.android/build-cache/8ec3a609aa61af2741bec2da488a42702dd85537/output/AndroidManifest.xml:25:5-27:34
+	android:value
+		ADDED from [com.android.support:design:25.3.1] /home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/AndroidManifest.xml:27:9-31
+	android:name
+		ADDED from [com.android.support:design:25.3.1] /home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/AndroidManifest.xml:26:9-47

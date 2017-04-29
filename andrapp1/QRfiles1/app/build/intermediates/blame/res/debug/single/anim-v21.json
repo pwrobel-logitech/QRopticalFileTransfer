@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_in.xml",
+        "source": "/home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/res/anim-v21/design_bottom_sheet_slide_in.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_out.xml",
+        "source": "/home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/res/anim-v21/design_bottom_sheet_slide_out.xml"
+    }
+]

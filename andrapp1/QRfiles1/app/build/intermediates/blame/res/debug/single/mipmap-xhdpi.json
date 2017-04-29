@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/mipmap-xhdpi/ic_launcher_round.png",
+        "source": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/mipmap-xhdpi/ic_launcher.png",
+        "source": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+    }
+]

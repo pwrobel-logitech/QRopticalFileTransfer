@@ -1,0 +1,46 @@
+[
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_color_highlight_material.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_color_highlight_material.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_tint_default.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_tint_default.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_tint_switch_thumb.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_tint_switch_thumb.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_tint_switch_track.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_tint_seek_thumb.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_tint_seek_thumb.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_tint_btn_checkable.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_tint_btn_checkable.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_btn_colored_borderless_text_material.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_btn_colored_borderless_text_material.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_btn_colored_text_material.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_btn_colored_text_material.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/design_tint_password_toggle.xml",
+        "source": "/home/pwrobel/.android/build-cache/ba40db48adadc7d1919a476c8a6ddf18ae26cf05/output/res/color-v23/design_tint_password_toggle.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_tint_spinner.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_tint_spinner.xml"
+    },
+    {
+        "merged": "/repos/qr/encoder_x86/andrapp1/QRfiles1/app/build/intermediates/res/merged/debug/color-v23/abc_tint_edittext.xml",
+        "source": "/home/pwrobel/.android/build-cache/167202653e782d7616288dff7f540838f3b75e40/output/res/color-v23/abc_tint_edittext.xml"
+    }
+]
