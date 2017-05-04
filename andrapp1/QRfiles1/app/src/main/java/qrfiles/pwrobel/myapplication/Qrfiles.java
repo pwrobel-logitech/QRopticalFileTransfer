@@ -15,9 +15,8 @@ import android.view.MenuItem;
 public class Qrfiles extends AppCompatActivity {
 
 
+    //used to hold main camera thread with the higher priority
     CameraWorker camworker;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +34,7 @@ public class Qrfiles extends AppCompatActivity {
             }
         });
 
-        this.init();
+        this.initall();
 
     // Example of a call to a native method
     //TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -64,9 +63,10 @@ public class Qrfiles extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private synchronized void init(){
+    private synchronized void initall(){
         Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
         this.camworker = new CameraWorker("CameraDetectorThread");
+        this.camworker.setContext(this);
         this.camworker.start();
         this.camworker.waitUntilReady();
 
@@ -77,6 +77,7 @@ public class Qrfiles extends AppCompatActivity {
                 Log.i("CamThr", "executed on the camera thread, id: " + android.os.Process.myTid());
             }
         });
+        this.camworker.initAsync();
     }
 
     /**
