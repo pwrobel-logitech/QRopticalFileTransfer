@@ -42,6 +42,12 @@ public class Qrfiles extends AppCompatActivity {
     }
 
     @Override
+    public void onPause(){
+        super.onPause();
+        this.camworker.closeCamAsync();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_qrfiles, menu);
@@ -70,6 +76,7 @@ public class Qrfiles extends AppCompatActivity {
         this.camworker.start();
         this.camworker.waitUntilReady();
 
+
         //this.camworker.waitUntilReady();
         this.camworker.handler.post(new Runnable() {
             @Override
@@ -77,7 +84,7 @@ public class Qrfiles extends AppCompatActivity {
                 Log.i("CamThr", "executed on the camera thread, id: " + android.os.Process.myTid());
             }
         });
-        this.camworker.initAsync();
+        //this.camworker.initAsync();
     }
 
     /**
@@ -90,4 +97,7 @@ public class Qrfiles extends AppCompatActivity {
     static {
         System.loadLibrary("native-lib");
     }
+
+
+
 }

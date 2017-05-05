@@ -18,7 +18,7 @@
         tools:layout_editor_absoluteX="0dp">
 
         <qrfiles.pwrobel.myapplication.CameraPreviewSurface
-            android:id="@+id/surfaceView"
+            android:id="@+id/glsurfaceView1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout_editor_absoluteY="0dp"
