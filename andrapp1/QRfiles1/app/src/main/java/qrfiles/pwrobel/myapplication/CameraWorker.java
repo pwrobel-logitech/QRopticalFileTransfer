@@ -141,11 +141,16 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     /// data as NV21 input, pixels as 8bit greyscale output
     public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
+        applygrayscalenative(pixels, data, width, height);
+/*
         byte p;
         int size = width*height;
         for(int i = 0; i < size; i++) {
             p = (byte)(data[i] & 0xFF);
             pixels[i] = p;
         }
+*/
     }
+
+    public static native void applygrayscalenative(byte [] pixels, byte [] data, int width, int height);
 }
