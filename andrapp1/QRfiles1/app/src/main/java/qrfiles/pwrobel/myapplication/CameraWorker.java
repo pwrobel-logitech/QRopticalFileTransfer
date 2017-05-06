@@ -21,9 +21,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     public volatile Handler handler;
     public Camera camera;
+    int camwidth, camheight;
     public CameraPreviewSurface camsurf;
     Context context;
     byte[] callbackbuffer;
+    byte[] greyscalebuffer;
 
     public void setContext(Context cont){
         context = cont;
@@ -50,6 +52,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     public void onPreviewFrame(byte[] data, Camera camera) {
         Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
         Log.i("info", "Got byte arrQ of size "+data.length+" bytes");
+
+        applyGrayScale(greyscalebuffer, data, camwidth, camheight);
+
         camera.addCallbackBuffer(callbackbuffer);
     }
 
@@ -75,6 +80,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 int camwidth = psize.get(7).width;
                 int camheight = psize.get(7).height;
+                CameraWorker.this.camwidth = camwidth;
+                CameraWorker.this.camheight = camheight;
 
                 try{
                     param.setPreviewSize(camwidth, camheight);
@@ -83,6 +90,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
 
                 callbackbuffer = new byte[camheight*camwidth*4 * 2];
+                greyscalebuffer = new byte[camheight*camwidth];
 
 
                 SurfaceTexture surfaceTexture = camsurf.getSurfaceTexture();
@@ -129,4 +137,15 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             }
         });
     };
+
+
+    /// data as NV21 input, pixels as 8bit greyscale output
+    public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
+        byte p;
+        int size = width*height;
+        for(int i = 0; i < size; i++) {
+            p = (byte)(data[i] & 0xFF);
+            pixels[i] = p;
+        }
+    }
 }
