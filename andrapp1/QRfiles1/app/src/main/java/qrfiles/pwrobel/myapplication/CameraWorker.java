@@ -2,16 +2,24 @@ package qrfiles.pwrobel.myapplication;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.HandlerThread;
 
 import android.os.Process;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.RunnableFuture;
 
 /**
  * Created by pwrobel on 29.04.17.
@@ -55,6 +63,62 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         applyGrayScale(greyscalebuffer, data, camwidth, camheight);
 
+        final byte[] dat = data;
+        Activity a = (Activity) context;
+
+
+        Camera.Parameters parameters = camera.getParameters();
+        final int width = parameters.getPreviewSize().width;
+        final int height = parameters.getPreviewSize().height;
+/*
+        YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+
+        byte[] bytes = out.toByteArray();
+        final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+*/
+        
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {Activity act = (Activity) CameraWorker.this.context;
+                ImageView f = (ImageView) act.findViewById(R.id.imv1);
+
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inMutable = true;
+                //for (int q = 0; q < greyscalebuffer.length; q++)
+                //  greyscalebuffer[q] = (byte)0x7f;
+                //Bitmap bmp = BitmapFactory.decodeByteArray(dat, 0, dat.length, options);
+                int []pixels = new int[width*height];
+                for (int i = 0; i<width; i++)
+                    for (int j = 0; j<height; j++){
+                        byte p = greyscalebuffer[j*width+i];
+                        pixels[j*width+i] = 0xff000000 | ((p<<16)&0xff0000) | ((p<<8)&0xff00) | (p&0xff);
+                    }
+                Bitmap bmp = Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+
+
+                f.setImageBitmap(bmp);
+                synchronized(this)
+                {
+                    this.notify();
+                }
+            }
+        };
+
+        synchronized(r) {
+            a.runOnUiThread(r);
+            try {
+                r.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
         camera.addCallbackBuffer(callbackbuffer);
     }
 
@@ -83,15 +147,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 CameraWorker.this.camwidth = camwidth;
                 CameraWorker.this.camheight = camheight;
 
-                try{
-                    param.setPreviewSize(camwidth, camheight);
-                }catch (Exception e){
-                    Log.e("camsize", "Error setting the camera preview size");
-                }
-
                 callbackbuffer = new byte[camheight*camwidth*4 * 2];
                 greyscalebuffer = new byte[camheight*camwidth];
 
+                try{
+                    param.setPreviewSize(camwidth, camheight);
+                }catch (Exception e){
+                    Log.e("camworker", "Error setting the camera preview size");
+                }
 
                 SurfaceTexture surfaceTexture = camsurf.getSurfaceTexture();
                 try {
@@ -99,10 +162,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                final Camera.Parameters params = camera.getParameters();
-                params.setRecordingHint(true);
-                params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-                camera.setParameters(params);
+
+                param.setRecordingHint(true);
+                param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                camera.setParameters(param);
+
+
                 camera.addCallbackBuffer(callbackbuffer);
                 camera.setPreviewCallbackWithBuffer(CameraWorker.this);
                 camera.startPreview();

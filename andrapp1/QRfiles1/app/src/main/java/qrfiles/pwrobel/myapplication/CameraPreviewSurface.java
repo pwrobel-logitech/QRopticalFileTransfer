@@ -142,7 +142,15 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         }
         camcontroller.initCamAsync();
 
-        Matrix.setRotateM(mOrientationM, 0, 90.0f, 0f, 0f, 1f);
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(0, info);
+
+        float rot_angle = 0.0f;
+
+        rot_angle = info.orientation;
+
+        Matrix.setRotateM(mOrientationM, 0, rot_angle, 0f, 0f, 1f);
 
         requestRender();
     }

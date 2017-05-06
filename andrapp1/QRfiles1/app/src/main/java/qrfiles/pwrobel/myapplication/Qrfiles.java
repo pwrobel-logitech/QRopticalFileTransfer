@@ -3,6 +3,7 @@ package qrfiles.pwrobel.myapplication;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -35,6 +36,7 @@ public class Qrfiles extends AppCompatActivity {
         });
 
         this.initall();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     // Example of a call to a native method
     //TextView tv = (TextView) findViewById(R.id.sample_text);
