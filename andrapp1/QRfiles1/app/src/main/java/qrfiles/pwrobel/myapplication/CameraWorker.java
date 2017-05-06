@@ -11,6 +11,7 @@ import android.os.Process;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by pwrobel on 29.04.17.
@@ -28,7 +29,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         context = cont;
         Activity a = (Activity) cont;
         camsurf = (CameraPreviewSurface) a.findViewById(R.id.glsurfaceView1);
-        callbackbuffer = new byte[2048*2048*4];
+        callbackbuffer = null;
         camsurf.setCameraController(this);
          //notify initialization done
         synchronized (context){
@@ -69,6 +70,21 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 camera = Camera.open();
 
+                Camera.Parameters param = camera.getParameters();
+                List<Camera.Size> psize = param.getSupportedPreviewSizes();
+
+                int camwidth = psize.get(7).width;
+                int camheight = psize.get(7).height;
+
+                try{
+                    param.setPreviewSize(camwidth, camheight);
+                }catch (Exception e){
+                    Log.e("camsize", "Error setting the camera preview size");
+                }
+
+                callbackbuffer = new byte[camheight*camwidth*4 * 2];
+
+
                 SurfaceTexture surfaceTexture = camsurf.getSurfaceTexture();
                 try {
                     camera.setPreviewTexture(surfaceTexture);
@@ -102,7 +118,15 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
             }
         });
-    }
+    };
 
-    ;
+    @Override
+    public void setCallbackBufferSizeAsync(final int size) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                callbackbuffer = new byte[size];
+            }
+        });
+    };
 }
