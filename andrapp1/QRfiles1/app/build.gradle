@@ -15,6 +15,9 @@ android {
                 cppFlags "-fPIC"
             }
         }
+        ndk {
+            abiFilters "armeabi-v7a", "armeabi", "x86_64"
+        }
     }
     buildTypes {
         release {
@@ -26,7 +29,9 @@ android {
         cmake {
             path "CMakeLists.txt"
         }
+
     }
+
 }
 
 dependencies {

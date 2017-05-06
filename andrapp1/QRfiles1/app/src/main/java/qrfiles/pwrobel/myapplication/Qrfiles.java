@@ -97,6 +97,10 @@ public class Qrfiles extends AppCompatActivity {
 
     // Used to load the 'native-lib' library on application startup.
     static {
+        System.loadLibrary("fec");
+        System.loadLibrary("qrencoder_wrapper");
+        System.loadLibrary("RSencoder");
+        System.loadLibrary("RSdecoder");
         System.loadLibrary("native-lib");
     }
 

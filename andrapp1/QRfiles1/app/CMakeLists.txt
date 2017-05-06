@@ -5,6 +5,13 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+#copy prebuilt native libs
+
+configure_file(../../../androidarchs/${ANDROID_ABI}/libfec.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libfec.so COPYONLY)
+configure_file(../../../androidarchs/${ANDROID_ABI}/libqrencoder_wrapper.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libqrencoder_wrapper.so COPYONLY)
+configure_file(../../../androidarchs/${ANDROID_ABI}/libRSencoder.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSencoder.so COPYONLY)
+configure_file(../../../androidarchs/${ANDROID_ABI}/libRSdecoder.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSdecoder.so COPYONLY)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.

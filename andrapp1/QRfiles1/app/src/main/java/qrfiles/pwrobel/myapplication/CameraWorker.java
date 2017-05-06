@@ -79,7 +79,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         byte[] bytes = out.toByteArray();
         final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 */
-        
+
 
         Runnable r = new Runnable() {
             @Override
@@ -164,7 +164,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
 
                 param.setRecordingHint(true);
-                param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
                 camera.setParameters(param);
 
 
