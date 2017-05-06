@@ -11,6 +11,7 @@ configure_file(../../../androidarchs/${ANDROID_ABI}/libfec.so ${CMAKE_LIBRARY_OU
 configure_file(../../../androidarchs/${ANDROID_ABI}/libqrencoder_wrapper.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libqrencoder_wrapper.so COPYONLY)
 configure_file(../../../androidarchs/${ANDROID_ABI}/libRSencoder.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSencoder.so COPYONLY)
 configure_file(../../../androidarchs/${ANDROID_ABI}/libRSdecoder.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSdecoder.so COPYONLY)
+configure_file(../../../androidarchs/${ANDROID_ABI}/libRSdecAPI.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSdecAPI.so COPYONLY)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.

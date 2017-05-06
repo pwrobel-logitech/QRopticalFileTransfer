@@ -101,6 +101,7 @@ public class Qrfiles extends AppCompatActivity {
         System.loadLibrary("qrencoder_wrapper");
         System.loadLibrary("RSencoder");
         System.loadLibrary("RSdecoder");
+        System.loadLibrary("RSdecAPI");
         System.loadLibrary("native-lib");
     }
 

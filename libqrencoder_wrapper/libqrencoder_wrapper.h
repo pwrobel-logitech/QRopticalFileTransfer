@@ -7,18 +7,7 @@
 #include <string.h>
 
 
-//returned status after we pass the qr image data
-enum immediate_status {
-    NOT_RECOGNIZED, // on the passed image, there were no detected qr image
-    AMBUGUOUS, // more than one qr image detected
-    HEADER_ALREADY_DETECTED,
-    ERRONEUS_HASH_WRONG,
-    ERRONEUS, // detected, but the frame number is wrong or missed too many frames
-              // if received only once, the whole detection is revoked and resources must be released
-    ERR_DATAFRAME_TOO_EARLY, // got data frame, without recognizing the header first from previous frames
-    RECOGNIZED, // some qr code has been recognized for sure
-    ALREADY_CORRECTLY_TRANSFERRED
-};
+#include "../public_decoder_api.h"
 
 size_t compressImage(char* buffer, size_t width, size_t height, unsigned char** outputBuffer, int quality);
 

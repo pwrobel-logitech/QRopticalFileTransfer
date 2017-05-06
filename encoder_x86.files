@@ -394,3 +394,8 @@ open_rs_encoder.h
 qr_frame_producer.cpp
 qr_frame_producer.h
 single_fac_test.cpp
+public_decoder_api.h
+public_encoder_api.h
+decoder_api_lib.cpp
+encoder_api_lib.cpp
+decoder/test2_pubapi.cpp

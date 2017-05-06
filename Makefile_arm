@@ -34,8 +34,12 @@ libqrencode_wrapper:
 decoder_lib: decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp
 	$(CPP) $(CFLAGS) -O2 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/$(OUTARCH)/libRSdecoder.so -L$(current_dir)/$(OUTARCH) -lfec -lqrencoder_wrapper
 	$(STRIP) $(current_dir)/$(OUTARCH)/libRSdecoder.so
-        
+
+public_decoder_api_lib: decoder_lib decoder_api_lib.cpp
+	$(CPP) $(CFLAGS) -O2 -I$(current_dir) -I$(current_dir)/decoder decoder_api_lib.cpp -fPIC -shared -o $(OUTARCH)/libRSdecAPI.so -L$(current_dir)/$(OUTARCH) -lRSdecoder -lqrencoder_wrapper 
+	$(STRIP) $(current_dir)/$(OUTARCH)/libRSdecAPI.so
+
 decoder_test: decoder_lib decoder/decoder_test.cpp
 	$(CPP) $(CFLAGS) -O2 -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -pie -o $(current_dir)/$(OUTARCH)/decoder_test -L$(current_dir)/$(OUTARCH) -lRSdecoder -lqrencoder_wrapper
 
-all: fec_test lib libqrencode_wrapper decoder_test main
+all: fec_test lib libqrencode_wrapper public_decoder_api_lib decoder_test main
