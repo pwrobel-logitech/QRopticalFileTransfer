@@ -5,7 +5,7 @@
 current_dir = $(shell pwd)
 BASE=/home/pwrobel/toolchains/arm-14
 STRIP=$(BASE)/bin/arm-linux-androideabi-strip
-CFLAGS=-I. -I$(BASE)/include/c++/4.9.x/bits/ -Wall
+CFLAGS=-I. -I$(BASE)/include/c++/4.9.x/bits/ -Wall -DANDROID
 CPP=$(BASE)/bin/arm-linux-androideabi-g++
 STRIP=$(BASE)/bin/arm-linux-androideabi-strip
 LIBQRENCODER_LIBFOLDERNAME=libqrencode
@@ -32,7 +32,7 @@ libqrencode_wrapper:
 	$(CPP) $(CFLAGS)  -O2 -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper_test.cpp -pie -o $(current_dir)/$(OUTARCH)/libqrencoder_test -L$(current_dir)/$(OUTARCH) -lqrencoder_wrapper
 
 decoder_lib: decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp
-	$(CPP) $(CFLAGS) -O2 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/$(OUTARCH)/libRSdecoder.so -L$(current_dir)/$(OUTARCH) -lfec -lqrencoder_wrapper
+	$(CPP) $(CFLAGS) -O2 -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/$(OUTARCH)/libRSdecoder.so -L$(current_dir)/$(OUTARCH) -lfec -lqrencoder_wrapper -llog
 	$(STRIP) $(current_dir)/$(OUTARCH)/libRSdecoder.so
 
 public_decoder_api_lib: decoder_lib decoder_api_lib.cpp

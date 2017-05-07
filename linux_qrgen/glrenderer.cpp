@@ -60,7 +60,7 @@ void glrenderer::renderGL(int w, int h, const char* buff)
 	//Clear color buffer and depth buffer
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	//clear color
-    glClearColor( 0.f, 1.0f, 0.0f, 1.f );
+    glClearColor( 1.f, 1.0f, 1.0f, 1.f );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity();
     //draw here..
@@ -69,7 +69,7 @@ void glrenderer::renderGL(int w, int h, const char* buff)
     glEnable( GL_TEXTURE_2D );
 
     //glColor3f(1.0f, 0.0f, 0.0f);
-    float x=0.99, y=0.99;
+    float x=0.7, y=0.7;
 
     int Mode = GL_RGBA;
 

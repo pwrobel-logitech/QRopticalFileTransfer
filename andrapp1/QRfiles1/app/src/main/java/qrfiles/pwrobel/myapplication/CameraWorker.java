@@ -13,6 +13,7 @@ import android.os.HandlerThread;
 
 import android.os.Process;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -47,6 +48,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
         //context.notifyAll();
         initialize_decoder();
+        set_decoded_file_path("/mnt/sdcard/out");
     }
 
     public CameraWorker(String name) {
@@ -58,8 +60,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
-        Log.i("info", "Got byte arrQ of size "+data.length+" bytes");
+        //Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
+        //Log.i("info", "Got byte arrQ of size "+data.length+" bytes");
 
         applyGrayScale(greyscalebuffer, data, camwidth, camheight);
 
@@ -70,6 +72,21 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         Camera.Parameters parameters = camera.getParameters();
         final int width = parameters.getPreviewSize().width;
         final int height = parameters.getPreviewSize().height;
+
+
+
+        final int status = send_next_grayscale_buffer_to_decoder(greyscalebuffer, width, height);
+        if(false)
+        ((Activity)context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toolbar t = (Toolbar)((Activity)context).findViewById(R.id.toolbar);
+                t.setTitle("Status "+status);
+            }
+        });
+
+        //Log.i("STATUS QR frame", "status is : " + status);
+
 /*
         YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
 
@@ -80,43 +97,45 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 */
 
+        if(false){
 
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {Activity act = (Activity) CameraWorker.this.context;
-                ImageView f = (ImageView) act.findViewById(R.id.imv1);
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    Activity act = (Activity) CameraWorker.this.context;
+                    ImageView f = (ImageView) act.findViewById(R.id.imv1);
 
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inMutable = true;
-                //for (int q = 0; q < greyscalebuffer.length; q++)
-                //  greyscalebuffer[q] = (byte)0x7f;
-                //Bitmap bmp = BitmapFactory.decodeByteArray(dat, 0, dat.length, options);
-                int []pixels = new int[width*height];
-                for (int i = 0; i<width; i++)
-                    for (int j = 0; j<height; j++){
-                        byte p = greyscalebuffer[j*width+i];
-                        pixels[j*width+i] = 0xff000000 | ((p<<16)&0xff0000) | ((p<<8)&0xff00) | (p&0xff);
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inMutable = true;
+                    //for (int q = 0; q < greyscalebuffer.length; q++)
+                    //  greyscalebuffer[q] = (byte)0x7f;
+                    //Bitmap bmp = BitmapFactory.decodeByteArray(dat, 0, dat.length, options);
+                    int[] pixels = new int[width * height];
+                    for (int i = 0; i < width; i++)
+                        for (int j = 0; j < height; j++) {
+                            byte p = greyscalebuffer[j * width + i];
+                            pixels[j * width + i] = 0xff000000 | ((p << 16) & 0xff0000) | ((p << 8) & 0xff00) | (p & 0xff);
+                        }
+                    Bitmap bmp = Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+
+
+                    f.setImageBitmap(bmp);
+                    synchronized (this) {
+                        this.notify();
                     }
-                Bitmap bmp = Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+                }
+            };
 
-
-                f.setImageBitmap(bmp);
-                synchronized(this)
-                {
-                    this.notify();
+            synchronized (r) {
+                a.runOnUiThread(r);
+                try {
+                    r.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        };
 
-        synchronized(r) {
-            a.runOnUiThread(r);
-            try {
-                r.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
-
 
 
         camera.addCallbackBuffer(callbackbuffer);

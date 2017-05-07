@@ -16,8 +16,8 @@ using namespace TCLAP;
 using namespace std;
 
 //Window initial dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 640;
+const int SCREEN_WIDTH = 700;
+const int SCREEN_HEIGHT = 700;
 
 bool is_fullscreen = false;
 //Starts up SDL and creates window
@@ -242,7 +242,9 @@ int MyThread(void *ptr)
         unlock_mutex();
 
         //printf("\nThread counter: %d", cnt);
-        SDL_Delay(200);
+        SDL_Delay(50);
+        //if(cnt==90)
+          //  frame_producer->tell_no_more_generating_header();
         //if (!is_screen_valid){
             produce_next_QR_frame_to_buffer();
             draw_frame();

@@ -2,6 +2,10 @@
 #include "hash-library/sha256.h"
 #include <iostream>
 
+#ifdef ANDROID
+#include <android/log.h>
+#endif
+
 QR_frame_decoder::QR_frame_decoder(){
     this->header_data_.resize(0);
     this->header_data_tmp_.resize(0);
@@ -119,6 +123,9 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
 // 4B (N,K), 4B (n,k), 5Bfilelength(Q), 2B length fname, 1B hash length, XB file name, XB file hash content
 
 int QR_frame_decoder::analyze_header(){
+#ifdef ANDROID
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX start analyze header", 1);
+#endif
     if(this->header_detection_done_) //detection already succeeded earlier
         return 1;
     int status = 0;
@@ -136,7 +143,9 @@ int QR_frame_decoder::analyze_header(){
             }
         //we have magic header start - check further
         //end
-
+#ifdef ANDROID
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX2 badass detected", 1);
+#endif
         pos += 4; //skip over magic bytes
         uint16_t totalL = *((uint16_t*) (start + pos-pos_start));
         pos += 2; //skip over total length
@@ -174,6 +183,10 @@ int QR_frame_decoder::analyze_header(){
             continue; // if first hash over header does not match, ingnore this batch and go further
         }
 
+#ifdef ANDROID
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX3 got small hash", 1);
+#endif
+
         // now we trust all the header fields, if the hashes match - file name lenth included
 
         //hash big - file name text as well
@@ -201,6 +214,9 @@ int QR_frame_decoder::analyze_header(){
         this->file_info_.RSk_residual = k;
         this->file_info_.filelength = flength;
         this->file_info_.filename = std::string(start + 45, fname_length);
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ got header correctly %s", this->file_info_.filename.c_str());
+#endif
         this->file_info_.filepath = this->api_told_filepath_;
         if(this->file_info_.fp != NULL)
             FileClose(this->file_info_.fp);
@@ -341,6 +357,9 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 }
 
 int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int context){
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new chunk chl %d, contx %d", chunklength, context);
+#endif
     DCHECK(chunklength>=0);
     if(chunklength==0)
         DLOG("Warn, chunklength is zero\n");
