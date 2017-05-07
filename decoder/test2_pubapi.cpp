@@ -11,7 +11,7 @@
 int main(int argc, char** argv){
 
 
- initialize_encoder();
+ initialize_decoder();
  set_decoded_file_path("/home/pwrobel/");
 
  FILE *f;
@@ -58,5 +58,5 @@ int main(int argc, char** argv){
      printf("ERROR - transmition failed - too many errors or file sanity check failed\n");
  }
 
- deinitialize_encoder();
+ deinitialize_decoder();
 }

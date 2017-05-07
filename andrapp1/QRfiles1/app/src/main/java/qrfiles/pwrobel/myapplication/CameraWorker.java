@@ -46,7 +46,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             context.notify();
         }
         //context.notifyAll();
-
+        initialize_decoder();
     }
 
     public CameraWorker(String name) {
@@ -217,5 +217,20 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 */
     }
 
+
+    /////////native part
     public static native void applygrayscalenative(byte [] pixels, byte [] data, int width, int height);
+
+    //native decoder/encoder lib part
+
+    public static native int initialize_decoder();
+    public static native int set_decoded_file_path(String path);
+    public static native int send_next_grayscale_buffer_to_decoder(
+        byte[] grayscale_qr_data,
+        int image_width,
+        int image_height);
+
+    public static native int tell_decoder_no_more_qr();
+    public static native int deinitialize_decoder();
+
 }

@@ -17,7 +17,7 @@ char namebuf[200];
 immediate_status last_status;
 
 
-int initialize_encoder(){
+int initialize_decoder(){
     framedecoder = new QR_frame_decoder;
     return 0;
 };
@@ -42,7 +42,7 @@ immediate_status tell_decoder_no_more_qr(){
 };
 
 
-int deinitialize_encoder(){
+int deinitialize_decoder(){
     delete framedecoder;
     framedecoder = NULL;
     return 0;
