@@ -21,6 +21,9 @@ struct etab {
 } Tab = {10, 0x409,   1,   1, 512, 10 };
 
 
+etab Tab2 = {3, 0xb,     1,   1, 2, 10};
+
+
 
 int go(struct etab *e);
 
@@ -38,7 +41,86 @@ double currmili(){
 }
 
 
+
+
+
+
+
+int go2(){
+
+    int N = (1<<Tab2.symsize) - 1;
+    int K = 3;
+    int nroots = N - K;
+
+    int* mem = new int[N];
+    int* erasureloc = new int[N];
+
+    memset(mem, 0, N);
+    memset(erasureloc, 0, N);
+
+    mem[0] = 3;
+    mem[1] = 2;
+    mem[2] = 7;
+    //mem[3] = 0;
+    //mem[4] = 6;
+    //mem[5] = 5;
+    //mem[6] = 4;
+
+    for (int i = 0; i<N; i++)
+        printf("(mem[%d]=%d), ", i, mem[i]);
+    printf("\n");
+
+    void* rs = init_rs_int(Tab2.symsize,Tab2.genpoly,Tab2.fcs,Tab2.prim,nroots,0);
+    encode_rs_int(rs, mem, &mem[K]);
+
+    for (int i = 0; i<N; i++)
+        printf("(mem[%d]=%d), ", i, mem[i]);
+    printf("\n");
+
+    free_rs_int(rs);
+
+    //make erasures
+    mem[0]=0;
+    mem[1]=0;
+    mem[2]=0;
+    mem[5]=0;
+
+    //make info in the location array
+    erasureloc[0]=0;
+    erasureloc[1]=1;
+    erasureloc[2]=2;
+    erasureloc[3]=5;
+
+    printf("Corrupted content : \n");
+
+    //reprint
+    for (int i = 0; i<N; i++)
+        printf("(mem[%d]=%d), ", i, mem[i]);
+    printf("\n");
+
+    //recreate RS engine
+    rs = init_rs_int(Tab2.symsize,Tab2.genpoly,Tab2.fcs,Tab2.prim,nroots,0);
+    int nr = decode_rs_int(rs,mem,erasureloc,4/* num of erasures*/);
+
+    printf("Info from dec %d\n", nr);
+
+    //reprint
+    for (int i = 0; i<N; i++)
+        printf("(mem[%d]=%d), ", i, mem[i]);
+    printf("\n");
+
+    free_rs_int(rs);
+
+    delete []erasureloc;
+    delete []mem;
+}
+
+
+
+
 int main(){
+    go2();
+    exit(0);
   int i;
 
   srandom(time(NULL));
