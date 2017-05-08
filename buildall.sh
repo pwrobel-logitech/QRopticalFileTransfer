@@ -3,6 +3,7 @@ make -f Makefile_x86_64 all
 make -f Makefile_arm all
 make -f Makefile_armv7a all
 
+mkdir androidarchs
 mkdir androidarchs/x86_64
 mkdir androidarchs/armeabi
 mkdir androidarchs/armeabi-v7a

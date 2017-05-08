@@ -1,7 +1,9 @@
 #include "rs_decoder.h"
 #include "fec.h"
 
-
+#ifdef ANDROID
+#include <android/log.h>
+#endif
 
 OpenRSEncodedFrame::OpenRSEncodedFrame(int RSn, int RSk) :
     EncodedFrame::EncodedFrame(RSn, RSk){}
@@ -267,6 +269,17 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
         }
     }
     int nerasures = this->RSn_ - this->next_erasure_successful_num_position_;
+    //
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "rsdec", "neras%d, tab : %d %d %d %d %d %d %d ", nerasures,
+                            internal_RS_erasure_location_mem_[0],
+                            internal_RS_erasure_location_mem_[1],
+                            internal_RS_erasure_location_mem_[2],
+                            internal_RS_erasure_location_mem_[3],
+                            internal_RS_erasure_location_mem_[4],
+                            internal_RS_erasure_location_mem_[5],
+                            internal_RS_erasure_location_mem_[6]);
+#endif
     //
     uint32_t nerr = 0;
     printf("\n");

@@ -242,7 +242,7 @@ int MyThread(void *ptr)
         unlock_mutex();
 
         //printf("\nThread counter: %d", cnt);
-        SDL_Delay(100);
+        SDL_Delay(90);
         //if(cnt==90)
           //  frame_producer->tell_no_more_generating_header();
         //if (!is_screen_valid){

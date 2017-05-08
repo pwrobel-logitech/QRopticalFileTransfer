@@ -326,7 +326,7 @@ immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength
     // Tell the decoder not to try as hard as possible.
     DecodeHints hints;
     hints.clear();
-    hints.setTryHarder(true);
+    hints.setTryHarder(false);
     hints.addFormat(BarcodeFormat::QR_CODE);
 
 
