@@ -55,18 +55,26 @@ RS_decoder::RS_decoder(){
     //this->byte_of_file_currently_processed_to_frames_ = 0;
     this->file_data_.clear();
     this->RSfecDec = NULL;
-    this->internal_RS_error_location_mem_ = NULL;
+    this->internal_RS_erasure_location_mem_ = NULL;
+    this->internal_RS_successfull_indexes_per_chunk_ = NULL;
     this->old_chunk_number_ = 0;
     this->status_ = RS_decoder::STILL_OK;
     this->configured_ = false;
     this->fist_proper_framedata_number_for_this_decoder_ = 0;
+    this->next_erasure_successful_num_position_ = 0;
 }
 
 RS_decoder::~RS_decoder(){
     if(this->RSfecDec)
         free_rs_int(this->RSfecDec);
-    if(this->internal_RS_error_location_mem_ != NULL)
-        delete []this->internal_RS_error_location_mem_;
+    if(this->internal_RS_erasure_location_mem_ != NULL){
+        delete []this->internal_RS_erasure_location_mem_;
+        this->internal_RS_erasure_location_mem_ = NULL;
+    }
+    if(this->internal_RS_successfull_indexes_per_chunk_ != NULL){
+        delete []this->internal_RS_successfull_indexes_per_chunk_;
+        this->internal_RS_successfull_indexes_per_chunk_ = NULL;
+    }
     if(this->internal_memory_ != NULL){
         delete []this->internal_memory_;
         this->internal_memory_ = NULL;
@@ -100,7 +108,7 @@ void RS_decoder::internal_getdata_from_internal_memory(){
     if(nerr>0)
         DLOG("Warning, nerr = %d\n", nerr);
     int internal_status = RS_decoder::STILL_OK;
-    if ((nerr>(this->get_RSn()-this->get_RSk())/2) || (nerr==-1))
+    if (/*(nerr>(this->get_RSn()-this->get_RSk())/2) ||*/ (nerr==-1)) //-1 is enough = data recovery failed
         internal_status = RS_decoder::TOO_MUCH_ERRORS;
 
     this->recreate_original_arr(this->internal_memory_, &data, &length);
@@ -143,7 +151,18 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
 
     if (curr_chunk > this->old_chunk_number_){ // time to decode the internal_memory_ + pack bits back to the original array
         this->internal_getdata_from_internal_memory();
+        //done encoding - reset erasure positions
+        this->next_erasure_successful_num_position_ = 0;
+        memset(this->internal_RS_successfull_indexes_per_chunk_, 0, sizeof(int) * this->RSn_);
+        memset(this->internal_RS_erasure_location_mem_, 0, sizeof(int) * this->RSn_);
     }
+
+    //save to the index array for calculation of the erasure position
+    this->internal_RS_successfull_indexes_per_chunk_[this->next_erasure_successful_num_position_] = ipos;
+    this->next_erasure_successful_num_position_++;
+    DCHECK(this->next_erasure_successful_num_position_ <= this->RSn_);
+    //
+
     /////////////////////////// action for the new frame that was actally send
     int nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
 
@@ -190,7 +209,7 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
         this->internal_memory_ = NULL;
     }
     this->internal_memory_ = new uint32_t[n*this->n_channels_];
-    memset(this->internal_memory_,0 , n*this->n_channels_*sizeof(uint32_t));
+    memset(this->internal_memory_, 0, n*this->n_channels_*sizeof(uint32_t));
 
     int i = 0;
     while ((1<<RS_decoder::RSfecCodeConsts[i].symsize) != n+1)
@@ -203,10 +222,20 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
             RS_decoder::RSfecCodeConsts[this->RSfecCodeConsts_index_].prim,
             n - k,
             0);
-    if(this->internal_RS_error_location_mem_ != NULL){
-        delete []this->internal_RS_error_location_mem_;
+    if(this->internal_RS_erasure_location_mem_ != NULL){
+        delete []this->internal_RS_erasure_location_mem_;
+        this->internal_RS_erasure_location_mem_ = NULL;
     }
-    this->internal_RS_error_location_mem_ = new int[this->RSn_];
+    this->internal_RS_erasure_location_mem_ = new int[this->RSn_];
+    memset(this->internal_RS_erasure_location_mem_, 0, sizeof(uint32_t) * n);
+
+    if(this->internal_RS_successfull_indexes_per_chunk_ != NULL){
+        delete []this->internal_RS_successfull_indexes_per_chunk_;
+        this->internal_RS_successfull_indexes_per_chunk_ = NULL;
+    }
+    this->internal_RS_successfull_indexes_per_chunk_ = new int[this->RSn_];
+    memset(this->internal_RS_successfull_indexes_per_chunk_, 0, sizeof(uint32_t) * n);
+    this->next_erasure_successful_num_position_ = 0;
 };
 
 
@@ -225,11 +254,25 @@ bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
 }
 
 uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
+    //calculate erasure positions from the frame indexes array - as required by the FEC. See the (7,3) test code
+    int last_compared_index_in_succ_arr = 0;
+    int curr_index_in_erasure_arr = 0;
+    for (int q = 0; q < this->RSn_; q++){
+        if(q != this->internal_RS_successfull_indexes_per_chunk_[last_compared_index_in_succ_arr]){
+            this->internal_RS_erasure_location_mem_[curr_index_in_erasure_arr++] = q;
+        }else{
+            last_compared_index_in_succ_arr++;
+            if(q == this->RSn_)
+                break;
+        }
+    }
+    int nerasures = this->RSn_ - this->next_erasure_successful_num_position_;
+    //
     uint32_t nerr = 0;
     printf("\n");
     for (uint32_t j = 0; j < this->n_channels_; j++){
         uint32_t e = decode_rs_int(this->RSfecDec, j*this->RSn_ + (int*)this->internal_memory_,
-                             NULL, 0);
+                             this->internal_RS_erasure_location_mem_, nerasures);
         printf("%d ",e);
         if (e > nerr)
             nerr = e;

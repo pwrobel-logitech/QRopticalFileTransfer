@@ -61,7 +61,7 @@ OpenRSEncoder::OpenRSEncoder(){
     this->byte_of_file_currently_processed_to_frames_ = 0;
     this->file_data_.clear();
     this->RSfecEnc = NULL;
-    this->internal_RS_error_location_mem_ = NULL;
+    this->internal_RS_erasure_location_mem_ = NULL;
     this->is_header_frame_generating_ = true;
     this->total_file_length_ = 0;
     this->offset_in_file_reading_starts_ = 0;
@@ -71,8 +71,8 @@ OpenRSEncoder::OpenRSEncoder(){
 OpenRSEncoder::~OpenRSEncoder(){
     if(this->RSfecEnc)
         free_rs_int(this->RSfecEnc);
-    if(this->internal_RS_error_location_mem_ != NULL)
-        delete []this->internal_RS_error_location_mem_;
+    if(this->internal_RS_erasure_location_mem_ != NULL)
+        delete []this->internal_RS_erasure_location_mem_;
     if(this->internal_memory_ != NULL){
         delete []this->internal_memory_;
         this->internal_memory_ = NULL;
@@ -130,11 +130,11 @@ void OpenRSEncoder::set_RS_nk(uint16_t n, uint16_t k){
             OpenRSEncoder::RSfecCodeConsts[this->RSfecCodeConsts_index_].prim,
             n - k,
             0);
-    if(this->internal_RS_error_location_mem_ != NULL){
-        delete []this->internal_RS_error_location_mem_;
+    if(this->internal_RS_erasure_location_mem_ != NULL){
+        delete []this->internal_RS_erasure_location_mem_;
     }
-    this->internal_RS_error_location_mem_ = new int[this->RSn_];
-    memset(this->internal_RS_error_location_mem_, 0, sizeof(int) * this->RSn_);
+    this->internal_RS_erasure_location_mem_ = new int[this->RSn_];
+    memset(this->internal_RS_erasure_location_mem_, 0, sizeof(int) * this->RSn_);
 };
 
 uint8_t* OpenRSEncoder::compute_hash(){

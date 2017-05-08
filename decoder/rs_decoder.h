@@ -72,8 +72,15 @@ protected:
 
     // used to store symbols containing the data for the series of frames + the RS redundancy symbols
     uint32_t* internal_memory_;
-    //this is for the libfec
-    int* internal_RS_error_location_mem_;
+
+    //not used, since it can be inferred from the latest next_erasure_successful_num_position_
+    //uint32_t Num_erasures_; //number of erasures = N - succesfully_recognized_frames_in_chunk
+    int next_erasure_successful_num_position_;
+    //this is for the libfec - of size N - used to store erasure locations - as in the simple (7,3) RS test
+    int* internal_RS_erasure_location_mem_;
+    int* internal_RS_successfull_indexes_per_chunk_; //negative of the above - if some frame is decoded
+    //then it index modulo N goes here. Used to produce erasure array
+
     void* RSfecDec;
     uint32_t RSfecCodeConsts_index_; //which index is currently used.
 
