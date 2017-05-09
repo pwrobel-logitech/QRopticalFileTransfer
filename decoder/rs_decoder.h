@@ -123,4 +123,7 @@ protected:
     uint32_t apply_RS_decode_to_internal_memory();
 
     void internal_getdata_from_internal_memory();
+
+private:
+    bool is_successfull_pos_for_erasure_position_present(int ipos_for_query);
 };

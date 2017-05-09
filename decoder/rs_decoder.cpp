@@ -151,17 +151,23 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
 
     DCHECK(curr_chunk >= 0);
 
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "QRdec", "ipos %d, chunk %d", ipos, curr_chunk);
+#endif
+
     if (curr_chunk > this->old_chunk_number_){ // time to decode the internal_memory_ + pack bits back to the original array
         this->internal_getdata_from_internal_memory();
         //done encoding - reset erasure positions
         this->next_erasure_successful_num_position_ = 0;
-        memset(this->internal_RS_successfull_indexes_per_chunk_, 0, sizeof(int) * this->RSn_);
+        memset(this->internal_RS_successfull_indexes_per_chunk_, -1, sizeof(int) * this->RSn_);
         memset(this->internal_RS_erasure_location_mem_, 0, sizeof(int) * this->RSn_);
     }
 
     //save to the index array for calculation of the erasure position
-    this->internal_RS_successfull_indexes_per_chunk_[this->next_erasure_successful_num_position_] = ipos;
-    this->next_erasure_successful_num_position_++;
+    if(!this->is_successfull_pos_for_erasure_position_present(ipos)){
+        this->internal_RS_successfull_indexes_per_chunk_[this->next_erasure_successful_num_position_] = ipos;
+        this->next_erasure_successful_num_position_++;
+    }
     DCHECK(this->next_erasure_successful_num_position_ <= this->RSn_);
     //
 
@@ -236,7 +242,7 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
         this->internal_RS_successfull_indexes_per_chunk_ = NULL;
     }
     this->internal_RS_successfull_indexes_per_chunk_ = new int[this->RSn_];
-    memset(this->internal_RS_successfull_indexes_per_chunk_, 0, sizeof(uint32_t) * n);
+    memset(this->internal_RS_successfull_indexes_per_chunk_, -1, sizeof(uint32_t) * n);
     this->next_erasure_successful_num_position_ = 0;
 };
 
@@ -293,6 +299,13 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
     printf("\n");
     return nerr;
 };
+
+bool RS_decoder::is_successfull_pos_for_erasure_position_present(int ipos_for_query){
+    for(int i = this->next_erasure_successful_num_position_ - 1; i>=0; i--)
+        if(this->internal_RS_successfull_indexes_per_chunk_[i] == ipos_for_query)
+            return true;
+        return false;
+}
 
 RS_decoder::codeconst RS_decoder::RSfecCodeConsts[] = {
  {2, 0x7,     1,   1, 1, 10 },

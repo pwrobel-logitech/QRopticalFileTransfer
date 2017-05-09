@@ -272,6 +272,10 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 
     uint32_t nhfr = *((uint16_t*)(generated_data+4));
 
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "QRdec", "nfr %d, nhfr %d", nfr, nhfr);
+#endif
+
     if(this->is_header_generating_){
         printf("qqrh %d, ",nhfr);
         for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
