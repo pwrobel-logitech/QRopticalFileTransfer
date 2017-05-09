@@ -286,6 +286,8 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
                             internal_RS_erasure_location_mem_[5],
                             internal_RS_erasure_location_mem_[6]);
 #endif
+    if (nerasures > this->RSn_ - this->RSk_) //do not try to decode, when it is known it advance that it will fail
+        return -1;
     //
     uint32_t nerr = 0;
     printf("\n");
