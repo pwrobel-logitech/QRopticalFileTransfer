@@ -11,4 +11,6 @@ public interface CameraController {
     public void closeCamAsync();
 
     public void setCallbackBufferSizeAsync(int size);
+
+    public void callAutoFocusAsync();
 }

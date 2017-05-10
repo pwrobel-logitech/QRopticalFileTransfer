@@ -11,9 +11,11 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import java.nio.ByteBuffer;
 
@@ -26,7 +28,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class CameraPreviewSurface extends GLSurfaceView implements
         GLSurfaceView.Renderer,
-        SurfaceTexture.OnFrameAvailableListener
+        SurfaceTexture.OnFrameAvailableListener,
+
+        View.OnTouchListener
 {
 
     private float[] mTransformM = new float[16];
@@ -197,4 +201,11 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        Log.i("Touch", "surface touched");
+        if (camcontroller != null)
+            camcontroller.callAutoFocusAsync();
+        return false;
+    }
 }

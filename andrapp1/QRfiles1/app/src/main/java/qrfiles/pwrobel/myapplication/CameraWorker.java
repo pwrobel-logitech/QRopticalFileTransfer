@@ -15,10 +15,13 @@ import android.os.Process;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RunnableFuture;
 
@@ -49,6 +52,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         //context.notifyAll();
         initialize_decoder();
         set_decoded_file_path("/mnt/sdcard/out");
+
+        camsurf.setOnTouchListener(camsurf);
     }
 
     public CameraWorker(String name) {
@@ -158,6 +163,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 camera = Camera.open();
 
+                camera.cancelAutoFocus();
+
                 Camera.Parameters param = camera.getParameters();
                 List<Camera.Size> psize = param.getSupportedPreviewSizes();
 
@@ -183,8 +190,17 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
 
                 param.setRecordingHint(true);
-                param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                param.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+
+                int nareas = param.getMaxNumFocusAreas();
+                if (nareas > 0) {
+                    ArrayList<Camera.Area> focusAreas = new ArrayList<Camera.Area>(1);
+                    focusAreas.add(new Camera.Area(new Rect(-500, -500, 500, 500), 1000));
+                    param.setFocusAreas(focusAreas);
+                }
+
                 camera.setParameters(param);
+
 
 
                 camera.addCallbackBuffer(callbackbuffer);
@@ -220,7 +236,25 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 callbackbuffer = new byte[size];
             }
         });
-    };
+    }
+
+    @Override
+    public void callAutoFocusAsync() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (camera != null)
+                    camera.autoFocus(new Camera.AutoFocusCallback() {
+                        @Override
+                        public void onAutoFocus(boolean success, Camera camera) {
+                            Log.i("Focus", "camera autofocused, success = " + success);
+                        }
+                    });
+            }
+        });
+    }
+
+    ;
 
 
     /// data as NV21 input, pixels as 8bit greyscale output
