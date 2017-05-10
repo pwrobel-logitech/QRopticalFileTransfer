@@ -27,6 +27,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->api_told_filepath_ = std::string("");
     this->is_all_file_processing_done_ = false;
     this->is_hash_of_flushed_file_correct_ = false;
+    this->file_info_.fp = NULL;
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -52,8 +53,10 @@ QR_frame_decoder::~QR_frame_decoder(){
     if (this->header_decoder_ != NULL)
         delete this->header_decoder_;
     if(this->file_info_.fp)
-        if(this->file_info_.fp != NULL)
+        if(this->file_info_.fp != NULL){
             FileClose(this->file_info_.fp);
+            this->file_info_.fp = NULL;
+        }
 
 }
 
@@ -234,8 +237,10 @@ int QR_frame_decoder::analyze_header(){
         __android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ got header correctly %s", this->file_info_.filename.c_str());
 #endif
         this->file_info_.filepath = this->api_told_filepath_;
-        if(this->file_info_.fp != NULL)
+        if(this->file_info_.fp != NULL){
             FileClose(this->file_info_.fp);
+            this->file_info_.fp = NULL;
+        }
         std::string fullpathname = this->file_info_.filepath + this->file_info_.filename;
         this->file_info_.fp = FileOpenToWrite(fullpathname.c_str());
         this->file_info_.hash.resize(8);
@@ -413,8 +418,10 @@ void QR_frame_decoder::flush_data_to_file(const char *data, uint32_t datalen){
         stat = write_file_fp(this->file_info_.fp, data, this->position_in_file_to_flush_, datalen);
     this->position_in_file_to_flush_ += datalen;
     if(this->is_switched_to_residual_data_decoder_){ //last remaining part of file was saved, check hash
-        if(this->file_info_.fp != NULL)
+        if(this->file_info_.fp != NULL){
             FileClose(this->file_info_.fp);
+            this->file_info_.fp = NULL;
+        }
         std::string fullpathname = this->file_info_.filepath + this->file_info_.filename;
         this->file_info_.fp = FileOpenToRead(fullpathname.c_str());
         bool is_hash_ok = this->is_file_hash_correct();

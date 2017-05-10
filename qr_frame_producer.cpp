@@ -30,8 +30,10 @@ Qr_frame_producer::~Qr_frame_producer(){
     if(this->metadata_encoder_!=NULL)
         delete this->metadata_encoder_;
     finish_libqrencoder();
-    if(this->file_info_.fp != NULL)
+    if(this->file_info_.fp != NULL){
         FileClose(this->file_info_.fp);
+        this->file_info_.fp = NULL;
+    }
 }
 
 void Qr_frame_producer::calculate_file_content_hash(int hash_chunk_size){
@@ -74,8 +76,10 @@ int Qr_frame_producer::set_external_file_info(const char* filename, const char* 
     this->setup_metadata_encoder();
     this->file_info_.filename = std::string(filename);
     this->file_info_.filepath = std::string(filepath);
-    if(this->file_info_.fp != NULL)
+    if(this->file_info_.fp != NULL){
         FileClose(this->file_info_.fp);
+        this->file_info_.fp = NULL;
+    }
     std::string fullname;
     if(strlen(filepath) > 0)
         fullname = this->file_info_.filepath + "/" + this->file_info_.filename;
