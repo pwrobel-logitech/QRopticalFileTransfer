@@ -124,7 +124,7 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
 
 int QR_frame_decoder::analyze_header(){
 #ifdef ANDROID
-        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX start analyze header", 1);
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX0 start analyze header, TEST1S %d", strtol("0x90695ffc", NULL, 16));
 #endif
     if(this->header_detection_done_) //detection already succeeded earlier
         return 1;
@@ -143,9 +143,7 @@ int QR_frame_decoder::analyze_header(){
             }
         //we have magic header start - check further
         //end
-#ifdef ANDROID
-        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX2 badass detected", 1);
-#endif
+
         pos += 4; //skip over magic bytes
         uint16_t totalL = *((uint16_t*) (start + pos-pos_start));
         pos += 2; //skip over total length
@@ -167,6 +165,12 @@ int QR_frame_decoder::analyze_header(){
         /// now, before proceeding with reading file name, we first check correctness of the
         /// first header hash
 
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO,
+                            "NATIVE", "XX2 badass detected, N%d, K%d, tl%d, fl%d, fnl%d",
+                            N, K, totalL, flength, fname_length);
+#endif
+
         //hash small hash - not the filename content and not the hashes itself
         SHA256 sha256stream;
         sha256stream.add(start, 6); //hash
@@ -174,17 +178,22 @@ int QR_frame_decoder::analyze_header(){
         std::string h_small = sha256stream.getHash();
 
         std::string hs_low  = std::string(h_small.c_str(), 8);
-        uint32_t hs_wlow = (uint32_t)strtol(hs_low.c_str(), NULL, 16);
+        uint32_t hs_wlow = (uint32_t)strtoul(hs_low.c_str(), NULL, 16);
         std::string hs_high = std::string(h_small.c_str() + 8, 8);
-        uint32_t hs_whigh = (uint32_t)strtol(hs_high.c_str(), NULL, 16);
+        uint32_t hs_whigh = (uint32_t)strtoul(hs_high.c_str(), NULL, 16);
         uint32_t writen_hs_wlow  = *((uint32_t*)(start + 6));
         uint32_t writen_hs_whigh = *((uint32_t*)(start + 10));
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO,
+                            "NATIVE", "XX2a hl%d hh%d, whl%d whh%d, c1 %d, c2 %d",
+                            hs_wlow, hs_whigh, writen_hs_wlow, writen_hs_whigh, (hs_wlow == writen_hs_wlow), (hs_whigh == writen_hs_whigh));
+#endif
         if ((hs_wlow != writen_hs_wlow) || (hs_whigh != writen_hs_whigh)) {
             continue; // if first hash over header does not match, ingnore this batch and go further
         }
 
 #ifdef ANDROID
-        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX3 got small hash", 1);
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX3 got small hash", 1);
 #endif
 
         // now we trust all the header fields, if the hashes match - file name lenth included
@@ -197,11 +206,18 @@ int QR_frame_decoder::analyze_header(){
         std::string h_big = sha256streamB.getHash();
 
         std::string hb_low  = std::string(h_big.c_str(), 8);
-        uint32_t hb_wlow = (uint32_t)strtol(hb_low.c_str(), NULL, 16);
+        uint32_t hb_wlow = (uint32_t)strtoul(hb_low.c_str(), NULL, 16);
         uint32_t written_hb_wlow = *((uint32_t*)(start + 6 + 8));
         std::string hb_high = std::string(h_big.c_str() + 8, 8);
-        uint32_t hb_whigh = (uint32_t)strtol(hb_high.c_str(), NULL, 16);
+        uint32_t hb_whigh = (uint32_t)strtoul(hb_high.c_str(), NULL, 16);
         uint32_t written_hb_whigh = *((uint32_t*)(start + 10 + 8));
+
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO,
+                            "NATIVE", "XX3a hl%d hh%d, whl%d whh%d",
+                            hb_wlow, hb_whigh, written_hb_wlow, written_hb_whigh);
+#endif
+
         if ((hb_wlow != written_hb_wlow) || (hb_whigh != written_hb_whigh)) {  //big hash mismatch
             continue;
         }
@@ -362,7 +378,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 
 int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int context){
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new chunk chl %d, contx %d", chunklength, context);
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new chunk chl %d, contx %d", chunklength, context);
 #endif
     DCHECK(chunklength>=0);
     if(chunklength==0)
@@ -441,10 +457,10 @@ bool QR_frame_decoder::is_file_hash_correct(){
 
 
     std::string hs_low  = std::string(h_small.c_str(), 8);
-    uint32_t hs_wlow = (uint32_t)strtol(hs_low.c_str(), NULL, 16);
+    uint32_t hs_wlow = (uint32_t)strtoul(hs_low.c_str(), NULL, 16);
     uint32_t hs_wlow_from_header =*((uint32_t*)(&this->file_info_.hash[0]));
     std::string hs_high = std::string(h_small.c_str() + 8, 8);
-    uint32_t hs_whigh = (uint32_t)strtol(hs_high.c_str(), NULL, 16);
+    uint32_t hs_whigh = (uint32_t)strtoul(hs_high.c_str(), NULL, 16);
     uint32_t hs_whigh_from_header = *((uint32_t*)(&this->file_info_.hash[4]));
     return ((hs_wlow == hs_wlow_from_header) && (hs_whigh == hs_whigh_from_header));
 };

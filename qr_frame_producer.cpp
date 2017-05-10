@@ -62,10 +62,10 @@ void Qr_frame_producer::calculate_file_content_hash(int hash_chunk_size){
 
     this->file_info_.hash.resize(8);
     std::string hs_low  = std::string(h_small.c_str(), 8);
-    uint32_t hs_wlow = (uint32_t)strtol(hs_low.c_str(), NULL, 16);
+    uint32_t hs_wlow = (uint32_t)strtoul(hs_low.c_str(), NULL, 16);
     *((uint32_t*)(&this->file_info_.hash[0])) = hs_wlow;
     std::string hs_high = std::string(h_small.c_str() + 8, 8);
-    uint32_t hs_whigh = (uint32_t)strtol(hs_high.c_str(), NULL, 16);
+    uint32_t hs_whigh = (uint32_t)strtoul(hs_high.c_str(), NULL, 16);
     *((uint32_t*)(&this->file_info_.hash[4])) = hs_whigh;
 };
 
@@ -191,10 +191,10 @@ void Qr_frame_producer::produce_metadata(){
         std::string h_small = sha256stream.getHash();
 
         std::string hs_low  = std::string(h_small.c_str(), 8);
-        uint32_t hs_wlow = (uint32_t)strtol(hs_low.c_str(), NULL, 16);
+        uint32_t hs_wlow = (uint32_t)strtoul(hs_low.c_str(), NULL, 16);
         *((uint32_t*)(start + 6)) = hs_wlow;
         std::string hs_high = std::string(h_small.c_str() + 8, 8);
-        uint32_t hs_whigh = (uint32_t)strtol(hs_high.c_str(), NULL, 16);
+        uint32_t hs_whigh = (uint32_t)strtoul(hs_high.c_str(), NULL, 16);
         *((uint32_t*)(start + 10)) = hs_whigh;
 
         //hash big - file name text as well
@@ -205,10 +205,10 @@ void Qr_frame_producer::produce_metadata(){
         std::string h_big = sha256streamB.getHash();
 
         std::string hb_low  = std::string(h_big.c_str(), 8);
-        uint32_t hb_wlow = (uint32_t)strtol(hb_low.c_str(), NULL, 16);
+        uint32_t hb_wlow = (uint32_t)strtoul(hb_low.c_str(), NULL, 16);
         *((uint32_t*)(start + 6 + 8)) = hb_wlow;
         std::string hb_high = std::string(h_big.c_str() + 8, 8);
-        uint32_t hb_whigh = (uint32_t)strtol(hb_high.c_str(), NULL, 16);
+        uint32_t hb_whigh = (uint32_t)strtoul(hb_high.c_str(), NULL, 16);
         *((uint32_t*)(start + 10 + 8)) = hb_whigh;
 
         spos += pos;

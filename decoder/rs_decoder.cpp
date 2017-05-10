@@ -277,14 +277,14 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
     int nerasures = this->RSn_ - this->next_erasure_successful_num_position_;
     //
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "rsdec", "neras%d, tab : %d %d %d %d %d %d %d ", nerasures,
+        /*__android_log_print(ANDROID_LOG_INFO, "rsdec", "neras%d, tab : %d %d %d %d %d %d %d ", nerasures,
                             internal_RS_erasure_location_mem_[0],
                             internal_RS_erasure_location_mem_[1],
                             internal_RS_erasure_location_mem_[2],
                             internal_RS_erasure_location_mem_[3],
                             internal_RS_erasure_location_mem_[4],
                             internal_RS_erasure_location_mem_[5],
-                            internal_RS_erasure_location_mem_[6]);
+                            internal_RS_erasure_location_mem_[6]);*/
 #endif
     if (nerasures > this->RSn_ - this->RSk_) //do not try to decode, when it is known it advance that it will fail
         return -1;

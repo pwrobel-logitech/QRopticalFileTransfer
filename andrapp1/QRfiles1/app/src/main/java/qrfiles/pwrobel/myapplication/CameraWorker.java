@@ -183,7 +183,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
 
                 param.setRecordingHint(true);
-                param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+                param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
                 camera.setParameters(param);
 
 
