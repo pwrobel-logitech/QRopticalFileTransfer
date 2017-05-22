@@ -52,7 +52,19 @@ Qr_frame_producer* frame_producer = NULL;
 vector<string> fileNames;
 int qrbytesize = 0;
 int current_file_index = 0;
+int initTime = 5;
+int targetFPS = 14;
 ////////////////////////////
+
+///////consts resulting from the above QR info
+double timeframe_delay; //delay between two consecutive frames = 1/fps
+///
+
+//general globals regarding the state of the program at the current moment
+double current_ms_time = 0;
+bool is_in_header_generation_mode = true; //when header frames are generated, keep this to true
+//
+
 
 bool is_displaychange_requested = false;
 bool is_fullscreenchange_requested = false;
@@ -64,6 +76,13 @@ int draw_frame();
 bool is_thread_running = true;
 SDL_Thread *thread;
 SDL_mutex *mutex;
+
+double get_current_ms_time(){
+    struct timeval tp;
+    gettimeofday(&tp, NULL);
+    long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    return ((double) ms);
+}
 
 
 int syscommand(string aCommand, string & result) {
@@ -209,6 +228,8 @@ bool init(bool is_fullscreen)
 
 int MyThread(void *ptr)
 {
+    double last_time = get_current_ms_time();
+
     int cnt = 0;
     lock_mutex();
 
@@ -216,11 +237,19 @@ int MyThread(void *ptr)
     {
         printf( "Failed to initialize!\n" );
     }
-    unlock_mutex();
+
+
+    produce_next_QR_frame_to_buffer();
     draw_frame();
+    cnt++;
+    unlock_mutex();
+
+    double first_frame_draw_time = get_current_ms_time();
+
     while(is_thread_running) {
-        lock_mutex();
-        if(is_requested_reread_winsize)
+
+
+        if (is_requested_reread_winsize)
         {
             SDL_GetWindowSize(gWindow, &sizeX, &sizeY);
             if( !glrenderer::initGL(sizeX, sizeY) )
@@ -230,27 +259,44 @@ int MyThread(void *ptr)
 
             draw_frame();
         }
-        if(is_fullscreenchange_requested)
-        {
-            draw_frame();
-            is_fullscreenchange_requested = false;
-        }
-        unlock_mutex();
 
-        lock_mutex();
-        draw_frame();
-        unlock_mutex();
+        if (is_in_header_generation_mode){
+            if (get_current_ms_time() >= first_frame_draw_time + initTime * 1000.0){
+                is_in_header_generation_mode = false;
+                frame_producer->tell_no_more_generating_header();
+            }
+        }
 
         //printf("\nThread counter: %d", cnt);
-        SDL_Delay(90);
-        //if(cnt==90)
-          //  frame_producer->tell_no_more_generating_header();
-        //if (!is_screen_valid){
+        double tdiff = get_current_ms_time() - last_time;
+        if(tdiff >= timeframe_delay){
+            last_time = get_current_ms_time();
+            // redraw frame
+
+
+            lock_mutex();
+            draw_frame();
+
+
             produce_next_QR_frame_to_buffer();
             draw_frame();
             is_screen_valid = true;
+
+            unlock_mutex();
+            cnt++;
+
+        }
+        //do the delay
+
+        //
+
+        SDL_Delay(1);
+        //if(cnt==90)
+          //  frame_producer->tell_no_more_generating_header();
+        //if (!is_screen_valid){
+
         //}
-        cnt++;
+
     }
     return cnt;
 }
@@ -427,6 +473,12 @@ int main(int argc, char** argv)
     ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame", false, 31, "int");
     cmd.add( QRsizeArg );
 
+    ValueArg<int> QRtargetFPS("s", "fpsvalue", "Target FPS", false, 14, "int");
+    cmd.add( QRtargetFPS );
+
+    ValueArg<int> QRinitTime("t", "initialframetime", "Time duration(s) of the initial frames", false, 4, "int");
+    cmd.add( QRinitTime );
+
     //SwitchArg reverseSwitch("r","reverse","Print name backwards", false);
     //cmd.add( reverseSwitch );
 
@@ -442,6 +494,9 @@ int main(int argc, char** argv)
     //bool reverseName = reverseSwitch.getValue();
     fileNames = multi.getValue();
     qrbytesize = QRsizeArg.getValue();
+    initTime = QRinitTime.getValue();
+    targetFPS = QRtargetFPS.getValue();
+    timeframe_delay = 1000.0 / ((double) targetFPS);
 
     printf("QR size : %d\n", QRsizeArg.getValue());
 
