@@ -49,6 +49,9 @@ private:
     // describes whether we are generating the header frame now.
     bool is_header_frame_generating_;
 
+    // decribes if there is any header/data mode switch pending
+    bool is_header_frame_generating_switch_pending_;
+
 
     //default qr data length size
     uint16_t total_chars_per_QR_;

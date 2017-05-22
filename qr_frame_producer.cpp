@@ -22,6 +22,7 @@ Qr_frame_producer::Qr_frame_producer()
     this->is_first_dataframe_number_offset_reconfigured_on_the_res_decoder_ = false;
     this->total_frame_numbers_that_will_be_produced_ = 0;
     this->nfr_done_ = 0;
+    this->is_header_frame_generating_switch_pending_ = false;
 }
 
 Qr_frame_producer::~Qr_frame_producer(){
@@ -109,7 +110,7 @@ void Qr_frame_producer::setup_metadata_encoder(){
     this->metadata_encoder_->set_filelength(0);
     this->metadata_encoder_->set_datafeed_provider(this);
     this->metadata_encoder_->set_is_header_frame_generating(true);
-    uint32_t n = 7;
+    uint32_t n = fixed_N_metadata;
 
 
     int bestfit = utils::count_symbols_to_fit(n,
@@ -117,7 +118,7 @@ void Qr_frame_producer::setup_metadata_encoder(){
                                               this->total_chars_per_QR_ - 6)-1;
     this->metadata_encoder_->set_nchannels_parallel(bestfit);
     this->metadata_encoder_->set_nbytes_data_per_generated_frame(this->total_chars_per_QR_ - 6);
-    this->metadata_encoder_->set_RS_nk(n, 3); //redundancy level
+    this->metadata_encoder_->set_RS_nk(n, fixed_K_metadata); //redundancy level
 }
 
 int Qr_frame_producer::estimate_capacity(int N, int K, int charperQR){
@@ -156,6 +157,10 @@ void Qr_frame_producer::produce_metadata(){
     }while(curr_size<remain_length);
     int remN = (1 << curr_power) - 1;
     int remK = remN - ((1 << curr_power) / 2);
+    if (remN > optimal_rsn)
+        remN = optimal_rsn;
+    if (remK > optimal_rsk)
+        remK = optimal_rsk;
     this->setup_encoder(optimal_rsn, optimal_rsk, remN, remK);
     // fill metadata array
     while (cont){
@@ -268,12 +273,19 @@ void Qr_frame_producer::setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint3
 }
 
 int Qr_frame_producer::tell_no_more_generating_header(){
-    this->is_header_frame_generating_ = false;
+    this->is_header_frame_generating_switch_pending_ = true;
     return 0;
 }
 
 int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_image, int *produced_width){
     DLOG("Producing image to mem..\n");
+
+    //check if there is no header->data switch pending, and apply it in the right moment
+    if(( (this->nfr_done_+0) % fixed_N_metadata == 0) && this->is_header_frame_generating_switch_pending_){
+        this->is_header_frame_generating_ = false;
+        this->is_header_frame_generating_switch_pending_ = false;
+    }
+
     OpenRSEncodedFrame *frame = new OpenRSEncodedFrame();
     if(this->is_header_frame_generating_){
         this->metadata_encoder_->set_is_header_frame_generating(true);

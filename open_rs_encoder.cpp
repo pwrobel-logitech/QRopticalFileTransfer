@@ -66,6 +66,7 @@ OpenRSEncoder::OpenRSEncoder(){
     this->total_file_length_ = 0;
     this->offset_in_file_reading_starts_ = 0;
     this->n_dataframe_first_frame_number_produced_by_the_encoder_ = 0;
+    this->n_dataframe_last_produced_ = 0;
 };
 
 OpenRSEncoder::~OpenRSEncoder(){

@@ -6,6 +6,9 @@ const int fixed_metadata_arr_size = 32*4096;
 const int fixed_filehash_buff_size = 32*1024;
 char fixed_filehash_buff[fixed_filehash_buff_size];
 
+const int fixed_N_metadata = 7;
+const int fixed_K_metadata = 3;
+
 struct FileInfo{
     std::string filename;
     std::string filepath;
