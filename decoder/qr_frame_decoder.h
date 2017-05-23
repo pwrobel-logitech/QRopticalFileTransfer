@@ -78,5 +78,4 @@ protected:
     //set to true only when the previous processing has been done, and the hash has been confirmed to be correct
     bool is_hash_of_flushed_file_correct_;
 
-
 };

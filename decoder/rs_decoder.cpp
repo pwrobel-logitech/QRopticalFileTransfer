@@ -5,6 +5,8 @@
 #include <android/log.h>
 #endif
 
+#include "globaldefs.h"
+
 OpenRSEncodedFrame::OpenRSEncodedFrame(int RSn, int RSk) :
     EncodedFrame::EncodedFrame(RSn, RSk){}
 

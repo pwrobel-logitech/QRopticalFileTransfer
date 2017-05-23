@@ -6,6 +6,8 @@
 #include <android/log.h>
 #endif
 
+#include "globaldefs.h"
+
 QR_frame_decoder::QR_frame_decoder(){
     this->header_data_.resize(0);
     this->header_data_tmp_.resize(0);
@@ -325,13 +327,13 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 
     if(this->is_header_generating_){
         fr->set_frame_number(nhfr);
-        fr->framedata_.resize(generated_datalength);
+        fr->framedata_.resize(generated_datalength+end_corruption_overhead);
         memcpy(&(fr->framedata_[0]), generated_data, generated_datalength);
         fr->set_frame_RSnk(this->header_decoder_->get_RSn(), this->header_decoder_->get_RSk());
 
         printf("header frame set %d\n",nfr);
         printf("FR send : \n");
-        for(int q=0;q<fr->framedata_.size();q++){
+        for(int q=0;q<fr->framedata_.size()-end_corruption_overhead;q++){
             printf("%d ", fr->framedata_[q]);
         }
         RS_decoder::detector_status dec_status = this->header_decoder_->send_next_frame(fr);
@@ -357,13 +359,13 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         chosenRSk = final_decoder->get_RSk();
 
         fr->set_frame_number(nfr);
-        fr->framedata_.resize(generated_datalength);
+        fr->framedata_.resize(generated_datalength+end_corruption_overhead);
         memcpy(&(fr->framedata_[0]), generated_data, generated_datalength);
         fr->set_frame_RSnk(chosenRSn, chosenRSk);
 
         printf("frame set %d\n",nfr);
         printf("FR send : \n");
-        for(int q=0;q<fr->framedata_.size();q++){
+        for(int q=0;q<fr->framedata_.size()-end_corruption_overhead;q++){
             printf("%d ", fr->framedata_[q]);
         }
         RS_decoder::detector_status dec_status = final_decoder->send_next_frame(fr);

@@ -1,6 +1,7 @@
 #include "open_rs_encoder.h"
 #include <memory.h>
 #include <sys/time.h>
+#include "globaldefs.h"
 
 ///Encoded frame part
 ///
@@ -274,13 +275,13 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
 };
 
 bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
-    int overhead = 0;
+    int overhead = 0;    
     if(this->is_header_frame_generating_){
         overhead = 6;
     }else{
         overhead = 4;
     }
-    frame.framedata_.resize(this->bytes_per_generated_frame_+overhead);
+    frame.framedata_.resize(this->bytes_per_generated_frame_+overhead+end_corruption_overhead);
     //generate header containing the frame number on every frame
     if(is_header_frame_generating_)
         *((uint32_t*)&(frame.framedata_[0])) = 0xffffffff;
@@ -311,7 +312,7 @@ bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
     }
     int num = this->is_header_frame_generating_ ? this->n_header_frame_processed_ : this->n_dataframe_processed_;
     printf("qqr %d, ",num);
-    int qrlen = frame.framedata_.size();
+    int qrlen = frame.framedata_.size()-end_corruption_overhead;
     for(int k = 0; k<qrlen;k++)printf("0x%02hhx ", frame.framedata_[k]);
     printf("\n");
     return true;

@@ -3,6 +3,7 @@
 #include "hash-library/sha256.h"
 #include <iostream>
 #include <math.h>
+#include "globaldefs.h"
 
 Qr_frame_producer::Qr_frame_producer()
 {
@@ -314,7 +315,7 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     DLOG("Frame number : %d\n", (int)frame->get_frame_number());
     int resulting_width;
     char* generated_grayscale_data;
-    int size = frame->framedata_.size();
+    int size = frame->framedata_.size()-end_corruption_overhead;
     int margin = 3;
     generate_qr_greyscale_bitmap_data(&frame->framedata_[0],
                                            size,
