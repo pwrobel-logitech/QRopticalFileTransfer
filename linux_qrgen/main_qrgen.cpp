@@ -63,6 +63,7 @@ double timeframe_delay; //delay between two consecutive frames = 1/fps
 //general globals regarding the state of the program at the current moment
 double current_ms_time = 0;
 bool is_in_header_generation_mode = true; //when header frames are generated, keep this to true
+bool is_last_frame_for_curr_file_done = false;
 //
 
 
@@ -179,6 +180,7 @@ int produce_next_QR_frame_to_buffer(){
         }
         if(frame_producer){
             int status = frame_producer->produce_next_qr_grayscale_image_to_mem(&QRbuffer, &QRbuffw);
+            printf("Got status from the frame producer : %d\n", status);
             QRbuffh = QRbuffw;
             Nframe++;
             if (status == 1){
@@ -186,6 +188,7 @@ int produce_next_QR_frame_to_buffer(){
                 frame_producer = NULL;
                 current_file_index++;
                 Nframe = 0;
+                return 1;
             }
         }
         return 0;
@@ -275,11 +278,12 @@ int MyThread(void *ptr)
 
 
             lock_mutex();
-            draw_frame();
 
 
-            produce_next_QR_frame_to_buffer();
-            draw_frame();
+
+            int status = produce_next_QR_frame_to_buffer();
+            if(status == 0)
+                draw_frame();
             is_screen_valid = true;
 
             unlock_mutex();

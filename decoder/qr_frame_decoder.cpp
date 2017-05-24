@@ -385,7 +385,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 
 int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int context){
 #ifdef ANDROID
-        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new chunk chl %d, contx %d", chunklength, context);
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new chunk chl %d, contx %d", chunklength, context);
 #endif
     DCHECK(chunklength>=0);
     if(chunklength==0)
@@ -415,6 +415,9 @@ int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int
 }
 
 void QR_frame_decoder::flush_data_to_file(const char *data, uint32_t datalen){
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ0 flushing datalen %d to file", datalen);
+#endif
     int stat = 0;
     if(this->file_info_.fp)
         stat = write_file_fp(this->file_info_.fp, data, this->position_in_file_to_flush_, datalen);

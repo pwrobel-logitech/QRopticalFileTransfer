@@ -337,8 +337,8 @@ bool OpenRSEncoder::apply_RS_code_to_internal_memory(){
 
 
     //
-    for(int k = 0; k<this->RSn_*this->n_channels_; k++)
-        printf("ino %d, val %d\n",k, this->internal_memory_[k]);
+    //for(int k = 0; k<this->RSn_*this->n_channels_; k++)
+    //    printf("ino %d, val %d\n",k, this->internal_memory_[k]);
     //
 
     for (uint32_t j = 0; j < this->n_channels_; j++){
@@ -346,8 +346,8 @@ bool OpenRSEncoder::apply_RS_code_to_internal_memory(){
                       j*this->RSn_ + (int*)this->internal_memory_ + this->RSk_);
     }
     //
-    for(int k = 0; k<this->RSn_*this->n_channels_; k++)
-        printf("ind %d, val %d\n",k, this->internal_memory_[k]);
+    //for(int k = 0; k<this->RSn_*this->n_channels_; k++)
+    //    printf("ind %d, val %d\n",k, this->internal_memory_[k]);
     //
     return true;
 }

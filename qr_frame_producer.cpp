@@ -23,6 +23,7 @@ Qr_frame_producer::Qr_frame_producer()
     this->is_first_dataframe_number_offset_reconfigured_on_the_res_decoder_ = false;
     this->total_frame_numbers_that_will_be_produced_ = 0;
     this->nfr_done_ = 0;
+    this->ndataframe_done_ = 0;
     this->is_header_frame_generating_switch_pending_ = false;
 }
 
@@ -326,7 +327,13 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     *produced_width = resulting_width;
     delete frame;
     this->nfr_done_++;
-    int status = (this->nfr_done_ >= this->total_frame_numbers_that_will_be_produced_);
+    if(!this->is_header_frame_generating_)
+        this->ndataframe_done_++;
+    int status;
+    if(this->is_header_frame_generating_)
+        status = 0;
+    else
+        status = (this->ndataframe_done_ > this->total_frame_numbers_that_will_be_produced_);
     return status;
 };
 
