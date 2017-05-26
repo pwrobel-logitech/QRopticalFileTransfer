@@ -7,6 +7,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#ifdef ANDROID
+#include <android/log.h>
+#endif
+
+
 uint32_t get_file_size(const char* filepath){
     uint32_t size = 0;
     FILE * fp;
@@ -26,14 +31,23 @@ uint32_t get_file_size_fp(void* fp){
 
 // system-dependent file manipulation functions
 void* FileOpenToRead(const char* fn){
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "FUTIL", "fopen r %s", fn);
+#endif
     return (void*)fopen(fn, "r");
 }
 
 void* FileOpenToWrite(const char* fn){
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "FUTIL", "fopen w %s", fn);
+#endif
     return (void*)fopen(fn, "w");
 }
 
 void FileClose(void* fn){
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "FUTIL", "fclose %d", (int)fn);
+#endif
     fclose((FILE*)fn);
 }
 

@@ -17,6 +17,7 @@ public:
     void print_current_maindata();
 
     void tell_file_generation_path(const char* filepath);
+    int get_total_frames_of_data_that_will_be_produced();
 
     ////////////End API
 

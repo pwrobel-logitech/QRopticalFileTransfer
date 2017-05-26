@@ -243,6 +243,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         handler.post(new Runnable() {
             @Override
             public void run() {
+                tell_decoder_no_more_qr();
                 if (camera != null)
                     camera.autoFocus(new Camera.AutoFocusCallback() {
                         @Override

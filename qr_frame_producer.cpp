@@ -4,6 +4,7 @@
 #include <iostream>
 #include <math.h>
 #include "globaldefs.h"
+#include <libgen.h>
 
 Qr_frame_producer::Qr_frame_producer()
 {
@@ -17,6 +18,7 @@ Qr_frame_producer::Qr_frame_producer()
     this->file_info_.filelength = 0;
     this->file_info_.filename = std::string("");
     this->file_info_.filepath = std::string("");
+    this->file_info_.filename_without_any_path = std::string("");
     this->file_info_.fp = NULL;
     this->current_position_of_file_to_process_ = 0;
     this->last_frame_num_produced_by_encoder_ = 0;
@@ -78,6 +80,7 @@ int Qr_frame_producer::set_external_file_info(const char* filename, const char* 
     this->total_chars_per_QR_ = suggested_qr_payload_length;
     this->setup_metadata_encoder();
     this->file_info_.filename = std::string(filename);
+    this->file_info_.filename_without_any_path = std::string(basename((char*)filename));
     this->file_info_.filepath = std::string(filepath);
     if(this->file_info_.fp != NULL){
         FileClose(this->file_info_.fp);
@@ -185,13 +188,14 @@ void Qr_frame_producer::produce_metadata(){
         *((uint32_t*)(start+pos)) = this->file_info_.filelength;
         *((uint8_t*)(start+pos+4)) = 0; //remain
         pos += 5; //skip over the filelength field
-        *((uint16_t*) (pos+start)) = this->file_info_.filename.length();
+        *((uint16_t*) (pos+start)) = this->file_info_.filename_without_any_path.length();
         pos += 2; //skip over filenamelength field
         *((uint32_t*)(start+pos)) = *((uint32_t*)(&this->file_info_.hash[0]));
         *((uint32_t*)(start+pos+4)) = *((uint32_t*)(&this->file_info_.hash[4]));
         pos += 8;//skip over filedata hash
-        memcpy(start+pos, this->file_info_.filename.c_str(), this->file_info_.filename.length());
-        pos += this->file_info_.filename.length(); // skip all filename characters for now
+        memcpy(start+pos, this->file_info_.filename_without_any_path.c_str(),
+               this->file_info_.filename_without_any_path.length());
+        pos += this->file_info_.filename_without_any_path.length(); // skip all filename characters for now
 
         *((uint16_t*) (start+4)) = pos;//save total length
 
@@ -212,7 +216,7 @@ void Qr_frame_producer::produce_metadata(){
         SHA256 sha256streamB;
         sha256streamB.add(start, 6); //hash
         sha256streamB.add(start + 22, 23);
-        sha256streamB.add(start + 45, this->file_info_.filename.length());
+        sha256streamB.add(start + 45, this->file_info_.filename_without_any_path.length());
         std::string h_big = sha256streamB.getHash();
 
         std::string hb_low  = std::string(h_big.c_str(), 8);
@@ -326,14 +330,17 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     *produced_image = generated_grayscale_data;
     *produced_width = resulting_width;
     delete frame;
+    int status;
+
     this->nfr_done_++;
     if(!this->is_header_frame_generating_)
         this->ndataframe_done_++;
-    int status;
+
     if(this->is_header_frame_generating_)
         status = 0;
     else
         status = (this->ndataframe_done_ > this->total_frame_numbers_that_will_be_produced_);
+
     return status;
 };
 

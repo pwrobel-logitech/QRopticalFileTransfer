@@ -10,8 +10,9 @@ const int fixed_N_metadata = 7;
 const int fixed_K_metadata = 3;
 
 struct FileInfo{
-    std::string filename;
-    std::string filepath;
+    std::string filename;//can contain some relative dir to the base path. On the decoder, this is the pure name
+    std::string filename_without_any_path; //just pure filename
+    std::string filepath; //base dir of search. For decoder, this is the dump path of the files
     uint32_t filelength;
     int RSn;//for main part of the file
     int RSk;

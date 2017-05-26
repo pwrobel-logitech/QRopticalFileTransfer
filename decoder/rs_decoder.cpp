@@ -95,8 +95,8 @@ void RS_decoder::fist_proper_framedata_number_for_this_decoder(uint32_t first){
 
 void RS_decoder::internal_getdata_from_internal_memory(){
 
-    for(int k = 0; k<this->RSn_*this->n_channels_; k++)
-        printf("ind %d, val %d\n",k, this->internal_memory_[k]);
+    //for(int k = 0; k<this->RSn_*this->n_channels_; k++)
+    //    printf("ind %d, val %d\n",k, this->internal_memory_[k]);
     //
 
     char* data;
@@ -154,10 +154,13 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
     DCHECK(curr_chunk >= 0);
 
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "QRdec", "ipos %d, chunk %d", ipos, curr_chunk);
+        __android_log_print(ANDROID_LOG_INFO, "QRdec", "ipos %d, chunk %d, oldchn %d", ipos, curr_chunk, this->old_chunk_number_);
 #endif
 
     if (curr_chunk > this->old_chunk_number_){ // time to decode the internal_memory_ + pack bits back to the original array
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX5 time to prepare for new chunk");
+#endif
         this->internal_getdata_from_internal_memory();
         //done encoding - reset erasure positions
         this->next_erasure_successful_num_position_ = 0;

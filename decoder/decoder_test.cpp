@@ -10,7 +10,7 @@ int main(int argc, char** argv){
 
 
     QR_frame_decoder framedecoder;
-    framedecoder.tell_file_generation_path("/home/pwrobel/");
+    framedecoder.tell_file_generation_path("/home/pwrobel");
 
     FILE *f;
     char namebuf[100];
@@ -31,6 +31,7 @@ int main(int argc, char** argv){
             printf("Error reading frame in the qr decoder test! \n");
         int width = (int)sqrt(fsize);
         immediate_status status = framedecoder.send_next_grayscale_qr_frame(buf, width, width);
+        printf("QQQQQQQQQQQQ willbe %d\n", framedecoder.get_total_frames_of_data_that_will_be_produced());
         last_status = status;
         if ((status == ALREADY_CORRECTLY_TRANSFERRED) || (status == ERRONEUS_HASH_WRONG) ||
              (status == ERRONEUS)){

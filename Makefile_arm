@@ -20,7 +20,7 @@ fec_test: single_fac_test.cpp
 	$(CPP) $(CFLAGS) -DANDROID -pie single_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o $(OUTARCH)/test_single -L$(current_dir)/$(OUTARCH) -lfec
 
 lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper
-	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -DANDROID  -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp hash-library/sha256.cpp -o $(OUTARCH)/libRSencoder.so -L$(current_dir)/$(OUTARCH) -lfec -lqrencoder_wrapper
+	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -DANDROID  -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp hash-library/sha256.cpp -o $(OUTARCH)/libRSencoder.so -L$(current_dir)/$(OUTARCH) -lfec -lqrencoder_wrapper -llog
 	$(STRIP) $(current_dir)/$(OUTARCH)/libRSencoder.so
         
 main: main.cpp

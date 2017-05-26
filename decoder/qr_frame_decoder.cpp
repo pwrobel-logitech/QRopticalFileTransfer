@@ -81,6 +81,16 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
 
 void QR_frame_decoder::tell_file_generation_path(const char* filepath){
     this->api_told_filepath_ = std::string(filepath);
+    if(this->api_told_filepath_.c_str()[this->api_told_filepath_.length()-1] != '/')
+      this->api_told_filepath_ += "/";
+};
+
+int QR_frame_decoder::get_total_frames_of_data_that_will_be_produced(){
+    if(this->is_header_generating_)
+        return -1; //we do not know yet
+
+    int nchunk_main = this->file_info_.filelength / this->decoder_bytes_len_;
+    return nchunk_main*this->RSn_ + this->RSn_rem_;
 };
 
 void QR_frame_decoder::setup_detector_after_header_recognized(){
@@ -427,10 +437,12 @@ void QR_frame_decoder::flush_data_to_file(const char *data, uint32_t datalen){
             FileClose(this->file_info_.fp);
             this->file_info_.fp = NULL;
         }
+
         std::string fullpathname = this->file_info_.filepath + this->file_info_.filename;
         this->file_info_.fp = FileOpenToRead(fullpathname.c_str());
         bool is_hash_ok = this->is_file_hash_correct();
-        FileClose(this->file_info_.fp);
+        if(this->file_info_.fp)
+            FileClose(this->file_info_.fp);
         if(!is_hash_ok)
             remove_file(fullpathname.c_str());
         this->file_info_.fp = NULL;
