@@ -39,6 +39,23 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     byte[] callbackbuffer;
     byte[] greyscalebuffer;
 
+
+    //below, fields regarding the estimation of the moment after we know for sure the detector has ended
+    //even if the few last frames are missing
+    //we estimate based on the moment of first dataframe that arrived and the last dataframe so far
+    //we know how many frame to expect to, so simply interpolate the time the last frame is supposed
+    //to arrive (with some small delay added)
+    boolean is_first_frame_arrived = false;
+    int first_frame_num_arrived;
+    long time_first_frame_arrived;
+    boolean is_last_frame_so_far_arrived = false;
+    int last_frame_number_arrived_so_far; // must be greater than the first frame number
+    long time_last_frame_number_arrived_so_far; //only used when first and last frame so far arrived
+    double current_estimated_moment_of_end;
+    static long time_overhead = 300000000; // 180ms in nanosecs as a time unit. From System.nanoTime()
+    boolean triggered_autoestimated_end = false;
+    //end of the fields for the estimation of the end of the detection
+
     public void setContext(Context cont){
         context = cont;
         Activity a = (Activity) cont;
@@ -80,6 +97,38 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
 
         final int status = send_next_grayscale_buffer_to_decoder(greyscalebuffer, width, height);
+
+        int ntot = get_total_frames_of_data_that_will_be_produced();
+        int lf = get_last_number_of_frame_detected();
+
+        if(status > 0 && ntot != -1 && lf != -1){ //correctly recognized - not header frame
+            if(!is_first_frame_arrived){
+                first_frame_num_arrived = lf;
+                time_first_frame_arrived = System.nanoTime();
+                Log.i("QQQ", "First frame arrived : "+lf);
+                is_first_frame_arrived = true;
+            }
+
+            if(is_first_frame_arrived && lf > first_frame_num_arrived && lf > last_frame_number_arrived_so_far){
+                is_last_frame_so_far_arrived = true;
+                time_last_frame_number_arrived_so_far = System.nanoTime();
+                last_frame_number_arrived_so_far = lf;
+                Log.i("QQQ", "Last frame arrived so far: "+lf);
+            }
+        }
+
+        if(is_first_frame_arrived && is_last_frame_so_far_arrived && ntot!=-1 && (!triggered_autoestimated_end)){
+            //do the execution of end, if the interpolated time exceeed the limit
+            double est_time = time_first_frame_arrived +
+                    (time_last_frame_number_arrived_so_far - time_first_frame_arrived) *
+                    (ntot/(last_frame_number_arrived_so_far - first_frame_num_arrived));
+            long lest_time = (long) est_time;
+            if (System.nanoTime() > lest_time + time_overhead){
+                Log.i("QQQ", "Triggering the end of detection");
+                tell_decoder_no_more_qr();
+                triggered_autoestimated_end = true;
+            }
+        }
 
         if(status > 0)
             Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+
@@ -248,7 +297,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         handler.post(new Runnable() {
             @Override
             public void run() {
-                tell_decoder_no_more_qr();
+                //tell_decoder_no_more_qr();
                 if (camera != null)
                     camera.autoFocus(new Camera.AutoFocusCallback() {
                         @Override
