@@ -5,6 +5,27 @@
 
 extern "C"
 JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1total_1frames_1of_1data_1that_1will_1be_1produced(
+        JNIEnv *env, jclass type) {
+    return (jint)get_total_frames_of_data_that_will_be_produced();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1number_1of_1frame_1detected(JNIEnv *env,
+                                                                                       jclass type) {
+    return (jint)get_last_number_of_frame_detected();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1number_1of_1header_1frame_1detected(
+        JNIEnv *env, jclass type) {
+    return (jint)get_last_number_of_header_frame_detected();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_initialize_1decoder(JNIEnv *env, jclass type) {
     return initialize_decoder();
 }

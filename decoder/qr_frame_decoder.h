@@ -19,6 +19,10 @@ public:
     void tell_file_generation_path(const char* filepath);
     int get_total_frames_of_data_that_will_be_produced();
 
+    int get_last_number_of_frame_detected();
+
+    int get_last_number_of_header_frame_detected();
+
     ////////////End API
 
     int notifyNewChunk(int chunklength, const char* chunkdata, int context);
@@ -78,5 +82,10 @@ protected:
     bool is_all_file_processing_done_;
     //set to true only when the previous processing has been done, and the hash has been confirmed to be correct
     bool is_hash_of_flushed_file_correct_;
+
+    //what was the last frame number that was successfully recognized
+    //-1 means, that nothing has been processed yet
+    int last_frame_number_processed_;
+    int last_header_frame_number_processed_;
 
 };

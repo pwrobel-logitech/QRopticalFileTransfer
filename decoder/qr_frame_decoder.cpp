@@ -30,6 +30,8 @@ QR_frame_decoder::QR_frame_decoder(){
     this->is_all_file_processing_done_ = false;
     this->is_hash_of_flushed_file_correct_ = false;
     this->file_info_.fp = NULL;
+    this->last_header_frame_number_processed_ = -1;
+    this->last_frame_number_processed_ = -1;
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -91,6 +93,14 @@ int QR_frame_decoder::get_total_frames_of_data_that_will_be_produced(){
 
     int nchunk_main = this->file_info_.filelength / this->decoder_bytes_len_;
     return nchunk_main*this->RSn_ + this->RSn_rem_;
+};
+
+int QR_frame_decoder::get_last_number_of_frame_detected(){
+    return this->last_frame_number_processed_;
+};
+
+int QR_frame_decoder::get_last_number_of_header_frame_detected(){
+    return this->last_header_frame_number_processed_;
 };
 
 void QR_frame_decoder::setup_detector_after_header_recognized(){
@@ -284,6 +294,12 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         return NOT_RECOGNIZED;
     ////////////////////////// process generated_data = extract frame number
     uint32_t nfr = *((uint32_t*)generated_data);
+    uint32_t nhfr = *((uint16_t*)(generated_data+4));
+
+    if(nfr == 0xffffffff)
+        this->last_header_frame_number_processed_ = nhfr;
+    else
+        this->last_frame_number_processed_ = nfr;
 
     if((nfr != 0xffffffff) && (!this->header_detection_done_))
         return ERR_DATAFRAME_TOO_EARLY;
@@ -302,8 +318,6 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         this->reconfigure_qr_size(generated_datalength);
         this->header_decoder_->set_configured(true);
     }
-
-    uint32_t nhfr = *((uint16_t*)(generated_data+4));
 
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_INFO, "QRdec", "nfr %d, nhfr %d", nfr, nhfr);

@@ -42,6 +42,20 @@ immediate_status tell_decoder_no_more_qr(){
 };
 
 
+int get_total_frames_of_data_that_will_be_produced(){
+    return framedecoder->get_total_frames_of_data_that_will_be_produced();
+};
+
+
+int get_last_number_of_frame_detected(){
+    return framedecoder->get_last_number_of_frame_detected();
+};
+
+int get_last_number_of_header_frame_detected(){
+    return framedecoder->get_last_number_of_header_frame_detected();
+};
+
+
 int deinitialize_decoder(){
     delete framedecoder;
     framedecoder = NULL;

@@ -79,16 +79,21 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         final int height = parameters.getPreviewSize().height;
 
 
-
         final int status = send_next_grayscale_buffer_to_decoder(greyscalebuffer, width, height);
-        if(false)
+
+        if(status > 0)
+            Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+
+                  " lashHdrProducedN "+get_last_number_of_header_frame_detected() +
+                  " lastDatFrProducedN "+get_last_number_of_frame_detected() + " laststatus "+status);
+
+        /*if(false)
         ((Activity)context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Toolbar t = (Toolbar)((Activity)context).findViewById(R.id.toolbar);
                 t.setTitle("Status "+status);
             }
-        });
+        });*/
 
         //Log.i("STATUS QR frame", "status is : " + status);
 
@@ -101,7 +106,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         byte[] bytes = out.toByteArray();
         final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 */
-
+/*
         if(false){
 
             Runnable r = new Runnable() {
@@ -140,7 +145,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
             }
 
-        }
+        }*/
 
 
         camera.addCallbackBuffer(callbackbuffer);
@@ -285,6 +290,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         int image_height);
 
     public static native int tell_decoder_no_more_qr();
+
+    public static native int get_total_frames_of_data_that_will_be_produced();
+    public static native int get_last_number_of_frame_detected();
+    public static native int get_last_number_of_header_frame_detected();
+
+
     public static native int deinitialize_decoder();
 
 }
