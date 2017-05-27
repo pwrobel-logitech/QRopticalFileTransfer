@@ -248,15 +248,16 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     e.printStackTrace();
                 }
 
-                param.setRecordingHint(true);
-                param.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+                //param.setRecordingHint(true);
+                param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
-                int nareas = param.getMaxNumFocusAreas();
-                if (nareas > 0) {
-                    ArrayList<Camera.Area> focusAreas = new ArrayList<Camera.Area>(1);
-                    focusAreas.add(new Camera.Area(new Rect(-500, -500, 500, 500), 1000));
-                    param.setFocusAreas(focusAreas);
-                }
+                //int nareas = param.getMaxNumFocusAreas();
+                //if (nareas > 0) {
+                    //ArrayList<Camera.Area> focusAreas = new ArrayList<Camera.Area>(1);
+                    //focusAreas.add(new Camera.Area(new Rect(-100, -100, 100, 100), 1000));
+                    //param.setFocusAreas(focusAreas);
+                    //param.setMeteringAreas(focusAreas);
+                //}
 
                 camera.setParameters(param);
 
@@ -303,13 +304,32 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             @Override
             public void run() {
                 //tell_decoder_no_more_qr();
-                if (camera != null)
+                //if (camera != null)
+
+
+                    //try{
+                    //    camera.cancelAutoFocus();
+                    //}catch (Exception e){}
+                //Camera.Parameters param = camera.getParameters();
+
+                //param.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                //camera.setParameters(param);
+                //Log.i("Focus", "auto");
                     camera.autoFocus(new Camera.AutoFocusCallback() {
                         @Override
-                        public void onAutoFocus(boolean success, Camera camera) {
+                        public void onAutoFocus(boolean success, Camera camera2) {
                             Log.i("Focus", "camera autofocused, success = " + success);
+                            //Camera.Parameters param = camera.getParameters();
+                            //param.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
+                            //camera.setParameters(param);
+                            camera.cancelAutoFocus();
+                            //camera.autoFocus(null);
+                            //Log.i("Focus", "fixed");
+
                         }
                     });
+                //camera.cancelAutoFocus();
+                //camera.autoFocus(null);
             }
         });
     }

@@ -93,6 +93,8 @@ int QR_frame_decoder::get_total_frames_of_data_that_will_be_produced(){
     if(this->is_header_generating_)
         return -1; //we do not know yet
 
+    if(this->decoder_bytes_len_ <= 0)
+        return -1;
     int nchunk_main = this->file_info_.filelength / this->decoder_bytes_len_;
     return nchunk_main*this->RSn_ + this->RSn_rem_;
 };
