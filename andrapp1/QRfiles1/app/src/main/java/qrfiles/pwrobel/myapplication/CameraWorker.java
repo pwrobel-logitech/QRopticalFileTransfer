@@ -120,15 +120,20 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if(is_first_frame_arrived && is_last_frame_so_far_arrived && ntot!=-1 && (!triggered_autoestimated_end)){
             //do the execution of end, if the interpolated time exceeed the limit
             double est_time = time_first_frame_arrived +
-                    (time_last_frame_number_arrived_so_far - time_first_frame_arrived) *
+                    2*(time_last_frame_number_arrived_so_far - time_first_frame_arrived) *
                     (ntot/(last_frame_number_arrived_so_far - first_frame_num_arrived));
             long lest_time = (long) est_time;
             if (System.nanoTime() > lest_time + time_overhead){
                 Log.i("QQQ", "Triggering the end of detection");
-                tell_decoder_no_more_qr();
+                //tell_decoder_no_more_qr();
                 triggered_autoestimated_end = true;
             }
         }
+
+
+        if(ntot > 0 && lf > 0)
+            if(lf >= ntot - 1)
+                tell_decoder_no_more_qr();
 
         if(status > 0)
             Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+

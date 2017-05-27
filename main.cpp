@@ -70,10 +70,10 @@ int main(int argc, char **argv){
 
     Qr_frame_producer frame_producer;
 
-    frame_producer.set_external_file_info("77.txt", "/repos/qr/", 66);
+    frame_producer.set_external_file_info("tv3.txt", "/repos/qr/", 66);
 
     int num = 0;
-    for(int i=0; i<7*20; i++){
+    for(int i=0; i<7*40; i++){
         snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", num);
         frame_producer.produce_next_qr_image_to_file(namebuf);
         num++;
@@ -81,7 +81,7 @@ int main(int argc, char **argv){
 
     frame_producer.tell_no_more_generating_header();
 
-    for(int i=0; i<35; i++){
+    for(int i=0; i<35*20; i++){
         snprintf(namebuf, sizeof(namebuf), "QRNE_%d_frame", num);
         frame_producer.produce_next_qr_image_to_file(namebuf);
         num++;

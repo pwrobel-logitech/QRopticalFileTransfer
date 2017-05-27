@@ -66,6 +66,8 @@ RS_decoder::RS_decoder(){
     this->configured_ = false;
     this->fist_proper_framedata_number_for_this_decoder_ = 0;
     this->next_erasure_successful_num_position_ = 0;
+    this->is_residual_ = false;
+    this->processed_once_ = false;
 }
 
 RS_decoder::~RS_decoder(){
@@ -99,7 +101,7 @@ void RS_decoder::internal_getdata_from_internal_memory(){
     //    printf("ind %d, val %d\n",k, this->internal_memory_[k]);
     //
 
-    char* data;
+    char* data = NULL;
     uint32_t length=0;
     double t = utils::currmili();
     uint32_t nerr = this->apply_RS_decode_to_internal_memory();
@@ -133,8 +135,11 @@ void RS_decoder::internal_getdata_from_internal_memory(){
         }else{
             DLOG("Warn: no chunk listener to pass the decoded data to..\n");
         }
-    if(length > 0)
+    if(length > 0 && data != NULL)
         delete []data;
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "RSdec", "Cleaining1 internal mem RS%d", (int)this);
+#endif
     memset(this->internal_memory_, 0, sizeof(uint32_t)*this->n_channels_*this->RSn_);
 }
 
@@ -188,6 +193,10 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
         offset = 6;
     }
 
+#ifdef ANDROID
+      //LOGI("ABCQ2 : ipos %d : ", ipos);
+#endif
+
     for (uint32_t j = 0; j < numsym; j++){ //iterate over symbols within a frame
         uint32_t val = utils::get_data(&(frame->framedata_[offset]), j*nbits, nbits);
         if(val>this->RSn_)
@@ -195,7 +204,15 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
         DCHECK(ipos+j*this->RSn_<this->RSn_*this->n_channels_);
         this->internal_memory_[ipos+j*this->RSn_] = val;
         //printf("QQQx indw %d, valw %d\n", ipos+j*this->RSn_, val);
+#ifdef ANDROID
+        //LOGI("(j%d)%d ", j, val);
+#endif
     }
+
+#ifdef ANDROID
+      //LOGI("\n");
+#endif
+
 
     this->old_chunk_number_ = curr_chunk;
     return this->status_;
@@ -259,10 +276,25 @@ bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
     if(*data_produced == NULL)
         return false;
     memset(*data_produced, 0, *length_produced);
+#ifdef ANDROID
+    LOGI("DATAA recr_original_arr : n_channels %d, RSn_ %d, RSk_ %d : ", this->n_channels_, this->RSn_, this->RSk_);
+#endif
     for (uint32_t j = 0; j<this->n_channels_; j++)
         for (uint32_t i = 0; i<this->RSk_; i++){
             utils::set_data((void*)*data_produced, (j * this->RSk_+ i)*utils::nbits_forsymcombinationsnumber(this->RSn_), symbols_arr[i+j*this->RSn_]);
+#ifdef ANDROID
+        if(this->is_residual_ && !processed_once_)LOGI("(i%d,j%d)%d ", i, j, symbols_arr[i+j*this->RSn_]);
+#endif
         }
+#ifdef ANDROID
+        LOGI("\n");
+        LOGI("DATAA1 : ");
+        for(int q = 0; q < *length_produced; q++){
+            LOGI("%d ", (*data_produced)[q]);
+        }
+        LOGI("\n");
+        processed_once_ = true;
+#endif
     return true;
 }
 

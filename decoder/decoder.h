@@ -80,6 +80,8 @@ public:
     //should have been received may have been not passed - so needed to tell the decoder manually
     virtual void fist_proper_framedata_number_for_this_decoder(uint32_t first) = 0;
 
+    bool is_residual_; //for testing purposes only
+    bool processed_once_;//for testing
 
 protected:
     // this will keep the current status of the detector

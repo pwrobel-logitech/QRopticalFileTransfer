@@ -66,6 +66,8 @@ public:
 
     void fist_proper_framedata_number_for_this_decoder(uint32_t first);
 
+
+
 protected:
 
     bool mode_header_parsing_;

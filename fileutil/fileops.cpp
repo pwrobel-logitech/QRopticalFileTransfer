@@ -7,10 +7,43 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#ifdef ANDROID
-#include <android/log.h>
-#endif
 
+#include <stdio.h>
+#include <stdarg.h>
+
+#ifdef ANDROID
+static const char LOG_TAG[] = "Qjni";
+
+void android_log(android_LogPriority type, const char *fmt, ...)
+{
+    static char buf[1024*8];
+    static char *bp = buf;
+
+    va_list vl;
+    va_start(vl, fmt);
+    int available = sizeof(buf) - (bp - buf);
+    int nout = vsnprintf(bp, available, fmt, vl);
+    if (nout >= available) {
+        __android_log_write(type, LOG_TAG, buf);
+        __android_log_write(ANDROID_LOG_WARN, LOG_TAG, "previous log line has been truncated!");
+        bp = buf;
+    } else {
+        char *lastCR = strrchr(bp, '\n');
+        bp += nout;
+        if (lastCR) {
+            *lastCR = '\0';
+            __android_log_write(type, LOG_TAG, buf);
+
+            char *rest = lastCR+1;
+            int len = bp - rest; // strlen(rest)
+            memmove(buf, rest, len+1); // no strcpy (may overlap)
+            bp = buf + len;
+        }
+    }
+
+    va_end(vl);
+}
+#endif //ANDROID
 
 uint32_t get_file_size(const char* filepath){
     uint32_t size = 0;

@@ -72,10 +72,12 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
         }
     }else{
         if (this->decoder_){
-            this->decoder_->tell_no_more_qr();
+            if(!this->is_switched_to_residual_data_decoder_)
+                this->decoder_->tell_no_more_qr();
         }
         if (this->res_decoder_){
-            this->res_decoder_->tell_no_more_qr();
+            if(this->is_switched_to_residual_data_decoder_)
+                this->res_decoder_->tell_no_more_qr();
         }
     }
     return stat;
@@ -127,6 +129,7 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
     this->res_decoder_->set_RS_nk(this->RSn_rem_, this->RSk_rem_);
     this->res_decoder_->set_chunk_listener(this);
     this->res_decoder_->set_configured(true);
+    this->res_decoder_->is_residual_ = true;
 
     uint32_t chun_len = this->RSk_ * nchp * utils::nbits_forsymcombinationsnumber(this->RSn_) / 8;
     uint32_t chun_len_res = this->RSk_rem_ * nchpr * utils::nbits_forsymcombinationsnumber(this->RSn_rem_) / 8;
@@ -331,6 +334,11 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         printf("qqr %d, ",nfr);
         for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
         printf("\n");
+#ifdef ANDROID
+        LOGI("qqr %d, ",nfr);
+        for(int k = 0; k<generated_datalength;k++)LOGI("0x%02hhx ", (generated_data)[k]);
+        LOGI("\n");
+#endif
     }
     /*
     if(nfr < this->decoder_->get_nframe()){ //impossible - we got less than previously received
@@ -371,6 +379,10 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 
         if(nfr < first_proper_framenumber_into_res_decoder_){
             final_decoder = this->decoder_;
+            printf("ABCQ1 : decoder set - main\n");
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "ABCQ1", "decoder set - main");
+#endif
         }else{
             if(!this->is_switched_to_residual_data_decoder_){
                 if(this->file_info_.filelength >= this->decoder_bytes_len_)
@@ -378,6 +390,10 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
                 this->is_switched_to_residual_data_decoder_ = true;
             }
             final_decoder = this->res_decoder_;
+            printf("ABCQ1 : decoder set - residual\n");
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "ABCQ1", "decoder set - residual");
+#endif
         }
         chosenRSn = final_decoder->get_RSn();
         chosenRSk = final_decoder->get_RSk();
@@ -408,9 +424,6 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 }
 
 int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int context){
-#ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new chunk chl %d, contx %d", chunklength, context);
-#endif
     DCHECK(chunklength>=0);
     if(chunklength==0)
         DLOG("Warn, chunklength is zero\n");
@@ -433,6 +446,10 @@ int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int
         if(this->position_in_file_to_flush_ + datalen <= this->file_info_.filelength)
             this->flush_data_to_file(chunkdata, datalen);
         this->main_chunk_data_tmp_.resize(0); // eradicate, after flushing to file
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new data chunk chl %d, contx %d, datalen %d",
+                            chunklength, context, datalen);
+#endif
     }
 
     return 0;
@@ -440,7 +457,15 @@ int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int
 
 void QR_frame_decoder::flush_data_to_file(const char *data, uint32_t datalen){
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ0 flushing datalen %d to file", datalen);
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ0 flushing datalen %d to file c1 %c c2 %c", datalen,
+                            data[0], data[1]);
+        //if (datalen == 173){
+           LOGI("QQ1b dat173 :");
+           for (int i = 0; i<datalen; i++){
+               LOGI("0x%02hhx ", data[i]);
+           }
+           LOGI("\n");
+        //}
 #endif
     int stat = 0;
     if(this->file_info_.fp)

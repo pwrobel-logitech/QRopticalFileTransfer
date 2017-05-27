@@ -282,6 +282,7 @@ bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
         overhead = 4;
     }
     frame.framedata_.resize(this->bytes_per_generated_frame_+overhead+end_corruption_overhead);
+    memset(&frame.framedata_[0], 0, this->bytes_per_generated_frame_+overhead+end_corruption_overhead);
     //generate header containing the frame number on every frame
     if(is_header_frame_generating_)
         *((uint32_t*)&(frame.framedata_[0])) = 0xffffffff;
@@ -300,9 +301,9 @@ bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
     int i = (nf - this->n_dataframe_first_frame_number_produced_by_the_encoder_) % this->RSn_;
     for (uint32_t j = 0; j<this->n_channels_; j++){
         //for (uint32_t i = 0; i<this->RSk_; i++){
-            uint32_t valset = this->internal_memory_[i+j*this->RSn_];
+            uint32_t valset = this->internal_memory_[i+j*this->RSn_] ;//^ (j % 0xff);
             uint32_t nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
-            utils::set_data((void*)data, j * nbits, valset);
+            utils::set_data((void*)data, j * nbits, valset );
             uint32_t valget = utils::get_data((void*) data,j *nbits, nbits);
             DCHECK(valget==valset);
             if(valset!=valget){

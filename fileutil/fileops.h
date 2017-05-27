@@ -7,8 +7,17 @@
 #include <string>
 #include <stdio.h>
 
+#ifdef ANDROID
+#include <android/log.h>
+#endif
 
 extern "C"{
+
+#ifdef ANDROID
+void android_log(android_LogPriority type, const char *fmt, ...);
+#define LOGI(...) android_log(ANDROID_LOG_INFO, __VA_ARGS__)
+#define LOGW(...) android_log(ANDROID_LOG_WARN, __VA_ARGS__)
+#endif
 
 uint32_t get_file_size(const char* filepath);
 uint32_t get_file_size_fp(void* fp);
