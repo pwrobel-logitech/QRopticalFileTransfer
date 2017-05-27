@@ -70,7 +70,7 @@ int main(int argc, char **argv){
 
     Qr_frame_producer frame_producer;
 
-    frame_producer.set_external_file_info("tv3.txt", "/repos/qr/", 66);
+    frame_producer.set_external_file_info("tv3.txt", "/repos/qr/", 444);
 
     int num = 0;
     for(int i=0; i<7*40; i++){
