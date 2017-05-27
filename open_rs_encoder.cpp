@@ -210,8 +210,16 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
                 if((j * this->RSk_+ i)*nbits + nbits <= mem_to_read * sizeof(char) * 8){
                     val = utils::get_data(file_read_start, (j * this->RSk_+ i)*nbits, nbits);
                 }else{
-                    val = 0;
+                    // reading full nbits would read outside file boundary chunk,
+                    // so read value as a smaller bit number - but of course with the same bit offset
+                    int nnb = mem_to_read * sizeof(char) * 8 - (j * this->RSk_+ i)*nbits;
+                    if(nnb <= nbits && nnb >=0)
+                        val = utils::get_data(file_read_start, (j * this->RSk_+ i)*nbits, nnb);
+                    else
+                        val = 0;
+                    DLOG("WARN - attemp to read beyond file chunk boundary!!!!\n");
                 }
+
                 //if(i+j*this->RSn_ == 12507)
                 //    printf("XXQval12507, fs %d, %d\n",file_read_start, val);
                 if(val>this->RSn_)
@@ -221,6 +229,16 @@ Encoder::generated_frame_status OpenRSEncoder::produce_next_encoded_frame(Encode
         }
         double t = currmili();
         this->apply_RS_code_to_internal_memory();
+
+        /*
+        if(this->RSk_ > 3){ //print internal mem
+            printf("VVV1 enc internalmem : \n");
+            for(int q = 0; q<this->n_channels_*this->RSn_;q++){
+                printf("VVV2 (%d) %d \n", q, internal_memory_[q]);
+            }
+            printf("\n");
+        }*/
+
         DLOG("Time to encode %d frames is %f ms\n", this->RSn_, currmili()-t);
 
         /*

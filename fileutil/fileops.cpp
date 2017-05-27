@@ -244,7 +244,6 @@ namespace utils{
             uint32_t v2 = (value_to_set >> (bits - sym_in_chunk2));
             *(((uint32_t*)arr_begin) + bits_offset_from_arrbegin / 32+1) = (chunk2 & (~mask2)) | v2;
         }
-
    }
 
 

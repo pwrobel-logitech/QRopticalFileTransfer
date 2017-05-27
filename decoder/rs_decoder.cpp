@@ -286,6 +286,16 @@ bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
         if(this->is_residual_ && !processed_once_)LOGI("(i%d,j%d)%d ", i, j, symbols_arr[i+j*this->RSn_]);
 #endif
         }
+
+        /*
+        if(this->RSk_ > 3){ //print internal mem
+            printf("VVV1 dec internalmem : \n");
+            for(int q = 0; q<this->n_channels_*this->RSn_;q++){
+                printf("VVV2 (%d) %d \n", q, internal_memory_[q]);
+            }
+            printf("\n");
+        }*/
+
 #ifdef ANDROID
         LOGI("\n");
         LOGI("DATAA1 : ");
