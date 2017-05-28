@@ -54,6 +54,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     double current_estimated_moment_of_end;
     static long time_overhead = 300000000; // 180ms in nanosecs as a time unit. From System.nanoTime()
     boolean triggered_autoestimated_end = false;
+    boolean tiggered_lastframedetectedbase_end = false;
     //end of the fields for the estimation of the end of the detection
 
     public void setContext(Context cont){
@@ -125,7 +126,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             long lest_time = (long) est_time;
             if (System.nanoTime() > lest_time + time_overhead){
                 Log.i("QQQ", "Triggering the end of detection");
-                tell_decoder_no_more_qr();
+                if(!tiggered_lastframedetectedbase_end)
+                    tell_decoder_no_more_qr();
                 triggered_autoestimated_end = true;
             }
         }
@@ -133,8 +135,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         if(ntot > 0 && lf > 0)
             if(lf >= ntot - 1)
-                if(!triggered_autoestimated_end)
+                if(!triggered_autoestimated_end){
                     tell_decoder_no_more_qr();
+                    tiggered_lastframedetectedbase_end = true;
+            }
 
         if(status > 0)
             Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+

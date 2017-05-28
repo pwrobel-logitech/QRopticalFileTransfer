@@ -13,6 +13,7 @@ struct FileInfo{
     std::string filename;//can contain some relative dir to the base path. On the decoder, this is the pure name
     std::string filename_without_any_path; //just pure filename
     std::string filepath; //base dir of search. For decoder, this is the dump path of the files
+    std::string cache_suffix; //added to a file name - it is the suffix for file, that data is flushed to
     uint32_t filelength;
     int RSn;//for main part of the file
     int RSk;

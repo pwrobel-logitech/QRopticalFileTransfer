@@ -45,10 +45,28 @@ void android_log(android_LogPriority type, const char *fmt, ...)
 }
 #endif //ANDROID
 
+//pseudorandom generator part = http://www.electro-tech-online.com/threads/ultra-fast-pseudorandom-number-generator-for-8-bit.124249/
 
 void apply_pos_xor_to_arr(char* data, int datalen){
+    unsigned x = 0;
+    unsigned a = 1;
+    unsigned b = 2;
+    unsigned c = 3;
+    a ^= 0xcafebabe;
+    b ^= 0xbada5511;
+    c ^= 66;
+    x++;
+    a = (a^c^x);
+    b = (b+a);
+    c = (c+(b>>1)^a);
     for (int i = 0; i < datalen; i++){
-        data[i] = data[i] ^ (i % 0xff);
+        unsigned random = 0;
+        x++;               //x is incremented every round and is not affected by any other variable
+        a = (a^c^x);       //note the mix of addition and XOR
+        b = (b+a);         //And the use of very few instructions
+        c = (c+(b>>1)^a);  //the right shift is to ensure that high-order bits from b can affect
+        random = c;          //low order bits of other variables
+        data[i] = data[i] ^ (random & 0xff);
     }
 };
 
@@ -91,6 +109,10 @@ void FileClose(void* fn){
 #endif
     fclose((FILE*)fn);
 }
+
+int FileRename(const char *oldname, const char *newname){
+   return rename(oldname, newname);
+};
 
 int read_file(const char* filepath, char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
     FILE * fp = fopen (filepath, "r");

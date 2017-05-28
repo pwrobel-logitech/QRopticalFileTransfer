@@ -27,6 +27,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->is_switched_to_residual_data_decoder_ = false;
     this->position_in_file_to_flush_ = 0;
     this->api_told_filepath_ = std::string("");
+    this->file_info_.cache_suffix = std::string(".__tmpcache");
     this->is_all_file_processing_done_ = false;
     this->is_hash_of_flushed_file_correct_ = false;
     this->file_info_.fp = NULL;
@@ -268,7 +269,7 @@ int QR_frame_decoder::analyze_header(){
             FileClose(this->file_info_.fp);
             this->file_info_.fp = NULL;
         }
-        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename;
+        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename + this->file_info_.cache_suffix;
         this->file_info_.fp = FileOpenToWrite(fullpathname.c_str());
         this->file_info_.hash.resize(8);
         for(int q = 0; q < 8; q++)
@@ -479,13 +480,23 @@ void QR_frame_decoder::flush_data_to_file(const char *data, uint32_t datalen){
             this->file_info_.fp = NULL;
         }
 
-        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename;
+        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename + this->file_info_.cache_suffix;
         this->file_info_.fp = FileOpenToRead(fullpathname.c_str());
         bool is_hash_ok = this->is_file_hash_correct();
-        if(this->file_info_.fp)
+        if(this->file_info_.fp != NULL){
             FileClose(this->file_info_.fp);
-        if(!is_hash_ok)
-            remove_file(fullpathname.c_str());
+            this->file_info_.fp = NULL;
+        }
+        if(!is_hash_ok){
+            remove_file(fullpathname.c_str()); //remove suffixed file - it is wrong
+        }
+        else { //move suffixed temp file to final file name
+            std::string finalname = this->file_info_.filepath + this->file_info_.filename;
+            int status = FileRename(fullpathname.c_str(), finalname.c_str());
+            if(status == -1){
+                DLOG("Failed to finally rename file!\n");
+            }
+        }
         this->file_info_.fp = NULL;
         this->is_all_file_processing_done_ = true;
         this->is_hash_of_flushed_file_correct_ = is_hash_ok;

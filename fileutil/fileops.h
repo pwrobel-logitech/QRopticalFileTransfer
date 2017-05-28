@@ -34,6 +34,8 @@ void FileClose(void* fn);
 void* FileOpenToRead(const char* fn);
 void* FileOpenToWrite(const char* fn);
 
+int FileRename(const char *oldname, const char *newname); // returns -1 for the error
+
 
 #ifdef OS_WIN
 uint32_t get_file_size(char* filepath){
