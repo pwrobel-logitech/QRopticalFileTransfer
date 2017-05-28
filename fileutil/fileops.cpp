@@ -45,6 +45,14 @@ void android_log(android_LogPriority type, const char *fmt, ...)
 }
 #endif //ANDROID
 
+
+void apply_pos_xor_to_arr(char* data, int datalen){
+    for (int i = 0; i < datalen; i++){
+        data[i] = data[i] ^ (i % 0xff);
+    }
+};
+
+
 uint32_t get_file_size(const char* filepath){
     uint32_t size = 0;
     FILE * fp;

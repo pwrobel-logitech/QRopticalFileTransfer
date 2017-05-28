@@ -22,6 +22,9 @@ void android_log(android_LogPriority type, const char *fmt, ...);
 uint32_t get_file_size(const char* filepath);
 uint32_t get_file_size_fp(void* fp);
 
+//to avoid having distinct large 0's block visible cleraly in the QR frames
+void apply_pos_xor_to_arr(char* data, int datalen);
+
 int read_file(const char* filepath, char* data_after_read, uint32_t offset, uint32_t size);
 
 int read_file_fp(void* fp, char* data_after_read, uint32_t offset, uint32_t size);

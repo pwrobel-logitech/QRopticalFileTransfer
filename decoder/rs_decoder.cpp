@@ -196,7 +196,7 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
 #ifdef ANDROID
       //LOGI("ABCQ2 : ipos %d : ", ipos);
 #endif
-
+    apply_pos_xor_to_arr((char*)(&(frame->framedata_[offset])), this->bytes_per_generated_frame_);
     for (uint32_t j = 0; j < numsym; j++){ //iterate over symbols within a frame
         uint32_t val = utils::get_data(&(frame->framedata_[offset]), j*nbits, nbits);
         if(val>this->RSn_)
