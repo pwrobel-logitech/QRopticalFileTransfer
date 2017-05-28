@@ -272,16 +272,22 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
 bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
                                        char **data_produced, uint32_t* length_produced){
     *length_produced = this->RSk_ * this->n_channels_ * utils::nbits_forsymcombinationsnumber(this->RSn_) / 8;
-    *data_produced = new char[*length_produced];
+    *data_produced = new char[*length_produced + end_corruption_overhead];
     if(*data_produced == NULL)
         return false;
-    memset(*data_produced, 0, *length_produced);
+    memset(*data_produced, 0, *length_produced + end_corruption_overhead);
 #ifdef ANDROID
     LOGI("DATAA recr_original_arr : n_channels %d, RSn_ %d, RSk_ %d : ", this->n_channels_, this->RSn_, this->RSk_);
 #endif
+    int nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
     for (uint32_t j = 0; j<this->n_channels_; j++)
         for (uint32_t i = 0; i<this->RSk_; i++){
-            utils::set_data((void*)*data_produced, (j * this->RSk_+ i)*utils::nbits_forsymcombinationsnumber(this->RSn_), symbols_arr[i+j*this->RSn_]);
+            //int nbb = (*length_produced) * sizeof(char) * 8 - (j * this->RSk_+ i)*nbits;
+            utils::set_data((void*)*data_produced,
+                            (j * this->RSk_+ i)*nbits,
+                            symbols_arr[i+j*this->RSn_]);
+
+
 #ifdef ANDROID
         if(this->is_residual_ && !processed_once_)LOGI("(i%d,j%d)%d ", i, j, symbols_arr[i+j*this->RSn_]);
 #endif
