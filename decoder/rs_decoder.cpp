@@ -66,8 +66,8 @@ RS_decoder::RS_decoder(){
     this->configured_ = false;
     this->fist_proper_framedata_number_for_this_decoder_ = 0;
     this->next_erasure_successful_num_position_ = 0;
-    this->is_residual_ = false;
-    this->processed_once_ = false;
+    //this->is_residual_ = false;
+    //this->processed_once_ = false;
 }
 
 RS_decoder::~RS_decoder(){
@@ -138,7 +138,7 @@ void RS_decoder::internal_getdata_from_internal_memory(){
     if(length > 0 && data != NULL)
         delete []data;
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "RSdec", "Cleaining1 internal mem RS%d", (int)this);
+       // __android_log_print(ANDROID_LOG_INFO, "RSdec", "Cleaining1 internal mem RS%d", (int)this);
 #endif
     memset(this->internal_memory_, 0, sizeof(uint32_t)*this->n_channels_*this->RSn_);
 }
@@ -159,12 +159,12 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
     DCHECK(curr_chunk >= 0);
 
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "QRdec", "ipos %d, chunk %d, oldchn %d", ipos, curr_chunk, this->old_chunk_number_);
+        //__android_log_print(ANDROID_LOG_INFO, "QRdec", "ipos %d, chunk %d, oldchn %d", ipos, curr_chunk, this->old_chunk_number_);
 #endif
 
     if (curr_chunk > this->old_chunk_number_){ // time to decode the internal_memory_ + pack bits back to the original array
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX5 time to prepare for new chunk");
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX5 time to prepare for new chunk");
 #endif
         this->internal_getdata_from_internal_memory();
         //done encoding - reset erasure positions
@@ -196,7 +196,7 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
 #ifdef ANDROID
       //LOGI("ABCQ2 : ipos %d : ", ipos);
 #endif
-    apply_pos_xor_to_arr((char*)(&(frame->framedata_[offset])), this->bytes_per_generated_frame_);
+    apply_pos_xor_to_arr((char*)(&(frame->framedata_[offset])), this->bytes_per_generated_frame_, frame->get_frame_number());
     for (uint32_t j = 0; j < numsym; j++){ //iterate over symbols within a frame
         uint32_t val = utils::get_data(&(frame->framedata_[offset]), j*nbits, nbits);
         if(val>this->RSn_)
@@ -277,7 +277,7 @@ bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
         return false;
     memset(*data_produced, 0, *length_produced + end_corruption_overhead);
 #ifdef ANDROID
-    LOGI("DATAA recr_original_arr : n_channels %d, RSn_ %d, RSk_ %d : ", this->n_channels_, this->RSn_, this->RSk_);
+    //LOGI("DATAA recr_original_arr : n_channels %d, RSn_ %d, RSk_ %d : ", this->n_channels_, this->RSn_, this->RSk_);
 #endif
     int nbits = utils::nbits_forsymcombinationsnumber(this->RSn_);
     for (uint32_t j = 0; j<this->n_channels_; j++)
@@ -289,7 +289,7 @@ bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
 
 
 #ifdef ANDROID
-        if(this->is_residual_ && !processed_once_)LOGI("(i%d,j%d)%d ", i, j, symbols_arr[i+j*this->RSn_]);
+        //if(this->is_residual_ && !processed_once_)LOGI("(i%d,j%d)%d ", i, j, symbols_arr[i+j*this->RSn_]);
 #endif
         }
 
@@ -303,13 +303,13 @@ bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
         }*/
 
 #ifdef ANDROID
-        LOGI("\n");
-        LOGI("DATAA1 : ");
-        for(int q = 0; q < *length_produced; q++){
-            LOGI("%d ", (*data_produced)[q]);
-        }
-        LOGI("\n");
-        processed_once_ = true;
+        //LOGI("\n");
+        //LOGI("DATAA1 : ");
+        //for(int q = 0; q < *length_produced; q++){
+        //    LOGI("%d ", (*data_produced)[q]);
+        //}
+        //LOGI("\n");
+        //processed_once_ = true;
 #endif
     return true;
 }

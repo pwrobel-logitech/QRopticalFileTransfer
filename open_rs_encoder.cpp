@@ -329,8 +329,8 @@ bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
             }
         //}
     }
-    apply_pos_xor_to_arr((char*)data, this->bytes_per_generated_frame_);
     int num = this->is_header_frame_generating_ ? this->n_header_frame_processed_ : this->n_dataframe_processed_;
+    apply_pos_xor_to_arr((char*)data, this->bytes_per_generated_frame_, num);
     printf("qqr %d, ",num);
     int qrlen = frame.framedata_.size()-end_corruption_overhead;
     for(int k = 0; k<qrlen;k++)printf("0x%02hhx ", frame.framedata_[k]);

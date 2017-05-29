@@ -110,7 +110,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 is_first_frame_arrived = true;
             }
 
-            if(is_first_frame_arrived && lf > first_frame_num_arrived && lf > last_frame_number_arrived_so_far){
+            if(is_first_frame_arrived && lf > first_frame_num_arrived + 4 && lf > last_frame_number_arrived_so_far){
                 is_last_frame_so_far_arrived = true;
                 time_last_frame_number_arrived_so_far = System.nanoTime();
                 last_frame_number_arrived_so_far = lf;
@@ -121,14 +121,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if(is_first_frame_arrived && is_last_frame_so_far_arrived && ntot!=-1 && (!triggered_autoestimated_end)){
             //do the execution of end, if the interpolated time exceeed the limit
             double est_time = time_first_frame_arrived +
-                    2*(time_last_frame_number_arrived_so_far - time_first_frame_arrived) *
+                    (time_last_frame_number_arrived_so_far - time_first_frame_arrived) *
                     (ntot/(last_frame_number_arrived_so_far - first_frame_num_arrived));
             long lest_time = (long) est_time;
             if (System.nanoTime() > lest_time + time_overhead){
                 Log.i("QQQ", "Triggering the end of detection");
-                if(!tiggered_lastframedetectedbase_end)
-                    tell_decoder_no_more_qr();
-                triggered_autoestimated_end = true;
+                //if(!tiggered_lastframedetectedbase_end) //turn off time based autodetection, since it's buggy anyway
+                //    tell_decoder_no_more_qr();
+                //triggered_autoestimated_end = true;
             }
         }
 
@@ -231,6 +231,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 Camera.Parameters param = camera.getParameters();
                 List<Camera.Size> psize = param.getSupportedPreviewSizes();
+
+
+                int []fpsrange = new int [2];
+                param.getPreviewFpsRange(fpsrange);
+                param.setPreviewFpsRange(fpsrange[0], fpsrange[1]);
+
+                param.set("vrmode", 1);
+                param.set("fast-fps-mode", 1);
 
                 int camwidth = psize.get(7).width;
                 int camheight = psize.get(7).height;

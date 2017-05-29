@@ -132,7 +132,7 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
     this->res_decoder_->set_RS_nk(this->RSn_rem_, this->RSk_rem_);
     this->res_decoder_->set_chunk_listener(this);
     this->res_decoder_->set_configured(true);
-    this->res_decoder_->is_residual_ = true;
+    //this->res_decoder_->is_residual_ = true;
 
     uint32_t chun_len = this->RSk_ * nchp * utils::nbits_forsymcombinationsnumber(this->RSn_) / 8;
     uint32_t chun_len_res = this->RSk_rem_ * nchpr * utils::nbits_forsymcombinationsnumber(this->RSn_rem_) / 8;
@@ -197,9 +197,9 @@ int QR_frame_decoder::analyze_header(){
         /// first header hash
 
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO,
-                            "NATIVE", "XX2 badass detected, N%d, K%d, tl%d, fl%d, fnl%d",
-                            N, K, totalL, flength, fname_length);
+        //__android_log_print(ANDROID_LOG_INFO,
+        //                    "NATIVE", "XX2 badass detected, N%d, K%d, tl%d, fl%d, fnl%d",
+        //                    N, K, totalL, flength, fname_length);
 #endif
 
         //hash small hash - not the filename content and not the hashes itself
@@ -215,16 +215,16 @@ int QR_frame_decoder::analyze_header(){
         uint32_t writen_hs_wlow  = *((uint32_t*)(start + 6));
         uint32_t writen_hs_whigh = *((uint32_t*)(start + 10));
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO,
-                            "NATIVE", "XX2a hl%d hh%d, whl%d whh%d, c1 %d, c2 %d",
-                            hs_wlow, hs_whigh, writen_hs_wlow, writen_hs_whigh, (hs_wlow == writen_hs_wlow), (hs_whigh == writen_hs_whigh));
+        //__android_log_print(ANDROID_LOG_INFO,
+        //                    "NATIVE", "XX2a hl%d hh%d, whl%d whh%d, c1 %d, c2 %d",
+        //                    hs_wlow, hs_whigh, writen_hs_wlow, writen_hs_whigh, (hs_wlow == writen_hs_wlow), (hs_whigh == writen_hs_whigh));
 #endif
         if ((hs_wlow != writen_hs_wlow) || (hs_whigh != writen_hs_whigh)) {
             continue; // if first hash over header does not match, ingnore this batch and go further
         }
 
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX3 got small hash", 1);
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX3 got small hash", 1);
 #endif
 
         // now we trust all the header fields, if the hashes match - file name lenth included
@@ -244,9 +244,9 @@ int QR_frame_decoder::analyze_header(){
         uint32_t written_hb_whigh = *((uint32_t*)(start + 10 + 8));
 
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO,
-                            "NATIVE", "XX3a hl%d hh%d, whl%d whh%d",
-                            hb_wlow, hb_whigh, written_hb_wlow, written_hb_whigh);
+        //__android_log_print(ANDROID_LOG_INFO,
+        //                    "NATIVE", "XX3a hl%d hh%d, whl%d whh%d",
+        //                    hb_wlow, hb_whigh, written_hb_wlow, written_hb_whigh);
 #endif
 
         if ((hb_wlow != written_hb_wlow) || (hb_whigh != written_hb_whigh)) {  //big hash mismatch
@@ -326,7 +326,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     }
 
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "QRdec", "nfr %d, nhfr %d", nfr, nhfr);
+        //__android_log_print(ANDROID_LOG_INFO, "QRdec", "nfr %d, nhfr %d", nfr, nhfr);
 #endif
 
     if(this->is_header_generating_){
@@ -338,9 +338,9 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
         printf("\n");
 #ifdef ANDROID
-        LOGI("qqr %d, ",nfr);
-        for(int k = 0; k<generated_datalength;k++)LOGI("0x%02hhx ", (generated_data)[k]);
-        LOGI("\n");
+        //LOGI("qqr %d, ",nfr);
+        //for(int k = 0; k<generated_datalength;k++)LOGI("0x%02hhx ", (generated_data)[k]);
+        //LOGI("\n");
 #endif
     }
     /*
@@ -384,7 +384,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
             final_decoder = this->decoder_;
             printf("ABCQ1 : decoder set - main\n");
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "ABCQ1", "decoder set - main");
+        //__android_log_print(ANDROID_LOG_INFO, "ABCQ1", "decoder set - main");
 #endif
         }else{
             if(!this->is_switched_to_residual_data_decoder_){
@@ -395,7 +395,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
             final_decoder = this->res_decoder_;
             printf("ABCQ1 : decoder set - residual\n");
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "ABCQ1", "decoder set - residual");
+        //__android_log_print(ANDROID_LOG_INFO, "ABCQ1", "decoder set - residual");
 #endif
         }
         chosenRSn = final_decoder->get_RSn();
@@ -460,14 +460,14 @@ int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int
 
 void QR_frame_decoder::flush_data_to_file(const char *data, uint32_t datalen){
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ0 flushing datalen %d to file c1 %c c2 %c", datalen,
-                            data[0], data[1]);
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ0 flushing datalen %d to file c1 %c c2 %c", datalen,
+        //                    data[0], data[1]);
         //if (datalen == 173){
-           LOGI("QQ1b dat173 :");
-           for (int i = 0; i<datalen; i++){
-               LOGI("0x%02hhx ", data[i]);
-           }
-           LOGI("\n");
+        //   LOGI("QQ1b dat173 :");
+        //   for (int i = 0; i<datalen; i++){
+        //       LOGI("0x%02hhx ", data[i]);
+        //   }
+        //   LOGI("\n");
         //}
 #endif
     int stat = 0;

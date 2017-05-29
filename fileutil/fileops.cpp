@@ -47,11 +47,11 @@ void android_log(android_LogPriority type, const char *fmt, ...)
 
 //pseudorandom generator part = http://www.electro-tech-online.com/threads/ultra-fast-pseudorandom-number-generator-for-8-bit.124249/
 
-void apply_pos_xor_to_arr(char* data, int datalen){
+void apply_pos_xor_to_arr(char* data, int datalen, unsigned frpos){
     unsigned x = 0;
-    unsigned a = 1;
-    unsigned b = 2;
-    unsigned c = 3;
+    unsigned a = frpos;
+    unsigned b = frpos-2;
+    unsigned c = frpos-3;
     a ^= 0xcafebabe;
     b ^= 0xbada5511;
     c ^= 66;
