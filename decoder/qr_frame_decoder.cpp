@@ -15,6 +15,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->main_chunk_data_tmp_.resize(0);
     this->decoder_ = new RS_decoder();
     this->res_decoder_ = new RS_decoder();
+    this->is_header_generating_ = true;
 
     this->qr_byte_length = 0;
     //
@@ -57,15 +58,20 @@ QR_frame_decoder::~QR_frame_decoder(){
         delete this->res_decoder_;
     if (this->header_decoder_ != NULL)
         delete this->header_decoder_;
-    if(this->file_info_.fp)
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "DEL", "XXXX1");
+#endif
+    if(this->file_info_.fp){
         if(this->file_info_.fp != NULL){
             FileClose(this->file_info_.fp);
             this->file_info_.fp = NULL;
         }
-
+    }
 }
 
 immediate_status QR_frame_decoder::tell_no_more_qr(){
+    if (this->qr_byte_length <= 0)
+        return NOT_INITIALIZED;
     immediate_status stat = RECOGNIZED;
     if(this->is_header_generating_){
         if (this->header_decoder_){
@@ -81,6 +87,10 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
                 this->res_decoder_->tell_no_more_qr();
         }
     }
+    if (this->is_all_file_processing_done_ && (!this->is_hash_of_flushed_file_correct_))
+        stat = ERRONEUS_HASH_WRONG;
+    if (this->is_all_file_processing_done_ && (this->is_hash_of_flushed_file_correct_))
+        stat = ALREADY_CORRECTLY_TRANSFERRED;
     return stat;
 };
 
@@ -324,6 +334,9 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         this->reconfigure_qr_size(generated_datalength);
         this->header_decoder_->set_configured(true);
     }
+
+    if (generated_datalength != this->qr_byte_length)
+        return LENGTH_QR_CHANGED;
 
 #ifdef ANDROID
         //__android_log_print(ANDROID_LOG_INFO, "QRdec", "nfr %d, nhfr %d", nfr, nhfr);

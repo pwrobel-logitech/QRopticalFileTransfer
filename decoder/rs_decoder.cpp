@@ -117,7 +117,9 @@ void RS_decoder::internal_getdata_from_internal_memory(){
     if (/*(nerr>(this->get_RSn()-this->get_RSk())/2) ||*/ (nerr==-1)) //-1 is enough = data recovery failed
         internal_status = RS_decoder::TOO_MUCH_ERRORS;
 
+
     this->recreate_original_arr(this->internal_memory_, &data, &length);
+
     int k;
     //printf("Trying to printf chunk: \n", data);
     //for(int q=0;q<length;q++)printf("%c",data[q]);

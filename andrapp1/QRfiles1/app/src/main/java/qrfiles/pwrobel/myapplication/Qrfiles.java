@@ -35,7 +35,7 @@ public class Qrfiles extends AppCompatActivity {
             }
         });
 
-        this.initall();
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     // Example of a call to a native method
@@ -44,9 +44,17 @@ public class Qrfiles extends AppCompatActivity {
     }
 
     @Override
+    public void onResume(){
+        Log.i("ACTINFO", "Activity resumed");
+        this.initall();
+        super.onResume();
+    }
+
+    @Override
     public void onPause(){
         super.onPause();
-        this.camworker.closeCamAsync();
+        Log.i("ACTINFO", "Activity paused");
+        this.destroyall();
     }
 
     @Override
@@ -87,6 +95,10 @@ public class Qrfiles extends AppCompatActivity {
             }
         });
         //this.camworker.initAsync();
+    }
+
+    private synchronized void destroyall(){
+        this.camworker.closeCamAsync();
     }
 
     /**

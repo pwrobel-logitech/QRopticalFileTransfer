@@ -68,8 +68,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             context.notify();
         }
         //context.notifyAll();
-        initialize_decoder();
-        set_decoded_file_path("/mnt/sdcard/out");
+
 
         camsurf.setOnTouchListener(camsurf);
     }
@@ -280,6 +279,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 camera.setPreviewCallbackWithBuffer(CameraWorker.this);
                 camera.startPreview();
 
+                initialize_decoder();
+                set_decoded_file_path("/mnt/sdcard/out");
             }
         });
     }
@@ -297,6 +298,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 if(camsurf != null){
                     camsurf.getSurfaceTexture().release();
                 }
+                tell_decoder_no_more_qr();
+                deinitialize_decoder();
             }
         });
     };

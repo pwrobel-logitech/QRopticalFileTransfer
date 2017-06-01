@@ -2,6 +2,7 @@
 
 //returned status after we pass the qr image data
 enum immediate_status {
+    API_NOT_INITIALIZED = -1, // you must call the initialization function after release of resource
     NOT_RECOGNIZED = 0, // on the passed image, there were no detected qr image
     AMBUGUOUS = 1, // more than one qr image detected
     HEADER_ALREADY_DETECTED = 2,
@@ -10,7 +11,9 @@ enum immediate_status {
               // if received only once, the whole detection is revoked and resources must be released
     ERR_DATAFRAME_TOO_EARLY = 5, // got data frame, without recognizing the header first from previous frames
     RECOGNIZED = 6, // some qr code has been recognized for sure
-    ALREADY_CORRECTLY_TRANSFERRED = 7
+    ALREADY_CORRECTLY_TRANSFERRED = 7,
+    NOT_INITIALIZED = 8, // told to finish qr generation, but not even initialized before with the first frame
+    LENGTH_QR_CHANGED = 9, //new QR frame has the new length - migh want to kill current transfer and start the new one
 };
 
 
