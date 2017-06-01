@@ -144,8 +144,8 @@ int Qr_frame_producer::estimate_capacity(int N, int K, int charperQR){
 void Qr_frame_producer::produce_metadata(){
     int spos = 0;
     bool cont = true;
-    int optimal_rsn = 127;
-    int optimal_rsk = 63;
+    int optimal_rsn = 255;
+    int optimal_rsk = 127;
     // estimate remain (n,k)
     int nch = utils::count_symbols_to_fit(optimal_rsn, 256, this->total_chars_per_QR_ - 4) - 1;
     int datalength_per_chunk = optimal_rsk * nch * utils::nbits_forsymcombinationsnumber(optimal_rsn) / 8;
@@ -156,9 +156,15 @@ void Qr_frame_producer::produce_metadata(){
     this->chunk_length_ = chunk_length;
     int curr_size = 0;
     int curr_power = 2;
+    if (chunk_length == 1) // for big chunk present in different amount, elongate minimum residual one as well
+        curr_power = 4;
+    else if (chunk_length == 2)
+        curr_power = 5;
+    else if (chunk_length >= 3)
+        curr_power = 6;
     do{
-        curr_size = this->estimate_capacity((1 << curr_power) - 1, (1 << curr_power) / 2, this->total_chars_per_QR_);
         curr_power += 1;
+        curr_size = this->estimate_capacity((1 << curr_power) - 1, (1 << curr_power) / 2, this->total_chars_per_QR_);
     }while(curr_size<remain_length);
     int remN = (1 << curr_power) - 1;
     int remK = remN - ((1 << curr_power) / 2);
