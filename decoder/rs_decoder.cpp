@@ -346,6 +346,7 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
     //
     uint32_t nerr = 0;
     printf("\n");
+    double t = utils::currmili();
     for (uint32_t j = 0; j < this->n_channels_; j++){
         uint32_t e = decode_rs_int(this->RSfecDec, j*this->RSn_ + (int*)this->internal_memory_,
                              this->internal_RS_erasure_location_mem_, nerasures);
@@ -353,6 +354,9 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
         if (e > nerr)
             nerr = e;
     }
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "RSTIME", "WWWWWWW > time %f", utils::currmili() - t);
+#endif
     printf("\n");
     return nerr;
 };

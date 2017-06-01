@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <time.h>
 
 #ifdef ANDROID
 static const char LOG_TAG[] = "Qjni";
@@ -164,6 +165,13 @@ int read_file(char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
 #endif
 
 namespace utils{
+
+    void Dosleep(int milis){
+        timespec t;
+        t.tv_sec =  milis / 1000;
+        t.tv_nsec = (milis % 1000) * 1000000;
+        nanosleep(&t, NULL);
+    }
 
     double currmili(){
         struct timeval start;
