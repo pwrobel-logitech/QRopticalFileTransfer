@@ -335,10 +335,15 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
                                            margin);
     *produced_image = generated_grayscale_data;
     *produced_width = resulting_width;
+
+    if (frame->get_frame_number() % this->file_info_.RSn == 1)
+        utils::Dosleep(950);
+
     delete frame;
     int status;
 
     this->nfr_done_++;
+
     if(!this->is_header_frame_generating_)
         this->ndataframe_done_++;
 
