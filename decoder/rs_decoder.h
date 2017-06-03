@@ -21,7 +21,7 @@ public:
 class RS_decoder : public Decoder {
 public:
 
-    RS_decoder();
+    RS_decoder(ChunkListener* l);
     ~RS_decoder();
 
     detector_status send_next_frame(EncodedFrame* frame);
@@ -74,6 +74,7 @@ protected:
 
     // used to store symbols containing the data for the series of frames + the RS redundancy symbols
     uint32_t* internal_memory_;
+    uint32_t* internal_memory_async_; //copy of the above memory for the async processing
 
     //not used, since it can be inferred from the latest next_erasure_successful_num_position_
     //uint32_t Num_erasures_; //number of erasures = N - succesfully_recognized_frames_in_chunk
@@ -81,6 +82,10 @@ protected:
     //this is for the libfec - of size N - used to store erasure locations - as in the simple (7,3) RS test
     int* internal_RS_erasure_location_mem_;
     int* internal_RS_successfull_indexes_per_chunk_; //negative of the above - if some frame is decoded
+
+    int* internal_RS_erasure_location_mem_async_; //async copy of the above mem
+    int* internal_RS_successfull_indexes_per_chunk_async_;
+
     //then it index modulo N goes here. Used to produce erasure array
 
     void* RSfecDec;
@@ -125,6 +130,10 @@ protected:
     uint32_t apply_RS_decode_to_internal_memory();
 
     void internal_getdata_from_internal_memory();
+
+    //async action
+    void execute_RS_async_action();
+
 
 private:
     bool is_successfull_pos_for_erasure_position_present(int ipos_for_query);

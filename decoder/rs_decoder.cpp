@@ -51,9 +51,11 @@ bool RS_decoder::get_configured(){
     return this->configured_;
 };
 
-RS_decoder::RS_decoder(){
+RS_decoder::RS_decoder(ChunkListener* l){
+    this->chunk_listener_ = l;
     //this->bytes_currently_read_from_file_ = 0;
     this->internal_memory_ = NULL;
+    this->internal_memory_async_ = NULL;
     this->n_dataframe_processed_ = 0;
     this->n_header_frame_processed_ = 0;
     //this->byte_of_file_currently_processed_to_frames_ = 0;
@@ -61,6 +63,10 @@ RS_decoder::RS_decoder(){
     this->RSfecDec = NULL;
     this->internal_RS_erasure_location_mem_ = NULL;
     this->internal_RS_successfull_indexes_per_chunk_ = NULL;
+
+    this->internal_RS_erasure_location_mem_async_ = NULL;
+    this->internal_RS_successfull_indexes_per_chunk_async_ = NULL;
+
     this->old_chunk_number_ = 0;
     this->status_ = RS_decoder::STILL_OK;
     this->configured_ = false;
@@ -68,6 +74,7 @@ RS_decoder::RS_decoder(){
     this->next_erasure_successful_num_position_ = 0;
     //this->is_residual_ = false;
     //this->processed_once_ = false;
+
 }
 
 RS_decoder::~RS_decoder(){
@@ -85,6 +92,28 @@ RS_decoder::~RS_decoder(){
         delete []this->internal_memory_;
         this->internal_memory_ = NULL;
     }
+    AsyncInfo* as = this->chunk_listener_->getAsyncInfo();
+    pthread_mutex_lock(&as->async_mutex_);
+    //while (as->async_main_is_waiting_for_thread_to_complete_) {
+    //    printf("Main is going to wait2...\n");
+    //    pthread_cond_wait(&(as->async_main_wait_), &(as->async_mutex_));
+    //}
+
+    if(this->internal_RS_erasure_location_mem_async_ != NULL){
+        delete []this->internal_RS_erasure_location_mem_async_;
+        this->internal_RS_erasure_location_mem_async_ = NULL;
+    }
+    if(this->internal_RS_successfull_indexes_per_chunk_async_ != NULL){
+        delete []this->internal_RS_successfull_indexes_per_chunk_async_;
+        this->internal_RS_successfull_indexes_per_chunk_async_ = NULL;
+    }
+    if(this->internal_memory_async_ != NULL){
+        delete []this->internal_memory_async_;
+        this->internal_memory_async_ = NULL;
+    }
+
+
+    pthread_mutex_unlock(&as->async_mutex_);
 }
 
 void RS_decoder::set_header_frame_generating(bool isheader){
@@ -95,7 +124,13 @@ void RS_decoder::fist_proper_framedata_number_for_this_decoder(uint32_t first){
     this->fist_proper_framedata_number_for_this_decoder_ = first;
 };
 
-void RS_decoder::internal_getdata_from_internal_memory(){
+
+void RS_decoder::execute_RS_async_action(){
+
+    AsyncInfo* as = this->chunk_listener_->getAsyncInfo();
+
+
+    int n = this->RSn_;
 
     //for(int k = 0; k<this->RSn_*this->n_channels_; k++)
     //    printf("ind %d, val %d\n",k, this->internal_memory_[k]);
@@ -118,22 +153,24 @@ void RS_decoder::internal_getdata_from_internal_memory(){
         internal_status = RS_decoder::TOO_MUCH_ERRORS;
 
 
-    this->recreate_original_arr(this->internal_memory_, &data, &length);
+    this->recreate_original_arr(as->internal_mem, &data, &length);
 
     int k;
     //printf("Trying to printf chunk: \n", data);
     //for(int q=0;q<length;q++)printf("%c",data[q]);
     //printf("\n");
 
+    pthread_mutex_lock(&as->async_mutex_);
+
     if (internal_status != RS_decoder::TOO_MUCH_ERRORS)
         if(this->chunk_listener_){
             int context;
-            if(this->is_header_frame_generating_){
+            if(as->is_header_frame_generating_){
                 context = 1;
             } else {
                 context = 0;
             }
-            this->chunk_listener_->notifyNewChunk(length, data, context);
+            as->chlistener->notifyNewChunk(length, data, context);
         }else{
             DLOG("Warn: no chunk listener to pass the decoded data to..\n");
         }
@@ -142,15 +179,82 @@ void RS_decoder::internal_getdata_from_internal_memory(){
 #ifdef ANDROID
        // __android_log_print(ANDROID_LOG_INFO, "RSdec", "Cleaining1 internal mem RS%d", (int)this);
 #endif
+    pthread_mutex_unlock(&as->async_mutex_);
+
+};
+
+
+void RS_decoder::internal_getdata_from_internal_memory(){
+
+
+    AsyncInfo* as = this->chunk_listener_->getAsyncInfo();
+
+    //pthread_mutex_lock(&as->async_mutex_);
+
+
+
+
+    int n = this->RSn_;
+
+    while (as->async_main_is_waiting_for_thread_to_complete_) {
+        printf("Main is going to wait...\n");
+        pthread_cond_wait(&(as->async_main_wait_), &(as->async_mutex_));
+    }
+
+
+    double ct = utils::currmili();
+    as->async_main_is_waiting_for_thread_to_complete_ = true;
+
+    as->internal_mem = this->internal_memory_async_;
+
+    memcpy(as->internal_mem, this->internal_memory_, n*this->n_channels_*sizeof(uint32_t));
+    as->current_decoder = this;
+
+    as->internal_RS_successfull_indexes_per_chunk_ = this->internal_RS_successfull_indexes_per_chunk_async_;
+    as->internal_RS_erasure_location_mem_ = this->internal_RS_erasure_location_mem_async_;
+
+    memcpy(as->internal_RS_successfull_indexes_per_chunk_, this->internal_RS_successfull_indexes_per_chunk_, sizeof(int) * this->RSn_);
+    memcpy(as->internal_RS_erasure_location_mem_, this->internal_RS_erasure_location_mem_, sizeof(int) * this->RSn_);
+
+    as->next_erasure_successful_num_position_ = this->next_erasure_successful_num_position_;
+    as->RSn_ = this->RSn_;
+    as->RSk_ = this->RSk_;
+    as->RSfecDec = this->RSfecDec;
+    as->is_header_frame_generating_ = this->is_header_frame_generating_;
+    as->n_channels_ = this->n_channels_;
+    as->chlistener = this->chunk_listener_;
+    as->is_switched_to_residual_data_decoder_ = this->chunk_listener_->getIsSwitchedToResidualDataDecoder();
+
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "YY1 preparing async %f", utils::currmili() - ct);
+#endif
+
+    printf("YYY queriying dec RSN %d\n", this->RSn_);
+    as->async_thread_waiting_ = false;
+    printf("Signaling async thread to stop waiting...\n");
+    pthread_cond_broadcast(&as->async_condvar_);
+
+
+
+    //pthread_mutex_unlock(&as->async_mutex_);
+
+
     memset(this->internal_memory_, 0, sizeof(uint32_t)*this->n_channels_*this->RSn_);
+
+
+
 }
 
 RS_decoder::detector_status RS_decoder::tell_no_more_qr(){
+    utils::ScopeLock l(this->chunk_listener_->getAsyncInfo()->async_mutex_);
     this->internal_getdata_from_internal_memory();
     return status_;
 };
 
 RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
+    AsyncInfo* as = this->chunk_listener_->getAsyncInfo();
+    //pthread_mutex_lock(&as->async_mutex_);
+    utils::ScopeLock l(this->chunk_listener_->getAsyncInfo()->async_mutex_);
     /////////////////// first action to recover previous chunk from the internal memory
     int ipos = (frame->get_frame_number() - this->fist_proper_framedata_number_for_this_decoder_) % this->RSn_;
 
@@ -217,7 +321,11 @@ RS_decoder::detector_status RS_decoder::send_next_frame(EncodedFrame* frame){
 
 
     this->old_chunk_number_ = curr_chunk;
-    return this->status_;
+
+    detector_status st = this->status_;
+    //pthread_mutex_unlock(&as->async_mutex_);
+
+    return st;
 };
 
 void RS_decoder::set_nchannels_parallel(uint32_t nch){
@@ -233,6 +341,7 @@ Decoder::detector_status RS_decoder::get_detector_status(){
 };
 
 void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
+    AsyncInfo* as = this->chunk_listener_->getAsyncInfo();
     this->RSn_ = n;
     this->RSk_ = k;
     this->status_ = RS_decoder::STILL_OK;
@@ -240,8 +349,16 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
         delete this->internal_memory_;
         this->internal_memory_ = NULL;
     }
+    if(this->internal_memory_async_ != NULL){
+        delete this->internal_memory_async_;
+        this->internal_memory_async_ = NULL;
+    }
+
     this->internal_memory_ = new uint32_t[n*this->n_channels_];
     memset(this->internal_memory_, 0, n*this->n_channels_*sizeof(uint32_t));
+
+    this->internal_memory_async_ = new uint32_t[n*this->n_channels_];
+    memset(this->internal_memory_async_, 0, n*this->n_channels_*sizeof(uint32_t));
 
     int i = 0;
     while ((1<<RS_decoder::RSfecCodeConsts[i].symsize) != n+1)
@@ -268,6 +385,23 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
     this->internal_RS_successfull_indexes_per_chunk_ = new int[this->RSn_];
     memset(this->internal_RS_successfull_indexes_per_chunk_, -1, sizeof(uint32_t) * n);
     this->next_erasure_successful_num_position_ = 0;
+
+    //setup the async copy as well
+
+    if(this->internal_RS_erasure_location_mem_async_ != NULL){
+        delete []this->internal_RS_erasure_location_mem_async_;
+        this->internal_RS_erasure_location_mem_async_ = NULL;
+    }
+    this->internal_RS_erasure_location_mem_async_ = new int[this->RSn_];
+    memset(this->internal_RS_erasure_location_mem_async_, 0, sizeof(uint32_t) * n);
+
+    if(this->internal_RS_successfull_indexes_per_chunk_async_ != NULL){
+        delete []this->internal_RS_successfull_indexes_per_chunk_async_;
+        this->internal_RS_successfull_indexes_per_chunk_async_ = NULL;
+    }
+    this->internal_RS_successfull_indexes_per_chunk_async_ = new int[this->RSn_];
+    memset(this->internal_RS_successfull_indexes_per_chunk_async_, -1, sizeof(uint32_t) * n);
+
 };
 
 
@@ -317,19 +451,20 @@ bool RS_decoder::recreate_original_arr(/*internal_memory*/uint32_t *symbols_arr,
 }
 
 uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
+    AsyncInfo* as = this->chunk_listener_->getAsyncInfo();
     //calculate erasure positions from the frame indexes array - as required by the FEC. See the (7,3) test code
     int last_compared_index_in_succ_arr = 0;
     int curr_index_in_erasure_arr = 0;
-    for (int q = 0; q < this->RSn_; q++){
-        if(q != this->internal_RS_successfull_indexes_per_chunk_[last_compared_index_in_succ_arr]){
-            this->internal_RS_erasure_location_mem_[curr_index_in_erasure_arr++] = q;
+    for (int q = 0; q < as->RSn_; q++){
+        if(q != as->internal_RS_successfull_indexes_per_chunk_[last_compared_index_in_succ_arr]){
+            as->internal_RS_erasure_location_mem_[curr_index_in_erasure_arr++] = q;
         }else{
             last_compared_index_in_succ_arr++;
-            if(q == this->RSn_)
+            if(q == as->RSn_)
                 break;
         }
     }
-    int nerasures = this->RSn_ - this->next_erasure_successful_num_position_;
+    int nerasures = as->RSn_ - as->next_erasure_successful_num_position_;
     //
 #ifdef ANDROID
         /*__android_log_print(ANDROID_LOG_INFO, "rsdec", "neras%d, tab : %d %d %d %d %d %d %d ", nerasures,
@@ -341,19 +476,22 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
                             internal_RS_erasure_location_mem_[5],
                             internal_RS_erasure_location_mem_[6]);*/
 #endif
-    if (nerasures > this->RSn_ - this->RSk_) //do not try to decode, when it is known it advance that it will fail
+    printf("YYY doing dec RSN %d, nerasures %d\n", as->RSn_, nerasures);
+    if (nerasures > as->RSn_ - as->RSk_) //do not try to decode, when it is known it advance that it will fail
         return -1;
     //
     uint32_t nerr = 0;
     printf("\n");
     double t = utils::currmili();
-    for (uint32_t j = 0; j < this->n_channels_; j++){
-        uint32_t e = decode_rs_int(this->RSfecDec, j*this->RSn_ + (int*)this->internal_memory_,
-                             this->internal_RS_erasure_location_mem_, nerasures);
-        printf("%d ",e);
+
+    for (uint32_t j = 0; j < as->n_channels_; j++){
+        uint32_t e = decode_rs_int(as->RSfecDec, j*as->RSn_ + (int*)as->internal_mem,
+                             as->internal_RS_erasure_location_mem_, nerasures);
+        //printf("%d ",e);
         if (e > nerr)
             nerr = e;
     }
+    //utils::Dosleep(5000);
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_INFO, "RSTIME", "WWWWWWW > time %f", utils::currmili() - t);
 #endif

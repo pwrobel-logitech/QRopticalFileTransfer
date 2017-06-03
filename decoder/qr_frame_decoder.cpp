@@ -8,18 +8,72 @@
 
 #include "globaldefs.h"
 
+void* QR_frame_decoder::thrfunc(void* arg){
+    AsyncInfo* as = (AsyncInfo*)arg;
+    QR_frame_decoder* self = (QR_frame_decoder*)(as->chlistener);
+
+    while (true) {
+        bool running = true;
+
+        pthread_mutex_lock(&(as->async_mutex_));
+        running = as->async_thread_alive_;
+        pthread_mutex_unlock(&(as->async_mutex_));
+
+        if(!running)
+            break;
+
+        pthread_mutex_lock(&(as->async_mutex_));
+        while (as->async_thread_waiting_) {
+            printf("Async is going to wait...\n");
+            pthread_cond_wait(&(as->async_condvar_), &(as->async_mutex_));
+        }
+        pthread_mutex_unlock(&(as->async_mutex_));
+
+
+        //do some action here, using the async info provided
+
+
+        bool filecompleted = false;
+        pthread_mutex_lock(&(as->async_mutex_));
+        filecompleted = self->is_all_file_processing_done_;
+        pthread_mutex_unlock(&(as->async_mutex_));
+        if(!filecompleted)
+            as->current_decoder->execute_RS_async_action();
+
+
+
+        pthread_mutex_lock(&(as->async_mutex_));
+        as->async_thread_waiting_ = true;
+        as->async_main_is_waiting_for_thread_to_complete_ = false;
+        printf("Signaling main thread work is done, can stop to wait...\n");
+        pthread_cond_broadcast(&(as->async_main_wait_));
+        pthread_mutex_unlock(&(as->async_mutex_));
+
+    }
+
+};
+
 QR_frame_decoder::QR_frame_decoder(){
+    pthread_mutex_init(&(this->async_info_.async_mutex_), NULL);
+
+    pthread_cond_init(&(this->async_info_.async_condvar_), NULL);
+    pthread_cond_init(&(this->async_info_.async_main_wait_), NULL);
+
+    pthread_mutex_lock(&(this->async_info_.async_mutex_));
+
+
     this->header_data_.resize(0);
     this->header_data_tmp_.resize(0);
     this->main_chunk_data_.resize(0);
     this->main_chunk_data_tmp_.resize(0);
-    this->decoder_ = new RS_decoder();
-    this->res_decoder_ = new RS_decoder();
+    this->decoder_ = new RS_decoder(this);
+    this->res_decoder_ = new RS_decoder(this);
     this->is_header_generating_ = true;
 
     this->qr_byte_length = 0;
     //
-    this->header_decoder_ = new RS_decoder();
+    this->header_decoder_ = new RS_decoder(this);
+
     this->last_analyzed_header_pos_ = 0;
     this->header_detection_done_ = false;
     this->decoder_res_bytes_len_ = 0;
@@ -34,6 +88,18 @@ QR_frame_decoder::QR_frame_decoder(){
     this->file_info_.fp = NULL;
     this->last_header_frame_number_processed_ = -1;
     this->last_frame_number_processed_ = -1;
+    ////async part setup
+
+
+    this->async_info_.async_thread_alive_ = true;
+    this->async_info_.async_main_is_waiting_for_thread_to_complete_ = false;
+    this->async_info_.async_thread_waiting_ = true;
+    this->async_info_.chlistener = this;
+    this->async_info_.internal_mem = NULL;
+    this->async_info_.recreated_data = NULL;
+    pthread_mutex_unlock(&(this->async_info_.async_mutex_));
+    pthread_create(&(this->async_info_.async_thr_id_), NULL, QR_frame_decoder::thrfunc, (void*)(&(this->async_info_)));
+
 }
 
 void QR_frame_decoder::reconfigure_qr_size(int qrlen){
@@ -47,11 +113,12 @@ void QR_frame_decoder::reconfigure_qr_size(int qrlen){
     this->header_decoder_->set_nchannels_parallel(utils::count_symbols_to_fit(headerRSn, 256, qrlen-6)-1);
     this->header_decoder_->set_bytes_per_generated_frame(qrlen-6);
     this->header_decoder_->set_RS_nk(headerRSn, headerRSk);
-    this->header_decoder_->set_chunk_listener(this);
+    //this->header_decoder_->set_chunk_listener(this);
 
 }
 
 QR_frame_decoder::~QR_frame_decoder(){
+    pthread_mutex_lock(&(this->async_info_.async_mutex_));
     if (this->decoder_ != NULL)
         delete this->decoder_;
     if (this->res_decoder_ != NULL)
@@ -67,9 +134,23 @@ QR_frame_decoder::~QR_frame_decoder(){
             this->file_info_.fp = NULL;
         }
     }
+
+    ///async destruction part
+
+    this->async_info_.async_thread_alive_ = false;
+    this->async_info_.async_main_is_waiting_for_thread_to_complete_ = false;
+    pthread_cond_broadcast(&(this->async_info_.async_main_wait_));
+    pthread_cond_broadcast(&(this->async_info_.async_condvar_));
+    pthread_join(this->async_info_.async_thr_id_, NULL);
+    pthread_mutex_unlock(&(this->async_info_.async_mutex_));
 }
 
 immediate_status QR_frame_decoder::tell_no_more_qr(){
+    bool switched_to_residual_data_decoder;
+    pthread_mutex_lock(&(this->async_info_.async_mutex_));
+    switched_to_residual_data_decoder = this->is_switched_to_residual_data_decoder_;
+    pthread_mutex_unlock(&(this->async_info_.async_mutex_));
+
     if (this->qr_byte_length <= 0)
         return NOT_INITIALIZED;
     immediate_status stat = RECOGNIZED;
@@ -79,14 +160,15 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
         }
     }else{
         if (this->decoder_){
-            if(!this->is_switched_to_residual_data_decoder_)
+            if(!switched_to_residual_data_decoder)
                 this->decoder_->tell_no_more_qr();
         }
         if (this->res_decoder_){
-            if(this->is_switched_to_residual_data_decoder_)
+            if(switched_to_residual_data_decoder)
                 this->res_decoder_->tell_no_more_qr();
         }
     }
+    utils::ScopeLock l(this->async_info_.async_mutex_);
     if (this->is_all_file_processing_done_ && (!this->is_hash_of_flushed_file_correct_))
         stat = ERRONEUS_HASH_WRONG;
     if (this->is_all_file_processing_done_ && (this->is_hash_of_flushed_file_correct_))
@@ -95,12 +177,14 @@ immediate_status QR_frame_decoder::tell_no_more_qr(){
 };
 
 void QR_frame_decoder::tell_file_generation_path(const char* filepath){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
     this->api_told_filepath_ = std::string(filepath);
     if(this->api_told_filepath_.c_str()[this->api_told_filepath_.length()-1] != '/')
       this->api_told_filepath_ += "/";
 };
 
 int QR_frame_decoder::get_total_frames_of_data_that_will_be_produced(){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
     if(this->is_header_generating_)
         return -1; //we do not know yet
 
@@ -111,16 +195,19 @@ int QR_frame_decoder::get_total_frames_of_data_that_will_be_produced(){
 };
 
 int QR_frame_decoder::get_last_number_of_frame_detected(){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
     return this->last_frame_number_processed_;
 };
 
 int QR_frame_decoder::get_last_number_of_header_frame_detected(){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
     return this->last_header_frame_number_processed_;
 };
 
 void QR_frame_decoder::setup_detector_after_header_recognized(){
     //printf("QQQFL : %d\n", this->file_info_.filelength);
     //exit(0);
+
     uint32_t qrlen = this->qr_byte_length;
     this->RSn_ = this->file_info_.RSn;
     this->RSk_ = this->file_info_.RSk;
@@ -131,7 +218,7 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
     this->decoder_->set_nchannels_parallel(nchp);
     this->decoder_->set_bytes_per_generated_frame(qrlen-4);
     this->decoder_->set_RS_nk(this->RSn_, this->RSk_);
-    this->decoder_->set_chunk_listener(this);
+    //this->decoder_->set_chunk_listener(this);
     this->decoder_->set_configured(true);
     this->decoder_->fist_proper_framedata_number_for_this_decoder(0);
 
@@ -140,7 +227,7 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
     this->res_decoder_->set_nchannels_parallel(nchpr);
     this->res_decoder_->set_bytes_per_generated_frame(qrlen-4);
     this->res_decoder_->set_RS_nk(this->RSn_rem_, this->RSk_rem_);
-    this->res_decoder_->set_chunk_listener(this);
+    //this->res_decoder_->set_chunk_listener(this);
     this->res_decoder_->set_configured(true);
     //this->res_decoder_->is_residual_ = true;
 
@@ -164,6 +251,7 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
 // 4B (N,K), 4B (n,k), 5Bfilelength(Q), 2B length fname, 1B hash length, XB file name, XB file hash content
 
 int QR_frame_decoder::analyze_header(){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX0 start analyze header, TEST1S %d", strtol("0x90695ffc", NULL, 16));
 #endif
@@ -298,10 +386,14 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
                                                                 int image_width, int image_height){
     int generated_datalength;
     char* generated_data = NULL;
+
     immediate_status ret_status =
             generate_data_from_qr_greyscalebuffer(&generated_datalength, &generated_data,
                                                   grayscale_qr_data,
                                                   image_width, image_height);
+
+    uint32_t nfr, nhfr;
+    {utils::ScopeLock l(this->async_info_.async_mutex_);
 
     if(generated_data == NULL)
         return NOT_RECOGNIZED;
@@ -309,8 +401,8 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     if(ret_status == NOT_RECOGNIZED)
         return NOT_RECOGNIZED;
     ////////////////////////// process generated_data = extract frame number
-    uint32_t nfr = *((uint32_t*)generated_data);
-    uint32_t nhfr = *((uint16_t*)(generated_data+4));
+    nfr = *((uint32_t*)generated_data);
+    nhfr = *((uint16_t*)(generated_data+4));
 
     if(nfr == 0xffffffff)
         this->last_header_frame_number_processed_ = nhfr;
@@ -338,23 +430,20 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     if (generated_datalength != this->qr_byte_length)
         return LENGTH_QR_CHANGED;
 
-#ifdef ANDROID
-        //__android_log_print(ANDROID_LOG_INFO, "QRdec", "nfr %d, nhfr %d", nfr, nhfr);
-#endif
-
     if(this->is_header_generating_){
-        printf("qqrh %d, ",nhfr);
-        for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
-        printf("\n");
+        //printf("qqrh %d, ",nhfr);
+        //for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
+        //printf("\n");
     }else{
-        printf("qqr %d, ",nfr);
-        for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
-        printf("\n");
+        //printf("qqr %d, ",nfr);
+        //for(int k = 0; k<generated_datalength;k++)printf("0x%02hhx ", (generated_data)[k]);
+        //printf("\n");
 #ifdef ANDROID
         //LOGI("qqr %d, ",nfr);
         //for(int k = 0; k<generated_datalength;k++)LOGI("0x%02hhx ", (generated_data)[k]);
         //LOGI("\n");
 #endif
+    }
     }
     /*
     if(nfr < this->decoder_->get_nframe()){ //impossible - we got less than previously received
@@ -381,13 +470,15 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
 
         printf("header frame set %d\n",nfr);
         printf("FR send : \n");
-        for(int q=0;q<fr->framedata_.size()-end_corruption_overhead;q++){
-            printf("%d ", fr->framedata_[q]);
-        }
+        //for(int q=0;q<fr->framedata_.size()-end_corruption_overhead;q++){
+        //    printf("%d ", fr->framedata_[q]);
+        //}
         RS_decoder::detector_status dec_status = this->header_decoder_->send_next_frame(fr);
         //if (dec_status == Decoder::TOO_MUCH_ERRORS)
         //    ret_status = ERRONEUS;
+        //pthread_mutex_lock(&this->async_info_.async_mutex_);
         this->analyze_header();
+        //pthread_mutex_unlock(&this->async_info_.async_mutex_);
     }else{
 
         Decoder* final_decoder;
@@ -400,10 +491,16 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         //__android_log_print(ANDROID_LOG_INFO, "ABCQ1", "decoder set - main");
 #endif
         }else{
-            if(!this->is_switched_to_residual_data_decoder_){
+            bool switched_to_residual_data_decoder;
+            pthread_mutex_lock(&(this->async_info_.async_mutex_));
+            switched_to_residual_data_decoder = this->is_switched_to_residual_data_decoder_;
+            pthread_mutex_unlock(&(this->async_info_.async_mutex_));
+            if(!switched_to_residual_data_decoder){
                 if(this->file_info_.filelength >= this->decoder_bytes_len_)
                     this->decoder_->tell_no_more_qr();
+                pthread_mutex_lock(&(this->async_info_.async_mutex_));
                 this->is_switched_to_residual_data_decoder_ = true;
+                pthread_mutex_unlock(&(this->async_info_.async_mutex_));
             }
             final_decoder = this->res_decoder_;
             printf("ABCQ1 : decoder set - residual\n");
@@ -411,6 +508,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         //__android_log_print(ANDROID_LOG_INFO, "ABCQ1", "decoder set - residual");
 #endif
         }
+        pthread_mutex_lock(&(this->async_info_.async_mutex_));
         chosenRSn = final_decoder->get_RSn();
         chosenRSk = final_decoder->get_RSk();
 
@@ -424,8 +522,10 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         for(int q=0;q<fr->framedata_.size()-end_corruption_overhead;q++){
             printf("%d ", fr->framedata_[q]);
         }
+        pthread_mutex_unlock(&(this->async_info_.async_mutex_));
         RS_decoder::detector_status dec_status = final_decoder->send_next_frame(fr);
         delete fr;
+        pthread_mutex_lock(&(this->async_info_.async_mutex_));
         if (dec_status == Decoder::TOO_MUCH_ERRORS)
             ret_status = ERRONEUS;
         if (ret_status != ERRONEUS){
@@ -434,6 +534,7 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
             if (this->is_all_file_processing_done_ && (this->is_hash_of_flushed_file_correct_))
                 ret_status = ALREADY_CORRECTLY_TRANSFERRED;
         }
+        pthread_mutex_unlock(&(this->async_info_.async_mutex_));
     }
     delete []generated_data;
     return ret_status;
@@ -454,7 +555,7 @@ int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int
         }
         printf("New temp chunkdata currently saved is %d \n", this->main_chunk_data_tmp_.size());
         uint32_t datalen = chunklength;
-        if (this->is_switched_to_residual_data_decoder_){
+        if (this->async_info_.is_switched_to_residual_data_decoder_){
             datalen = this->file_info_.filelength % this->decoder_bytes_len_;
             if (datalen > chunklength)
                 datalen = chunklength;
@@ -487,7 +588,7 @@ void QR_frame_decoder::flush_data_to_file(const char *data, uint32_t datalen){
     if(this->file_info_.fp)
         stat = write_file_fp(this->file_info_.fp, data, this->position_in_file_to_flush_, datalen);
     this->position_in_file_to_flush_ += datalen;
-    if(this->is_switched_to_residual_data_decoder_){ //last remaining part of file was saved, check hash
+    if(this->async_info_.is_switched_to_residual_data_decoder_){ //last remaining part of file was saved, check hash
         if(this->file_info_.fp != NULL){
             FileClose(this->file_info_.fp);
             this->file_info_.fp = NULL;
@@ -555,13 +656,13 @@ bool QR_frame_decoder::is_file_hash_correct(){
 };
 
 void QR_frame_decoder::print_current_header(){
-    printf("Curr header tmp, size %d : \n", this->header_data_tmp_.size());
-    for(int i=0; i<this->header_data_tmp_.size(); i++)
-        printf("%c", this->header_data_tmp_[i]);
+    //printf("Curr header tmp, size %d : \n", this->header_data_tmp_.size());
+    //for(int i=0; i<this->header_data_tmp_.size(); i++)
+    //   printf("%c", this->header_data_tmp_[i]);
 };
 
 void QR_frame_decoder::print_current_maindata(){
-    printf("Curr maindata tmp , size %d : \n", this->main_chunk_data_tmp_.size());
-    for(int i=0; i<this->main_chunk_data_tmp_.size(); i++)
-        printf("%c", this->main_chunk_data_tmp_[i]);
+    //printf("Curr maindata tmp , size %d : \n", this->main_chunk_data_tmp_.size());
+    //for(int i=0; i<this->main_chunk_data_tmp_.size(); i++)
+    //    printf("%c", this->main_chunk_data_tmp_[i]);
 };

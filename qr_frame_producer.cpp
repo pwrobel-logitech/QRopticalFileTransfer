@@ -144,8 +144,8 @@ int Qr_frame_producer::estimate_capacity(int N, int K, int charperQR){
 void Qr_frame_producer::produce_metadata(){
     int spos = 0;
     bool cont = true;
-    int optimal_rsn = 255;
-    int optimal_rsk = 127;
+    int optimal_rsn = 511;
+    int optimal_rsk = 255;
     // estimate remain (n,k)
     int nch = utils::count_symbols_to_fit(optimal_rsn, 256, this->total_chars_per_QR_ - 4) - 1;
     int datalength_per_chunk = optimal_rsk * nch * utils::nbits_forsymcombinationsnumber(optimal_rsn) / 8;
@@ -337,7 +337,7 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     *produced_width = resulting_width;
 
     if (frame->get_frame_number() % this->file_info_.RSn == 1)
-        utils::Dosleep(950);
+        utils::Dosleep(0);
 
     delete frame;
     int status;

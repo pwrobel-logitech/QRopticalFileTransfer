@@ -8,7 +8,7 @@ LIBZXING=zxing_lib/zxing-cpp/core/src
 CFLAGS=-O0 -g
 
 x86_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper
-	g++ -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC $(CFLAGS) -shared open_rs_encoder.cpp qr_frame_producer.cpp hash-library/sha256.cpp $(current_dir)/fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
+	g++ -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC $(CFLAGS) -shared open_rs_encoder.cpp qr_frame_producer.cpp hash-library/sha256.cpp $(current_dir)/fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper -lpthread
 	cp $(current_dir)/libRSencoder.so $(current_dir)/bin_fec_x64
 fec_x86_test: ka9q_fac_test.cpp single_fac_test.cpp fileutil/fileops.cpp
 	g++ $(CFLAGS) ka9q_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o bin_fec_x64/fec_x86_test -L$(current_dir)/bin_fec_x64 -lfec
@@ -25,7 +25,7 @@ libqrencode_wrapper:
 	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper_test.cpp -fPIC -pie -o $(current_dir)/bin_fec_x64/libqrencoder_test -L$(current_dir)/bin_fec_x64 -lqrencoder_wrapper
 
 x86_decoder_lib: libqrencode_wrapper decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp
-	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/bin_fec_x64/libRSdecoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
+	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/bin_fec_x64/libRSdecoder.so -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper -lpthread
 
 public_decoder_api_lib: x86_decoder_lib decoder_api_lib.cpp
 	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder_api_lib.cpp -fPIC -shared -o $(current_dir)/bin_fec_x64/libRSdecAPI.so -L$(current_dir)/bin_fec_x64 -lRSdecoder -lqrencoder_wrapper 

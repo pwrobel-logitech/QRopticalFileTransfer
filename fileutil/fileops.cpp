@@ -291,5 +291,13 @@ namespace utils{
    }
 
 
+   ScopeLock::ScopeLock(pthread_mutex_t &m){
+       mp = &m;
+       pthread_mutex_lock(mp);
+   };
+   ScopeLock::~ScopeLock(){
+       pthread_mutex_unlock(mp);
+   };
+
 }
 

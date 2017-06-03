@@ -26,6 +26,11 @@ public:
     ////////////End API
 
     int notifyNewChunk(int chunklength, const char* chunkdata, int context);
+    bool getIsSwitchedToResidualDataDecoder() {return this->is_switched_to_residual_data_decoder_;}
+
+
+    //async info
+    AsyncInfo* getAsyncInfo() {return &(this->async_info_);};
 
 protected:
 
@@ -87,5 +92,13 @@ protected:
     //-1 means, that nothing has been processed yet
     int last_frame_number_processed_;
     int last_header_frame_number_processed_;
+
+
+    ///Async part
+    AsyncInfo async_info_;
+
+
+
+    static void* thrfunc(void*);
 
 };

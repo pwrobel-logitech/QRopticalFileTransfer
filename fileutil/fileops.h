@@ -82,6 +82,14 @@ namespace utils{
 
    void printbits(unsigned char v);
 
+   class ScopeLock {
+   public:
+       ScopeLock(pthread_mutex_t &m);
+       ~ScopeLock();
+   private :
+       pthread_mutex_t* mp;
+   };
+
 
 }
 

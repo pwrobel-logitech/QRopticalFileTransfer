@@ -1,9 +1,43 @@
 #include "encoder.h"
 #include "libqrencoder_wrapper/libqrencoder_wrapper.h"
+#include <pthread.h>
 
 //#ifdef DEBUG
 //#define DCHECK(a) if(!(a))printf("Condition "#a" failed in line %d, file %s !\n", __LINE__, __FILE__);
 //#endif
+
+class ChunkListener;
+class Decoder;
+
+//define the data passed to another thread in order to complete the async task involving the RS decode
+struct AsyncInfo{
+    uint32_t* internal_mem;
+    char* recreated_data;
+    int* internal_RS_successfull_indexes_per_chunk_;
+    int* internal_RS_erasure_location_mem_;
+    int next_erasure_successful_num_position_;
+    int RSn_;
+    int RSk_;
+    void* RSfecDec;
+    bool is_header_frame_generating_;
+    uint32_t n_channels_;
+    bool is_switched_to_residual_data_decoder_;
+
+    Decoder* current_decoder;
+
+    bool async_completed;
+    immediate_status completion_status;
+    ChunkListener* chlistener;
+
+    pthread_t async_thr_id_;
+    pthread_mutex_t async_mutex_; //mutex for protecting the concurrent con
+    pthread_cond_t async_condvar_; //async thread waits on it to start processing - async_thread_waiting_
+    pthread_cond_t async_main_wait_; //main is waiting for the async to complete - async_main_is_waiting_for_thread_to_complete_
+    bool async_thread_alive_; // async thr alive
+    bool async_thread_waiting_; //is thread waiting to do some processing
+    bool async_main_is_waiting_for_thread_to_complete_;
+};
+
 
 //interface for the class listening for the ready chunk and appending to the chunk pool
 class ChunkListener{
@@ -11,8 +45,10 @@ public:
     // context : 0 - file, 1 - metadata, 2 - trailing chunk
     // returns additional status info
     virtual int notifyNewChunk(int chunklength, const char* chunkdata, int context) = 0;
-
+    virtual bool getIsSwitchedToResidualDataDecoder() = 0;
+    virtual AsyncInfo* getAsyncInfo() = 0;
 };
+
 
 
 // interface for the decoder class being able to decode the data from the delivered images
@@ -82,6 +118,8 @@ public:
 
     //bool is_residual_; //for testing purposes only
     //bool processed_once_;//for testing
+
+    virtual void execute_RS_async_action() = 0;
 
 protected:
     // this will keep the current status of the detector
