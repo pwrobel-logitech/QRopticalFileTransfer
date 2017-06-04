@@ -93,16 +93,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         Activity a = (Activity) context;
 
 
-        Camera.Parameters parameters = camera.getParameters();
-        final int width = parameters.getPreviewSize().width;
-        final int height = parameters.getPreviewSize().height;
-
-
-        final int status = send_next_grayscale_buffer_to_decoder(greyscalebuffer, width, height);
+        final int status = send_next_grayscale_buffer_to_decoder(greyscalebuffer, camwidth, camheight);
 
         int ntot = get_total_frames_of_data_that_will_be_produced();
         int lf = get_last_number_of_frame_detected();
-
+/*
         if(status > 0 && ntot != -1 && lf != -1){ //correctly recognized - not header frame
             if(!is_first_frame_arrived){
                 first_frame_num_arrived = lf;
@@ -132,7 +127,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 //triggered_autoestimated_end = true;
             }
         }
-
+*/
 
         if(ntot > 0 && lf > 0)
             if(lf >= ntot - 1)
@@ -286,6 +281,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 initialize_decoder();
                 set_decoded_file_path("/mnt/sdcard/out");
+
+                System.gc();
             }
         });
     }
