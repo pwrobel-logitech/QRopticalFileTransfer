@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.RunnableFuture;
 
@@ -231,7 +233,6 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 Camera.Parameters param = camera.getParameters();
                 List<Camera.Size> psize = param.getSupportedPreviewSizes();
 
-
                 int []fpsrange = new int [2];
                 param.getPreviewFpsRange(fpsrange);
                 param.setPreviewFpsRange(fpsrange[0], fpsrange[1]);
@@ -239,10 +240,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 param.set("vrmode", 1);
                 param.set("fast-fps-mode", 1);
 
-                int camwidth = psize.get(7).width;
-                int camheight = psize.get(7).height;
+                int bestsizeindex = CameraWorker.this.select_best_preview_size_index(psize);
+
+                int camwidth = psize.get(bestsizeindex).width;
+                int camheight = psize.get(bestsizeindex).height;
                 CameraWorker.this.camwidth = camwidth;
                 CameraWorker.this.camheight = camheight;
+
+                Log.i("camworker", "Preview w "+camwidth + " h " + camheight);
 
                 callbackbuffer = new byte[camheight*camwidth*4 * 2];
                 greyscalebuffer = new byte[camheight*camwidth];
@@ -351,6 +356,68 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
     ;
+
+    public int select_best_preview_size_index(List<Camera.Size> psize){
+        int bestindex = 0;
+        List<Camera.Size> l = new ArrayList<Camera.Size>(psize);
+
+        Collections.sort(l, new Comparator<Camera.Size>() {
+            @Override
+            public int compare(Camera.Size o1, Camera.Size o2) {
+                int bo1, bo2;
+                if (o1.width > o1.height){
+                    bo1 = o1.width;
+                }else{
+                    bo1 = o1.height;
+                }
+                if (o2.width > o2.height){
+                    bo2 = o2.width;
+                }else{
+                    bo2 = o2.height;
+                }
+                if (bo1 > bo2){
+                    return 1;
+                }else{
+                    return -1;
+                }
+
+                //return 0;
+            }
+        });
+
+
+        int found_sorted_index = 0;
+        for (int i = 0; i < l.size(); i++) {
+            Camera.Size size = l.get(i);
+            Log.i("CamPrevSize", "size w "+ size.width + "; size h "+size.height);
+            int bigger_size, smaller_size;
+            if (size.width > size.height){
+                bigger_size = size.width;
+                smaller_size = size.height;
+            } else {
+                bigger_size = size.height;
+                smaller_size = size.width;
+            }
+            if (bigger_size >= 640){
+                found_sorted_index = i;
+                break;
+            }
+        }
+        if(found_sorted_index == 0)//have not found
+            found_sorted_index = l.size() - 1;
+
+        Camera.Size founds = l.get(found_sorted_index);
+        int index_found_in_unsorted = 0;
+        for (int j = 0; j < psize.size(); j++){
+            Camera.Size size = psize.get(j);
+            if(size.width == founds.width && size.height == founds.height){
+                index_found_in_unsorted = j;
+                break;
+            }
+        }
+        bestindex = index_found_in_unsorted;
+        return bestindex;
+    }
 
 
     /// data as NV21 input, pixels as 8bit greyscale output

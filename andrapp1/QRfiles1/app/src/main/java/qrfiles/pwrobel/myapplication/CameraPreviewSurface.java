@@ -111,7 +111,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
-        Log.i("draw", "surface changed");
+        Log.i("draw", "surface changed, size w "+ this.getWidth()+ " h "+this.getHeight() + "argw "+width+" argh "+height);
 
         int[] mTextureHandles = new int[1];
         GLES20.glGenTextures(1, mTextureHandles, 0);
