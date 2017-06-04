@@ -155,7 +155,7 @@ void Qr_frame_producer::produce_metadata(){
     this->remain_length_ = remain_length;
     this->chunk_length_ = chunk_length;
     int curr_size = 0;
-    int curr_power = 2;
+    int curr_power = 3;
     if (chunk_length == 1) // for big chunk present in different amount, elongate minimum residual one as well
         curr_power = 4;
     else if (chunk_length == 2)
@@ -337,7 +337,9 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     *produced_width = resulting_width;
 
     if (frame->get_frame_number() % this->file_info_.RSn == 1)
-        utils::Dosleep(0);
+        utils::Dosleep(40);
+    if (frame->get_frame_number() == 1)
+        utils::Dosleep(150);
 
     delete frame;
     int status;

@@ -135,6 +135,11 @@ QR_frame_decoder::~QR_frame_decoder(){
         }
     }
 
+    if(!this->is_all_file_processing_done_){ //if processing failed, clean up temp file
+        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename + this->file_info_.cache_suffix;
+        remove_file(fullpathname.c_str()); //remove suffixed file - it is wrong
+    }
+
     ///async destruction part
 
     this->async_info_.async_thread_alive_ = false;
