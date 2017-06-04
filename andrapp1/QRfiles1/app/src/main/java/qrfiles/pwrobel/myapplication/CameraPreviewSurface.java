@@ -139,12 +139,22 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
             while (camcontroller == null)
                 try {
-                    mContext.wait();
+                    mContext.wait(); //wait for the camcontext to be available for sure
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
         }
         camcontroller.initCamAsync();
+
+        synchronized (camcontroller) {
+            while (!camcontroller.isCameraInitialized()){
+                try {
+                    camcontroller.wait(); //wait for the initialization of the camera to complete
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         android.hardware.Camera.CameraInfo info =
                 new android.hardware.Camera.CameraInfo();
@@ -153,6 +163,28 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         float rot_angle = 0.0f;
 
         rot_angle = info.orientation;
+
+        int camera_width = camcontroller.getCamPreviewWidth();
+        int camera_height = camcontroller.getCamPreviewHeight();
+
+        float a=0,b=0; //rotated parameters
+        if(info.orientation % 180 == 0){
+            a = camera_height;
+            b = camera_width;
+        }else{
+            a = camera_width;
+            b = camera_height;
+        }
+
+        if( ((float)a)/((float)b) < ((float)height)/((float)width) ){
+            //camera preview more square than surface to present
+            mRatio[0] = ((((float)b)*((float)height))/(((float)a)*((float)width))); //multiply by q>1
+            mRatio[1] = 1.0f;
+        }else{
+            mRatio[0] = 1.0f;
+            mRatio[1] = (((float)a)/((float)b))/(((float)height)/((float)width)); //multiply by the same(inv) q < 1
+        }
+
 
         Matrix.setRotateM(mOrientationM, 0, rot_angle, 0f, 0f, 1f);
 

@@ -13,4 +13,11 @@ public interface CameraController {
     public void setCallbackBufferSizeAsync(int size);
 
     public void callAutoFocusAsync();
+
+    public int getCamPreviewWidth();
+
+    public int getCamPreviewHeight();
+
+    public boolean isCameraInitialized();
+
 }

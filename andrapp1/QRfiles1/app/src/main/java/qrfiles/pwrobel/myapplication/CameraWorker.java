@@ -35,11 +35,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     public volatile Handler handler;
     public Camera camera;
-    int camwidth, camheight;
+    private int camwidth, camheight;
     public CameraPreviewSurface camsurf;
     Context context;
     byte[] callbackbuffer;
     byte[] greyscalebuffer;
+    boolean camera_initialized = false;
 
 
     //below, fields regarding the estimation of the moment after we know for sure the detector has ended
@@ -283,6 +284,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 set_decoded_file_path("/mnt/sdcard/out");
 
                 System.gc();
+
+                synchronized (CameraWorker.this) {
+                    camera_initialized = true;
+                    CameraWorker.this.notifyAll();
+                }
             }
         });
     }
@@ -416,6 +422,20 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return bestindex;
     }
 
+    public synchronized int getCamPreviewWidth(){
+        return camwidth;
+    };
+
+    public synchronized int getCamPreviewHeight(){
+        return camheight;
+    }
+
+    @Override
+    public boolean isCameraInitialized() {
+        return camera_initialized;
+    }
+
+    ;
 
     /// data as NV21 input, pixels as 8bit greyscale output
     public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
