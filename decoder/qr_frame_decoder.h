@@ -23,6 +23,13 @@ public:
 
     int get_last_number_of_header_frame_detected();
 
+    //in case the header generation is not done, return -1
+    int get_main_RSN();
+    int get_main_RSK();
+    int get_residual_RSN();
+    int get_residual_RSK();
+
+
     ////////////End API
 
     int notifyNewChunk(int chunklength, const char* chunkdata, int context);

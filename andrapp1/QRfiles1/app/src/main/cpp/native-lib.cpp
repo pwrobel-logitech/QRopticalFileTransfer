@@ -5,6 +5,30 @@
 
 extern "C"
 JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1main_1RSN(JNIEnv *env, jclass type) {
+    return (jint)get_main_RSN();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1main_1RSK(JNIEnv *env, jclass type) {
+    return (jint)get_main_RSK();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1residual_1RSN(JNIEnv *env, jclass type) {
+    return (jint)get_residual_RSN();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1residual_1RSK(JNIEnv *env, jclass type) {
+    return (jint)get_residual_RSK();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1total_1frames_1of_1data_1that_1will_1be_1produced(
         JNIEnv *env, jclass type) {
     return (jint)get_total_frames_of_data_that_will_be_produced();

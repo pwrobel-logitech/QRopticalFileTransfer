@@ -140,7 +140,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if(status > 0)
             Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+
                   " lashHdrProducedN "+get_last_number_of_header_frame_detected() +
-                  " lastDatFrProducedN "+get_last_number_of_frame_detected() + " laststatus "+status);
+                  " lastDatFrProducedN "+get_last_number_of_frame_detected() +
+                    " RSM(" + get_main_RSN() +","+get_main_RSK()+");RSR("+get_residual_RSN()+","+get_residual_RSK()+") "+
+                    " laststatus "+status);
 
         /*if(false)
         ((Activity)context).runOnUiThread(new Runnable() {
@@ -469,6 +471,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     public static native int get_last_number_of_frame_detected();
     public static native int get_last_number_of_header_frame_detected();
 
+    public static native int get_main_RSN();
+    public static native int get_main_RSK();
+    public static native int get_residual_RSN();
+    public static native int get_residual_RSK();
 
     public static native int deinitialize_decoder();
 

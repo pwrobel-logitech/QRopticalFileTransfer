@@ -671,3 +671,41 @@ void QR_frame_decoder::print_current_maindata(){
     //for(int i=0; i<this->main_chunk_data_tmp_.size(); i++)
     //    printf("%c", this->main_chunk_data_tmp_[i]);
 };
+
+//API functions
+
+int QR_frame_decoder::get_main_RSN(){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
+    if(this->header_detection_done_){
+        return this->file_info_.RSn;
+    }else{
+        return -1;
+    }
+};
+
+int QR_frame_decoder::get_main_RSK(){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
+    if(this->header_detection_done_){
+        return this->file_info_.RSk;
+    }else{
+        return -1;
+    }
+};
+
+int QR_frame_decoder::get_residual_RSN(){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
+    if(this->header_detection_done_){
+        return this->file_info_.RSn_residual;
+    }else{
+        return -1;
+    }
+};
+
+int QR_frame_decoder::get_residual_RSK(){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
+    if(this->header_detection_done_){
+        return this->file_info_.RSk_residual;
+    }else{
+        return -1;
+    }
+};

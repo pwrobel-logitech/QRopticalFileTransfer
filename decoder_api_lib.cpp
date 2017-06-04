@@ -77,6 +77,23 @@ int get_last_number_of_header_frame_detected(){
 };
 
 
+int get_main_RSN(){
+    return framedecoder->get_main_RSN();
+};
+
+int get_main_RSK(){
+    return framedecoder->get_main_RSK();
+};
+
+int get_residual_RSN(){
+    return framedecoder->get_residual_RSN();
+};
+
+int get_residual_RSK(){
+    return framedecoder->get_residual_RSK();
+};
+
+
 int deinitialize_decoder(){
     if (framedecoder != NULL)
         delete framedecoder;

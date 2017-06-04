@@ -56,6 +56,14 @@ int get_last_number_of_frame_detected();
 int get_last_number_of_header_frame_detected();
 
 
+//this get the RS correction codes settings for the residual and the main decoder
+//in case they are not known - for example, when the header has not been recognized yet - they are -1
+int get_main_RSN();
+int get_main_RSK();
+int get_residual_RSN();
+int get_residual_RSK();
+
+
 // call this at the end of the usage
 int deinitialize_decoder();
 
