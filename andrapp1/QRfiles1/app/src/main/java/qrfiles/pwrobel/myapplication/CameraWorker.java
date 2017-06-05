@@ -60,6 +60,21 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     boolean tiggered_lastframedetectedbase_end = false;
     //end of the fields for the estimation of the end of the detection
 
+
+    //start of the fields responsible for the proper detector progress visualization
+    static int MAX_CHUNK_LENGTH = 4096 * 4;
+    static int MAX_LAST_FR_LEN = 10; // for generating current preview color
+    boolean [] succesfull_last_smallpos;
+    double success_ratio_in_smallpos = 0;
+    boolean [] succesfull_positions_in_current_chunk;
+    boolean [] succesfull_positions_in_prev_chunk;
+    int biggest_frame_number = -1;
+    int last_frame_number = 0;
+    int total_frame_number = -1;
+    int RSn, RSk, RSn_res, RSk_res;
+    boolean RS_info_set = false;
+    //end of the decoder visualization fields
+
     public void setContext(Context cont){
         context = cont;
         Activity a = (Activity) cont;
@@ -83,6 +98,67 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
 
+    public void update_decoder_statistic(int newfrnum){
+        boolean is_residual = false;
+        int nmainchunks = total_frame_number / RSn;
+
+        is_residual = (newfrnum >= (total_frame_number - RSn_res));
+
+        if(newfrnum % RSn == 0){
+            for(int i = 0; i < RSn; i++)
+                succesfull_positions_in_current_chunk[i] = false;
+        }
+
+
+
+        int smallpos = newfrnum;
+        if (newfrnum >= MAX_LAST_FR_LEN)
+            smallpos = MAX_LAST_FR_LEN - 1;
+
+        int smallposold = this.last_frame_number;
+        if (smallposold >= MAX_LAST_FR_LEN)
+            smallposold = MAX_LAST_FR_LEN - 1;
+
+        int diff = newfrnum - this.last_frame_number;
+        if (diff >= MAX_LAST_FR_LEN){
+            for(int j = 0; j < MAX_LAST_FR_LEN-1; j++)
+                this.succesfull_last_smallpos[j]=false;
+        }
+
+        if(smallpos < MAX_LAST_FR_LEN - 1){
+            for (int i = last_frame_number+1; i < smallpos; i++)
+                this.succesfull_last_smallpos[i] = false;
+            this.succesfull_last_smallpos[smallpos] = true;
+        }else if (diff < MAX_LAST_FR_LEN){
+            for(int i = 0; i <MAX_LAST_FR_LEN - diff; i++){
+                int np = i + diff;
+                if(np > 0 && np < MAX_LAST_FR_LEN)
+                    this.succesfull_last_smallpos[i] = this.succesfull_last_smallpos[np];
+            }
+            for(int j = smallposold-diff+1; j < smallpos; j++)
+                this.succesfull_last_smallpos[j]=false;
+            this.succesfull_last_smallpos[MAX_LAST_FR_LEN-1] = true;
+        }
+
+
+
+
+
+        int sum = 0;
+        for (int i = 0; i<=smallpos; i++){
+            if (this.succesfull_last_smallpos[i])
+                sum++;
+        }
+
+        if(smallpos != 0)
+            success_ratio_in_smallpos = ((double)sum)/((double)MAX_LAST_FR_LEN);
+
+        Log.i("SmallSuccRatio", "Succ coeff : "+success_ratio_in_smallpos);
+
+        this.last_frame_number = newfrnum;
+
+    }
+
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         //Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
@@ -98,6 +174,27 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         int ntot = get_total_frames_of_data_that_will_be_produced();
         int lf = get_last_number_of_frame_detected();
+
+        if (ntot > 0) {
+            this.total_frame_number = ntot;
+            this.last_frame_number_arrived_so_far = lf;
+            int rsNM = get_main_RSN();
+            int rsKM = get_main_RSK();
+            int rsNR = get_residual_RSN();
+            int rsKR = get_residual_RSK();
+            if (rsNM > 0 && rsKM > 0 && rsNR > 0 && rsKR > 0 && (!this.RS_info_set)){
+                this.RSn = rsNM;
+                this.RSk = rsKM;
+                this.RSn_res = rsNR;
+                this.RSk_res = rsKR;
+                this.success_ratio_in_smallpos = ((double) RSk) / ((double) RSn);
+                this.RS_info_set = true;
+            }
+            if (lf > -1)
+                this.update_decoder_statistic(lf);
+        }
+
+
 /*
         if(status > 0 && ntot != -1 && lf != -1){ //correctly recognized - not header frame
             if(!is_first_frame_arrived){
@@ -285,6 +382,18 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 initialize_decoder();
                 set_decoded_file_path("/mnt/sdcard/out");
 
+                CameraWorker.this.succesfull_positions_in_prev_chunk = new boolean[MAX_CHUNK_LENGTH];
+                CameraWorker.this.succesfull_positions_in_current_chunk = new boolean[MAX_CHUNK_LENGTH];
+                CameraWorker.this.succesfull_last_smallpos = new boolean[MAX_LAST_FR_LEN];
+
+                for (int i = 0; i<MAX_CHUNK_LENGTH; i++){
+                    CameraWorker.this.succesfull_positions_in_current_chunk[i] = false;
+                    CameraWorker.this.succesfull_positions_in_prev_chunk[i] = false;
+                }
+
+                for (int i = 0; i<MAX_LAST_FR_LEN; i++)
+                    CameraWorker.this.succesfull_last_smallpos[i] = false;
+
                 System.gc();
 
                 synchronized (CameraWorker.this) {
@@ -310,6 +419,18 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
                 tell_decoder_no_more_qr();
                 deinitialize_decoder();
+
+                CameraWorker.this.succesfull_positions_in_prev_chunk = null;
+                CameraWorker.this.succesfull_positions_in_current_chunk = null;
+                CameraWorker.this.succesfull_last_smallpos = null;
+
+                biggest_frame_number = -1;
+                total_frame_number = -1;
+
+                CameraWorker.this.RS_info_set = false;
+
+                System.gc();
+
             }
         });
     };
