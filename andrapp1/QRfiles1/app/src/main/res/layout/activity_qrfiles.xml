@@ -12,14 +12,6 @@
         android:layout_width="match_parent"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:text="aa"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_qrfiles"
@@ -32,14 +24,5 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email" />
-
-    <ImageView
-        android:id="@+id/imv1"
-        android:layout_width="120dp"
-        android:layout_height="162dp"
-        android:layout_gravity="bottom|left"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="top|right"
-        app:srcCompat="@mipmap/ic_launcher" />
 
 </android.support.design.widget.CoordinatorLayout>

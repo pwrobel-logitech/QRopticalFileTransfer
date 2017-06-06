@@ -15,15 +15,19 @@ import android.os.Process;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.RunnableFuture;
 
@@ -63,8 +67,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     //start of the fields responsible for the proper detector progress visualization
     static int MAX_CHUNK_LENGTH = 4096 * 4;
-    static int MAX_LAST_FR_LEN = 10; // for generating current preview color
+    static int MAX_LAST_FR_LEN = 50; // for generating current preview color
     boolean [] succesfull_last_smallpos;
+    //static double seconds_window_for_estimation_succ_ratio = 2.0; //2s
     double success_ratio_in_smallpos = 0;
     boolean [] succesfull_positions_in_current_chunk;
     boolean [] succesfull_positions_in_prev_chunk;
@@ -73,6 +78,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     int total_frame_number = -1;
     int RSn, RSk, RSn_res, RSk_res;
     boolean RS_info_set = false;
+    ///
+    Deque<Pair<Integer, Long>> lastframeswithtime; //queue of the frame number and the recorded time
+    double estimated_max_framerate = 0; //what is the current decoding speed
     //end of the decoder visualization fields
 
     public void setContext(Context cont){
@@ -95,6 +103,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         super(name, Process.THREAD_PRIORITY_URGENT_DISPLAY);
         context = null;
         camsurf = null;
+        lastframeswithtime = new ArrayDeque<Pair<Integer, Long>>(0);
     }
 
 
@@ -109,8 +118,35 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 succesfull_positions_in_current_chunk[i] = false;
         }
 
+        if (newfrnum != last_frame_number)
+            this.lastframeswithtime.addLast(new Pair<Integer, Long>(newfrnum, System.nanoTime()));
+        if (this.lastframeswithtime.size() > MAX_LAST_FR_LEN)
+            this.lastframeswithtime.removeFirst();
 
 
+        //now, estiate the framerate
+        double framerate = 0;
+        if (this.lastframeswithtime.size() > 1 &&
+                (this.lastframeswithtime.getLast().first - this.lastframeswithtime.getFirst().first > 5)){
+            framerate = ((double)(this.lastframeswithtime.getLast().first - this.lastframeswithtime.getFirst().first))
+                    / ((double)(this.lastframeswithtime.getLast().second - this.lastframeswithtime.getFirst().second));
+            framerate *= 1e9;
+
+            estimated_max_framerate = framerate;
+        }
+
+        if (framerate < 1e-10) { //if still close to 0 (not calculated) - dimnish the frame window
+            if (this.lastframeswithtime.size() > 1 &&
+                    (this.lastframeswithtime.getLast().first - this.lastframeswithtime.getFirst().first > 2)){
+                framerate = ((double)(this.lastframeswithtime.getLast().first - this.lastframeswithtime.getFirst().first))
+                        / ((double)(this.lastframeswithtime.getLast().second - this.lastframeswithtime.getFirst().second));
+                framerate *= 1e9;
+
+                estimated_max_framerate = framerate;
+            }
+        }
+
+/*
         int smallpos = newfrnum;
         if (newfrnum >= MAX_LAST_FR_LEN)
             smallpos = MAX_LAST_FR_LEN - 1;
@@ -142,21 +178,48 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
 
 
-
-
+*/
+/*
         int sum = 0;
-        for (int i = 0; i<=smallpos; i++){
-            if (this.succesfull_last_smallpos[i])
-                sum++;
-        }
+        //for(Iterator itr = this.lastframeswithtime.iterator(); itr.hasNext();)  {
+        //    Pair<Integer, Long> p = (Pair<Integer, Long>) itr.next();
+        //}
 
-        if(smallpos != 0)
-            success_ratio_in_smallpos = ((double)sum)/((double)MAX_LAST_FR_LEN);
 
-        Log.i("SmallSuccRatio", "Succ coeff : "+success_ratio_in_smallpos);
+        if(this.lastframeswithtime.size() > 1)
+            success_ratio_in_smallpos = ((double)this.lastframeswithtime.size()) /
+                ((double)(this.lastframeswithtime.getLast().first-this.lastframeswithtime.getFirst().first+1));
 
+        Log.i("SmallSuccRatio", "Succ coeff : "+success_ratio_in_smallpos + " Framerate "+this.estimated_max_framerate);
+*/
         this.last_frame_number = newfrnum;
 
+    }
+
+    public void estimate_success_ratio_at_current_time(){
+        double succratio = 0;
+
+        double currtime = (double)System.nanoTime() * 1e-9;
+        double seconds_window_for_estimation_succ_ratio = MAX_LAST_FR_LEN / this.estimated_max_framerate;
+
+        //find all the frames that are not further back in time than the current, 2s probation window
+        int numfr_in_timewindow = 0;
+        for(Iterator itr = this.lastframeswithtime.iterator(); itr.hasNext();)  {
+            Pair<Integer, Long> p = (Pair<Integer, Long>) itr.next();
+            if ((currtime - (double)(p.second) * 1e-9) < seconds_window_for_estimation_succ_ratio){
+                numfr_in_timewindow++;
+            }
+        }
+        double num_expected_in_timewindow_based_on_curr_framerate =
+                seconds_window_for_estimation_succ_ratio * this.estimated_max_framerate;
+
+        succratio = ((double) numfr_in_timewindow) / num_expected_in_timewindow_based_on_curr_framerate;
+
+        if (succratio > 1.0)
+            succratio = 1.0;
+
+        success_ratio_in_smallpos = succratio;
+        Log.i("SUC", "success ratio : " + success_ratio_in_smallpos + " fps "+this.estimated_max_framerate);
     }
 
     @Override
@@ -190,8 +253,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 this.success_ratio_in_smallpos = ((double) RSk) / ((double) RSn);
                 this.RS_info_set = true;
             }
-            if (lf > -1)
-                this.update_decoder_statistic(lf);
+            if (lf > -1) {
+                if (status > 0)
+                    this.update_decoder_statistic(lf);
+                if (this.estimated_max_framerate > 1e-10)
+                    this.estimate_success_ratio_at_current_time();
+            }
         }
 
 
@@ -301,7 +368,6 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             }
 
         }*/
-
 
         camera.addCallbackBuffer(callbackbuffer);
     }
