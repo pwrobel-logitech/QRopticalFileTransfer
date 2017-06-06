@@ -1,4 +1,5 @@
 uniform vec2 ratios;
+uniform float prev_yx_ratio;
 attribute vec2 aPosition;
 
 uniform mat4 uTransformM;

@@ -36,6 +36,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     private float[] mTransformM = new float[16];
     private float[] mOrientationM = new float[16];
     private float[] mRatio = new float[2];
+    private float m_prev_yx_ratio = 1.0f;
     private ByteBuffer mFullQuadVertices;
     private int mTextureHandle;
     private Shader mOffscreenShader = null;
@@ -186,6 +187,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         }
 
 
+        m_prev_yx_ratio = ((float)a)/((float)b);
+
         Matrix.setRotateM(mOrientationM, 0, rot_angle, 0f, 0f, 1f);
 
         requestRender();
@@ -216,12 +219,12 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         int uTransformM = mOffscreenShader.getHandle("uTransformM");
         int uOrientationM = mOffscreenShader.getHandle("uOrientationM");
         int uRatioV = mOffscreenShader.getHandle("ratios");
-
+        int urpevratio = mOffscreenShader.getHandle("prev_yx_ratio");
 
         GLES20.glUniformMatrix4fv(uTransformM, 1, false, mTransformM, 0);
         GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
         GLES20.glUniform2fv(uRatioV, 1, mRatio, 0);
-
+        GLES20.glUniform1f(urpevratio, m_prev_yx_ratio);
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureHandle);
