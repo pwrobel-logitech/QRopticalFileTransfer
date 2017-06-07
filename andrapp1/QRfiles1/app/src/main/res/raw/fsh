@@ -3,15 +3,40 @@
 precision highp float;
 
 uniform float prev_yx_ratio;
+uniform float succratio;
+
 
 uniform samplerExternalOES sTexture;
 varying vec2 vTextureCoord;
 
 uniform vec2 ratios;
 
-float x, y, transx, transy, cx, cy , rs;
+float x, y, transx, transy, cx, cy , rs, red, green;
+
+float distancefactor , distancefactorx, distancefactory;
 
 float darkness;
+float boundx, boundy;
+
+vec4 texcolor, redf, greenf;
+vec4 t00, t01, t10, t11;
+vec4 sumcol;
+vec4 Bmm, Bm0, Bmp, B0m, B00, B0p, Bpm, Bp0, Bpp;
+
+uniform vec2 sizeprev;
+
+
+
+float v1;
+float dstfac(float t, float b){
+    v1 = 0.0;
+    if (t<b && t>0.0){
+      v1=(b-t)/t;
+    }else if (t>1.0-b && t<1.0){
+      v1 = (t-1.0+b)/b;
+    }
+    return v1;
+}
 
 void main(){
 
@@ -31,13 +56,67 @@ void main(){
     cy = 0.5;
 
 
+   distancefactor = 1.0;
 
    darkness = 1.0;
+   green = 0.0;
+   red = 0.0;
+   boundx = 0.15;
+   boundy = 0.15;
+   redf = vec4(0.0,0.0,0.0,0.0);
+   greenf = vec4(0.0,0.0,0.0,0.0);
 
-   if (transx < 0.15 || transx > 0.85 || transy < 0.15 || transy > 0.85){
-     darkness = 0.5;
+
+    texcolor = texture2D(sTexture, vec2(x,y));
+
+
+   if (transx < boundx || transx > (1.0-boundx) || transy < boundy || transy > (1.0-boundy)){
+     darkness = 0.6;
+
+     /*distancefactorx = dstfac(transx, boundx);
+      distancefactory = dstfac(transy, boundy);
+     distancefactor = distancefactorx + distancefactory;*/
+
+
+            if(succratio < 0.5){
+               green = 0.0;
+               red = 2.0*(0.5 - succratio);
+            }else {
+               green = 2.0*(succratio - 0.5);
+               red = 0.0;
+            }
+
+
+             t00 = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y));
+             t01 = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y));
+             t10 = texture2D(sTexture, vec2(x,y-2.0/sizeprev.y));
+             t11 = texture2D(sTexture, vec2(x,y+2.0/sizeprev.y));
+/*
+             //Bmm = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y-1.0/sizeprev.y));
+             //Bm0 = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y));
+             //Bmp = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y+1.0/sizeprev.y));
+             //B0m = texture2D(sTexture, vec2(x,y-2.0/sizeprev.y));
+             //B00 = texture2D(sTexture, vec2(x,y));
+             //B0p = texture2D(sTexture, vec2(x,y+2.0/sizeprev.y));
+             //Bpm = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y-1.0/sizeprev.y));
+             //Bp0 = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y));
+             //Bpp = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y+1.0/sizeprev.y));;
+*/
+             /*texcolor = 0.2*(Bmm+Bm0+Bmp+B0m+B0p+Bpm+Bp0+Bpp);*/
+             texcolor = (1.0/5.0)*(texcolor + t00 + t01 + t10 + t11);
+
+             redf = red * (1.0-darkness)*texcolor;
+             redf.y=0.0;
+             redf.z = 0.0;
+             greenf = green *(1.0-darkness)* texcolor;
+             greenf.x = 0.0;
+             greenf.z = 0.0;
+
+
+
+
    }
 
-   gl_FragColor = 0.0*vec4(1.0, 0.0, 1.0, 1.0) + darkness* texture2D(sTexture, vec2(x,y));
+   gl_FragColor = redf  + greenf + darkness*texcolor ;
 
 }

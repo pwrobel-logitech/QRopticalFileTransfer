@@ -36,6 +36,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     private float[] mTransformM = new float[16];
     private float[] mOrientationM = new float[16];
     private float[] mRatio = new float[2];
+    private float[] sizeprev = new float[2];
     private float m_prev_yx_ratio = 1.0f;
     private ByteBuffer mFullQuadVertices;
     private int mTextureHandle;
@@ -48,6 +49,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
     private Context mContext;
     private CameraController camcontroller;
+
+    private double curr_succ_ratio_got_from_camworker = 0.0;
 
     public CameraPreviewSurface(Context context, CameraController cc) {
         super(context);
@@ -188,6 +191,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
 
         m_prev_yx_ratio = ((float)a)/((float)b);
+        sizeprev[0] = a;
+        sizeprev[1] = b;
 
         Matrix.setRotateM(mOrientationM, 0, rot_angle, 0f, 0f, 1f);
 
@@ -198,6 +203,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     public void onDrawFrame(GL10 gl) {
 
 
+        curr_succ_ratio_got_from_camworker = camcontroller.getCurrentSuccRatio();
 
         //Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
         //Log.i("draw", "frame has been requested to be drawn");
@@ -220,11 +226,15 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         int uOrientationM = mOffscreenShader.getHandle("uOrientationM");
         int uRatioV = mOffscreenShader.getHandle("ratios");
         int urpevratio = mOffscreenShader.getHandle("prev_yx_ratio");
+        int usuccratio = mOffscreenShader.getHandle("succratio");
+        int usizes = mOffscreenShader.getHandle("sizeprev");
 
         GLES20.glUniformMatrix4fv(uTransformM, 1, false, mTransformM, 0);
         GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
         GLES20.glUniform2fv(uRatioV, 1, mRatio, 0);
+        GLES20.glUniform2fv(usizes, 1, sizeprev, 0);
         GLES20.glUniform1f(urpevratio, m_prev_yx_ratio);
+        GLES20.glUniform1f(usuccratio, (float)curr_succ_ratio_got_from_camworker);
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureHandle);

@@ -67,7 +67,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     //start of the fields responsible for the proper detector progress visualization
     static int MAX_CHUNK_LENGTH = 4096 * 4;
-    static int MAX_LAST_FR_LEN = 50; // for generating current preview color
+    static int MAX_LAST_FR_LEN = 25; // for generating current preview color
     boolean [] succesfull_last_smallpos;
     //static double seconds_window_for_estimation_succ_ratio = 2.0; //2s
     double success_ratio_in_smallpos = 0;
@@ -218,7 +218,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if (succratio > 1.0)
             succratio = 1.0;
 
-        success_ratio_in_smallpos = succratio;
+        synchronized (this){
+            success_ratio_in_smallpos = succratio;
+        }
         Log.i("SUC", "success ratio : " + success_ratio_in_smallpos + " fps "+this.estimated_max_framerate);
     }
 
@@ -622,6 +624,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     @Override
     public boolean isCameraInitialized() {
         return camera_initialized;
+    }
+
+    @Override
+    public synchronized double getCurrentSuccRatio() {
+        double succ = 0.5;
+        if (this.estimated_max_framerate > 1e-9)
+            succ = this.success_ratio_in_smallpos;
+        return succ;
     }
 
     ;

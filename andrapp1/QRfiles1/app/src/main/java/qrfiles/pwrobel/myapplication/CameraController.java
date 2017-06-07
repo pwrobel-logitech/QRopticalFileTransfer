@@ -20,4 +20,6 @@ public interface CameraController {
 
     public boolean isCameraInitialized();
 
+    public double getCurrentSuccRatio();
+
 }

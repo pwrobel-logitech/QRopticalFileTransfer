@@ -1,11 +1,13 @@
 uniform vec2 ratios;
 uniform float prev_yx_ratio;
+uniform float succratio;
 attribute vec2 aPosition;
 
 uniform mat4 uTransformM;
 uniform mat4 uOrientationM;
 
 varying vec2 vTextureCoord;
+uniform vec2 sizeprev;
 
 void main(){
 	gl_Position = vec4(aPosition, 0.0, 1.0);
