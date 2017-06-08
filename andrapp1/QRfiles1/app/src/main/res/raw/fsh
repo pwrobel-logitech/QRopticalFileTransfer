@@ -87,10 +87,10 @@ void main(){
             }
 
 
-             t00 = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y));
-             t01 = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y));
-             t10 = texture2D(sTexture, vec2(x,y-2.0/sizeprev.y));
-             t11 = texture2D(sTexture, vec2(x,y+2.0/sizeprev.y));
+             t00 = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y-2.0/sizeprev.y));
+             t01 = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y+2.0/sizeprev.y));
+             t10 = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y-2.0/sizeprev.y));
+             t11 = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y+2.0/sizeprev.y));
 /*
              //Bmm = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y-1.0/sizeprev.y));
              //Bm0 = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y));
@@ -103,7 +103,7 @@ void main(){
              //Bpp = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y+1.0/sizeprev.y));;
 */
              /*texcolor = 0.2*(Bmm+Bm0+Bmp+B0m+B0p+Bpm+Bp0+Bpp);*/
-             texcolor = (1.0/5.0)*(texcolor + t00 + t01 + t10 + t11);
+             texcolor = (1.0/6.0)*(2.0*texcolor + t00 + t01 + t10 + t11);
 
              redf = red * (1.0-darkness)*texcolor;
              redf.y=0.0;
