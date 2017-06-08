@@ -94,9 +94,10 @@ int get_residual_RSK(){
 };
 
 
-int deinitialize_decoder(){
+immediate_status deinitialize_decoder(){
+    immediate_status stat = framedecoder->destroy_and_get_filetransfer_status();
     if (framedecoder != NULL)
         delete framedecoder;
     framedecoder = NULL;
-    return 0;
+    return stat;
 };

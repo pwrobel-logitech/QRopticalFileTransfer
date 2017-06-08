@@ -29,6 +29,13 @@ public:
     int get_residual_RSN();
     int get_residual_RSK();
 
+    //is called right before destructor, and does the actual destruction with returning the async status
+    //at the end of the destruction we join with the RS processing thread and know for sure the actual
+    //file transfer status including checking the file hash
+    //delivers ALREADY_CORRECTLY_TRANSFERRED if file is checked for consistency successfully and saved
+    //or ERRONEUS_HASH_WRONG if the transmited temporary file has the wrong hash
+    immediate_status destroy_and_get_filetransfer_status();
+
 
     ////////////End API
 

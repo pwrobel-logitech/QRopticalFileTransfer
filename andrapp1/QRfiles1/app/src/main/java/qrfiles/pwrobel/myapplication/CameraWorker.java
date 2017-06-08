@@ -56,7 +56,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     int first_frame_num_arrived;
     long time_first_frame_arrived;
     boolean is_last_frame_so_far_arrived = false;
-    int last_frame_number_arrived_so_far; // must be greater than the first frame number
+    int last_frame_number_arrived_so_far = -1; // must be greater than the first frame number
     long time_last_frame_number_arrived_so_far; //only used when first and last frame so far arrived
     double current_estimated_moment_of_end;
     static long time_overhead = 300000000; // 180ms in nanosecs as a time unit. From System.nanoTime()
@@ -82,6 +82,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     Deque<Pair<Integer, Long>> lastframeswithtime; //queue of the frame number and the recorded time
     double estimated_max_framerate = 0; //what is the current decoding speed
     //end of the decoder visualization fields
+
+    ////contains file transfer status - whether hash checking etc. produced good file or not
+    boolean file_detection_ended = false;
+    boolean file_detected_and_finally_saved_successfully = false;
+    String last_received_file_name = "";
+    ///
+
 
     public void setContext(Context cont){
         context = cont;
@@ -239,10 +246,17 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         int ntot = get_total_frames_of_data_that_will_be_produced();
         int lf = get_last_number_of_frame_detected();
+        int hfn = get_last_number_of_header_frame_detected();
+
+        //if (ntot == -1 && hfn >= 0 && lf == -1 && status == 2){ //got header in the middle of data detection
+        //    Log.i("QQQQQQQQQQQQQQQQQQq", "AA");
+        //    this.reset_decoder();
+        //}
 
         if (ntot > 0) {
             this.total_frame_number = ntot;
             this.last_frame_number_arrived_so_far = lf;
+
             int rsNM = get_main_RSN();
             int rsKM = get_main_RSK();
             int rsNR = get_residual_RSN();
@@ -299,7 +313,6 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if(ntot > 0 && lf > 0)
             if(lf >= ntot - 1)
                 if(!triggered_autoestimated_end){
-                    tell_decoder_no_more_qr();
                     this.reset_decoder();
                     tiggered_lastframedetectedbase_end = true;
             }
@@ -650,12 +663,28 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 */
     }
 
+    public void file_status_delivered(String filename){ //either failed or succeeded
+        Log.i("FILESTATUS", "got file status, success : "+this.file_detected_and_finally_saved_successfully +
+        " Filename : " + filename);
+    }
+
     public void reset_decoder(){
+        Log.i("RST", "reset of the decoder is detected");
         this.estimated_max_framerate = 0;
         this.lastframeswithtime.clear();
-        deinitialize_decoder();
+        last_frame_number_arrived_so_far = -1;
+        tell_decoder_no_more_qr();
+        int stat = deinitialize_decoder();
+        Log.i("RST", "stat value "+stat);
+        this.file_detection_ended = true;
+        if(stat == 3)
+            this.file_detected_and_finally_saved_successfully = false;
+        else if (stat == 7)
+            this.file_detected_and_finally_saved_successfully = true;
+        this.file_status_delivered(this.last_received_file_name);
         initialize_decoder();
         set_decoded_file_path("/mnt/sdcard/out");
+        this.file_detection_ended = false;
     }
 
     /////////native part

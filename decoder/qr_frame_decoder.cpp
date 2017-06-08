@@ -117,7 +117,8 @@ void QR_frame_decoder::reconfigure_qr_size(int qrlen){
 
 }
 
-QR_frame_decoder::~QR_frame_decoder(){
+immediate_status QR_frame_decoder::destroy_and_get_filetransfer_status(){
+    immediate_status final_status = ERRONEUS; //fake
     pthread_mutex_lock(&(this->async_info_.async_mutex_));
 
     this->async_info_.async_thread_waiting_ = false;
@@ -127,6 +128,14 @@ QR_frame_decoder::~QR_frame_decoder(){
 
     while (this->async_info_.async_main_is_waiting_for_thread_to_complete_){
         pthread_cond_wait(&(async_info_.async_main_wait_), &(async_info_.async_mutex_));
+    }
+
+    if(this->is_all_file_processing_done_ && this->is_hash_of_flushed_file_correct_){
+        final_status = ALREADY_CORRECTLY_TRANSFERRED;
+    }
+
+    if(this->is_all_file_processing_done_ && !this->is_hash_of_flushed_file_correct_){
+        final_status = ERRONEUS_HASH_WRONG;
     }
 
     if(!this->is_all_file_processing_done_){ //if processing failed, clean up temp file
@@ -178,6 +187,11 @@ QR_frame_decoder::~QR_frame_decoder(){
 
     pthread_mutex_unlock(&(this->async_info_.async_mutex_));
     pthread_join(this->async_info_.async_thr_id_, NULL);
+    return final_status;
+};
+
+QR_frame_decoder::~QR_frame_decoder(){
+
 }
 
 immediate_status QR_frame_decoder::tell_no_more_qr(){

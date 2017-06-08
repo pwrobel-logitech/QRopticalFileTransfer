@@ -14,6 +14,7 @@ enum immediate_status {
     ALREADY_CORRECTLY_TRANSFERRED = 7,
     NOT_INITIALIZED = 8, // told to finish qr generation, but not even initialized before with the first frame
     LENGTH_QR_CHANGED = 9, //new QR frame has the new length - migh want to kill current transfer and start the new one
+
 };
 
 
@@ -64,7 +65,11 @@ int get_residual_RSN();
 int get_residual_RSK();
 
 
-// call this at the end of the usage
-int deinitialize_decoder();
+// call this at the end of the usage of the decoder
+//at the end of the destruction we join with the RS processing thread and know for sure the actual
+//file transfer status including checking the file hash
+//delivers ALREADY_CORRECTLY_TRANSFERRED if file is checked for consistency successfully and saved
+//or ERRONEUS_HASH_WRONG if the transmited temporary file has the wrong hash
+immediate_status deinitialize_decoder();
 
 }
