@@ -17,24 +17,24 @@ void* QR_frame_decoder::thrfunc(void* arg){
 
         pthread_mutex_lock(&(as->async_mutex_));
         running = as->async_thread_alive_;
-        pthread_mutex_unlock(&(as->async_mutex_));
+        //pthread_mutex_unlock(&(as->async_mutex_));
 
         if(!running)
             break;
 
-        pthread_mutex_lock(&(as->async_mutex_));
+        //pthread_mutex_lock(&(as->async_mutex_));
         while (as->async_thread_waiting_) {
             printf("Async is going to wait...\n");
             pthread_cond_wait(&(as->async_condvar_), &(as->async_mutex_));
         }
-        pthread_mutex_unlock(&(as->async_mutex_));
+        //pthread_mutex_unlock(&(as->async_mutex_));
 
 
         //do some action here, using the async info provided
 
 
         bool filecompleted = false;
-        pthread_mutex_lock(&(as->async_mutex_));
+        //pthread_mutex_lock(&(as->async_mutex_));
         filecompleted = self->is_all_file_processing_done_;
         pthread_mutex_unlock(&(as->async_mutex_));
         if(!filecompleted)
@@ -119,6 +119,38 @@ void QR_frame_decoder::reconfigure_qr_size(int qrlen){
 
 QR_frame_decoder::~QR_frame_decoder(){
     pthread_mutex_lock(&(this->async_info_.async_mutex_));
+
+    this->async_info_.async_thread_waiting_ = false;
+    pthread_cond_broadcast(&(this->async_info_.async_condvar_));
+
+
+
+    while (this->async_info_.async_main_is_waiting_for_thread_to_complete_){
+        pthread_cond_wait(&(async_info_.async_main_wait_), &(async_info_.async_mutex_));
+    }
+
+    if(!this->is_all_file_processing_done_){ //if processing failed, clean up temp file
+        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename + this->file_info_.cache_suffix;
+        remove_file(fullpathname.c_str()); //remove suffixed file - it is wrong
+    }
+
+    this->async_info_.async_thread_alive_ = false;
+    this->async_info_.async_thread_waiting_ = false;
+    this->async_info_.async_main_is_waiting_for_thread_to_complete_ = false;
+    this->is_all_file_processing_done_ = true;
+    pthread_cond_broadcast(&(this->async_info_.async_main_wait_));
+    pthread_cond_broadcast(&(this->async_info_.async_condvar_));
+
+    //pthread_mutex_unlock(&(this->async_info_.async_mutex_));
+
+    //pthread_mutex_lock(&(this->async_info_.async_mutex_));
+
+    //wait for the async action to complete
+
+    //pthread_mutex_unlock(&(this->async_info_.async_mutex_));
+
+
+    //pthread_mutex_lock(&(this->async_info_.async_mutex_));
     if (this->decoder_ != NULL)
         delete this->decoder_;
     if (this->res_decoder_ != NULL)
@@ -135,10 +167,7 @@ QR_frame_decoder::~QR_frame_decoder(){
         }
     }
 
-    if(!this->is_all_file_processing_done_){ //if processing failed, clean up temp file
-        std::string fullpathname = this->file_info_.filepath + this->file_info_.filename + this->file_info_.cache_suffix;
-        remove_file(fullpathname.c_str()); //remove suffixed file - it is wrong
-    }
+
 
     ///async destruction part
 
@@ -146,8 +175,9 @@ QR_frame_decoder::~QR_frame_decoder(){
     this->async_info_.async_main_is_waiting_for_thread_to_complete_ = false;
     pthread_cond_broadcast(&(this->async_info_.async_main_wait_));
     pthread_cond_broadcast(&(this->async_info_.async_condvar_));
-    pthread_join(this->async_info_.async_thr_id_, NULL);
+
     pthread_mutex_unlock(&(this->async_info_.async_mutex_));
+    pthread_join(this->async_info_.async_thr_id_, NULL);
 }
 
 immediate_status QR_frame_decoder::tell_no_more_qr(){
@@ -462,7 +492,6 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     }
     */
     //int ipos = nfr % this->RSn_;
-
 
 
     EncodedFrame* fr = new OpenRSEncodedFrame();

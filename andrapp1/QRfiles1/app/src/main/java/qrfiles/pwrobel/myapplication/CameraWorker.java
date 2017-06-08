@@ -300,6 +300,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             if(lf >= ntot - 1)
                 if(!triggered_autoestimated_end){
                     tell_decoder_no_more_qr();
+                    this.reset_decoder();
                     tiggered_lastframedetectedbase_end = true;
             }
 
@@ -649,6 +650,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 */
     }
 
+    public void reset_decoder(){
+        this.estimated_max_framerate = 0;
+        this.lastframeswithtime.clear();
+        deinitialize_decoder();
+        initialize_decoder();
+        set_decoded_file_path("/mnt/sdcard/out");
+    }
 
     /////////native part
     public static native void applygrayscalenative(byte [] pixels, byte [] data, int width, int height);

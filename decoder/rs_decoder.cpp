@@ -491,7 +491,7 @@ uint32_t RS_decoder::apply_RS_decode_to_internal_memory(){
         if (e > nerr)
             nerr = e;
     }
-    //utils::Dosleep(5000);
+    //utils::Dosleep(8000);
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_INFO, "RSTIME", "WWWWWWW > time %f", utils::currmili() - t);
 #endif

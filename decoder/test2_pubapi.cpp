@@ -14,6 +14,12 @@ int main(int argc, char** argv){
  initialize_decoder();
  set_decoded_file_path("/home/pwrobel/");
 
+ for (int i = 0; i < 1000; i++){
+   deinitialize_decoder();
+   initialize_decoder();
+   set_decoded_file_path("/home/pwrobel/");
+ }
+
  FILE *f;
  char namebuf[100];
 
