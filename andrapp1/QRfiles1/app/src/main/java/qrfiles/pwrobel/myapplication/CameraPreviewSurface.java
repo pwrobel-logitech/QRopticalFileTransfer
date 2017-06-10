@@ -248,21 +248,29 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
         if (this.nframe_drawn % 3 == 0){
-            this.drawProgressBar1();
+            this.drawProgressBars();
         }
 
         this.nframe_drawn++;
     }
 
 
-    CustomProgressBar pr1drawer = null;
-    public void setCustomDecoderProgressBarsDrawers(CustomProgressBar pr1drawer){
+    CustomProgressBar pr1drawer = null; //progress
+    CustomProgressBar pr2drawer = null; //errors
+    long progress_err_num = 400;
+    long progress_progress_num = 690;
+    public void setCustomDecoderProgressBarsDrawers(CustomProgressBar pr1drawer, CustomProgressBar pr2drawer){
         this.pr1drawer = pr1drawer;
+        this.pr2drawer = pr2drawer;
     }
 
-    private void drawProgressBar1(){
-        if(pr1drawer != null)
-            pr1drawer.drawMe();
+    private void drawProgressBars(){
+        if(pr1drawer != null) {
+            pr1drawer.drawMe(this.progress_progress_num);
+        }
+        if(pr2drawer != null) {
+            pr2drawer.drawMe(this.progress_err_num);
+        }
     }
 
 

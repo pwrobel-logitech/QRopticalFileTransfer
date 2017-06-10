@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -30,11 +31,13 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
     public CustomProgressBar(Context context, AttributeSet attrs){
         super(context, attrs);
         this.setZOrderOnTop(true);
+        this.getHolder().addCallback(this);
     }
 
     public CustomProgressBar(Context context) {
         super(context);
         this.setZOrderOnTop(true);
+        this.getHolder().addCallback(this);
         //this.setZOrderOnTop(true);
         //this.invalidate();
     }
@@ -54,7 +57,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
     public void surfaceCreated(SurfaceHolder holder) {
         synchronized (holder) {
             Log.i("PRBAR", "progressbar surface created");
-            this.is_operational = true;
+            //this.is_operational = true;
         }
     }
 
@@ -68,43 +71,74 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public synchronized void surfaceDestroyed(SurfaceHolder holder) {
-        synchronized (holder){
+        synchronized (holder){//
             this.is_operational = false;
         }
     }
 
-    public void drawMe(){
+    public synchronized void drawMe(long progr) {
 
-        //if (this.is_operational == false)
-        //    return;
+        boolean operational = false;
+
+        synchronized (this.getHolder()) {
+            operational = this.is_operational;
+        }
+
+        if (!operational) {
+            Log.i("PRBAR", "not oprational, returning");
+            return;
+        }
+
 
         Canvas c = null;
 
-        try {
-            c = this.getHolder().lockCanvas();
-            if (c != null){
-                synchronized (this.getHolder()) {
+        boolean exception_got_when_locking = false;
+
+        synchronized (this.getHolder()) {
+
+            Surface surface = this.getHolder().getSurface();
+            if (surface != null && surface.isValid())
+            {
+
+            try {
+
+                ///https://stackoverflow.com/questions/26987728/java-lang-illegalargumentexceptionat-android-view-surface-unlockcanvasandpostn
+                c = this.getHolder().lockCanvas();
+                if (c != null) {
 //////////////////////////////////////////////////
                     this.setZOrderOnTop(true);
                     int w = this.getWidth();
                     int h = this.getHeight();
-                    Log.i("PRBAR", "drawMe w" + w + " h "+h);
+                    //Log.i("PRBAR", "drawMe w" + w + " h "+h);
                     //c.drawColor(Color.argb(100, 50, 50, 50));
                     this.getHolder().setFormat(PixelFormat.TRANSPARENT);
-                    c.drawCircle(w/2, h/2, h/2, rectanglePaint);
+                    int epsilon = 4;
+                    //c.drawColor(Color.CYAN);
+                    c.drawColor(0, PorterDuff.Mode.CLEAR);
+                    rectanglePaint.setColor(Color.BLUE);
+
+                    c.drawRect(new Rect(epsilon, epsilon, (int) (w * progr / 1000.0f) - epsilon, h - epsilon), rectanglePaint);
+                    //c.drawColor(Color.TRANSPARENT);
+                    c.drawARGB(127, 180, 180, 180);
+                    //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
+                    //c.drawCircle(w/2, h/2, h/2, rectanglePaint);
 //////////////////////////////////////////////////
                 }
-            }
-        }
-        finally {
-            if (c != null) {
-                try {
-                    this.getHolder().unlockCanvasAndPost(c);
-                }catch (IllegalFormatException e){
-                    Log.i("PRBAR", "failed unlockCanvasAndPost");
+
+            } catch (Exception e) {
+                Log.i("PRBAR", "Got exception when locking and drawing surf");
+                //exception_got_when_locking = true;///
+            } finally {
+                if (c != null && this.getHolder() != null /*&& !exception_got_when_locking*/) {
+                    try {
+                        this.getHolder().unlockCanvasAndPost(c);
+                    } catch (IllegalFormatException e) {
+                        Log.i("PRBAR", "failed unlockCanvasAndPost");
+                    }
                 }
             }
         }
+    }
     }
 
     @Override

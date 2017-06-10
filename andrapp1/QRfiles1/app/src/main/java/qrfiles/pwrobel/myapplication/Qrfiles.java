@@ -23,6 +23,7 @@ public class Qrfiles extends Activity {
     //used to hold main camera thread with the higher priority
     CameraWorker camworker;
     CustomProgressBar progressBar1_decoder;
+    CustomProgressBar progressBar2_decoder;
     CameraPreviewSurface camSurf;
 
     @Override
@@ -46,8 +47,9 @@ public class Qrfiles extends Activity {
 
         camSurf = (CameraPreviewSurface) findViewById(R.id.glsurfaceView1);
         progressBar1_decoder = (CustomProgressBar) findViewById(R.id.surfaceView2);
+        progressBar2_decoder = (CustomProgressBar) findViewById(R.id.surfaceView3);
 
-        this.camSurf.setCustomDecoderProgressBarsDrawers(progressBar1_decoder);
+        this.camSurf.setCustomDecoderProgressBarsDrawers(progressBar1_decoder, progressBar2_decoder);
 
 
 

@@ -38,7 +38,7 @@
 
 
                 <LinearLayout
-                    android:layout_weight="9"
+                    android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
@@ -47,13 +47,34 @@
                     <qrfiles.pwrobel.myapplication.CustomProgressBar
                         android:id="@+id/surfaceView2"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_margin="6dp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:orientation="vertical"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <qrfiles.pwrobel.myapplication.CustomProgressBar
+                        android:id="@+id/surfaceView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="6dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.15"
                     android:orientation="vertical"></LinearLayout>
             </LinearLayout>
 
