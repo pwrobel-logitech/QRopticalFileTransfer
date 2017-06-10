@@ -1,5 +1,6 @@
 package qrfiles.pwrobel.myapplication;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
@@ -13,7 +14,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class Qrfiles extends AppCompatActivity {
+public class Qrfiles extends Activity {
 
 
     //used to hold main camera thread with the higher priority
@@ -25,6 +26,9 @@ public class Qrfiles extends AppCompatActivity {
         setContentView(R.layout.activity_qrfiles);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

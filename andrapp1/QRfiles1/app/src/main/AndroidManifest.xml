@@ -19,7 +19,7 @@
         <activity
             android:name=".Qrfiles"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/pwrobel_theme1"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

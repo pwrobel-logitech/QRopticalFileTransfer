@@ -148,7 +148,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
                     e.printStackTrace();
                 }
         }
-        camcontroller.initCamAsync();
+        camcontroller.initCamAsync(width, height);
 
         synchronized (camcontroller) {
             while (!camcontroller.isCameraInitialized()){
@@ -191,8 +191,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
 
         m_prev_yx_ratio = ((float)a)/((float)b);
-        sizeprev[0] = a;
-        sizeprev[1] = b;
+        sizeprev[0] = b;
+        sizeprev[1] = a;
 
         Matrix.setRotateM(mOrientationM, 0, rot_angle, 0f, 0f, 1f);
 

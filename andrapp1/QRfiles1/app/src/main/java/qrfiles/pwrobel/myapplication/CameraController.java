@@ -6,7 +6,7 @@ package qrfiles.pwrobel.myapplication;
 
 public interface CameraController {
 
-    public void initCamAsync();
+    public void initCamAsync(int surfacew, int surfaceh);
 
     public void closeCamAsync();
 

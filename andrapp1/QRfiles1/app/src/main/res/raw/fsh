@@ -25,7 +25,7 @@ vec4 Bmm, Bm0, Bmp, B0m, B00, B0p, Bpm, Bp0, Bpp;
 
 uniform vec2 sizeprev;
 
-
+float nyb;
 
 float v1;
 float dstfac(float t, float b){
@@ -40,16 +40,41 @@ float dstfac(float t, float b){
 
 void main(){
 
-   x = vTextureCoord.x;
-   y = vTextureCoord.y;
+   x = clamp(vTextureCoord.x,0.0,1.0);
+   y = clamp(vTextureCoord.y,0.0,1.0);
+
+     boundx = 0.42/prev_yx_ratio; // 0.5-dx
+
 
 
    if (ratios.y < 1.0001){
-     transx = prev_yx_ratio*(x-0.5)+0.5;
-     transy = (y-0.5)+0.5;
+    boundx += 0.0;
+    //boundx += ((ratios.x - 1.0)/ (2.0*ratios.x)) * prev_yx_ratio ;
+
+
+
+    boundx =  ((0.5 - 0.05 )/prev_yx_ratio)  / ratios.x;
+
+     //boundx -= (ratios.x - 1.0)/ (2.0) ;
+     //xbeg = -prev_yx_ratio*0.5+0.5;
+     //xbeg = prev_yx_ratio*0.5+0.5;
+     //transx = clamp(prev_yx_ratio*(x-0.5)+0.5, 0.0, 1.0);
+     //transy = (y-0.5)+0.5;
+     //boundx = (ratios.x-1.0)/(2.0*ratios.x) + 0.05;
+     //boundy = boundx;
+
    } else {
-     transx = (x-0.5)+0.5;
-     transy = (y-0.5)/prev_yx_ratio+0.5;
+
+     boundx = 0.42/prev_yx_ratio;
+
+     //boundx -= ((ratios.y - 1.0)/ (2.0))/ prev_yx_ratio;
+
+     //ybeg = -0.5/prev_yx_ratio + 0.5;
+     //yend = 0.5/prev_yx_ratio + 0.5;
+     //transx = (x-0.5)+0.5;
+     //transy = clamp((y-0.5)/prev_yx_ratio+0.5, 0.0, 1.0);
+     //boundx = (ratios.y-1.0)/(2.0*ratios.y) + 0.05;
+     //boundy = boundx;
    }
 
     cx = 0.5;
@@ -61,16 +86,17 @@ void main(){
    darkness = 1.0;
    green = 0.0;
    red = 0.0;
-   boundx = 0.15;
-   boundy = 0.15;
+
    redf = vec4(0.0,0.0,0.0,0.0);
    greenf = vec4(0.0,0.0,0.0,0.0);
 
 
     texcolor = texture2D(sTexture, vec2(x,y));
 
+boundy = boundx*prev_yx_ratio;
 
-   if (transx < boundx || transx > (1.0-boundx) || transy < boundy || transy > (1.0-boundy)){
+if ((x < 0.5-boundx || x > (0.5+boundx)) || (y < 0.5-boundy || y > (0.5+boundy))){
+//   if (transx < boundx || transx > (1.0-boundx) || transy < boundy || transy > (1.0-boundy)){
      darkness = 0.6;
 
      /*distancefactorx = dstfac(transx, boundx);

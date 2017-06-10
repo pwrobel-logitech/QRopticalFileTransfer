@@ -393,10 +393,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         handler = new Handler(getLooper());
     }
 
-    public void initCamAsync(){
+    public void initCamAsync(final int surfacew, final int surfaceh){
         handler.post(new Runnable() {
             @Override
             public void run() {
+
+                int sw = surfacew;
+                int sh = surfaceh;
 
                 if(camera != null){
                     camera.stopPreview();
@@ -417,7 +420,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 param.set("vrmode", 1);
                 param.set("fast-fps-mode", 1);
 
-                int bestsizeindex = CameraWorker.this.select_best_preview_size_index(psize);
+                android.hardware.Camera.CameraInfo info =
+                        new android.hardware.Camera.CameraInfo();
+                android.hardware.Camera.getCameraInfo(0, info);
+
+                int bestsizeindex = CameraWorker.this.select_best_preview_size_index(psize, sw, sh, info.orientation);
 
                 int camwidth = psize.get(bestsizeindex).width;
                 int camheight = psize.get(bestsizeindex).height;
@@ -565,7 +572,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     ;
 
-    public int select_best_preview_size_index(List<Camera.Size> psize){
+    public int select_best_preview_size_index(List<Camera.Size> psize, int sw, int sh, int orientation){
+        boolean is_surface_portrait = (sh > sw);
         int bestindex = 0;
         List<Camera.Size> l = new ArrayList<Camera.Size>(psize);
 
@@ -597,6 +605,20 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         int found_sorted_index = 0;
         for (int i = 0; i < l.size(); i++) {
             Camera.Size size = l.get(i);
+
+            float a=0,b=0; //rotated parameters - a = height, b=width in the surface frame reference
+            if(orientation % 180 == 0){
+                a = size.height;
+                b = size.width;
+            }else{
+                a = size.width;
+                b = size.height;
+            }
+
+            boolean is_prev_size_portrait = (a > b);
+            if (is_surface_portrait != is_prev_size_portrait)
+                continue;
+
             Log.i("CamPrevSize", "size w "+ size.width + "; size h "+size.height);
             int bigger_size, smaller_size;
             if (size.width > size.height){
@@ -611,9 +633,31 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 break;
             }
         }
+
+        //backup mode - no matching portraits mode between preview sizes and surface proportion found
+        if (found_sorted_index == 0)
+            for (int i = 0; i < l.size(); i++) {
+                Camera.Size size = l.get(i);
+                Log.i("CamPrevSize", "size w "+ size.width + "; size h "+size.height);
+                int bigger_size, smaller_size;
+                if (size.width > size.height){
+                    bigger_size = size.width;
+                    smaller_size = size.height;
+                } else {
+                    bigger_size = size.height;
+                    smaller_size = size.width;
+                }
+                if (bigger_size >= 640){
+                    found_sorted_index = i;
+                    break;
+                }
+            }
+
+        //last resort
         if(found_sorted_index == 0)//have not found
             found_sorted_index = l.size() - 1;
 
+        //find the selected index in the unsorted array
         Camera.Size founds = l.get(found_sorted_index);
         int index_found_in_unsorted = 0;
         for (int j = 0; j < psize.size(); j++){
