@@ -1,5 +1,7 @@
 package qrfiles.pwrobel.myapplication;
 
+import android.view.SurfaceHolder;
+
 /**
  * Created by pwrobel on 06.05.17.
  */

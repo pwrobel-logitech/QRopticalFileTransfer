@@ -32,6 +32,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
         View.OnTouchListener
 {
+    private long nframe_drawn = 0;
 
     private float[] mTransformM = new float[16];
     private float[] mOrientationM = new float[16];
@@ -70,6 +71,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     }
 
     public void init(){
+        this.setZOrderOnTop(false);
         mRatio[0] = 1;
         mRatio[1] = 1;
 
@@ -244,7 +246,25 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         GLES20.glVertexAttribPointer(aPosition, 2, GLES20.GL_BYTE, false, 0, mFullQuadVertices);
         GLES20.glEnableVertexAttribArray(aPosition);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+
+        if (this.nframe_drawn % 3 == 0){
+            this.drawProgressBar1();
+        }
+
+        this.nframe_drawn++;
     }
+
+
+    CustomProgressBar pr1drawer = null;
+    public void setCustomDecoderProgressBarsDrawers(CustomProgressBar pr1drawer){
+        this.pr1drawer = pr1drawer;
+    }
+
+    private void drawProgressBar1(){
+        if(pr1drawer != null)
+            pr1drawer.drawMe();
+    }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {

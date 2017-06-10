@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.YuvImage;
@@ -17,6 +21,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -386,6 +392,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }*/
 
         camera.addCallbackBuffer(callbackbuffer);
+
     }
 
 
@@ -691,8 +698,6 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             succ = this.success_ratio_in_smallpos;
         return succ;
     }
-
-    ;
 
     /// data as NV21 input, pixels as 8bit greyscale output
     public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {

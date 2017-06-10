@@ -1,6 +1,9 @@
 package qrfiles.pwrobel.myapplication;
 
 import android.app.Activity;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
@@ -19,6 +22,8 @@ public class Qrfiles extends Activity {
 
     //used to hold main camera thread with the higher priority
     CameraWorker camworker;
+    CustomProgressBar progressBar1_decoder;
+    CameraPreviewSurface camSurf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,12 @@ public class Qrfiles extends Activity {
                         .setAction("Action", null).show();
             }
         });
+
+        camSurf = (CameraPreviewSurface) findViewById(R.id.glsurfaceView1);
+        progressBar1_decoder = (CustomProgressBar) findViewById(R.id.surfaceView2);
+
+        this.camSurf.setCustomDecoderProgressBarsDrawers(progressBar1_decoder);
+
 
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -99,6 +110,8 @@ public class Qrfiles extends Activity {
             }
         });
         //this.camworker.initAsync();
+
+
     }
 
     private synchronized void destroyall(){

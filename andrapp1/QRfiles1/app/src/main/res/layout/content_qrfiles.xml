@@ -15,14 +15,52 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp">
+        tools:layout_editor_absoluteX="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
-        <qrfiles.pwrobel.myapplication.CameraPreviewSurface
-            android:id="@+id/glsurfaceView1"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteY="0dp"
-            tools:layout_editor_absoluteX="0dp" />
+            android:layout_height="match_parent">
+
+            <qrfiles.pwrobel.myapplication.CameraPreviewSurface
+                android:id="@+id/glsurfaceView1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteY="0dp"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_weight="9"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+
+                    <qrfiles.pwrobel.myapplication.CustomProgressBar
+                        android:id="@+id/surfaceView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"></LinearLayout>
+            </LinearLayout>
+
+
+        </FrameLayout>
+
+
 
     </LinearLayout>
 
