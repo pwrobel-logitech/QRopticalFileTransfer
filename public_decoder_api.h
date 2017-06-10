@@ -14,7 +14,7 @@ enum immediate_status {
     ALREADY_CORRECTLY_TRANSFERRED = 7,
     NOT_INITIALIZED = 8, // told to finish qr generation, but not even initialized before with the first frame
     LENGTH_QR_CHANGED = 9, //new QR frame has the new length - migh want to kill current transfer and start the new one
-
+    NEW_HEADER_FRAME_IN_THE_MIDDLE_OF_DATA_DETECTION = 10 //when receiving this, it is advisable to tell no more qr frames and immediately reset decoder
 };
 
 

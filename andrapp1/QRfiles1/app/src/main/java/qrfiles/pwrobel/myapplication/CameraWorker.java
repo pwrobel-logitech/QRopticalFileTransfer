@@ -248,10 +248,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         int lf = get_last_number_of_frame_detected();
         int hfn = get_last_number_of_header_frame_detected();
 
-        //if (ntot == -1 && hfn >= 0 && lf == -1 && status == 2){ //got header in the middle of data detection
-        //    Log.i("QQQQQQQQQQQQQQQQQQq", "AA");
-        //    this.reset_decoder();
-        //}
+        if (status == 10){ //got header in the middle of data detection
+            Log.i("RST HDR", "Got header in the middle of data detection");
+            this.reset_decoder();
+        }
 
         if (ntot > 0) {
             this.total_frame_number = ntot;

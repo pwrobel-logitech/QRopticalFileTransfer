@@ -453,6 +453,10 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
     nfr = *((uint32_t*)generated_data);
     nhfr = *((uint16_t*)(generated_data+4));
 
+    if((nfr == 0xffffffff) && (!this->is_header_generating_) && this->header_detection_done_) {
+        return NEW_HEADER_FRAME_IN_THE_MIDDLE_OF_DATA_DETECTION;
+    }
+
     if(nfr == 0xffffffff)
         this->last_header_frame_number_processed_ = nhfr;
     else
