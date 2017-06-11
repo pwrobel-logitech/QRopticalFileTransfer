@@ -120,18 +120,23 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
 
+    private boolean is_residual = false;
+    private int last_chunk_number = 0;
     public synchronized void update_decoder_statistic(int newfrnum){
-        boolean is_residual = false;
         int nmainchunks = total_frame_number / RSn;
 
-        is_residual = (newfrnum >= (total_frame_number - RSn_res));
 
-        if(newfrnum % RSn == 0){
+        is_residual = (newfrnum >= (total_frame_number - RSn_res));
+        int curr_chunk = newfrnum / RSn;
+
+        if(curr_chunk != this.last_chunk_number){
             for(int i = 0; i < RSn; i++){
                 succesfull_positions_in_prev_chunk[i] = succesfull_positions_in_current_chunk[i];
                 succesfull_positions_in_current_chunk[i] = false;
             }
         }
+
+
 
         this.succesfull_positions_in_current_chunk[newfrnum % RSn] = true;
 
@@ -211,6 +216,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         Log.i("SmallSuccRatio", "Succ coeff : "+success_ratio_in_smallpos + " Framerate "+this.estimated_max_framerate);
 */
         this.last_frame_number = newfrnum;
+        this.last_chunk_number = curr_chunk;
 
     }
 
@@ -724,23 +730,34 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if (should_deliver_pending_info_for_drawer){
             return this.delivered_NoiseRatio;
         }
+        int RSn_curr = RSn;
+        if (is_residual)
+            RSn_curr = RSn_res;
+        int RSk_curr = RSk;
+        if (is_residual)
+            RSk_curr = RSk_res;
         double nr = 0;
         int succn = 0;
-        if (RSn > 0)
+        if (RSn_curr > 0)
         {
-            for (int i = 0; i < this.last_frame_number_arrived_so_far % RSn; i++){
+            for (int i = 0; i < this.last_frame_number_arrived_so_far % RSn_curr; i++){
                 if (succesfull_positions_in_current_chunk[i]==false)
                     succn++;
             }
             if (this.last_frame_number_arrived_so_far < 2)
                 nr = 0;
-            else
-                nr = ((double)succn) / ((double)(this.last_frame_number_arrived_so_far % RSn));
+            else{
+                if(!is_residual)
+                    nr = ((double)succn) / ((double)(this.last_frame_number_arrived_so_far % RSn_curr));
+                else
+                    nr = ((double)succn) /
+                            ((double)((-(this.last_frame_number_arrived_so_far / RSn)*RSn+this.last_frame_number_arrived_so_far) % RSn_res));
+            }
         }
-        if (RSn == 0 || RSk == 0)
+        if (RSn_curr == 0 || RSk_curr == 0)
             nr = 0;
         else
-            nr /= ((double) RSk) / ((double) RSn); // relative to the maximum allowed RS error level
+            nr /= ((double) RSk_curr) / ((double) RSn_curr); // relative to the maximum allowed RS error level
         Log.i("FFF", "nr "+nr);
         return nr;
     }
