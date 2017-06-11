@@ -55,32 +55,38 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        synchronized (holder) {
+        //synchronized (holder) {
             Log.i("PRBAR", "progressbar surface created");
-            //this.is_operational = true;
-        }
+            this.is_operational = true;
+        //}
+
     }
 
     @Override
     public synchronized void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        synchronized (holder) {
+        //synchronized (holder) {
             Log.i("PRBAR", "progressbar surface changed");
             this.is_operational = true;
-        }
+        //}
     }
 
     @Override
     public synchronized void surfaceDestroyed(SurfaceHolder holder) {
-        synchronized (holder){//
+        //synchronized (holder){//
+            Log.i("PRBAR", "progressbar surface destroyed");
             this.is_operational = false;
-        }
+        //}
     }
 
     public synchronized void drawMe(long progr) {
 
         boolean operational = false;
 
+        SurfaceHolder shold;
         synchronized (this.getHolder()) {
+            shold = this.getHolder();
+
+
             operational = this.is_operational;
         }
 
@@ -93,17 +99,24 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
         Canvas c = null;
 
         boolean exception_got_when_locking = false;
+        boolean locked = true;
 
-        synchronized (this.getHolder()) {
+        synchronized (shold) {
 
-            Surface surface = this.getHolder().getSurface();
-            if (surface != null && surface.isValid())
+            Surface surface = shold.getSurface();
+            if (surface != null && surface.isValid() && this.is_operational)
             {
 
             try {
 
                 ///https://stackoverflow.com/questions/26987728/java-lang-illegalargumentexceptionat-android-view-surface-unlockcanvasandpostn
-                c = this.getHolder().lockCanvas();
+                try {
+                    if (this.is_operational)
+                        c = shold.lockCanvas();
+                }catch (IllegalArgumentException e){
+                    locked = false;
+                    Log.i("PRBAR", "lock canvas has thrown");
+                }
                 if (c != null) {
 //////////////////////////////////////////////////
                     this.setZOrderOnTop(true);
@@ -129,9 +142,10 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                 Log.i("PRBAR", "Got exception when locking and drawing surf");
                 //exception_got_when_locking = true;///
             } finally {
-                if (c != null && this.getHolder() != null /*&& !exception_got_when_locking*/) {
+                if (c != null && shold != null /*&& !exception_got_when_locking*/ && locked) {
                     try {
-                        this.getHolder().unlockCanvasAndPost(c);
+                        if (this.is_operational)
+                            shold.unlockCanvasAndPost(c);
                     } catch (IllegalFormatException e) {
                         Log.i("PRBAR", "failed unlockCanvasAndPost");
                     }

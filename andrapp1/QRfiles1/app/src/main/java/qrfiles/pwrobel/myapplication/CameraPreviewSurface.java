@@ -1,5 +1,6 @@
 package qrfiles.pwrobel.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -198,6 +199,13 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
         Matrix.setRotateM(mOrientationM, 0, rot_angle, 0f, 0f, 1f);
 
+        /*try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
+        this.timeinitprogressbar = System.nanoTime();
         requestRender();
     }
 
@@ -247,10 +255,22 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         GLES20.glEnableVertexAttribArray(aPosition);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
-        if (this.nframe_drawn % 3 == 0){
-            this.drawProgressBars();
-        }
+        /////////////////////////////////////////////////////////
 
+
+        synchronized (this) {
+            if (this.nframe_drawn % 3 == 2 &&
+                    (System.nanoTime() - this.timeinitprogressbar > 50000000L)) {
+                Activity a = (Activity) this.getContext();
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        drawProgressBars();
+                    }
+                });
+                //this.drawProgressBars();
+            }
+        }
         this.nframe_drawn++;
     }
 
@@ -259,6 +279,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     CustomProgressBar pr2drawer = null; //errors
     long progress_err_num = 400;
     long progress_progress_num = 690;
+    long timeinitprogressbar = 0;
+    boolean can_draw_progressbars_for_thefirsttime = false;
     public void setCustomDecoderProgressBarsDrawers(CustomProgressBar pr1drawer, CustomProgressBar pr2drawer){
         this.pr1drawer = pr1drawer;
         this.pr2drawer = pr2drawer;
@@ -268,11 +290,15 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         if(pr1drawer != null) {
             pr1drawer.drawMe(this.progress_progress_num);
         }
-        if(pr2drawer != null) {
+        if(pr2drawer != null) {//
             pr2drawer.drawMe(this.progress_err_num);
         }
     }
 
+    public synchronized void deinitialize_resources(){
+        this.pr1drawer = null;
+        this.pr2drawer = null;
+    };
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {

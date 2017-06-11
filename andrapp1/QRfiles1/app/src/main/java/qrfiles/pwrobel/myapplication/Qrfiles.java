@@ -29,6 +29,14 @@ public class Qrfiles extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public void onResume(){
+        Log.i("ACTINFO", "Activity resumed");
+
+
         setContentView(R.layout.activity_qrfiles);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
@@ -55,14 +63,11 @@ public class Qrfiles extends Activity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-    // Example of a call to a native method
-    //TextView tv = (TextView) findViewById(R.id.sample_text);
-    //tv.setText(stringFromJNI());
-    }
+        // Example of a call to a native method
+        //TextView tv = (TextView) findViewById(R.id.sample_text);
+        //tv.setText(stringFromJNI());
 
-    @Override
-    public void onResume(){
-        Log.i("ACTINFO", "Activity resumed");
+
         this.initall();
         super.onResume();
     }
@@ -117,7 +122,12 @@ public class Qrfiles extends Activity {
     }
 
     private synchronized void destroyall(){
+
         this.camworker.closeCamAsync();
+        this.camSurf.deinitialize_resources();
+        this.camSurf = null;
+        this.camworker = null;
+        System.gc();
     }
 
     /**
