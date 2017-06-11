@@ -260,14 +260,14 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
         synchronized (this) {
             if (this.nframe_drawn % 3 == 2 &&
-                    (System.nanoTime() - this.timeinitprogressbar > 50000000L)) {
-                Activity a = (Activity) this.getContext();
-                a.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                    (System.nanoTime() - this.timeinitprogressbar > 200000000L)) {
+                //Activity a = (Activity) this.getContext();
+                //a.runOnUiThread(new Runnable() {
+                //    @Override
+                //    public void run() {
                         drawProgressBars();
-                    }
-                });
+                //    }
+                //});
                 //this.drawProgressBars();
             }
         }

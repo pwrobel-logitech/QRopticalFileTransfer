@@ -79,7 +79,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
     }
 
     public synchronized void drawMe(long progr) {
-
+        synchronized (this){
         boolean operational = false;
 
         SurfaceHolder shold;
@@ -110,6 +110,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
             try {
 
                 ///https://stackoverflow.com/questions/26987728/java-lang-illegalargumentexceptionat-android-view-surface-unlockcanvasandpostn
+                ///https://stackoverflow.com/questions/13535912/illegalargumentexception-when-switching-to-settings-activity-in-live-wallpaper
                 try {
                     if (this.is_operational)
                         c = shold.lockCanvas();
@@ -117,22 +118,25 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                     locked = false;
                     Log.i("PRBAR", "lock canvas has thrown");
                 }
-                if (c != null) {
+                if (c != null ) {
 //////////////////////////////////////////////////
                     this.setZOrderOnTop(true);
                     int w = this.getWidth();
                     int h = this.getHeight();
+
                     //Log.i("PRBAR", "drawMe w" + w + " h "+h);
                     //c.drawColor(Color.argb(100, 50, 50, 50));
-                    this.getHolder().setFormat(PixelFormat.TRANSPARENT);
+                    //transparancy and blending is causing inermittient crashes in unlockCanvasAndPost
+                    //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
                     int epsilon = 4;
                     //c.drawColor(Color.CYAN);
                     c.drawColor(0, PorterDuff.Mode.CLEAR);
                     rectanglePaint.setColor(Color.BLUE);
+                    c.drawColor(Color.DKGRAY);
 
                     c.drawRect(new Rect(epsilon, epsilon, (int) (w * progr / 1000.0f) - epsilon, h - epsilon), rectanglePaint);
                     //c.drawColor(Color.TRANSPARENT);
-                    c.drawARGB(127, 180, 180, 180);
+                    //c.drawARGB(127, 180, 180, 180);
                     //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
                     //c.drawCircle(w/2, h/2, h/2, rectanglePaint);
 //////////////////////////////////////////////////
@@ -153,6 +157,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
             }
         }
     }
+        }
     }
 
     @Override
