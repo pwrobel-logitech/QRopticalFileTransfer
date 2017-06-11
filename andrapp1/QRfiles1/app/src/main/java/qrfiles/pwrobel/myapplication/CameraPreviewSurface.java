@@ -33,6 +33,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
         View.OnTouchListener
 {
+
     private long nframe_drawn = 0;
 
     private float[] mTransformM = new float[16];
@@ -287,11 +288,17 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     }
 
     private void drawProgressBars(){
-        if(pr1drawer != null) {
-            pr1drawer.drawMe(this.progress_progress_num);
+
+        double nr = camcontroller.getCurrentNoiseRatio();
+        double pr = camcontroller.getCurrentProgressRatio();
+
+
+        //Log.i("NRR", "ratio " + nr);
+        if(pr1drawer != null && pr > 1e-20) {
+            pr1drawer.drawMe((int)(1000.0*pr), CustomProgressBar.progressBarType.PROGRESS);
         }
-        if(pr2drawer != null) {//
-            pr2drawer.drawMe(this.progress_err_num);
+        if(pr2drawer != null && nr > 1e-20) {//
+            pr2drawer.drawMe((int)(1000.0*nr), CustomProgressBar.progressBarType.NOISE);
         }
     }
 

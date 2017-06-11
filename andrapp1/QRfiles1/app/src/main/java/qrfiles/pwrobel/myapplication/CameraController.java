@@ -24,4 +24,8 @@ public interface CameraController {
 
     public double getCurrentSuccRatio();
 
+    public double getCurrentNoiseRatio(); //for RS chunk total noise level
+
+    public double getCurrentProgressRatio(); //normalized progress of the current download
+
 }

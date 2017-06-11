@@ -120,16 +120,21 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
 
-    public void update_decoder_statistic(int newfrnum){
+    public synchronized void update_decoder_statistic(int newfrnum){
         boolean is_residual = false;
         int nmainchunks = total_frame_number / RSn;
 
         is_residual = (newfrnum >= (total_frame_number - RSn_res));
 
         if(newfrnum % RSn == 0){
-            for(int i = 0; i < RSn; i++)
+            for(int i = 0; i < RSn; i++){
+                succesfull_positions_in_prev_chunk[i] = succesfull_positions_in_current_chunk[i];
                 succesfull_positions_in_current_chunk[i] = false;
+            }
         }
+
+        this.succesfull_positions_in_current_chunk[newfrnum % RSn] = true;
+
 
         if (newfrnum != last_frame_number)
             this.lastframeswithtime.addLast(new Pair<Integer, Long>(newfrnum, System.nanoTime()));
@@ -699,6 +704,38 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return succ;
     }
 
+    @Override
+    public synchronized double getCurrentNoiseRatio() {
+        double nr = 0;
+        int succn = 0;
+        if (RSn > 0)
+        {
+            for (int i = 0; i < this.last_frame_number_arrived_so_far % RSn; i++){
+                if (succesfull_positions_in_current_chunk[i]==false)
+                    succn++;
+            }
+            if (this.last_frame_number_arrived_so_far < 2)
+                nr = 0;
+            else
+                nr = ((double)succn) / ((double)(this.last_frame_number_arrived_so_far % RSn));
+        }
+        if (RSn == 0 || RSk == 0)
+            nr = 0;
+        else
+            nr /= ((double) RSk) / ((double) RSn); // relative to the maximum allowed RS error level
+        Log.i("FFF", "nr "+nr);
+        return nr;
+    }
+
+    @Override
+    public synchronized double getCurrentProgressRatio() {
+        double pr = 0;
+        if (this.total_frame_number > 1)
+            pr = ((double)this.last_frame_number_arrived_so_far)/((double)this.total_frame_number-1);
+        Log.i("FFF", "pr "+pr);
+        return pr;
+    }
+
     /// data as NV21 input, pixels as 8bit greyscale output
     public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
         applygrayscalenative(pixels, data, width, height);
@@ -724,6 +761,23 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         last_frame_number_arrived_so_far = -1;
         tell_decoder_no_more_qr();
         int stat = deinitialize_decoder();
+
+        for(int i = 0; i < RSn; i++){
+            succesfull_positions_in_prev_chunk[i] = succesfull_positions_in_current_chunk[i];
+            succesfull_positions_in_current_chunk[i] = false;
+        }
+
+        this.last_frame_number_arrived_so_far = 0;
+        this.total_frame_number = 0;
+        this.RSn = 0;
+        this.RSk = 0;
+        this.RSn_res = 0;
+        this.RSk_res = 0;
+
+        this.biggest_frame_number = -1;
+        this.last_frame_number = 0;
+        this.total_frame_number = -1;
+
         Log.i("RST", "stat value "+stat);
         this.file_detection_ended = true;
         if(stat == 3)

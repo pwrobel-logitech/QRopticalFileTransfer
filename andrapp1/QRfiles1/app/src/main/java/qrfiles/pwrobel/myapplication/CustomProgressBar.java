@@ -24,6 +24,9 @@ import java.util.IllegalFormatException;
 public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
 
 
+
+    public enum progressBarType {NOISE, PROGRESS};
+
     private final Paint rectanglePaint = new Paint();
 
     boolean is_operational = false;
@@ -78,8 +81,13 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
         //}
     }
 
-    public synchronized void drawMe(long progr) {
+    public synchronized void drawMe(long progr, progressBarType type) {
         synchronized (this){
+
+            if (progr > 1000)
+                progr = 1000;
+            if (progr < 0)
+                progr = 0;
         boolean operational = false;
 
         SurfaceHolder shold;
@@ -131,10 +139,29 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                     int epsilon = 4;
                     //c.drawColor(Color.CYAN);
                     c.drawColor(0, PorterDuff.Mode.CLEAR);
-                    rectanglePaint.setColor(Color.BLUE);
+
+
+                    //set color
+                    int redratio = (int)((progr / 1000.0) * 255);
+                    if (redratio > 255)
+                        redratio = 255;
+                    if (redratio < 0)
+                        redratio = 0;
+                    int greenratio = 255-redratio;
+                    ;
+                    ///
+
+
+
+                    if (type == progressBarType.NOISE) {
+                        rectanglePaint.setColor(Color.rgb(redratio, greenratio, 0));
+                    }else if (type == progressBarType.PROGRESS){
+                        rectanglePaint.setColor(Color.BLUE);
+                    }
+
                     c.drawColor(Color.DKGRAY);
 
-                    c.drawRect(new Rect(epsilon, epsilon, (int) (w * progr / 1000.0f) - epsilon, h - epsilon), rectanglePaint);
+                    c.drawRect(new Rect(epsilon, epsilon, (int) (w * (progr / 1000.0f)) - epsilon, h - epsilon), rectanglePaint);
                     //c.drawColor(Color.TRANSPARENT);
                     //c.drawARGB(127, 180, 180, 180);
                     //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
