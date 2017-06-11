@@ -321,6 +321,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
 */
 
+        if(status > 0)
+            Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+
+                    " lashHdrProducedN "+get_last_number_of_header_frame_detected() +
+                    " lastDatFrProducedN "+get_last_number_of_frame_detected() +
+                    " RSM(" + get_main_RSN() +","+get_main_RSK()+");RSR("+get_residual_RSN()+","+get_residual_RSK()+") "+
+                    " laststatus "+status);
+
         if(ntot > 0 && lf > 0)
             if(lf >= ntot - 1)
                 if(!triggered_autoestimated_end){
@@ -328,12 +335,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     tiggered_lastframedetectedbase_end = true;
             }
 
-        if(status > 0)
-            Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+
-                  " lashHdrProducedN "+get_last_number_of_header_frame_detected() +
-                  " lastDatFrProducedN "+get_last_number_of_frame_detected() +
-                    " RSM(" + get_main_RSN() +","+get_main_RSK()+");RSR("+get_residual_RSN()+","+get_residual_RSK()+") "+
-                    " laststatus "+status);
+
 
         /*if(false)
         ((Activity)context).runOnUiThread(new Runnable() {
@@ -704,8 +706,24 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return succ;
     }
 
+
+
+    //use to remember when the detector has been reseted.
+    // for certain interval, the old status will be still delivered, to give decoder a chance
+    //to deliver the end status for some time
+    long time_detector_reseted = 0;
+    double delivered_NoiseRatio = 0.0;
+    double delivered_totalprogress = 0.0;
+    boolean should_deliver_pending_info_for_drawer = false;
+    long pending_delivered_info_timeout = 1000000000L; //1s
     @Override
     public synchronized double getCurrentNoiseRatio() {
+        if(System.nanoTime() - this.time_detector_reseted > pending_delivered_info_timeout){
+            this.should_deliver_pending_info_for_drawer = false;
+        }
+        if (should_deliver_pending_info_for_drawer){
+            return this.delivered_NoiseRatio;
+        }
         double nr = 0;
         int succn = 0;
         if (RSn > 0)
@@ -729,6 +747,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     @Override
     public synchronized double getCurrentProgressRatio() {
+        if(System.nanoTime() - this.time_detector_reseted > pending_delivered_info_timeout){
+            this.should_deliver_pending_info_for_drawer = false;
+        }
+        if (should_deliver_pending_info_for_drawer){
+            return this.delivered_totalprogress;
+        }
         double pr = 0;
         if (this.total_frame_number > 1)
             pr = ((double)this.last_frame_number_arrived_so_far)/((double)this.total_frame_number-1);
@@ -756,38 +780,52 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     public void reset_decoder(){
         Log.i("RST", "reset of the decoder is detected");
+
+        synchronized (this){
+            this.time_detector_reseted = System.nanoTime();
+            this.should_deliver_pending_info_for_drawer = false;
+            this.delivered_NoiseRatio = this.getCurrentNoiseRatio();
+            this.delivered_totalprogress = this.getCurrentProgressRatio();
+            this.should_deliver_pending_info_for_drawer = true;
+        }
+
         this.estimated_max_framerate = 0;
         this.lastframeswithtime.clear();
         last_frame_number_arrived_so_far = -1;
         tell_decoder_no_more_qr();
         int stat = deinitialize_decoder();
 
-        for(int i = 0; i < RSn; i++){
-            succesfull_positions_in_prev_chunk[i] = succesfull_positions_in_current_chunk[i];
-            succesfull_positions_in_current_chunk[i] = false;
+        {
+            for (int i = 0; i < RSn; i++) {
+                succesfull_positions_in_prev_chunk[i] = succesfull_positions_in_current_chunk[i];
+                succesfull_positions_in_current_chunk[i] = false;
+            }
+
+
+            this.last_frame_number_arrived_so_far = 0;
+            this.total_frame_number = 0;
+            this.RSn = 0;
+            this.RSk = 0;
+            this.RSn_res = 0;
+            this.RSk_res = 0;
+
+            this.biggest_frame_number = -1;
+            this.last_frame_number = 0;
+            this.total_frame_number = -1;
+
+            Log.i("RST", "stat value "+stat);
+            this.file_detection_ended = true;
+            if(stat == 3)
+                this.file_detected_and_finally_saved_successfully = false;
+            else if (stat == 7)
+                this.file_detected_and_finally_saved_successfully = true;
+
         }
-
-        this.last_frame_number_arrived_so_far = 0;
-        this.total_frame_number = 0;
-        this.RSn = 0;
-        this.RSk = 0;
-        this.RSn_res = 0;
-        this.RSk_res = 0;
-
-        this.biggest_frame_number = -1;
-        this.last_frame_number = 0;
-        this.total_frame_number = -1;
-
-        Log.i("RST", "stat value "+stat);
-        this.file_detection_ended = true;
-        if(stat == 3)
-            this.file_detected_and_finally_saved_successfully = false;
-        else if (stat == 7)
-            this.file_detected_and_finally_saved_successfully = true;
         this.file_status_delivered(this.last_received_file_name);
         initialize_decoder();
         set_decoded_file_path("/mnt/sdcard/out");
         this.file_detection_ended = false;
+
     }
 
     /////////native part

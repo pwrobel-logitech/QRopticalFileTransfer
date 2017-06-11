@@ -28,4 +28,6 @@ public interface CameraController {
 
     public double getCurrentProgressRatio(); //normalized progress of the current download
 
+
+
 }

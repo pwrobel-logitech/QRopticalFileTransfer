@@ -195,6 +195,9 @@ QR_frame_decoder::~QR_frame_decoder(){
 }
 
 immediate_status QR_frame_decoder::tell_no_more_qr(){
+#ifdef ANDROID
+        __android_log_print(ANDROID_LOG_INFO, "FINISH", "telling native no more qr..");
+#endif
     bool switched_to_residual_data_decoder;
     pthread_mutex_lock(&(this->async_info_.async_mutex_));
     switched_to_residual_data_decoder = this->is_switched_to_residual_data_decoder_;
