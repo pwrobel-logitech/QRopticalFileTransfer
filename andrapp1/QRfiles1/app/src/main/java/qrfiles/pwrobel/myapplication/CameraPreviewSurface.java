@@ -292,13 +292,29 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         double nr = camcontroller.getCurrentNoiseRatio();
         double pr = camcontroller.getCurrentProgressRatio();
 
+        final boolean should_draw_something_on_progressbar = this.camcontroller.shouldDrawProgressBars();
+        Activity a = (Activity) getContext();
+        a.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (should_draw_something_on_progressbar){
+                    pr1drawer.setVisibility(VISIBLE);
+                    pr2drawer.setVisibility(VISIBLE);
+                }
+                else {
+                    pr1drawer.setVisibility(INVISIBLE);
+                    pr2drawer.setVisibility(INVISIBLE);
+                }
+            }
+        });
+        Log.i("PRBAR", "should draw something " + should_draw_something_on_progressbar);
 
         //Log.i("NRR", "ratio " + nr);
-        if(pr1drawer != null && pr > 1e-20) {
-            pr1drawer.drawMe((int)(1000.0*pr), CustomProgressBar.progressBarType.PROGRESS);
+        if(pr1drawer != null ) {
+            pr1drawer.drawMe((int)(1000.0*pr), CustomProgressBar.progressBarType.PROGRESS, should_draw_something_on_progressbar);
         }
-        if(pr2drawer != null && nr > 1e-20) {//
-            pr2drawer.drawMe((int)(1000.0*nr), CustomProgressBar.progressBarType.NOISE);
+        if(pr2drawer != null ) {//
+            pr2drawer.drawMe((int)(1000.0*nr), CustomProgressBar.progressBarType.NOISE, should_draw_something_on_progressbar);
         }
     }
 

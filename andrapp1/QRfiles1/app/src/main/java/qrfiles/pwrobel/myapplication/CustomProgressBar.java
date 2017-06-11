@@ -81,7 +81,10 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
         //}
     }
 
-    public synchronized void drawMe(long progr, progressBarType type) {
+    public synchronized void drawMe(long progr, progressBarType type, boolean shoulddraw) {
+        if (shoulddraw == false){
+            return;
+        }
         synchronized (this){
 
             if (progr > 1000)
@@ -128,7 +131,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                 }
                 if (c != null ) {
 //////////////////////////////////////////////////
-                    this.setZOrderOnTop(true);
+
                     int w = this.getWidth();
                     int h = this.getHeight();
 
@@ -138,34 +141,40 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                     //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
                     int epsilon = 4;
                     //c.drawColor(Color.CYAN);
-                    c.drawColor(0, PorterDuff.Mode.CLEAR);
+                    if (shoulddraw) {
+                        //this.setZOrderOnTop(true);
+                        c.drawColor(0, PorterDuff.Mode.CLEAR);
 
 
-                    //set color
-                    int redratio = (int)((progr / 1000.0) * 255);
-                    if (redratio > 255)
-                        redratio = 255;
-                    if (redratio < 0)
-                        redratio = 0;
-                    int greenratio = 255-redratio;
-                    ;
-                    ///
+                        //set color
+                        int redratio = (int) ((progr / 1000.0) * 255);
+                        if (redratio > 255)
+                            redratio = 255;
+                        if (redratio < 0)
+                            redratio = 0;
+                        int greenratio = 255 - redratio;
+                        ;
+                        ///
 
 
+                        if (type == progressBarType.NOISE) {
+                            rectanglePaint.setColor(Color.rgb(redratio, greenratio, 0));
+                        } else if (type == progressBarType.PROGRESS) {
+                            rectanglePaint.setColor(Color.BLUE);
+                        }
 
-                    if (type == progressBarType.NOISE) {
-                        rectanglePaint.setColor(Color.rgb(redratio, greenratio, 0));
-                    }else if (type == progressBarType.PROGRESS){
-                        rectanglePaint.setColor(Color.BLUE);
+                        c.drawColor(Color.DKGRAY);
+
+                        c.drawRect(new Rect(epsilon, epsilon, (int) (w * (progr / 1000.0f)) - epsilon, h - epsilon), rectanglePaint);
+                        //c.drawColor(Color.TRANSPARENT);
+                        //c.drawARGB(127, 180, 180, 180);
+                        //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
+                        //c.drawCircle(w/2, h/2, h/2, rectanglePaint);
+                    }else{
+                        //this.setZOrderOnTop(false);
+                        //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
+                        c.drawColor(0, PorterDuff.Mode.CLEAR);
                     }
-
-                    c.drawColor(Color.DKGRAY);
-
-                    c.drawRect(new Rect(epsilon, epsilon, (int) (w * (progr / 1000.0f)) - epsilon, h - epsilon), rectanglePaint);
-                    //c.drawColor(Color.TRANSPARENT);
-                    //c.drawARGB(127, 180, 180, 180);
-                    //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
-                    //c.drawCircle(w/2, h/2, h/2, rectanglePaint);
 //////////////////////////////////////////////////
                 }
 

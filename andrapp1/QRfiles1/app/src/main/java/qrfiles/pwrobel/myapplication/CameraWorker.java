@@ -270,6 +270,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.reset_decoder();
         }
 
+        if (status == 6 || status == 2){
+            synchronized (this){
+                this.is_header_detected = true;
+            }
+        }
+
         if (ntot > 0) {
             this.total_frame_number = ntot;
             this.last_frame_number_arrived_so_far = lf;
@@ -291,6 +297,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     this.update_decoder_statistic(lf);
                 if (this.estimated_max_framerate > 1e-10)
                     this.estimate_success_ratio_at_current_time();
+                synchronized (this) {
+                    this.should_draw_progressbars = true;
+                }
             }
         }
 
@@ -336,10 +345,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         if(ntot > 0 && lf > 0)
             if(lf >= ntot - 1)
-                if(!triggered_autoestimated_end){
-                    this.reset_decoder();
-                    tiggered_lastframedetectedbase_end = true;
-            }
+                this.reset_decoder();
+                //if(!triggered_autoestimated_end){
+
+              //      tiggered_lastframedetectedbase_end = true;
+            //}
 
 
 
@@ -777,6 +787,22 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return pr;
     }
 
+    public boolean should_draw_progressbars = false;
+    @Override
+    public synchronized boolean shouldDrawProgressBars() {
+        return this.should_draw_progressbars;
+    }
+
+    String filename_detected_from_header;
+    boolean is_header_detected = false;
+    @Override
+    public synchronized String getFileNameCapturedFromHeader() {
+        if (this.is_header_detected){
+            return "FAKENAME.txt"; // TODO - capture the real file name from the detected header
+        }
+        return "........"; //this means the header is still not recognized
+    }
+
     /// data as NV21 input, pixels as 8bit greyscale output
     public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
         applygrayscalenative(pixels, data, width, height);
@@ -838,10 +864,17 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 this.file_detected_and_finally_saved_successfully = true;
 
         }
+
+        this.RS_info_set = false;
+
         this.file_status_delivered(this.last_received_file_name);
         initialize_decoder();
         set_decoded_file_path("/mnt/sdcard/out");
         this.file_detection_ended = false;
+        synchronized (this){
+            this.should_draw_progressbars = false;
+            this.is_header_detected = false;
+        }
 
     }
 

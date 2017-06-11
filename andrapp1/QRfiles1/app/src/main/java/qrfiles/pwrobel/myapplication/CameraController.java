@@ -28,6 +28,8 @@ public interface CameraController {
 
     public double getCurrentProgressRatio(); //normalized progress of the current download
 
+    public boolean shouldDrawProgressBars();
 
+    public String getFileNameCapturedFromHeader(); // for 8 dots '........' there is no header detected yet
 
 }
