@@ -120,9 +120,45 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
 
+    private int last_header_frame_delivered = 0;
+
+    private void update_header_statistic(int nheader_delivered){
+        if (nheader_delivered != this.last_header_frame_delivered)
+            this.lastframeswithtime.addLast(new Pair<Integer, Long>(nheader_delivered, System.nanoTime()));
+        if (this.lastframeswithtime.size() > MAX_LAST_FR_LEN)
+            this.lastframeswithtime.removeFirst();
+
+        //now, estiate the framerate
+        double framerate = 0;
+        if (this.lastframeswithtime.size() > 1 &&
+                (this.lastframeswithtime.getLast().first - this.lastframeswithtime.getFirst().first > 5)){
+            framerate = ((double)(this.lastframeswithtime.getLast().first - this.lastframeswithtime.getFirst().first))
+                    / ((double)(this.lastframeswithtime.getLast().second - this.lastframeswithtime.getFirst().second));
+            framerate *= 1e9;
+
+            estimated_max_framerate = framerate;
+        }
+
+        if (framerate < 1e-10) { //if still close to 0 (not calculated) - dimnish the frame window
+            if (this.lastframeswithtime.size() > 1 &&
+                    (this.lastframeswithtime.getLast().first - this.lastframeswithtime.getFirst().first > 2)){
+                framerate = ((double)(this.lastframeswithtime.getLast().first - this.lastframeswithtime.getFirst().first))
+                        / ((double)(this.lastframeswithtime.getLast().second - this.lastframeswithtime.getFirst().second));
+                framerate *= 1e9;
+
+                estimated_max_framerate = framerate;
+            }
+        }
+
+        this.last_header_frame_delivered = nheader_delivered;
+    }
+
+
     private boolean is_residual = false;
     private int last_chunk_number = 0;
     public synchronized void update_decoder_statistic(int newfrnum){
+        if (RSn == 0)
+            return;
         int nmainchunks = total_frame_number / RSn;
 
 
@@ -268,6 +304,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if (status == 10){ //got header in the middle of data detection
             Log.i("RST HDR", "Got header in the middle of data detection");
             this.reset_decoder();
+            camera.addCallbackBuffer(callbackbuffer);
+            return;
         }
 
         if (status == 6 || status == 2){
@@ -291,6 +329,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 this.RSk_res = rsKR;
                 this.success_ratio_in_smallpos = ((double) RSk) / ((double) RSn);
                 this.RS_info_set = true;
+                this.lastframeswithtime.clear();
             }
             if (lf > -1) {
                 if (status > 0)
@@ -301,6 +340,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     this.should_draw_progressbars = true;
                 }
             }
+        }
+
+        if ((lf == -1) && (hfn >= 0)) {
+            this.update_header_statistic(hfn);
+            if (this.estimated_max_framerate > 1e-10)
+                this.estimate_success_ratio_at_current_time();
         }
 
 
@@ -344,8 +389,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     " laststatus "+status);
 
         if(ntot > 0 && lf > 0)
-            if(lf >= ntot - 1)
+            if(lf >= ntot - 1){
                 this.reset_decoder();
+                camera.addCallbackBuffer(callbackbuffer);
+                return;
+            }
                 //if(!triggered_autoestimated_end){
 
               //      tiggered_lastframedetectedbase_end = true;
@@ -866,6 +914,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
 
         this.RS_info_set = false;
+        this.last_header_frame_delivered = 0;
 
         this.file_status_delivered(this.last_received_file_name);
         initialize_decoder();
@@ -875,7 +924,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.should_draw_progressbars = false;
             this.is_header_detected = false;
         }
-
+        System.gc();
     }
 
     /////////native part

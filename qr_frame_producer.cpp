@@ -339,7 +339,7 @@ int Qr_frame_producer::produce_next_qr_grayscale_image_to_mem(char** produced_im
     if (frame->get_frame_number() % this->file_info_.RSn == 1)
         utils::Dosleep(40);
     if (frame->get_frame_number() == 1)
-        utils::Dosleep(150);
+        utils::Dosleep(200);
 
     delete frame;
     int status;
