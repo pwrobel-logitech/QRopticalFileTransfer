@@ -8,6 +8,8 @@ import android.view.SurfaceHolder;
 
 public interface CameraController {
 
+
+
     public void initCamAsync(int surfacew, int surfaceh);
 
     public void closeCamAsync();
@@ -30,6 +32,18 @@ public interface CameraController {
 
     public boolean shouldDrawProgressBars();
 
+    //deprecated
     public String getFileNameCapturedFromHeader(); // for 8 dots '........' there is no header detected yet
+
+    public class DisplayStatusInfo{
+        enum StatusDisplayType{
+            TYPE_NOTE,
+            TYPE_ERR //errors are red..
+        }
+        public String displaytext;
+        public StatusDisplayType displayTextType;
+    }
+
+    public DisplayStatusInfo getDisplayStatusText();
 
 }

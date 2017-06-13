@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 
@@ -27,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ import java.util.concurrent.RunnableFuture;
  */
 
 public class CameraWorker extends HandlerThread implements CameraController, Camera.PreviewCallback{
+
 
     public volatile Handler handler;
     public Camera camera;
@@ -550,8 +553,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 camera.setPreviewCallbackWithBuffer(CameraWorker.this);
                 camera.startPreview();
 
+                CameraWorker.this.filedump_directory_fullpath =
+                        create_dump_directory_if_not_present(CameraWorker.this.filedump_directory_name);
                 initialize_decoder();
-                set_decoded_file_path("/mnt/sdcard/out");
+                set_decoded_file_path(CameraWorker.this.filedump_directory_fullpath);
 
                 CameraWorker.this.succesfull_positions_in_prev_chunk = new boolean[MAX_CHUNK_LENGTH];
                 CameraWorker.this.succesfull_positions_in_current_chunk = new boolean[MAX_CHUNK_LENGTH];
@@ -857,6 +862,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return "........"; //this means the header is still not recognized
     }
 
+    @Override
+    public synchronized DisplayStatusInfo getDisplayStatusText() {
+        DisplayStatusInfo status = new DisplayStatusInfo();
+        status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_NOTE;
+
+        return status;
+    }
+
     /// data as NV21 input, pixels as 8bit greyscale output
     public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
         applygrayscalenative(pixels, data, width, height);
@@ -924,7 +937,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         this.file_status_delivered(this.last_received_file_name);
         initialize_decoder();
-        set_decoded_file_path("/mnt/sdcard/out");
+        set_decoded_file_path(this.filedump_directory_fullpath);
         this.file_detection_ended = false;
         synchronized (this){
             this.should_draw_progressbars = false;
@@ -932,6 +945,30 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
         this.is_residual = false;
         System.gc();
+    }
+
+
+    private String filedump_directory_fullpath = null;
+    private String filedump_directory_name = "qrout";
+    private String create_dump_directory_if_not_present(String dirname){
+        File yourAppDir = new File(Environment.getExternalStorageDirectory()+File.separator+dirname);
+        if(!yourAppDir.exists() && !yourAppDir.isDirectory())
+        {
+            // create empty directory
+            if (yourAppDir.mkdirs())
+            {
+                Log.i("CreateDir","App dir created");
+            }
+            else
+            {
+                Log.w("CreateDir","Unable to create app dir!");
+            }
+        }
+        else
+        {
+            Log.i("CreateDir","App dir already exists");
+        }
+        return yourAppDir.getPath();
     }
 
     /////////native part
