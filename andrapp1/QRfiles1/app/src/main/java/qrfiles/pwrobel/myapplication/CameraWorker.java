@@ -342,10 +342,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             }
         }
 
-        if ((lf == -1) && (hfn >= 0)) {
+
+        //Log.i("QQ2FPS", " lf "+ lf + " , hfn "+hfn+", ntot "+ntot);
+        if ((ntot == -1) && (hfn >= 0)) {
             this.update_header_statistic(hfn);
-            if (this.estimated_max_framerate > 1e-10)
+            if (this.estimated_max_framerate > 1e-10){
+                //Log.i("QQFPS", " FPS = "+this.estimated_max_framerate);
                 this.estimate_success_ratio_at_current_time();
+            }
         }
 
 
@@ -816,7 +820,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             nr = 0;
         else
             nr /= ((double) RSk_curr) / ((double) RSn_curr); // relative to the maximum allowed RS error level
-        Log.i("FFF", "nr "+nr);
+        if (nr>0)
+            Log.i("FFF", "nr "+nr);
         return nr;
     }
 
@@ -831,7 +836,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         double pr = 0;
         if (this.total_frame_number > 1)
             pr = ((double)this.last_frame_number_arrived_so_far)/((double)this.total_frame_number-1);
-        Log.i("FFF", "pr "+pr);
+        if (pr > 0)
+            Log.i("FFF", "pr "+pr);
         return pr;
     }
 
@@ -924,6 +930,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.should_draw_progressbars = false;
             this.is_header_detected = false;
         }
+        this.is_residual = false;
         System.gc();
     }
 

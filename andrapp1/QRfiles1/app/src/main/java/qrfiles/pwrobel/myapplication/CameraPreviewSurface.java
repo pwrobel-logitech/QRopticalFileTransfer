@@ -298,16 +298,20 @@ public class CameraPreviewSurface extends GLSurfaceView implements
             @Override
             public void run() {
                 if (should_draw_something_on_progressbar){
-                    pr1drawer.setVisibility(VISIBLE);
-                    pr2drawer.setVisibility(VISIBLE);
+                    if (pr1drawer != null)
+                        pr1drawer.setVisibility(VISIBLE);
+                    if (pr2drawer != null)
+                        pr2drawer.setVisibility(VISIBLE);
                 }
                 else {
-                    pr1drawer.setVisibility(INVISIBLE);
-                    pr2drawer.setVisibility(INVISIBLE);
+                    if (pr1drawer != null)
+                        pr1drawer.setVisibility(INVISIBLE);
+                    if (pr2drawer != null)
+                        pr2drawer.setVisibility(INVISIBLE);
                 }
             }
         });
-        Log.i("PRBAR", "should draw something " + should_draw_something_on_progressbar);
+        //Log.i("PRBAR", "should draw something " + should_draw_something_on_progressbar);
 
         //Log.i("NRR", "ratio " + nr);
         if(pr1drawer != null ) {
