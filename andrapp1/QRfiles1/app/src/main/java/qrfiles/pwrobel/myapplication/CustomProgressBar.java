@@ -135,6 +135,8 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                     int w = this.getWidth();
                     int h = this.getHeight();
 
+
+
                     //Log.i("PRBAR", "drawMe w" + w + " h "+h);
                     //c.drawColor(Color.argb(100, 50, 50, 50));
                     //transparancy and blending is causing inermittient crashes in unlockCanvasAndPost
@@ -160,12 +162,20 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                         if (type == progressBarType.NOISE) {
                             rectanglePaint.setColor(Color.rgb(redratio, greenratio, 0));
                         } else if (type == progressBarType.PROGRESS) {
-                            rectanglePaint.setColor(Color.BLUE);
+                            rectanglePaint.setColor(Color.rgb(0x55, 0x55, 0xff));
                         }
 
-                        c.drawColor(Color.DKGRAY);
+                        c.drawColor(Color.rgb(0x7f, 0x7f, 0x7f));
 
                         c.drawRect(new Rect(epsilon, epsilon, (int) (w * (progr / 1000.0f)) - epsilon, h - epsilon), rectanglePaint);
+
+                        if (type == progressBarType.PROGRESS) {
+                            rectanglePaint.setColor(Color.BLACK);
+                            rectanglePaint.setTextSize(30);
+                            c.drawText(progr/10.0f+" %", -20+w/2.0f, 0.68f*h, rectanglePaint);
+                        }
+
+
                         //c.drawColor(Color.TRANSPARENT);
                         //c.drawARGB(127, 180, 180, 180);
                         //this.getHolder().setFormat(PixelFormat.TRANSPARENT);
