@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TestApp1</string>
     <string name="action_settings">Settings</string>
-    <string name="draw_blink_encourage_new_transmission">Waiting for transmission..</string>
+    <string name="draw_blink_encourage_new_transmission">Waiting for a new transmission..</string>
     <string name="draw_blink_started_header_detection">Preparing startup..</string>
     <string name="draw_blink_detected_file1">Detected file: </string>
     <string name="draw_blink_detected_file2">Waiting for the data..</string>

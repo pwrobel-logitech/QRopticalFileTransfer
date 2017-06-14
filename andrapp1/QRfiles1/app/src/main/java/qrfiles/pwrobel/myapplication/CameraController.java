@@ -38,10 +38,13 @@ public interface CameraController {
     public class DisplayStatusInfo{
         enum StatusDisplayType{
             TYPE_NOTE,
-            TYPE_ERR //errors are red..
+            TYPE_ERR, //errors are red..
+            TYPE_DONE //but these are green
         }
         public String displaytext;
+        public String displaytext2; //for the eventual second line
         public StatusDisplayType displayTextType;
+        boolean should_draw_status;
     }
 
     public DisplayStatusInfo getDisplayStatusText();

@@ -50,12 +50,27 @@
                         android:orientation="vertical">
 
 
-
-                        <qrfiles.pwrobel.myapplication.CustomProgressBar
-                            android:id="@+id/surfaceView2"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="7dp" />
+                            android:layout_height="match_parent">
+
+                            <qrfiles.pwrobel.myapplication.CustomProgressBar
+                                android:id="@+id/surfaceView2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="7dp" />
+
+                            <TextView
+                                android:id="@+id/statustext1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:ems="10"
+                                android:gravity="center"
+                                android:text="" />
+
+
+                        </FrameLayout>
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -70,11 +85,27 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
 
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
                         <qrfiles.pwrobel.myapplication.CustomProgressBar
                             android:id="@+id/surfaceView3"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_margin="7dp"/>
+
+                            <TextView
+                                android:id="@+id/statustext2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:ems="10"
+                                android:gravity="center"
+                                android:text="" />
+
+
+                        </FrameLayout>
 
                     </LinearLayout>
 

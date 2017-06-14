@@ -3,6 +3,7 @@
 
 #include "public_decoder_api.h"
 
+
 extern "C"
 JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1main_1RSN(JNIEnv *env, jclass type) {
@@ -46,6 +47,14 @@ JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1number_1of_1header_1frame_1detected(
         JNIEnv *env, jclass type) {
     return (jint)get_last_number_of_header_frame_detected();
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1recognized_1file_1name_1str(JNIEnv *env,
+                                                                                       jclass type) {
+    std::string str(get_last_recognized_file_name_str());
+    return env->NewStringUTF(str.c_str());
 }
 
 extern "C"

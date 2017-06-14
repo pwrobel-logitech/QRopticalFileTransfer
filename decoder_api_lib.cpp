@@ -77,6 +77,13 @@ int get_last_number_of_header_frame_detected(){
 };
 
 
+char filename_array[4096];
+const char* get_last_recognized_file_name_str(){
+    if (framedecoder != NULL)
+        framedecoder->copy_recognized_filename_to_provided_memory(filename_array, sizeof(filename_array));
+    return (const char*)filename_array;
+};
+
 int get_main_RSN(){
     return framedecoder->get_main_RSN();
 };

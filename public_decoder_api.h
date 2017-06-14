@@ -57,6 +57,12 @@ int get_last_number_of_frame_detected();
 int get_last_number_of_header_frame_detected();
 
 
+//returns pointer to already preallocated array, where the null-terminated string with the
+//file name recognized from the header is present. Gives only reasonable result if the
+//file has already been detected from the stream - so in other words when
+//get_total_frames_of_data_that_will_be_produced() > 0 or /*when status is 2*/
+const char* get_last_recognized_file_name_str();
+
 //this get the RS correction codes settings for the residual and the main decoder
 //in case they are not known - for example, when the header has not been recognized yet - they are -1
 int get_main_RSN();

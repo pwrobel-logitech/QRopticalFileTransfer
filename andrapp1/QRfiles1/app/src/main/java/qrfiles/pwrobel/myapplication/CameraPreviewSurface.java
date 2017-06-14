@@ -3,6 +3,7 @@ package qrfiles.pwrobel.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -17,8 +18,10 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.TextView;
 
 import java.nio.ByteBuffer;
+import java.security.acl.LastOwnerException;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -260,19 +263,28 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
 
         synchronized (this) {
-            if (this.nframe_drawn % 2 == 1 &&
+            if (this.nframe_drawn % 3 == 1 &&
                     (System.nanoTime() - this.timeinitprogressbar > 200000000L)) {
                 //Activity a = (Activity) this.getContext();
                 //a.runOnUiThread(new Runnable() {
                 //    @Override
                 //    public void run() {
                         drawProgressBars();
+
+                        final boolean should_draw_something_on_progressbar = this.camcontroller.shouldDrawProgressBars();
+
+                        if (should_draw_something_on_progressbar == false){
+                            draw_notification_status_if_needed();
+                        }
                 //    }
                 //});
                 //this.drawProgressBars();
             }
         }
         this.nframe_drawn++;
+
+        this.make_text_status_blink_switch();
+
     }
 
 
@@ -286,6 +298,32 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         this.pr1drawer = pr1drawer;
         this.pr2drawer = pr2drawer;
     }
+
+    private TextView decoder_status_textView1;
+    private TextView decoder_status_textView2;
+    boolean is_blink_phase_on = false; //for the status text, it blinks on and off - this indicates which phase of cycle is set
+    double ms_phase_on = 900.0; // approximate miliseconds spend in the on and off phase
+    double ms_phase_off = 300.0;
+    double last_time_phase_switch = System.nanoTime()/1.0e6; //based on the current time, this value and is_blink_phase_on
+    //the switch is done on the last bool value - controlling the visibility of the text
+    public void make_text_status_blink_switch(){
+
+            double begin = System.nanoTime()/1.0e6;
+            double diff = begin - this.last_time_phase_switch;
+            if ((is_blink_phase_on && diff > ms_phase_on) || (!is_blink_phase_on && diff > ms_phase_off)){
+                synchronized (this) {
+                    this.is_blink_phase_on = !this.is_blink_phase_on;
+                }
+                this.last_time_phase_switch = begin;
+                Log.i("Blink", "off/on");
+            }
+    }
+
+    public void setCustomDecoderStatusTextView(TextView tv1, TextView tv2){
+        this.decoder_status_textView1 = tv1;
+        this.decoder_status_textView2 = tv2;
+    }
+
 
     private void drawProgressBars(){
 
@@ -319,6 +357,49 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         }
         if(pr2drawer != null ) {//
             pr2drawer.drawMe((int)(1000.0*nr), CustomProgressBar.progressBarType.NOISE, should_draw_something_on_progressbar);
+        }
+    }
+
+    private synchronized void draw_notification_status_if_needed(){
+        final CameraController.DisplayStatusInfo status = this.camcontroller.getDisplayStatusText();
+        if (this.decoder_status_textView1 != null && this.decoder_status_textView2 != null){
+            Activity a = (Activity) getContext();
+            final boolean should_draw_something_on_progressbar = this.camcontroller.shouldDrawProgressBars();
+            final boolean blink_text_phase = CameraPreviewSurface.this.is_blink_phase_on;
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    char intensity = 0x7f;
+                    if (status.displayTextType == CameraController.DisplayStatusInfo.StatusDisplayType.TYPE_NOTE){
+                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(intensity,intensity,0));
+                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(intensity,intensity,0));
+                    }
+                    else if (status.displayTextType == CameraController.DisplayStatusInfo.StatusDisplayType.TYPE_ERR){
+                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(intensity,0x00,0));
+                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(intensity,0x00,0));
+                    }
+                    else if (status.displayTextType == CameraController.DisplayStatusInfo.StatusDisplayType.TYPE_DONE){
+                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(0,intensity,0));
+                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(0,intensity,0));
+                    }
+                    CameraPreviewSurface.this.decoder_status_textView1.setTextSize(19);
+                    CameraPreviewSurface.this.decoder_status_textView1.setText(status.displaytext);
+                    CameraPreviewSurface.this.decoder_status_textView2.setTextSize(19);
+                    CameraPreviewSurface.this.decoder_status_textView2.setText(status.displaytext2);
+                    Log.i("BLK2", "stat "+blink_text_phase + " should "+should_draw_something_on_progressbar);
+                    if((should_draw_something_on_progressbar == false) && blink_text_phase){
+                        if (decoder_status_textView1.getVisibility() == INVISIBLE)
+                            decoder_status_textView1.setVisibility(VISIBLE);
+                        if (decoder_status_textView2.getVisibility() == INVISIBLE)
+                            decoder_status_textView2.setVisibility(VISIBLE);
+                    }else{
+                        if (decoder_status_textView1.getVisibility() == VISIBLE)
+                            decoder_status_textView1.setVisibility(INVISIBLE);
+                        if (decoder_status_textView2.getVisibility() == VISIBLE)
+                            decoder_status_textView2.setVisibility(INVISIBLE);
+                    }
+                }
+            });
         }
     }
 

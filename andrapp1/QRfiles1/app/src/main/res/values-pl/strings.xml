@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">TestowaApka1</string>
     <string name="action_settings">Ustawienia</string>
-    <string name="draw_blink_encourage_new_transmission">Czekam na transmisję..</string>
+    <string name="draw_blink_encourage_new_transmission">Czekam na nową transmisję..</string>
     <string name="draw_blink_started_header_detection">Przygotowuję transmisję..</string>
-    <string name="draw_blink_detected_file1">Rozpocznę nowy plik: </string>
+    <string name="draw_blink_detected_file1">Wykryto plik: </string>
     <string name="draw_blink_detected_file2">Czekam na dane..</string>
     <string name="draw_blink_failed_header_detection">Nie udało się wykryć startu transmisji, spróbuj ponownie..</string>
 </resources>

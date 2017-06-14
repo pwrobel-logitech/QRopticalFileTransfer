@@ -26,6 +26,10 @@ public class Qrfiles extends Activity {
     CustomProgressBar progressBar2_decoder;
     CameraPreviewSurface camSurf;
 
+    //for decoder status text view
+    TextView decoder_status_textview1;
+    TextView decoder_status_textview2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +62,14 @@ public class Qrfiles extends Activity {
         progressBar2_decoder = (CustomProgressBar) findViewById(R.id.surfaceView3);
 
         this.camSurf.setCustomDecoderProgressBarsDrawers(progressBar1_decoder, progressBar2_decoder);
+
+        this.decoder_status_textview1 = (TextView) findViewById(R.id.statustext1);
+        this.decoder_status_textview2 = (TextView) findViewById(R.id.statustext2);
+
+        this.decoder_status_textview1.setVisibility(View.VISIBLE);
+        this.decoder_status_textview2.setVisibility(View.VISIBLE);
+
+        this.camSurf.setCustomDecoderStatusTextView(this.decoder_status_textview1, this.decoder_status_textview2);
 
 
 

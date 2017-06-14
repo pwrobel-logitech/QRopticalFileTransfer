@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 import android.os.Process;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -111,6 +112,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
         //context.notifyAll();
 
+        this.str_encourage_new_transmission = this.getStringResourceByName("draw_blink_encourage_new_transmission");
+        this.str_started_header_detection = this.getStringResourceByName("draw_blink_started_header_detection");
+
+        this.str_detected_file1 = this.getStringResourceByName("draw_blink_detected_file1");
+        this.str_detected_file2 = this.getStringResourceByName("draw_blink_detected_file2");
+
+        this.str_failed_header_detection = this.getStringResourceByName("draw_blink_failed_header_detection");
 
         camsurf.setOnTouchListener(camsurf);
     }
@@ -311,7 +319,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             return;
         }
 
-        if (status == 6 || status == 2){
+        if (/*status == 6 ||*/ status == 2){
             synchronized (this){
                 this.is_header_detected = true;
             }
@@ -348,6 +356,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         //Log.i("QQ2FPS", " lf "+ lf + " , hfn "+hfn+", ntot "+ntot);
         if ((ntot == -1) && (hfn >= 0)) {
+            synchronized (this){
+                this.did_any_header_frame_arrived = true;
+            }
             this.update_header_statistic(hfn);
             if (this.estimated_max_framerate > 1e-10){
                 //Log.i("QQFPS", " FPS = "+this.estimated_max_framerate);
@@ -854,7 +865,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     String filename_detected_from_header;
     boolean is_header_detected = false;
-    @Override
+    @Override  //deprecated
     public synchronized String getFileNameCapturedFromHeader() {
         if (this.is_header_detected){
             return "FAKENAME.txt"; // TODO - capture the real file name from the detected header
@@ -862,11 +873,30 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return "........"; //this means the header is still not recognized
     }
 
+    private boolean did_any_header_frame_arrived = false;
+    DisplayStatusInfo status = new DisplayStatusInfo();
     @Override
     public synchronized DisplayStatusInfo getDisplayStatusText() {
-        DisplayStatusInfo status = new DisplayStatusInfo();
-        status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_NOTE;
 
+        status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_NOTE;
+        if (!this.did_any_header_frame_arrived){
+            status.displaytext = this.str_encourage_new_transmission;
+            status.displaytext2 = "";
+            status.should_draw_status = true;
+            return status;
+        }
+        if (this.did_any_header_frame_arrived && (!this.is_header_detected)){
+            status.should_draw_status = true;
+            status.displaytext = this.str_started_header_detection;
+            status.displaytext2 = "";
+            return status;
+        }
+        if (this.did_any_header_frame_arrived && this.is_header_detected){
+            status.should_draw_status = true;
+            status.displaytext = this.str_detected_file1+" "+get_last_recognized_file_name_str();
+            status.displaytext2 = this.str_detected_file2;
+            return status;
+        }
         return status;
     }
 
@@ -944,6 +974,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.is_header_detected = false;
         }
         this.is_residual = false;
+        this.did_any_header_frame_arrived = false;
         System.gc();
     }
 
@@ -971,6 +1002,27 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return yourAppDir.getPath();
     }
 
+
+
+    private String str_encourage_new_transmission;
+    private String str_started_header_detection;
+    private String str_detected_file1;
+    private String str_detected_file2;
+    private String str_failed_header_detection;
+    private String getStringResourceByName(String aString) {
+        Activity a = (Activity) this.context;
+        if (a == null)
+            return null;
+        String packageName = a.getPackageName();
+        int resId = a.getResources()
+                .getIdentifier(aString, "string", packageName);
+        if (resId == 0) {
+            return aString;
+        } else {
+            return a.getString(resId);
+        }
+    }
+
     /////////native part
     public static native void applygrayscalenative(byte [] pixels, byte [] data, int width, int height);
 
@@ -988,6 +1040,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     public static native int get_total_frames_of_data_that_will_be_produced();
     public static native int get_last_number_of_frame_detected();
     public static native int get_last_number_of_header_frame_detected();
+
+    public static native String get_last_recognized_file_name_str();
 
     public static native int get_main_RSN();
     public static native int get_main_RSK();

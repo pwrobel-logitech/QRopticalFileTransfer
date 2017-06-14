@@ -256,6 +256,16 @@ int QR_frame_decoder::get_last_number_of_header_frame_detected(){
     return this->last_header_frame_number_processed_;
 };
 
+void QR_frame_decoder::copy_recognized_filename_to_provided_memory(char* str, int maxlen){
+    utils::ScopeLock l(this->async_info_.async_mutex_);
+//#ifdef ANDROID
+//        __android_log_print(ANDROID_LOG_INFO, "FLEQ", "Filename : %s , %s", this->file_info_.filename_without_any_path.c_str(), this->file_info_.filename.c_str());
+//#endif
+    if (this->header_detection_done_ && this->file_info_.filename.size() < maxlen){
+        strcpy(str, this->file_info_.filename.c_str());
+    }
+}
+
 void QR_frame_decoder::setup_detector_after_header_recognized(){
     //printf("QQQFL : %d\n", this->file_info_.filelength);
     //exit(0);

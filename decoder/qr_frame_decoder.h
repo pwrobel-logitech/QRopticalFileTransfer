@@ -37,6 +37,9 @@ public:
     immediate_status destroy_and_get_filetransfer_status();
 
 
+    //once the header detection has been done, copy the file name to the provided memory
+    void copy_recognized_filename_to_provided_memory(char* str, int maxlen);
+
     ////////////End API
 
     int notifyNewChunk(int chunklength, const char* chunkdata, int context);
