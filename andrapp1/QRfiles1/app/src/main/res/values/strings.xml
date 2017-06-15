@@ -8,4 +8,5 @@
     <string name="draw_blink_detected_file2">Waiting for the data..</string>
     <string name="draw_blink_failed_header_detection">Failed to detect startup phase, please resend..</string>
     <string name="draw_blink_failed_data_detection">File transmission error for : </string>
+    <string name="draw_blink_succeeded_data_detection">Correctly saved the file : </string>
 </resources>

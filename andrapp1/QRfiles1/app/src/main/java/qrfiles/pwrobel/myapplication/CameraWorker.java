@@ -123,6 +123,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         this.str_failed_header_detection = this.getStringResourceByName("draw_blink_failed_header_detection");
         this.str_failed_data_detection = this.getStringResourceByName("draw_blink_failed_data_detection");
 
+        this.str_succeeded_data_detection = this.getStringResourceByName("draw_blink_succeeded_data_detection");
+
         camsurf.setOnTouchListener(camsurf);
     }
 
@@ -900,13 +902,16 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return "........"; //this means the header is still not recognized
     }
 
+    private double timeout_file_successfuly_saved_ms = 2000.0;
+    private boolean should_deliver_info_file_successfully_saved_for_certain_time = false;
+    private double last_time_the_file_succ_saved = System.nanoTime()/1.0e6;
 
     private boolean got_dataframe_before_header_detection = false;
     private double timeout_no_header_detected_ms = 1500.0;
     private double last_time_the_first_dataframe_arrived_without_headerframe = System.nanoTime()/1.0e6;
 
     private boolean should_deliver_error_info_for_certain_time = false;
-    private double error_message_time_duration_ms = 2800.0;
+    private double error_message_time_duration_ms = 2500.0;
     private double error_time_arrival_ms = System.nanoTime()/1.0e6; //take it when get the error message
     private boolean got_chunkRS_decode_error = false;
     private String last_filename_detected_from_header = "";
@@ -935,6 +940,21 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             return status;
         }
 
+        if (this.should_deliver_info_file_successfully_saved_for_certain_time) {
+            double currtime = System.nanoTime() / 1.0e6;
+            if (currtime - last_time_the_file_succ_saved > this.timeout_file_successfuly_saved_ms){
+                this.should_deliver_info_file_successfully_saved_for_certain_time = false;
+                this.last_time_the_file_succ_saved = currtime;
+                this.last_filename_detected_from_header = "";
+            }else{
+                status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_DONE;
+                status.displaytext2 = "";
+                status.displaytext2 = this.last_filename_detected_from_header;
+                status.displaytext = this.str_succeeded_data_detection;
+                status.should_draw_status = true;
+            }
+            return status;
+        }
 
         if (!this.did_any_header_frame_arrived){
             //Log.i("TTT", "encour start transmm");
@@ -1036,8 +1056,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 this.file_detected_and_finally_saved_successfully = false;
             }
-            else if (stat == 7)
+            else if (stat == 7){
                 this.file_detected_and_finally_saved_successfully = true;
+                should_deliver_info_file_successfully_saved_for_certain_time = true;
+                this.last_time_the_file_succ_saved = System.nanoTime()/1.0e6;
+            }
 
         }
 
@@ -1092,6 +1115,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     private String str_detected_file2;
     private String str_failed_header_detection;
     private String str_failed_data_detection;
+    private String str_succeeded_data_detection;
     private String getStringResourceByName(String aString) {
         Activity a = (Activity) this.context;
         if (a == null)
