@@ -153,7 +153,7 @@ void RS_decoder::execute_RS_async_action(){
         internal_status = RS_decoder::TOO_MUCH_ERRORS;
 
     pthread_mutex_lock(&as->async_mutex_);
-    if (internal_status == RS_decoder::TOO_MUCH_ERRORS){
+    if ((internal_status == RS_decoder::TOO_MUCH_ERRORS) && (!(as->is_header_frame_generating_))){
         as->completion_status = ERRONEUS;
 //#ifdef ANDROID
 //       __android_log_print(ANDROID_LOG_INFO, "decAsync", "async send erroneus ");
