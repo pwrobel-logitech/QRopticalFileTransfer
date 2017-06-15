@@ -474,13 +474,13 @@ int main(int argc, char** argv)
 
     CmdLine cmd("Give it a file to send as a set of QR frames.", ' ', "0.9");
 
-    ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame", false, 31, "int");
+    ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame", false, 580, "int");
     cmd.add( QRsizeArg );
 
-    ValueArg<int> QRtargetFPS("s", "fpsvalue", "Target FPS", false, 14, "int");
+    ValueArg<int> QRtargetFPS("s", "fpsvalue", "Target FPS", false, 17, "int");
     cmd.add( QRtargetFPS );
 
-    ValueArg<int> QRinitTime("t", "initialframetime", "Time duration(s) of the initial frames", false, 4, "int");
+    ValueArg<int> QRinitTime("t", "initialframetime", "Time duration(s) of the initial frames", false, 6, "int");
     cmd.add( QRinitTime );
 
     //SwitchArg reverseSwitch("r","reverse","Print name backwards", false);
