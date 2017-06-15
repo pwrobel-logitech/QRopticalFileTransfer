@@ -97,7 +97,7 @@ boundy = boundx*prev_yx_ratio;
 
 if ((x < 0.5-boundx || x > (0.5+boundx)) || (y < 0.5-boundy || y > (0.5+boundy))){
 //   if (transx < boundx || transx > (1.0-boundx) || transy < boundy || transy > (1.0-boundy)){
-     darkness = 0.6;
+     darkness = 0.4;
 
      /*distancefactorx = dstfac(transx, boundx);
       distancefactory = dstfac(transy, boundy);

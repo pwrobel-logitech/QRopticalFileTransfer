@@ -373,19 +373,22 @@ public class CameraPreviewSurface extends GLSurfaceView implements
             a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    char intensity = 0x7f;
+                    char intensity = 0xff;
+                    char backintensity = 0x3f;
                     if (status.displayTextType == CameraController.DisplayStatusInfo.StatusDisplayType.TYPE_NOTE){
-                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(intensity,intensity,0));
-                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(intensity,intensity,0));
+                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(intensity,intensity,backintensity));
+                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(intensity,intensity,backintensity));
                     }
                     else if (status.displayTextType == CameraController.DisplayStatusInfo.StatusDisplayType.TYPE_ERR){
-                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(intensity,0x00,0));
-                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(intensity,0x00,0));
+                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(intensity,backintensity,backintensity));
+                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(intensity,backintensity,backintensity));
                     }
                     else if (status.displayTextType == CameraController.DisplayStatusInfo.StatusDisplayType.TYPE_DONE){
-                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(0,intensity,0));
-                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(0,intensity,0));
+                        CameraPreviewSurface.this.decoder_status_textView1.setTextColor(Color.rgb(backintensity,intensity,backintensity));
+                        CameraPreviewSurface.this.decoder_status_textView2.setTextColor(Color.rgb(backintensity,intensity,backintensity));
                     }
+                    //decoder_status_textView1.setBackgroundColor(Color.argb(0x7f,0x0,0x0,0x0));
+                    //decoder_status_textView2.setBackgroundColor(Color.argb(0x7f,0x0,0x0,0x0));
                     CameraPreviewSurface.this.decoder_status_textView1.setTextSize(19);
                     CameraPreviewSurface.this.decoder_status_textView1.setText(status.displaytext);
                     CameraPreviewSurface.this.decoder_status_textView2.setTextSize(19);
