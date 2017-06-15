@@ -114,7 +114,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.95"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical">
+
+
+                </LinearLayout>
             </LinearLayout>
 
 
@@ -123,7 +126,6 @@
 
 
     </LinearLayout>
-
 
 
 </android.widget.RelativeLayout>
