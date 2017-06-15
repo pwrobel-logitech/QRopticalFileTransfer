@@ -154,6 +154,7 @@ void Qr_frame_producer::produce_metadata(){
     this->datalength_per_chunk_ = datalength_per_chunk;
     this->remain_length_ = remain_length;
     this->chunk_length_ = chunk_length;
+    double k_factor = 0.9; // for residual chunks allow more errors. For normal chunks it's not used, so = 1
     int curr_size = 0;
     int curr_power = 3;
     if (chunk_length == 1) // for big chunk present in different amount, elongate minimum residual one as well
@@ -164,10 +165,13 @@ void Qr_frame_producer::produce_metadata(){
         curr_power = 6;
     do{
         curr_power += 1;
-        curr_size = this->estimate_capacity((1 << curr_power) - 1, (1 << curr_power) / 2, this->total_chars_per_QR_);
+        int remN = (1 << curr_power) - 1;
+        curr_size = this->estimate_capacity(remN,
+                                            (int)(k_factor*(remN - ((1 << curr_power) / 2))),
+                                            this->total_chars_per_QR_);
     }while(curr_size<remain_length);
     int remN = (1 << curr_power) - 1;
-    int remK = remN - ((1 << curr_power) / 2);
+    int remK = (int)(k_factor*(remN - ((1 << curr_power) / 2)));
     if (remN > optimal_rsn)
         remN = optimal_rsn;
     if (remK > optimal_rsk)

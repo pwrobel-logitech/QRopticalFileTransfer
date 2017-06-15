@@ -864,7 +864,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if (RSn_curr == 0 || RSk_curr == 0)
             nr = 0;
         else
-            nr /= ((double) RSk_curr) / ((double) RSn_curr); // relative to the maximum allowed RS error level
+            nr /= ((double) (RSn_curr-RSk_curr)) / ((double) RSn_curr); // relative to the maximum allowed RS error level
         if (nr>0)
             Log.i("FFF", "nr "+nr);
         return nr;
