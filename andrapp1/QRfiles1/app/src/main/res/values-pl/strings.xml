@@ -2,6 +2,7 @@
     <string name="app_name">TestowaApka1</string>
     <string name="action_settings">Ustawienia</string>
     <string name="draw_blink_encourage_new_transmission">Czekam na nową transmisję..</string>
+    <string name="draw_blink_warning_header_not_detected">Nie wykryto sekwencji startowej. </string>
     <string name="draw_blink_started_header_detection">Przygotowuję transmisję..</string>
     <string name="draw_blink_detected_file1">Wykryto plik: </string>
     <string name="draw_blink_detected_file2">Czekam na dane..</string>

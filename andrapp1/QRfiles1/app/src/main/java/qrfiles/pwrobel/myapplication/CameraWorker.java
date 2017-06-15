@@ -115,6 +115,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         this.str_encourage_new_transmission = this.getStringResourceByName("draw_blink_encourage_new_transmission");
         this.str_started_header_detection = this.getStringResourceByName("draw_blink_started_header_detection");
 
+        this.str_missed_to_detect_header = this.getStringResourceByName("draw_blink_warning_header_not_detected");
+
         this.str_detected_file1 = this.getStringResourceByName("draw_blink_detected_file1");
         this.str_detected_file2 = this.getStringResourceByName("draw_blink_detected_file2");
 
@@ -335,9 +337,17 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             return;
         }
 
+        if (status == 5){
+            synchronized (this){
+                 this.got_dataframe_before_header_detection = true;
+                 this.last_time_the_first_dataframe_arrived_without_headerframe = System.nanoTime()/1.0e6;
+            }
+        }
+
         if (/*status == 6 ||*/ status == 2){
             synchronized (this){
                 this.is_header_detected = true;
+                this.got_dataframe_before_header_detection = false;
             }
         }
 
@@ -365,6 +375,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     this.estimate_success_ratio_at_current_time();
                 synchronized (this) {
                     this.should_draw_progressbars = true;
+                    this.got_dataframe_before_header_detection = false;
                 }
             }
         }
@@ -890,6 +901,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
 
+    private boolean got_dataframe_before_header_detection = false;
+    private double timeout_no_header_detected_ms = 1500.0;
+    private double last_time_the_first_dataframe_arrived_without_headerframe = System.nanoTime()/1.0e6;
+
     private boolean should_deliver_error_info_for_certain_time = false;
     private double error_message_time_duration_ms = 2800.0;
     private double error_time_arrival_ms = System.nanoTime()/1.0e6; //take it when get the error message
@@ -910,6 +925,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 this.last_filename_detected_from_header = "";
                 //Log.i("TTT", "stopping error send");
             }else{
+                //Log.i("TTT", "ordering draw err");
                 status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_ERR;
                 status.displaytext2 = "";
                 status.displaytext2 = this.last_filename_detected_from_header;
@@ -924,6 +940,15 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             //Log.i("TTT", "encour start transmm");
             status.displaytext = this.str_encourage_new_transmission;
             status.displaytext2 = "";
+            if (this.got_dataframe_before_header_detection){
+                status.displaytext2 = this.str_missed_to_detect_header;
+                double currtime = System.nanoTime()/1.0e6;
+                if (currtime - this.last_time_the_first_dataframe_arrived_without_headerframe >
+                        this.timeout_no_header_detected_ms){
+                    this.got_dataframe_before_header_detection = false;
+                    this.last_time_the_first_dataframe_arrived_without_headerframe = currtime;
+                }
+            }
             status.should_draw_status = true;
             return status;
         }
@@ -969,6 +994,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.delivered_NoiseRatio = this.getCurrentNoiseRatio();
             this.delivered_totalprogress = this.getCurrentProgressRatio();
             this.should_deliver_pending_info_for_drawer = true;
+            this.last_filename_detected_from_header = get_last_recognized_file_name_str();
         }
 
         this.estimated_max_framerate = 0;
@@ -997,8 +1023,19 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
             Log.i("RST", "stat value "+stat);
             this.file_detection_ended = true;
-            if(stat == 3)
+            if(stat == 3 || stat == 4){
+
+                synchronized (this){
+                    this.got_chunkRS_decode_error = true;
+                }
+                Log.i("RST ERR", "Got unrecoverable chunk at the end - error");
+                synchronized (this) {
+                    this.error_time_arrival_ms = System.nanoTime() / 1.0e6;
+                    this.should_deliver_error_info_for_certain_time = true;
+                }
+
                 this.file_detected_and_finally_saved_successfully = false;
+            }
             else if (stat == 7)
                 this.file_detected_and_finally_saved_successfully = true;
 
@@ -1018,6 +1055,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         this.is_residual = false;
         this.did_any_header_frame_arrived = false;
         this.got_chunkRS_decode_error = false;
+        this.got_dataframe_before_header_detection = false;
         System.gc();
     }
 
@@ -1049,6 +1087,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     private String str_encourage_new_transmission;
     private String str_started_header_detection;
+    private String str_missed_to_detect_header;
     private String str_detected_file1;
     private String str_detected_file2;
     private String str_failed_header_detection;

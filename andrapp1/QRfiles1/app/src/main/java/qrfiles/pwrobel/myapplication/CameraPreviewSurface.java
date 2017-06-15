@@ -271,14 +271,18 @@ public class CameraPreviewSurface extends GLSurfaceView implements
                 //    public void run() {
                         drawProgressBars();
 
-                        final boolean should_draw_something_on_progressbar = this.camcontroller.shouldDrawProgressBars();
 
-                        if (should_draw_something_on_progressbar == false){
-                            draw_notification_status_if_needed();
-                        }
                 //    }
                 //});
                 //this.drawProgressBars();
+            }
+
+            if (this.nframe_drawn % 5 == 1 &&
+                    (System.nanoTime() - this.timeinitprogressbar > 200000000L)) {
+                final boolean should_draw_something_on_progressbar = this.camcontroller.shouldDrawProgressBars();
+                if (should_draw_something_on_progressbar == false){
+                    draw_notification_status_if_needed();
+                }
             }
         }
         this.nframe_drawn++;
@@ -315,7 +319,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
                     this.is_blink_phase_on = !this.is_blink_phase_on;
                 }
                 this.last_time_phase_switch = begin;
-                Log.i("Blink", "off/on");
+                //Log.i("Blink", "off/on");
             }
     }
 
@@ -386,17 +390,24 @@ public class CameraPreviewSurface extends GLSurfaceView implements
                     CameraPreviewSurface.this.decoder_status_textView1.setText(status.displaytext);
                     CameraPreviewSurface.this.decoder_status_textView2.setTextSize(19);
                     CameraPreviewSurface.this.decoder_status_textView2.setText(status.displaytext2);
-                    Log.i("BLK2", "stat "+blink_text_phase + " should "+should_draw_something_on_progressbar);
-                    if((should_draw_something_on_progressbar == false) && blink_text_phase){
-                        if (decoder_status_textView1.getVisibility() == INVISIBLE)
+                    //Log.i("BLK2", "stat "+blink_text_phase + " should "+should_draw_something_on_progressbar);
+                    if((should_draw_something_on_progressbar == false) && blink_text_phase){ //uncomment that to get the blink behaviour
+                        //if (decoder_status_textView1.getVisibility() == INVISIBLE){
                             decoder_status_textView1.setVisibility(VISIBLE);
-                        if (decoder_status_textView2.getVisibility() == INVISIBLE)
+
+                        //}
+                        //if (decoder_status_textView2.getVisibility() == INVISIBLE)
                             decoder_status_textView2.setVisibility(VISIBLE);
+                            decoder_status_textView1.requestLayout();
+                            decoder_status_textView2.requestLayout();
                     }else{
-                        if (decoder_status_textView1.getVisibility() == VISIBLE)
-                            decoder_status_textView1.setVisibility(INVISIBLE);
-                        if (decoder_status_textView2.getVisibility() == VISIBLE)
-                            decoder_status_textView2.setVisibility(INVISIBLE);
+                        //if (decoder_status_textView1.getVisibility() == VISIBLE)
+                            decoder_status_textView1.setVisibility(GONE);
+
+                        //if (decoder_status_textView2.getVisibility() == VISIBLE)
+                            decoder_status_textView2.setVisibility(GONE);
+                            decoder_status_textView1.requestLayout();
+                            decoder_status_textView2.requestLayout();
                     }
                 }
             });
