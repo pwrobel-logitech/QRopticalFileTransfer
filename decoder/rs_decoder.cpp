@@ -152,6 +152,17 @@ void RS_decoder::execute_RS_async_action(){
     if (/*(nerr>(this->get_RSn()-this->get_RSk())/2) ||*/ (nerr==-1)) //-1 is enough = data recovery failed
         internal_status = RS_decoder::TOO_MUCH_ERRORS;
 
+    pthread_mutex_lock(&as->async_mutex_);
+    if (internal_status == RS_decoder::TOO_MUCH_ERRORS){
+        as->completion_status = ERRONEUS;
+//#ifdef ANDROID
+//       __android_log_print(ANDROID_LOG_INFO, "decAsync", "async send erroneus ");
+//#endif
+    }else{
+        as->completion_status = NO_ASYNC_RESULT_KNOWN_YET;//have not failed on this chunk
+    }
+    pthread_mutex_unlock(&as->async_mutex_);
+
 
     this->recreate_original_arr(as->internal_mem, &data, &length);
 

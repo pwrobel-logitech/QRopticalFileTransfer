@@ -119,6 +119,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         this.str_detected_file2 = this.getStringResourceByName("draw_blink_detected_file2");
 
         this.str_failed_header_detection = this.getStringResourceByName("draw_blink_failed_header_detection");
+        this.str_failed_data_detection = this.getStringResourceByName("draw_blink_failed_data_detection");
 
         camsurf.setOnTouchListener(camsurf);
     }
@@ -311,6 +312,21 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         int ntot = get_total_frames_of_data_that_will_be_produced();
         int lf = get_last_number_of_frame_detected();
         int hfn = get_last_number_of_header_frame_detected();
+
+        if (status == 4) { //got some async error
+            synchronized (this){
+                this.got_chunkRS_decode_error = true;
+                this.last_filename_detected_from_header = get_last_recognized_file_name_str();
+            }
+            Log.i("RST ERR", "Got unrecoverable chunk - error");
+            this.reset_decoder();
+            synchronized (this) {
+                this.error_time_arrival_ms = System.nanoTime() / 1.0e6;
+                this.should_deliver_error_info_for_certain_time = true;
+            }
+            camera.addCallbackBuffer(callbackbuffer);
+            return;
+        }
 
         if (status == 10){ //got header in the middle of data detection
             Log.i("RST HDR", "Got header in the middle of data detection");
@@ -799,7 +815,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     double delivered_NoiseRatio = 0.0;
     double delivered_totalprogress = 0.0;
     boolean should_deliver_pending_info_for_drawer = false;
-    long pending_delivered_info_timeout = 1000000000L; //1s
+    long pending_delivered_info_timeout = 500000000L; //1s/2
     @Override
     public synchronized double getCurrentNoiseRatio() {
         if(System.nanoTime() - this.time_detector_reseted > pending_delivered_info_timeout){
@@ -873,13 +889,39 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return "........"; //this means the header is still not recognized
     }
 
+
+    private boolean should_deliver_error_info_for_certain_time = false;
+    private double error_message_time_duration_ms = 2800.0;
+    private double error_time_arrival_ms = System.nanoTime()/1.0e6; //take it when get the error message
+    private boolean got_chunkRS_decode_error = false;
+    private String last_filename_detected_from_header = "";
     private boolean did_any_header_frame_arrived = false;
     DisplayStatusInfo status = new DisplayStatusInfo();
     @Override
     public synchronized DisplayStatusInfo getDisplayStatusText() {
 
         status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_NOTE;
+
+        double currms = System.nanoTime() / 1.0e6;
+        if (this.should_deliver_error_info_for_certain_time){
+            if (currms - this.error_time_arrival_ms > this.error_message_time_duration_ms){
+                this.error_time_arrival_ms = currms;
+                this.should_deliver_error_info_for_certain_time = false;
+                this.last_filename_detected_from_header = "";
+                //Log.i("TTT", "stopping error send");
+            }else{
+                status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_ERR;
+                status.displaytext2 = "";
+                status.displaytext2 = this.last_filename_detected_from_header;
+                status.displaytext = this.str_failed_data_detection;
+                status.should_draw_status = true;
+            }
+            return status;
+        }
+
+
         if (!this.did_any_header_frame_arrived){
+            //Log.i("TTT", "encour start transmm");
             status.displaytext = this.str_encourage_new_transmission;
             status.displaytext2 = "";
             status.should_draw_status = true;
@@ -975,6 +1017,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
         this.is_residual = false;
         this.did_any_header_frame_arrived = false;
+        this.got_chunkRS_decode_error = false;
         System.gc();
     }
 
@@ -1009,6 +1052,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     private String str_detected_file1;
     private String str_detected_file2;
     private String str_failed_header_detection;
+    private String str_failed_data_detection;
     private String getStringResourceByName(String aString) {
         Activity a = (Activity) this.context;
         if (a == null)

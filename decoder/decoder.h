@@ -26,7 +26,7 @@ struct AsyncInfo{
     Decoder* current_decoder;
 
     bool async_completed;
-    immediate_status completion_status;
+    immediate_status completion_status; // so far, used to communicate failure in some RS decode
     ChunkListener* chlistener;
 
     pthread_t async_thr_id_;

@@ -9,12 +9,14 @@ enum immediate_status {
     ERRONEUS_HASH_WRONG = 3,
     ERRONEUS = 4, // detected, but the frame number is wrong or missed too many frames
               // if received only once, the whole detection is revoked and resources must be released
+              //usually delivered asynchronously on some other frame status, when the previous RS decode has failed
     ERR_DATAFRAME_TOO_EARLY = 5, // got data frame, without recognizing the header first from previous frames
     RECOGNIZED = 6, // some qr code has been recognized for sure
     ALREADY_CORRECTLY_TRANSFERRED = 7,
     NOT_INITIALIZED = 8, // told to finish qr generation, but not even initialized before with the first frame
     LENGTH_QR_CHANGED = 9, //new QR frame has the new length - migh want to kill current transfer and start the new one
-    NEW_HEADER_FRAME_IN_THE_MIDDLE_OF_DATA_DETECTION = 10 //when receiving this, it is advisable to tell no more qr frames and immediately reset decoder
+    NEW_HEADER_FRAME_IN_THE_MIDDLE_OF_DATA_DETECTION = 10, //when receiving this, it is advisable to tell no more qr frames and immediately reset decoder
+    NO_ASYNC_RESULT_KNOWN_YET = 11 //so far no info about the async failure in the middle of the detection has been delivered
 };
 
 

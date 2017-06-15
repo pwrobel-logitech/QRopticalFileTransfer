@@ -95,6 +95,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->async_info_.async_main_is_waiting_for_thread_to_complete_ = false;
     this->async_info_.async_thread_waiting_ = true;
     this->async_info_.chlistener = this;
+    this->async_info_.completion_status = NO_ASYNC_RESULT_KNOWN_YET;
     this->async_info_.internal_mem = NULL;
     this->async_info_.recreated_data = NULL;
     pthread_mutex_unlock(&(this->async_info_.async_mutex_));
@@ -599,9 +600,18 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
             if (this->is_all_file_processing_done_ && (this->is_hash_of_flushed_file_correct_))
                 ret_status = ALREADY_CORRECTLY_TRANSFERRED;
         }
+
+        if (this->async_info_.completion_status == ERRONEUS){
+            ret_status = ERRONEUS;
+//#ifdef ANDROID
+//       __android_log_print(ANDROID_LOG_INFO, "decA", "main reply erroneous ");
+//#endif
+        }
         pthread_mutex_unlock(&(this->async_info_.async_mutex_));
+
     }
     delete []generated_data;
+
     return ret_status;
 }
 

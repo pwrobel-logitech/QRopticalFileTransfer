@@ -6,4 +6,5 @@
     <string name="draw_blink_detected_file1">Wykryto plik: </string>
     <string name="draw_blink_detected_file2">Czekam na dane..</string>
     <string name="draw_blink_failed_header_detection">Nie udało się wykryć startu transmisji, spróbuj ponownie..</string>
+    <string name="draw_blink_failed_data_detection">Błąd transmisji pliku : </string>
 </resources>
