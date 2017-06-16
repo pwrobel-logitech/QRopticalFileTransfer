@@ -622,6 +622,15 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
             }
         });
+        synchronized (this){
+            while (!this.camera_initialized){
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     boolean is_waiting_for_deinit_to_complete = false;
@@ -675,8 +684,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                         e.printStackTrace();
                     }
                     }
+                    CameraWorker.this.camera_initialized = false;
                 }
-                CameraWorker.this.camera_initialized = false;
+
             }
         });
 

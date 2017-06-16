@@ -37,6 +37,7 @@ public class Qrfiles extends Activity {
 
     View detector_view = null;
     View qrsender_view = null;
+    View main_layout = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,11 @@ public class Qrfiles extends Activity {
         uparrowbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Qrfiles.this.main_layout.setVisibility(View.GONE);
+                Qrfiles.this.uparrowbutton.setOnClickListener(null);
+                uparrowbutton.setClickable(false);
+                uparrowbutton.requestLayout();
+                Log.i("clickable", "setting clickable to false");
                 if (Qrfiles.this.is_in_decoder_view) {
                     Qrfiles.this.switch_to_qrsender_view();
                     Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.down_arrow_icon);
@@ -147,7 +153,7 @@ public class Qrfiles extends Activity {
     }
 
 
-    private synchronized void switch_to_detector_view(){
+    private void switch_to_detector_view(){
 
         //setContentView(R.layout.activity_qrfiles);
 
@@ -167,6 +173,7 @@ public class Qrfiles extends Activity {
 
         this.detector_view = (View) findViewById(R.id.detector_layout);
         this.qrsender_view = (View) findViewById(R.id.qrsender_layout);
+        this.main_layout = (View) findViewById(R.id.main_layout);
 
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -181,19 +188,84 @@ public class Qrfiles extends Activity {
         this.detector_view.requestLayout();
         this.qrsender_view.requestLayout();
         this.initall();
+
+
+
+
+        //after initialization done - allow the button to be reclickable again
+
+
+                /*
+                Log.i("NNN", "preparing to wait for surface");
+                synchronized (Qrfiles.this.camSurf){
+                    while (!Qrfiles.this.camSurf.surface_and_camera_prepared){
+                        try {
+                            Log.i("NNN", "dothewait "+Qrfiles.this.camSurf.surface_and_camera_prepared);
+                            Qrfiles.this.camSurf.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }*/
+
+                //if (this.camSurf != null)
+                //synchronized (this.camSurf){
+                    //while (!(this.camSurf.surface_and_camera_prepared)){
+
+                    //}
+                //}
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        uparrowbutton.setClickable(true);
+                uparrowbutton.requestLayout();
+
+                Log.i("clickable", "setting clickable to true1");
+        Log.i("clickable", "executed on the thread, id: " + android.os.Process.myTid());
+
+
+        this.main_layout.setVisibility(View.VISIBLE);
+        this.main_layout.requestLayout();
+
     }
 
-    private synchronized void switch_to_qrsender_view(){
+    private void switch_to_qrsender_view(){
         this.destroyall();  //destroy camera and detector stuff
+
+        //set_decoder_elements();
+
+        //after deinitialization done - allow the button to be reclickable again
+        //this.runOnUiThread(new Runnable() {
+        //    @Override
+        //    public void run() {
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+                uparrowbutton.setClickable(true);
+                uparrowbutton.requestLayout();
+                Log.i("clickable", "setting clickable to true2");
+                Log.i("clickable", "executed on the thread, id: " + android.os.Process.myTid());
+                Qrfiles.this.set_activity_button_listeners();
+        //    }
+        //});
+
+        this.main_layout.setVisibility(View.VISIBLE);
         this.detector_view.setVisibility(View.GONE);
         this.qrsender_view.setVisibility(View.VISIBLE);
+        this.main_layout.requestLayout();
         this.detector_view.requestLayout();
         this.qrsender_view.requestLayout();
-        //set_decoder_elements();
+
     }
 
 
-    private synchronized void initall(){
+    private void initall(){
         Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
         this.camworker = new CameraWorker("CameraDetectorThread");
         this.camworker.setContext(this);
@@ -210,10 +282,23 @@ public class Qrfiles extends Activity {
         });
         //this.camworker.initAsync();
 
+        /*
+        synchronized (this.camSurf){
+            while (!this.camSurf.surface_and_camera_prepared){
+                try {
+                    this.camSurf.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }*/
+
+        this.main_layout.setVisibility(View.VISIBLE);
+        this.main_layout.requestLayout();
 
     }
 
-    private synchronized void destroyall(){
+    private void destroyall(){
 
 
 
