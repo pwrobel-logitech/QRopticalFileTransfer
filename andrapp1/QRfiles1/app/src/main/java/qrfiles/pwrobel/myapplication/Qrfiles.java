@@ -18,6 +18,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.io.File;
 
 public class Qrfiles extends Activity {
 
@@ -232,6 +235,8 @@ public class Qrfiles extends Activity {
 
     }
 
+    String _path;
+    ChooserDialog fileselection_dialog_in_sender;
     private void switch_to_qrsender_view(){
         this.destroyall();  //destroy camera and detector stuff
 
@@ -261,6 +266,24 @@ public class Qrfiles extends Activity {
         this.main_layout.requestLayout();
         this.detector_view.requestLayout();
         this.qrsender_view.requestLayout();
+
+
+        this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
+                .withFilter(true, false)
+                .withStartFile("/mnt/sdcard/")
+                .withDateFormat("HH:mm")
+                .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
+                .withChosenListener(new ChooserDialog.Result() {
+                    @Override
+                    public void onChoosePath(String path, File pathFile) {
+                        Toast.makeText(Qrfiles.this, "FOLDER: " + _path, Toast.LENGTH_SHORT).show();
+                        _path = path;
+                        //_tv.setText(_path);
+                    }
+                })
+                .build()
+                .show();
+
 
     }
 

@@ -9,4 +9,17 @@
     <string name="draw_blink_failed_header_detection">Failed to detect startup phase, please resend..</string>
     <string name="draw_blink_failed_data_detection">File transmission error for : </string>
     <string name="draw_blink_succeeded_data_detection">Correctly saved the file : </string>
+
+
+
+    <string name="empty_directory">Empty Directory</string>
+    <string name="storage_removed">Storage was removed or unmounted.</string>
+    <string name="choose_file">Select a file</string>
+    <string name="error_selecting_file">Error selecting File</string>
+    <string name="internal_storage">Internal storage</string>
+    <string name="title_choose">Choose</string>
+    <string name="title_choose_dict_file">Pick a dictionary</string>
+    <string name="dialog_ok">Select</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="title_choose_folder">Choose a folder</string>
 </resources>
