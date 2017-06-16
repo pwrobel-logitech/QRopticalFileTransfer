@@ -639,8 +639,15 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 if(camera != null){
                     camera.stopPreview();
+                    camera.addCallbackBuffer(null);
+                    try {
+                        camera.setPreviewDisplay(null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     camera.release();
                     camera = null;
+                    System.gc();
                 }
                 if(camsurf != null){
                     camsurf.getSurfaceTexture().release();
@@ -657,11 +664,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 CameraWorker.this.RS_info_set = false;
 
+                CameraWorker.this.callbackbuffer = null;
+                CameraWorker.this.greyscalebuffer = null;
                 System.gc();
-                synchronized (handler){
+                synchronized (CameraWorker.this){
                     while(is_waiting_for_deinit_to_complete) {
                     try {
-                        handler.wait();
+                        CameraWorker.this.wait();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -671,16 +680,22 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             }
         });
 
-        synchronized (handler){
+        synchronized (CameraWorker.this){
             is_waiting_for_deinit_to_complete = false;
-            handler.notifyAll();
+            CameraWorker.this.notifyAll();
         }
 
         ///this.interrupt();
 
         //this.quit();
         //this.interrupt();
-        handler.getLooper().quit();
+
+        //handler.getLooper().quit();
+        if(this != null)
+            synchronized (this){
+                this.interrupt();
+            }
+
         //handler = null;
     };
 

@@ -54,7 +54,7 @@ public class Qrfiles extends Activity {
         Log.i("ACTINFO", "Activity resumed");
 
 
-        setContentView(R.layout.activity_qrfiles);
+        //setContentView(R.layout.activity_qrfiles);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
