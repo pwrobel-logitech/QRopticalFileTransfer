@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Process;
 import android.util.Log;
 import android.view.WindowManager;
@@ -45,7 +46,8 @@ public class Qrfiles extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        File yourAppDir = new File(Environment.getExternalStorageDirectory()+"");
+        default_search_for_upload_homedir = yourAppDir.getPath();
     }
 
 
@@ -235,7 +237,8 @@ public class Qrfiles extends Activity {
 
     }
 
-    String _path;
+    String default_search_for_upload_homedir = null;
+    String chosen_file_path;
     ChooserDialog fileselection_dialog_in_sender;
     private void switch_to_qrsender_view(){
         this.destroyall();  //destroy camera and detector stuff
@@ -268,16 +271,17 @@ public class Qrfiles extends Activity {
         this.qrsender_view.requestLayout();
 
 
-        this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
-                .withFilter(true, false)
-                .withStartFile("/mnt/sdcard/")
+        if (default_search_for_upload_homedir != null)
+            this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
+                .withFilter(false, false)
+                .withStartFile(default_search_for_upload_homedir)
                 .withDateFormat("HH:mm")
                 .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
                 .withChosenListener(new ChooserDialog.Result() {
                     @Override
                     public void onChoosePath(String path, File pathFile) {
-                        Toast.makeText(Qrfiles.this, "FOLDER: " + _path, Toast.LENGTH_SHORT).show();
-                        _path = path;
+                        chosen_file_path = path;
+                        Toast.makeText(Qrfiles.this, "FILE: " + chosen_file_path, Toast.LENGTH_SHORT).show();
                         //_tv.setText(_path);
                     }
                 })

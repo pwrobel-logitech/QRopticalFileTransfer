@@ -1,5 +1,7 @@
 package qrfiles.pwrobel.myapplication;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileFilter;
 
@@ -37,18 +39,25 @@ public class ExtFileFilter implements FileFilter {
                 return false;
         }
 
+        return true;
+
+        /*
         if (m_ext == null)
             return true;
 
         if (pathname.isDirectory())
             return true;
 
+
+        String full = FileUtil.getExtension(pathname);
+        if (full.length() == 0)
+            return true;
         String ext = FileUtil.getExtension(pathname).substring(1);
         for (String e : m_ext) {
             if (ext.equalsIgnoreCase(e))
                 return true;
         }
-        return false;
+        return false;*/
     }
 
 }
