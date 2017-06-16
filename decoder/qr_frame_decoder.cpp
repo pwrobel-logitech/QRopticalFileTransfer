@@ -161,12 +161,7 @@ immediate_status QR_frame_decoder::destroy_and_get_filetransfer_status(){
 
 
     //pthread_mutex_lock(&(this->async_info_.async_mutex_));
-    if (this->decoder_ != NULL)
-        delete this->decoder_;
-    if (this->res_decoder_ != NULL)
-        delete this->res_decoder_;
-    if (this->header_decoder_ != NULL)
-        delete this->header_decoder_;
+
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_INFO, "DEL", "XXXX1");
 #endif
@@ -186,8 +181,16 @@ immediate_status QR_frame_decoder::destroy_and_get_filetransfer_status(){
     pthread_cond_broadcast(&(this->async_info_.async_main_wait_));
     pthread_cond_broadcast(&(this->async_info_.async_condvar_));
 
+    if (this->decoder_ != NULL)
+        delete this->decoder_;
+    if (this->res_decoder_ != NULL)
+        delete this->res_decoder_;
+    if (this->header_decoder_ != NULL)
+        delete this->header_decoder_;
+
     pthread_mutex_unlock(&(this->async_info_.async_mutex_));
     pthread_join(this->async_info_.async_thr_id_, NULL);
+
     return final_status;
 };
 

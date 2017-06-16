@@ -10,11 +10,12 @@
 
 int main(int argc, char** argv){
 
+  for (int q = 0; q < 25; q++){
 
  initialize_decoder();
  set_decoded_file_path("/home/pwrobel/");
 
- for (int i = 0; i < 1000; i++){
+ for (int i = 0; i < 100; i++){
    deinitialize_decoder();
    initialize_decoder();
    set_decoded_file_path("/home/pwrobel/");
@@ -65,4 +66,5 @@ int main(int argc, char** argv){
  }
 
  deinitialize_decoder();
+ }
 }

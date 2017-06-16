@@ -93,7 +93,7 @@ RS_decoder::~RS_decoder(){
         this->internal_memory_ = NULL;
     }
     AsyncInfo* as = this->chunk_listener_->getAsyncInfo();
-    pthread_mutex_lock(&as->async_mutex_);
+    //pthread_mutex_lock(&as->async_mutex_);
     //while (as->async_main_is_waiting_for_thread_to_complete_) {
     //    printf("Main is going to wait2...\n");
     //    pthread_cond_wait(&(as->async_main_wait_), &(as->async_mutex_));
@@ -113,7 +113,7 @@ RS_decoder::~RS_decoder(){
     }
 
 
-    pthread_mutex_unlock(&as->async_mutex_);
+    //pthread_mutex_unlock(&as->async_mutex_);
 }
 
 void RS_decoder::set_header_frame_generating(bool isheader){
@@ -357,18 +357,18 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
     this->RSk_ = k;
     this->status_ = RS_decoder::STILL_OK;
     if(this->internal_memory_ != NULL){
-        delete this->internal_memory_;
+        delete []this->internal_memory_;
         this->internal_memory_ = NULL;
     }
     if(this->internal_memory_async_ != NULL){
-        delete this->internal_memory_async_;
+        delete []this->internal_memory_async_;
         this->internal_memory_async_ = NULL;
     }
 
     this->internal_memory_ = new uint32_t[n*this->n_channels_];
     memset(this->internal_memory_, 0, n*this->n_channels_*sizeof(uint32_t));
 
-    this->internal_memory_async_ = new uint32_t[n*this->n_channels_];
+    this->internal_memory_async_ = new uint32_t[n*this->n_channels_];printf("QBC creating async %p\n", (void*)(this->internal_memory_async_));
     memset(this->internal_memory_async_, 0, n*this->n_channels_*sizeof(uint32_t));
 
     int i = 0;

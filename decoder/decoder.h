@@ -121,6 +121,8 @@ public:
 
     virtual void execute_RS_async_action() = 0;
 
+    virtual ~Decoder() {}
+
 protected:
     // this will keep the current status of the detector
     // if ever returns TOO_MUCH_ERRORS then the file is not
