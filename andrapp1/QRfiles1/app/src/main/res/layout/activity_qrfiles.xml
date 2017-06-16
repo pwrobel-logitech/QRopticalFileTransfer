@@ -15,7 +15,16 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_qrfiles"
-        android:id="@+id/include" />
+        android:id="@+id/detector_layout"
+        android:visibility="visible"/>
+
+    <include layout="@layout/content_upload_screen"
+        android:id="@+id/qrsender_layout"
+        android:visibility="gone"/>
+
+
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

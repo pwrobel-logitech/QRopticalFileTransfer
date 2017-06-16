@@ -302,6 +302,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+        //synchronized (this){
+        //    if(!camera_initialized)
+        //        return;
+        //}
         //Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
         //Log.i("info", "Got byte arrQ of size "+data.length+" bytes");
 
@@ -620,11 +624,19 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         });
     }
 
+    boolean is_waiting_for_deinit_to_complete = false;
     @Override
     public void closeCamAsync() {
         handler.post(new Runnable() {
             @Override
             public void run() {
+
+                camera.addCallbackBuffer(null);
+                camera.setPreviewCallbackWithBuffer(null);
+                camera.cancelAutoFocus();
+                camera.setAutoFocusMoveCallback(null);
+                camera.autoFocus(null);
+
                 if(camera != null){
                     camera.stopPreview();
                     camera.release();
@@ -646,9 +658,30 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 CameraWorker.this.RS_info_set = false;
 
                 System.gc();
-
+                synchronized (handler){
+                    while(is_waiting_for_deinit_to_complete) {
+                    try {
+                        handler.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    }
+                }
+                CameraWorker.this.camera_initialized = false;
             }
         });
+
+        synchronized (handler){
+            is_waiting_for_deinit_to_complete = false;
+            handler.notifyAll();
+        }
+
+        ///this.interrupt();
+
+        //this.quit();
+        //this.interrupt();
+        handler.getLooper().quit();
+        //handler = null;
     };
 
     @Override

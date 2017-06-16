@@ -1,6 +1,8 @@
 package qrfiles.pwrobel.myapplication;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -30,12 +32,23 @@ public class Qrfiles extends Activity {
     TextView decoder_status_textview1;
     TextView decoder_status_textview2;
 
+    //
+    FloatingActionButton uparrowbutton = null;
+
+    View detector_view = null;
+    View qrsender_view = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
+
+
+    boolean is_in_decoder_view = true;
+    boolean is_in_qr_sender_view = false;
+    boolean is_in_filechooser_view = false;
     @Override
     public void onResume(){
         Log.i("ACTINFO", "Activity resumed");
@@ -45,9 +58,14 @@ public class Qrfiles extends Activity {
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.switch_to_detector_view();
 
+
+        this.initall();
+        super.onResume();
+    }
+
+    void set_activity_button_listeners(){
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +75,33 @@ public class Qrfiles extends Activity {
             }
         });
 
+        uparrowbutton = (FloatingActionButton) findViewById(R.id.arrowup);
+        uparrowbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Qrfiles.this.is_in_decoder_view) {
+                    Qrfiles.this.switch_to_qrsender_view();
+                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.down_arrow_icon);
+                    Qrfiles.this.uparrowbutton.setImageBitmap(bmp);
+                    Qrfiles.this.uparrowbutton.requestLayout();
+                    Qrfiles.this.is_in_decoder_view = false;
+                    Qrfiles.this.is_in_qr_sender_view = true;
+                    return;
+                }
+                if (!Qrfiles.this.is_in_decoder_view) {
+                    Qrfiles.this.switch_to_detector_view();
+                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.up_arrow_icon);
+                    Qrfiles.this.uparrowbutton.setImageBitmap(bmp);
+                    Qrfiles.this.uparrowbutton.requestLayout();
+                    Qrfiles.this.is_in_decoder_view = true;
+                    Qrfiles.this.is_in_qr_sender_view = false;
+                    return;
+                }
+            }
+        });
+    }
+
+    void set_decoder_elements(){
         camSurf = (CameraPreviewSurface) findViewById(R.id.glsurfaceView1);
         progressBar1_decoder = (CustomProgressBar) findViewById(R.id.surfaceView2);
         progressBar2_decoder = (CustomProgressBar) findViewById(R.id.surfaceView3);
@@ -70,18 +115,6 @@ public class Qrfiles extends Activity {
         this.decoder_status_textview2.setVisibility(View.VISIBLE);
 
         this.camSurf.setCustomDecoderStatusTextView(this.decoder_status_textview1, this.decoder_status_textview2);
-
-
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        // Example of a call to a native method
-        //TextView tv = (TextView) findViewById(R.id.sample_text);
-        //tv.setText(stringFromJNI());
-
-
-        this.initall();
-        super.onResume();
     }
 
     @Override
@@ -113,6 +146,53 @@ public class Qrfiles extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    private synchronized void switch_to_detector_view(){
+
+        //setContentView(R.layout.activity_qrfiles);
+
+
+
+        setContentView(R.layout.activity_qrfiles);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        set_activity_button_listeners();
+
+
+        this.set_decoder_elements();
+
+        this.detector_view = (View) findViewById(R.id.detector_layout);
+        this.qrsender_view = (View) findViewById(R.id.qrsender_layout);
+
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // Example of a call to a native method
+        //TextView tv = (TextView) findViewById(R.id.sample_text);
+        //tv.setText(stringFromJNI());
+
+
+        this.detector_view.setVisibility(View.VISIBLE);
+        this.qrsender_view.setVisibility(View.GONE);
+        this.detector_view.requestLayout();
+        this.qrsender_view.requestLayout();
+        this.initall();
+    }
+
+    private synchronized void switch_to_qrsender_view(){
+        this.destroyall();  //destroy camera and detector stuff
+        this.detector_view.setVisibility(View.GONE);
+        this.qrsender_view.setVisibility(View.VISIBLE);
+        this.detector_view.requestLayout();
+        this.qrsender_view.requestLayout();
+        //set_decoder_elements();
+    }
+
+
     private synchronized void initall(){
         Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
         this.camworker = new CameraWorker("CameraDetectorThread");
@@ -135,8 +215,25 @@ public class Qrfiles extends Activity {
 
     private synchronized void destroyall(){
 
-        this.camworker.closeCamAsync();
-        this.camSurf.deinitialize_resources();
+
+
+
+        if(this.camworker != null)
+            this.camworker.closeCamAsync();
+        if(this.camSurf != null)
+            this.camSurf.deinitialize_resources();
+
+        /*
+        try {
+            this.camworker.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        this.camworker.quit();
+        this.camworker.interrupt();
+*/
+
         this.camSurf = null;
         this.camworker = null;
         System.gc();
