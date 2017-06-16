@@ -226,6 +226,12 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     @Override
     public void onDrawFrame(GL10 gl) {
 
+        boolean should_quit = false;
+        synchronized (this){
+            should_quit = this.is_drawer_deinitialized;
+        }
+        if (should_quit)
+            return;
 
         curr_succ_ratio_got_from_camworker = camcontroller.getCurrentSuccRatio();
 
@@ -427,7 +433,10 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         }
     }
 
+    boolean is_drawer_deinitialized = false;
     public synchronized void deinitialize_resources(){
+        is_drawer_deinitialized = true;
+
         this.pr1drawer = null;
         this.pr2drawer = null;
     };
