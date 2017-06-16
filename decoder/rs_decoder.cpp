@@ -368,7 +368,7 @@ void RS_decoder::set_RS_nk(uint16_t n, uint16_t k){
     this->internal_memory_ = new uint32_t[n*this->n_channels_];
     memset(this->internal_memory_, 0, n*this->n_channels_*sizeof(uint32_t));
 
-    this->internal_memory_async_ = new uint32_t[n*this->n_channels_];printf("QBC creating async %p\n", (void*)(this->internal_memory_async_));
+    this->internal_memory_async_ = new uint32_t[n*this->n_channels_];
     memset(this->internal_memory_async_, 0, n*this->n_channels_*sizeof(uint32_t));
 
     int i = 0;

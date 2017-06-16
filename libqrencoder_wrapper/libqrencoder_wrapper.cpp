@@ -306,6 +306,9 @@ using namespace zxing;
 using namespace zxing::qrcode;
 using namespace qrviddec;
 
+const uint32_t generated_data_mempool_size = 512 * 1024;
+char generated_data_mempool[generated_data_mempool_size];
+
 immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength, char** generated_data, const char* input_greyscale_buffer,
                                            int width, int height){
 //GLOBAL DEFAULT   20 zxing::qrcode::QRCodeReader::decode(zxing::Ref<zxing::BinaryBitmap>, zxing::DecodeHints)
@@ -337,7 +340,7 @@ immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength
 
 
     *generated_datalength = bitres.size();
-    *generated_data = new char [*generated_datalength];
+    *generated_data = generated_data_mempool;//new char [*generated_datalength];
 
     //http://stackoverflow.com/questions/17973641/how-to-decode-data-using-zxing-c
 
@@ -354,6 +357,9 @@ immediate_status generate_data_from_qr_greyscalebuffer(int* generated_datalength
 #endif
         cerr << "Error zxing, not recognized qr code : " << e.what() << endl;
         ret = NOT_RECOGNIZED;
+        //if ((*generated_data) != NULL){
+        //    delete [](*generated_data);
+        //}
         *generated_data = NULL;
     }
     return ret;

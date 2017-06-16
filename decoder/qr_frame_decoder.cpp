@@ -613,7 +613,9 @@ immediate_status QR_frame_decoder::send_next_grayscale_qr_frame(const char *gray
         pthread_mutex_unlock(&(this->async_info_.async_mutex_));
 
     }
-    delete []generated_data;
+    ///using static mempool now, so do not call delete
+    //if (generated_data != NULL)
+    //    delete []generated_data;
 
     return ret_status;
 }
