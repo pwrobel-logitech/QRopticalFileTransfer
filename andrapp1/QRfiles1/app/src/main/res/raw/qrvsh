@@ -1,0 +1,13 @@
+
+attribute vec2 aPosition;
+attribute vec4 vPosition;
+
+uniform mat4 uTransformM;
+uniform mat4 uOrientationM;
+
+varying vec2 vTextureCoord;
+void main() {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+    vTextureCoord = (uTransformM * (0.5*(1.0 + uOrientationM * gl_Position))).xy;
+ 
+}

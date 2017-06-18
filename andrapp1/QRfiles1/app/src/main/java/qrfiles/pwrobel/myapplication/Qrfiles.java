@@ -272,6 +272,12 @@ public class Qrfiles extends Activity {
             e.printStackTrace();
         }
 
+
+        this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
+        this.qrsurf.setFPS(2.0);
+        this.qrsurf.setZOrderOnTop(true);
+        this.qrsurf.init_qrsurf_thread();//starts thread
+
                 uparrowbutton.setClickable(true);
                 uparrowbutton.requestLayout();
                 Log.i("clickable", "setting clickable to true2");
@@ -287,9 +293,7 @@ public class Qrfiles extends Activity {
         this.detector_view.requestLayout();
         this.qrsender_view.requestLayout();
 
-        this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
-        this.qrsurf.setFPS(1.0);
-        this.qrsurf.init_qrsurf_thread();//starts thread
+
 
 
         adView = (AdView) this.findViewById(R.id.adView);

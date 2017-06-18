@@ -55,7 +55,7 @@
             android:id="@+id/qrsurf"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/colorgrey1" />
+            />
 
     </qrfiles.pwrobel.myapplication.SquareLayout>
 

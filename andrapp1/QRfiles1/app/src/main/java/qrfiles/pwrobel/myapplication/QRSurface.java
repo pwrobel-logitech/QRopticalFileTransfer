@@ -1,6 +1,7 @@
 package qrfiles.pwrobel.myapplication;
 
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -45,15 +46,81 @@ public class QRSurface extends GLSurfaceView implements
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         Log.i("QRSurf", "surface created");
+
+        try {
+            mOffscreenShader.setProgram(R.raw.qrvsh, R.raw.qrfsh, mContext);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
+
+    private int mTextureHandle;
+    private int surfw = 0, surfh = 0;
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        Log.i("QRSurf", "surface changed");
+        Log.i("QRSurf", "surface changed w"+width + " h "+height);
+        this.surfw = width;
+        this.surfh = height;
+
+        int[] mTextureHandles = new int[1];
+        GLES20.glGenTextures(1, mTextureHandles, 0);
+        mTextureHandle = mTextureHandles[0];
+
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureHandles[0]);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+
+        SurfaceTexture oldSurfaceTexture = mSurfaceTexture;
+        mSurfaceTexture = new SurfaceTexture(mTextureHandle);
+
+        float rot = 0.0f;
+        Matrix.setRotateM(mOrientationM, 0, rot, 0f, 0f, 1f);
+
     }
 
+    private Shader mOffscreenShader = null;
+    private float[] mTransformM = new float[16];
+    private float[] mOrientationM = new float[16];
+    private SurfaceTexture mSurfaceTexture = null;
     @Override
     public void onDrawFrame(GL10 gl) {
+
+        GLES20.glClearColor(0.0f, 1.0f, 1.0f, 0.0f);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+        mSurfaceTexture.updateTexImage();
+        mSurfaceTexture.getTransformMatrix(mTransformM);
+
+        GLES20.glViewport(0, 0, this.surfw, this.surfh);
+
+        mOffscreenShader.useProgram();
+
+        int uTransformM = mOffscreenShader.getHandle("uTransformM");
+        int uOrientationM = mOffscreenShader.getHandle("uOrientationM");
+
+        GLES20.glUniformMatrix4fv(uTransformM, 1, false, mTransformM, 0);
+        GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
+        //GLES20.glUniform2fv(uRatioV, 1, mRatio, 0);
+        //GLES20.glUniform2fv(usizes, 1, sizeprev, 0);
+        //GLES20.glUniform1f(urpevratio, m_prev_yx_ratio);
+        //GLES20.glUniform1f(usuccratio, (float)curr_succ_ratio_got_from_camworker);
+
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureHandle);
+
+        //render quad
+        int aPosition = mOffscreenShader.getHandle("aPosition");
+        GLES20.glVertexAttribPointer(aPosition, 2, GLES20.GL_BYTE, false, 0, mvertexs);
+        GLES20.glEnableVertexAttribArray(aPosition);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+
+        /////////////////////////////////////////////////////////
+
+
         Log.i("QRSurf", "ondrawframe");
     }
 
@@ -80,7 +147,16 @@ public class QRSurface extends GLSurfaceView implements
         this.fps = fps;
     }
 
+    ByteBuffer mvertexs;
     private void init_qrsurf(){
+
+        final byte FULL_QUAD_COORDS[] = {-1, 1, -1, -1, 1, 1, 1, -1};
+        mvertexs = ByteBuffer.allocateDirect(4 * 2);
+        mvertexs.put(FULL_QUAD_COORDS).position(0);
+
+        mOffscreenShader = new Shader();
+
+        setPreserveEGLContextOnPause(true);
         setEGLContextClientVersion(2);
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -95,9 +171,15 @@ public class QRSurface extends GLSurfaceView implements
     private boolean qrsurf_manager_thread_running = false;
     private Thread qrsufr_manager_thread = null;
     public void init_qrsurf_thread(){
+        this.should_display_anything = true;
         qrsufr_manager_thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(30);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 synchronized (QRSurface.this){
                     qrsurf_manager_thread_running = true;
                     waiting_for_qrmanager_thread_to_finish = false;
