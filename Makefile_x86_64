@@ -15,7 +15,7 @@ fec_x86_test: ka9q_fac_test.cpp single_fac_test.cpp fileutil/fileops.cpp
 	g++ $(CFLAGS) single_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o bin_fec_x64/test_single -L$(current_dir)/bin_fec_x64 -lfec
 
 clean:
-	rm bin_fec_x64/fec_x86_test bin_fec_x64/sendqr bin_fec_x64/test_single *.o *.so main bin_fec_x64/libqrencoder_wrapper.so bin_fec_x64/libqrencoder_test bin_fec_x64/decoder_test bin_fec_x64/libRSdecoder.so bin_fec_x64/libRSencoder.so
+	rm bin_fec_x64/fec_x86_test bin_fec_x64/sendqr bin_fec_x64/test_single *.o *.so main bin_fec_x64/libqrencoder_wrapper.so bin_fec_x64/libqrencoder_test bin_fec_x64/decoder_test bin_fec_x64/libRSdecoder.so bin_fec_x64/libRSencAPI.so bin_fec_x64/libRSdecAPI.so
 
 main: main.cpp
 	g++ -I$(current_dir) $(CFLAGS) main.cpp -o main -L$(current_dir) -lRSencoder -L$(current_dir)/bin_fec_x64 -lfec -lqrencoder_wrapper
@@ -30,6 +30,9 @@ x86_decoder_lib: libqrencode_wrapper decoder/qr_frame_decoder.cpp decoder/rs_dec
 public_decoder_api_lib: x86_decoder_lib decoder_api_lib.cpp
 	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder_api_lib.cpp -fPIC -shared -o $(current_dir)/bin_fec_x64/libRSdecAPI.so -L$(current_dir)/bin_fec_x64 -lRSdecoder -lqrencoder_wrapper 
 	
+public_encoder_api_lib: x86_lib encoder_api_lib.cpp
+	g++ $(CFLAGS) -I$(current_dir)  encoder_api_lib.cpp -fPIC -shared -o $(current_dir)/bin_fec_x64/libRSencAPI.so -L$(current_dir)/bin_fec_x64 -lRSencoder -lqrencoder_wrapper
+	
 x86_decoder_test: x86_decoder_lib decoder/decoder_test.cpp 
 	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -fPIC -o $(current_dir)/bin_fec_x64/decoder_test -L$(current_dir)/bin_fec_x64 -lRSdecoder -lqrencoder_wrapper
 	
@@ -39,6 +42,6 @@ x86_decoder_test2: public_decoder_api_lib decoder/test2_pubapi.cpp
 main_linuxqr: x86_lib libqrencode_wrapper
 	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -I$(current_dir)/linux_qrgen -I/usr/include/SDL2 -Wl,-rpath=\$$ORIGIN linux_qrgen/main_qrgen.cpp linux_qrgen/glrenderer.cpp -o bin_fec_x64/sendqr -L$(current_dir)/bin_fec_x64 -lRSencoder -lSDL2 -lGL
 
-all: x86_lib fec_x86_test x86_decoder_test x86_decoder_test2 public_decoder_api_lib main main_linuxqr
+all: x86_lib fec_x86_test x86_decoder_test x86_decoder_test2 public_encoder_api_lib public_decoder_api_lib main main_linuxqr
 
 

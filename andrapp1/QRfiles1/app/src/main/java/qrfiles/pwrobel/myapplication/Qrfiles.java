@@ -399,6 +399,7 @@ public class Qrfiles extends Activity {
         System.loadLibrary("qrencoder_wrapper");
         System.loadLibrary("RSencoder");
         System.loadLibrary("RSdecoder");
+        System.loadLibrary("RSencAPI");
         System.loadLibrary("RSdecAPI");
         System.loadLibrary("native-lib");
     }

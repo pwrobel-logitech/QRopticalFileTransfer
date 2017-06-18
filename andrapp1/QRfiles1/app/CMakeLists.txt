@@ -12,6 +12,7 @@ configure_file(../../../androidarchs/${ANDROID_ABI}/libqrencoder_wrapper.so ${CM
 configure_file(../../../androidarchs/${ANDROID_ABI}/libRSencoder.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSencoder.so COPYONLY)
 configure_file(../../../androidarchs/${ANDROID_ABI}/libRSdecoder.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSdecoder.so COPYONLY)
 configure_file(../../../androidarchs/${ANDROID_ABI}/libRSdecAPI.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSdecAPI.so COPYONLY)
+configure_file(../../../androidarchs/${ANDROID_ABI}/libRSencAPI.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSencAPI.so COPYONLY)
 
 include_directories(../../../)
 
@@ -82,6 +83,14 @@ target_link_libraries( # Specifies the target library.
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )
+
+get_filename_component(ABSOLUTE_PATH0
+                       "${CMAKE_CURRENT_LIST_DIR}/../../../androidarchs/${ANDROID_ABI}/libRSencAPI.so"
+                       ABSOLUTE)
+
+target_link_libraries(
+    native-lib
+    ${ABSOLUTE_PATH0})
 
 get_filename_component(ABSOLUTE_PATH
                        "${CMAKE_CURRENT_LIST_DIR}/../../../androidarchs/${ANDROID_ABI}/libRSdecAPI.so"
