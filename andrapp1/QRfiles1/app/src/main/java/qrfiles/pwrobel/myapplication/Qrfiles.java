@@ -21,7 +21,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Qrfiles extends Activity {
 
@@ -68,6 +73,7 @@ public class Qrfiles extends Activity {
 
 
         this.initall();
+
         super.onResume();
     }
 
@@ -237,6 +243,8 @@ public class Qrfiles extends Activity {
 
     }
 
+
+    AdView adView;
     String default_search_for_upload_homedir = null;
     String chosen_file_path;
     ChooserDialog fileselection_dialog_in_sender;
@@ -271,6 +279,32 @@ public class Qrfiles extends Activity {
         this.qrsender_view.requestLayout();
 
 
+        adView = (AdView) this.findViewById(R.id.adView);
+
+        new Timer().schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                Qrfiles.this.runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        AdRequest adRequest = new AdRequest.Builder()
+                                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                                .addTestDevice("motorola_3g-001")
+                                .build();
+
+                        adView.loadAd(adRequest);
+                    }
+                });
+            }
+        }, 1000);
+        
+
+
+
         if (default_search_for_upload_homedir != null)
             this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
                 .withFilter(false, false)
@@ -287,6 +321,8 @@ public class Qrfiles extends Activity {
                 })
                 .build()
                 .show();
+
+
 
 
     }
