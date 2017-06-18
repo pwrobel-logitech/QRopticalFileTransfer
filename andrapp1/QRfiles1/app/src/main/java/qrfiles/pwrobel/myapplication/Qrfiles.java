@@ -48,6 +48,8 @@ public class Qrfiles extends Activity {
     View qrsender_view = null;
     View main_layout = null;
 
+    QRSurface qrsurf = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,6 +195,9 @@ public class Qrfiles extends Activity {
         //TextView tv = (TextView) findViewById(R.id.sample_text);
         //tv.setText(stringFromJNI());
 
+
+        this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
+        this.qrsurf.setFPS(10.0);
 
         this.detector_view.setVisibility(View.VISIBLE);
         this.qrsender_view.setVisibility(View.GONE);
