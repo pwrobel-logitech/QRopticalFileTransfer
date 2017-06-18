@@ -168,6 +168,10 @@ public class Qrfiles extends Activity {
 
     private void switch_to_detector_view(){
 
+        if (this.qrsurf != null)
+            this.qrsurf.destroy_all_resources(); //actually, only deinits qrsurf manager thread
+        this.qrsurf = null;
+
         //setContentView(R.layout.activity_qrfiles);
 
 
@@ -196,8 +200,8 @@ public class Qrfiles extends Activity {
         //tv.setText(stringFromJNI());
 
 
-        this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
-        this.qrsurf.setFPS(10.0);
+
+
 
         this.detector_view.setVisibility(View.VISIBLE);
         this.qrsender_view.setVisibility(View.GONE);
@@ -282,6 +286,10 @@ public class Qrfiles extends Activity {
         this.main_layout.requestLayout();
         this.detector_view.requestLayout();
         this.qrsender_view.requestLayout();
+
+        this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
+        this.qrsurf.setFPS(1.0);
+        this.qrsurf.init_qrsurf_thread();//starts thread
 
 
         adView = (AdView) this.findViewById(R.id.adView);
@@ -376,6 +384,11 @@ public class Qrfiles extends Activity {
         if(this.camSurf != null)
             this.camSurf.deinitialize_resources();
 
+
+        if(this.qrsurf != null)
+            this.qrsurf.destroy_all_resources();
+        this.qrsurf = null;
+
         /*
         try {
             this.camworker.join();
@@ -389,6 +402,7 @@ public class Qrfiles extends Activity {
 
         this.camSurf = null;
         this.camworker = null;
+
         System.gc();
     }
 

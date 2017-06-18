@@ -57,6 +57,24 @@ public class QRSurface extends GLSurfaceView implements
         Log.i("QRSurf", "ondrawframe");
     }
 
+    private boolean waiting_for_qrmanager_thread_to_finish = false;
+    public void destroy_all_resources(){
+        synchronized (this){
+            should_display_anything = false;
+            qrsurf_manager_thread_running = false;
+        }
+
+
+
+        try {
+            this.qrsufr_manager_thread.join();
+        } catch (InterruptedException e) {
+            Log.i("QRSurfThr", "Failed to join thread");
+            e.printStackTrace();
+        }
+        this.qrsufr_manager_thread = null;
+    }
+
 
     public void setFPS(double fps){
         this.fps = fps;
@@ -66,20 +84,23 @@ public class QRSurface extends GLSurfaceView implements
         setEGLContextClientVersion(2);
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        init_qrsurf_thread();
+        //init_qrsurf_thread();
     }
 
 
+
+    private boolean should_display_anything = true;
     private double fps = 1;
     private double last_ns_time_frame_requested_for_display = 0.0;
     private boolean qrsurf_manager_thread_running = false;
     private Thread qrsufr_manager_thread = null;
-    private void init_qrsurf_thread(){
+    public void init_qrsurf_thread(){
         qrsufr_manager_thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 synchronized (QRSurface.this){
                     qrsurf_manager_thread_running = true;
+                    waiting_for_qrmanager_thread_to_finish = false;
                 }
                 while (true){
                     boolean shouldend = false;
@@ -97,7 +118,12 @@ public class QRSurface extends GLSurfaceView implements
 
     private void qrsurf_manager_thread_mainfunc(){
         try {
-            Thread.sleep(1);
+            int sleeptime = 1;
+            synchronized (this){
+                if (!should_display_anything)
+                    sleeptime = 200;
+            }
+            Thread.sleep(sleeptime);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -108,6 +134,9 @@ public class QRSurface extends GLSurfaceView implements
         if (current_ns - this.last_ns_time_frame_requested_for_display > framewaitns){
             last_ns_time_frame_requested_for_display = current_ns;
             Log.i("qrsurf", "manager thread wants new frame");
+            if (should_display_anything){
+                QRSurface.this.requestRender();
+            }
         }
 
 
