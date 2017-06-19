@@ -17,7 +17,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.security.acl.LastOwnerException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -34,9 +37,22 @@ public class QRSurface extends GLSurfaceView implements
         int max_width_unscaled = 512;
         int current_width; //must be lower than the max value above. Must be power of 2
         int current_height;
+        int current_qrbuffer_size_width;//contains actual width of the image data
+        int current_qrbuffer_size_height;
         //which part of the buffer on x and y the actual, non 2^n size buffer occpies
+        //=current_qrbuffer_size_width/current_width
         double curr_texture_sample_fraction = 1.0;
         ByteBuffer surfdata = ByteBuffer.allocateDirect(max_width_unscaled * max_width_unscaled);
+        //holds returned width
+        ByteBuffer produced_width_buffer = null;
+        SurfBuff(){
+            surfdata = ByteBuffer.allocateDirect(max_width_unscaled * max_width_unscaled);
+            for (int i = 0; i < surfdata.capacity(); i++){
+                surfdata.put(i, (byte)0xff);
+            }
+            produced_width_buffer = ByteBuffer.allocateDirect(8); //needs only 4, actually
+            produced_width_buffer.order( java.nio.ByteOrder.LITTLE_ENDIAN ); //is big endian by default, but c++ assumes little endian
+        }
     };
     SurfBuff surface_buffer = new SurfBuff();
 
@@ -69,6 +85,7 @@ public class QRSurface extends GLSurfaceView implements
     }
 
 
+    int last_surf_buff_w = 0, last_surf_buff_h = 0;
     private int mTextureHandle;
     private int surfw = 0, surfh = 0;
     @Override
@@ -108,10 +125,12 @@ public class QRSurface extends GLSurfaceView implements
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
 
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, 2, 2, 0,
-                GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, this.surface_buffer.current_qrbuffer_size_width, this.surface_buffer.current_qrbuffer_size_height, 0,
+                GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, surface_buffer.surfdata);
+        this.last_surf_buff_w = this.surface_buffer.current_qrbuffer_size_width;
+        this.last_surf_buff_h = this.surface_buffer.current_qrbuffer_size_height;
 
-        float rot = 0.0f;
+        float rot = 90.0f;
         Matrix.setRotateM(mOrientationM, 0, rot, 0f, 0f, 1f);
 
     }
@@ -123,40 +142,24 @@ public class QRSurface extends GLSurfaceView implements
     private float[] mTransformM = new float[16];
     private float[] mOrientationM = new float[16];
     private SurfaceTexture mSurfaceTexture = null;
+
+    private boolean is_frame_drawing = false;
+
     @Override
     public void onDrawFrame(GL10 gl) {
 
-        GLES20.glClearColor(0.0f, 1.0f, 1.0f, 0.0f);
+        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
 
-        for (int q = 0 ; q<surface_buffer.surfdata.capacity();q++){
-            surface_buffer.surfdata.put(q, (byte)0xFF);
-        }
-/*
-        surfdata.put(0, (byte)0x44);
-        surfdata.put(1, (byte)0x44);
-        surfdata.put(2, (byte)0x44);
-        surfdata.put(3, (byte)0x44);
 
 
-        surfdata.put(4, (byte)0xAA);
-        surfdata.put(5, (byte)0xAA);
-        surfdata.put(6, (byte)0xAA);
-        surfdata.put(7, (byte)0xAA);
+        //for (int q = 0 ; q<32;q++){
+        //    surface_buffer.surfdata.put(q, (byte)0xFF);
+        //}
+        //surface_buffer.surfdata.put(2, (byte)0x00);
+        //surface_buffer.surfdata.put(2, (byte)0x70);
 
-
-        surfdata.put(8, (byte)0x44);
-        surfdata.put(9, (byte)0x44);
-        surfdata.put(10, (byte)0x44);
-        surfdata.put(11, (byte)0x44);
-
-
-        surfdata.put(12, (byte)0x44);
-        surfdata.put(13, (byte)0x44);
-        surfdata.put(14, (byte)0x44);
-        surfdata.put(15, (byte)0x44);
-*/
         surface_buffer.surfdata.position(0);
 
 
@@ -171,15 +174,17 @@ public class QRSurface extends GLSurfaceView implements
         mOffscreenShader.useProgram();
 
         //int uTransformM = mOffscreenShader.getHandle("uTransformM");
-        //int uOrientationM = mOffscreenShader.getHandle("uOrientationM");
+        int uOrientationM = mOffscreenShader.getHandle("uOrientationM");
+        int utexratio = mOffscreenShader.getHandle("texratio");
 
         //int uTextureloc = mOffscreenShader.getHandle("tex");
 
         //GLES20.glUniformMatrix4fv(uTransformM, 1, false, mTransformM, 0);
-        //GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
+        GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
         //GLES20.glUniform2fv(uRatioV, 1, mRatio, 0);
         //GLES20.glUniform2fv(usizes, 1, sizeprev, 0);
-        //GLES20.glUniform1f(urpevratio, m_prev_yx_ratio);
+        double texratio = ((double)this.surface_buffer.current_width) / ((double)this.surface_buffer.current_qrbuffer_size_width);
+        GLES20.glUniform1f(utexratio, (float)texratio);
         //GLES20.glUniform1f(usuccratio, (float)curr_succ_ratio_got_from_camworker);
 
        // GLES20.glGenTextures ( 1, textureId, 0 );
@@ -193,9 +198,17 @@ public class QRSurface extends GLSurfaceView implements
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
 
-        GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, 2, 2,
-                GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, surface_buffer.surfdata);
-
+        if (this.last_surf_buff_w == this.surface_buffer.current_qrbuffer_size_width &&
+                this.last_surf_buff_h == this.surface_buffer.current_qrbuffer_size_height)
+            GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0,
+                    this.surface_buffer.current_qrbuffer_size_width, this.surface_buffer.current_qrbuffer_size_height,
+                           GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, surface_buffer.surfdata);
+        else {
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, this.surface_buffer.current_qrbuffer_size_width, this.surface_buffer.current_qrbuffer_size_height, 0,
+                    GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, surface_buffer.surfdata);
+            this.last_surf_buff_w = this.surface_buffer.current_qrbuffer_size_width;
+            this.last_surf_buff_h = this.surface_buffer.current_qrbuffer_size_height;
+        }
         //render quad
         int aPosition = mOffscreenShader.getHandle("aPosition");
         GLES20.glVertexAttribPointer(aPosition, 2, GLES20.GL_BYTE, false, 0, mvertexs);
@@ -206,6 +219,10 @@ public class QRSurface extends GLSurfaceView implements
 
 
         Log.i("QRSurf", "ondrawframe");
+        synchronized (this) {
+            this.is_frame_drawing = false;
+            this.notifyAll();
+        }
     }
 
     private boolean waiting_for_qrmanager_thread_to_finish = false;
@@ -249,7 +266,7 @@ public class QRSurface extends GLSurfaceView implements
 
 
 
-    private boolean should_display_anything = true;
+    private boolean should_display_anything = false;
     private double fps = 1;
     private double last_ns_time_frame_requested_for_display = 0.0;
     private boolean qrsurf_manager_thread_running = false;
@@ -282,11 +299,29 @@ public class QRSurface extends GLSurfaceView implements
         qrsufr_manager_thread.start();
     };
 
+
+    private boolean waiting_to_add_files = true;
+    public void add_new_files_to_send(ArrayList<String> filespath){
+        synchronized (this){
+            destroy_current_encoder();
+            files_to_send.clear();
+            for (int i = 0; i < filespath.size(); i++){
+                files_to_send.add(i, filespath.get(i));
+            }
+            Log.i("qrsurf", "file : " + files_to_send.get(0));
+            init_and_set_external_file_info(files_to_send.get(0), "", 580, 0.5);
+            waiting_to_add_files = false;
+            this.should_display_anything = true;
+        }
+    }
+
+    private int index_of_currently_processed_file = -1;
+    private List<String> files_to_send = new ArrayList<String>();
     private void qrsurf_manager_thread_mainfunc(){
         try {
             int sleeptime = 1;
             synchronized (this){
-                if (!should_display_anything)
+                if (!should_display_anything || this.waiting_to_add_files)
                     sleeptime = 200;
             }
             Thread.sleep(sleeptime);
@@ -301,12 +336,91 @@ public class QRSurface extends GLSurfaceView implements
             last_ns_time_frame_requested_for_display = current_ns;
             Log.i("qrsurf", "manager thread wants new frame");
             if (should_display_anything){
-                QRSurface.this.requestRender();
+                synchronized (this){
+                    this.is_frame_drawing = true;
+                    this.produce_new_qrdata_to_surf_buffer();
+                    QRSurface.this.requestRender();
+
+                    while (this.is_frame_drawing) {
+                        try {
+                            this.wait(10000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }
 
 
 
     }
+
+
+    private int nframe_last_produced = -1;
+    private double header_time_start_ns = 0.0;
+    private double header_time_timeout_ns = 6e9;//6s
+    //returns status, 1=end
+    private int produce_new_qrdata_to_surf_buffer(){
+        int status = 0;
+        int nfiles = 0;
+        synchronized (this){
+            nfiles = this.files_to_send.size();
+        }
+        if (nfiles == 0)
+            return -1;
+
+        surface_buffer.surfdata.position(0);
+        int stat =
+            produce_next_qr_grayscale_image_to_mem(this.surface_buffer.surfdata,
+                                                   this.surface_buffer.produced_width_buffer);
+        this.surface_buffer.current_width = this.surface_buffer.produced_width_buffer.asIntBuffer().get(0);
+        this.surface_buffer.current_height = this.surface_buffer.current_width;
+
+        this.surface_buffer.current_qrbuffer_size_width = (int)upper_power_of_two((long)this.surface_buffer.current_width);
+        this.surface_buffer.current_qrbuffer_size_height = this.surface_buffer.current_qrbuffer_size_width;
+
+        Log.i("qrsurf", "got buff size : "+this.surface_buffer.current_height + " pow2 : "+this.surface_buffer.current_qrbuffer_size_width);
+
+        if (stat == 1){
+            synchronized (this){
+                destroy_current_encoder();
+                this.waiting_to_add_files = false;
+            }
+        }
+
+        return status;
+    }
+
+
+    static long upper_power_of_two(long v)
+    {
+        v--;
+        v |= v >> 1;
+        v |= v >> 2;
+        v |= v >> 4;
+        v |= v >> 8;
+        v |= v >> 16;
+        v++;
+        return v;
+    }
+
+    //native part
+
+    public static native int init_and_set_external_file_info(String filename, String filepath,
+                                                             int suggested_qr_payload_length,
+                                                             double suggested_err_fraction //NOTIMPL
+                                                              );
+
+
+    //returns status, if status=1, the frame sequence is done
+    //ByteBuffer must have already allocated enough memory in advance (might have more than necessary)
+    // this function populates the buffer
+    // produced_width is the 4-byte buffer for holding the obtained width
+    public static native int produce_next_qr_grayscale_image_to_mem(ByteBuffer produced_image, ByteBuffer produced_width);
+
+    public static native int tell_no_more_generating_header();
+
+    public static native int destroy_current_encoder();
 
 }

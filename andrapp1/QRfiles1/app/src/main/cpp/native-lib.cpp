@@ -2,7 +2,79 @@
 #include <string>
 
 #include "public_decoder_api.h"
+#include "public_encoder_api.h"
 
+#include <android/log.h>
+
+//encoder
+
+long upper_power_of_two(long v)
+{
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+    return v;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_QRSurface_tell_1no_1more_1generating_1header(JNIEnv *env,
+                                                                                jclass type) {
+    return (jint)tell_no_more_generating_header();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_QRSurface_destroy_1current_1encoder(JNIEnv *env, jclass type) {
+    return destroy_current_encoder();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_QRSurface_produce_1next_1qr_1grayscale_1image_1to_1mem(
+        JNIEnv *env, jclass type, jobject produced_image, jobject produced_width) {
+    char* bbufmem = (char*)((env)->GetDirectBufferAddress(produced_image));
+    char* obtained_mem;
+    int numproduced_width = 0;
+    int stat = produce_next_qr_grayscale_image_to_mem(&obtained_mem, &numproduced_width);
+#ifdef ANDROID
+    __android_log_print(ANDROID_LOG_INFO, "QNAT", "prodw %d", numproduced_width);
+#endif
+    int* intmem = (int*)((env)->GetDirectBufferAddress(produced_width));
+    memset(intmem, 0, sizeof(int));
+    *intmem = numproduced_width;
+
+    int upperpower = (int)upper_power_of_two((int)numproduced_width);
+    for (int i = 0; i < numproduced_width; i++)
+        for (int j = 0; j < numproduced_width; j++){
+            bbufmem[j*upperpower+i] = obtained_mem[i*numproduced_width+j];
+        }
+
+    //memcpy(bbufmem, obtained_mem, numproduced_width * numproduced_width);
+    return (jint)produced_width;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_QRSurface_init_1and_1set_1external_1file_1info(JNIEnv *env,
+                                                                                  jclass type,
+                                                                                  jstring filename_,
+                                                                                  jstring filepath_,
+                                                                                  jint suggested_qr_payload_length,
+                                                                                  jdouble suggested_err_fraction) {
+    const char *filename = env->GetStringUTFChars(filename_, 0);
+    const char *filepath = env->GetStringUTFChars(filepath_, 0);
+    jint stat = init_and_set_external_file_info(filename, filepath, suggested_qr_payload_length);
+    env->ReleaseStringUTFChars(filename_, filename);
+    env->ReleaseStringUTFChars(filepath_, filepath);
+    return stat;
+}
+
+///decoder
 
 extern "C"
 JNIEXPORT jint JNICALL

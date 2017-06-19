@@ -1,4 +1,5 @@
 #include <qr_frame_producer.h>
+#include "public_encoder_api.h"
 
 Qr_frame_producer* internal_frame_producer = NULL;
 
@@ -6,8 +7,9 @@ Qr_frame_producer* internal_frame_producer = NULL;
 int init_and_set_external_file_info(const char* filename,
                                     const char* filepath,
                                     int suggested_qr_payload_length){
-    if (internal_frame_producer != NULL){
+    if (internal_frame_producer == NULL){
         internal_frame_producer = new Qr_frame_producer;
+        internal_frame_producer->set_external_file_info(filename, filepath, suggested_qr_payload_length);
     }
     return 0;
 };
@@ -33,5 +35,6 @@ int tell_no_more_generating_header(){
 int destroy_current_encoder(){
     if (internal_frame_producer != NULL){
         delete internal_frame_producer;
+        internal_frame_producer = NULL;
     }
 };

@@ -25,6 +25,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -274,7 +276,7 @@ public class Qrfiles extends Activity {
 
 
         this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
-        this.qrsurf.setFPS(2.0);
+        this.qrsurf.setFPS(17.0);
         this.qrsurf.setZOrderOnTop(true);
         this.qrsurf.init_qrsurf_thread();//starts thread
 
@@ -334,6 +336,10 @@ public class Qrfiles extends Activity {
                         chosen_file_path = path;
                         Toast.makeText(Qrfiles.this, "FILE: " + chosen_file_path, Toast.LENGTH_SHORT).show();
                         //_tv.setText(_path);
+                        List<String> files = new ArrayList<String>();
+                        files.clear();
+                        files.add(0, chosen_file_path);
+                        Qrfiles.this.qrsurf.add_new_files_to_send((ArrayList<String>) files);
                     }
                 })
                 .build()

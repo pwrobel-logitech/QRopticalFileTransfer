@@ -9,5 +9,5 @@ float x, y;
 void main() {
   x = clamp(vTextureCoord.x,0.0,1.0);
    y = clamp(vTextureCoord.y,0.0,1.0);
-    gl_FragColor = 0.8*texture2D(tex, vec2(x,y)) + 0.2*vec4(1.0,x,y,1.0);
+    gl_FragColor = 1.0*texture2D(tex, vec2(x,y)) + 0.0*vec4(1.0,x,y,1.0);
 }
