@@ -5,6 +5,7 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -27,6 +28,18 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class QRSurface extends GLSurfaceView implements
         GLSurfaceView.Renderer {
+
+    public class SurfBuff {
+        //surface buffer in java
+        int max_width_unscaled = 512;
+        int current_width; //must be lower than the max value above. Must be power of 2
+        int current_height;
+        //which part of the buffer on x and y the actual, non 2^n size buffer occpies
+        double curr_texture_sample_fraction = 1.0;
+        ByteBuffer surfdata = ByteBuffer.allocateDirect(max_width_unscaled * max_width_unscaled);
+    };
+    SurfBuff surface_buffer = new SurfBuff();
+
 
     Context mContext; //interface for the main activity
     public QRSurface(Context context) {
@@ -68,19 +81,43 @@ public class QRSurface extends GLSurfaceView implements
         GLES20.glGenTextures(1, mTextureHandles, 0);
         mTextureHandle = mTextureHandles[0];
 
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureHandles[0]);
-        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glClearColor(0.0f, 1.0f, 1.0f, 0.0f);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glEnable( GLES20.GL_TEXTURE_2D );
 
-        SurfaceTexture oldSurfaceTexture = mSurfaceTexture;
-        mSurfaceTexture = new SurfaceTexture(mTextureHandle);
+        //GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureHandles[0]);
+        //GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureHandle);
+        //GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        //GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        //GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        //GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+
+        //GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, 2, 2, 0,
+        //       GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, surfdata);
+        //SurfaceTexture oldSurfaceTexture = mSurfaceTexture;
+        //mSurfaceTexture = new SurfaceTexture(mTextureHandle);
+
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureHandle);
+
+        int uTextureloc = mOffscreenShader.getHandle("tex");
+        GLES20.glUniform1i(uTextureloc, 0);
+
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, 2, 2, 0,
+                GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, null);
 
         float rot = 0.0f;
         Matrix.setRotateM(mOrientationM, 0, rot, 0f, 0f, 1f);
 
     }
+
+
+
 
     private Shader mOffscreenShader = null;
     private float[] mTransformM = new float[16];
@@ -92,25 +129,72 @@ public class QRSurface extends GLSurfaceView implements
         GLES20.glClearColor(0.0f, 1.0f, 1.0f, 0.0f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-        mSurfaceTexture.updateTexImage();
-        mSurfaceTexture.getTransformMatrix(mTransformM);
+
+        for (int q = 0 ; q<surface_buffer.surfdata.capacity();q++){
+            surface_buffer.surfdata.put(q, (byte)0xFF);
+        }
+/*
+        surfdata.put(0, (byte)0x44);
+        surfdata.put(1, (byte)0x44);
+        surfdata.put(2, (byte)0x44);
+        surfdata.put(3, (byte)0x44);
+
+
+        surfdata.put(4, (byte)0xAA);
+        surfdata.put(5, (byte)0xAA);
+        surfdata.put(6, (byte)0xAA);
+        surfdata.put(7, (byte)0xAA);
+
+
+        surfdata.put(8, (byte)0x44);
+        surfdata.put(9, (byte)0x44);
+        surfdata.put(10, (byte)0x44);
+        surfdata.put(11, (byte)0x44);
+
+
+        surfdata.put(12, (byte)0x44);
+        surfdata.put(13, (byte)0x44);
+        surfdata.put(14, (byte)0x44);
+        surfdata.put(15, (byte)0x44);
+*/
+        surface_buffer.surfdata.position(0);
+
+
+        //GLUtils.texImage2D()
+
+        //mSurfaceTexture.updateTexImage();
+        //mSurfaceTexture.getTransformMatrix(mTransformM);
 
         GLES20.glViewport(0, 0, this.surfw, this.surfh);
 
+
         mOffscreenShader.useProgram();
 
-        int uTransformM = mOffscreenShader.getHandle("uTransformM");
-        int uOrientationM = mOffscreenShader.getHandle("uOrientationM");
+        //int uTransformM = mOffscreenShader.getHandle("uTransformM");
+        //int uOrientationM = mOffscreenShader.getHandle("uOrientationM");
 
-        GLES20.glUniformMatrix4fv(uTransformM, 1, false, mTransformM, 0);
-        GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
+        //int uTextureloc = mOffscreenShader.getHandle("tex");
+
+        //GLES20.glUniformMatrix4fv(uTransformM, 1, false, mTransformM, 0);
+        //GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
         //GLES20.glUniform2fv(uRatioV, 1, mRatio, 0);
         //GLES20.glUniform2fv(usizes, 1, sizeprev, 0);
         //GLES20.glUniform1f(urpevratio, m_prev_yx_ratio);
         //GLES20.glUniform1f(usuccratio, (float)curr_succ_ratio_got_from_camworker);
 
+       // GLES20.glGenTextures ( 1, textureId, 0 );
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureHandle);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureHandle);
+
+        //GLES20.glUniform1i(uTextureloc, 0);
+
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+
+        GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, 2, 2,
+                GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, surface_buffer.surfdata);
 
         //render quad
         int aPosition = mOffscreenShader.getHandle("aPosition");
