@@ -55,7 +55,7 @@ Java_qrfiles_pwrobel_myapplication_QRSurface_produce_1next_1qr_1grayscale_1image
         }
 
     //memcpy(bbufmem, obtained_mem, numproduced_width * numproduced_width);
-    return (jint)produced_width;
+    return (jint)stat;
 }
 
 extern "C"

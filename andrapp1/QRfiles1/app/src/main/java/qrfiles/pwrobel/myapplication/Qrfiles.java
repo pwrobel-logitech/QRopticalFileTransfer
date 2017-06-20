@@ -276,7 +276,8 @@ public class Qrfiles extends Activity {
 
 
         this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
-        this.qrsurf.setFPS(17.0);
+        this.qrsurf.setFPS(15.0);
+        this.qrsurf.set_header_display_timeout(7.0);
         this.qrsurf.setZOrderOnTop(true);
         this.qrsurf.init_qrsurf_thread();//starts thread
 

@@ -16,7 +16,7 @@ void main() {
     vTextureCoord.x *=texratio;
     vTextureCoord.y *=texratio;
 
-    gl_Position.x*=0.91;
-    gl_Position.y*=0.91;
+    gl_Position.x*=0.85;
+    gl_Position.y*=0.85;
  
 }

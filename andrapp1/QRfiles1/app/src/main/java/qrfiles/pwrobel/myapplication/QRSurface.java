@@ -274,7 +274,7 @@ public class QRSurface extends GLSurfaceView implements
 
 
     private boolean should_display_anything = false;
-    private double fps = 1;
+    private double fps = 5;
     private double last_ns_time_frame_requested_for_display = 0.0;
     private boolean qrsurf_manager_thread_running = false;
     private Thread qrsufr_manager_thread = null;
@@ -312,13 +312,18 @@ public class QRSurface extends GLSurfaceView implements
         synchronized (this){
             destroy_current_encoder();
             files_to_send.clear();
+            this.index_of_currently_processed_file++;
             for (int i = 0; i < filespath.size(); i++){
                 files_to_send.add(i, filespath.get(i));
             }
-            Log.i("qrsurf", "file : " + files_to_send.get(0));
-            init_and_set_external_file_info(files_to_send.get(0), "", 580, 0.5);
+            //files_to_send.add(1, filespath.get(0));
+            Log.i("qrsurf", "index : " + this.index_of_currently_processed_file+
+                    ", file : " + files_to_send.get(this.index_of_currently_processed_file));
+            init_and_set_external_file_info(files_to_send.get(this.index_of_currently_processed_file), "", 580, 0.5);
+            this.header_time_start_ns = System.nanoTime();
             waiting_to_add_files = false;
             this.should_display_anything = true;
+            this.is_header_generating = true;
         }
     }
 
@@ -345,6 +350,16 @@ public class QRSurface extends GLSurfaceView implements
             if (should_display_anything){
                 synchronized (this){
                     this.is_frame_drawing = true;
+
+                    if (this.is_header_generating) {
+                        double currtime = System.nanoTime();
+                        if (currtime - this.header_time_start_ns > this.header_time_timeout_ns) {
+                            this.is_header_generating = false;
+                            Log.i("PPP", "header stooops");
+                            tell_no_more_generating_header();
+                        }
+                    }
+
                     this.produce_new_qrdata_to_surf_buffer();
                     QRSurface.this.requestRender();
 
@@ -364,9 +379,17 @@ public class QRSurface extends GLSurfaceView implements
     }
 
 
+
+    public void set_header_display_timeout(double header_timeout_s){
+        synchronized (this) {
+            this.header_time_timeout_ns = 1.0e9 * header_timeout_s;
+        }
+    }
+
+    private boolean is_header_generating = false;
     private int nframe_last_produced = -1;
     private double header_time_start_ns = 0.0;
-    private double header_time_timeout_ns = 6e9;//6s
+    private double header_time_timeout_ns = 7e9;//7s
     //returns status, 1=end
     private int produce_new_qrdata_to_surf_buffer(){
         int status = 0;
@@ -392,8 +415,24 @@ public class QRSurface extends GLSurfaceView implements
         if (stat == 1){
             synchronized (this){
                 destroy_current_encoder();
-                this.waiting_to_add_files = false;
+                //this.waiting_to_add_files = false;
+                //this.should_display_anything = false;
+                Log.i("PPP", "frame producer ended, destroying..");
+
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+                this.index_of_currently_processed_file++;
+                if (this.index_of_currently_processed_file < this.files_to_send.size()){
+                    init_and_set_external_file_info(files_to_send.get(this.index_of_currently_processed_file), "", 580, 0.5);
+                    this.is_header_generating = true;
+                    this.header_time_start_ns = System.nanoTime();
+                    this.should_display_anything = true;
+                }
+
         }
 
         return status;
