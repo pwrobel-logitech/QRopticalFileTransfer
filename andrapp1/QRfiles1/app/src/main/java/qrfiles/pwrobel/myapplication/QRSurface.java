@@ -98,7 +98,7 @@ public class QRSurface extends GLSurfaceView implements
         GLES20.glGenTextures(1, mTextureHandles, 0);
         mTextureHandle = mTextureHandles[0];
 
-        GLES20.glClearColor(0.0f, 1.0f, 1.0f, 0.0f);
+        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glEnable( GLES20.GL_TEXTURE_2D );
 
@@ -147,6 +147,13 @@ public class QRSurface extends GLSurfaceView implements
 
     @Override
     public void onDrawFrame(GL10 gl) {
+
+        boolean should_display = true;
+        synchronized (this){
+            should_display = this.should_display_anything;
+        }
+        if (!should_display)
+            return;
 
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
@@ -272,7 +279,7 @@ public class QRSurface extends GLSurfaceView implements
     private boolean qrsurf_manager_thread_running = false;
     private Thread qrsufr_manager_thread = null;
     public void init_qrsurf_thread(){
-        this.should_display_anything = true;
+        //this.should_display_anything = true;
         qrsufr_manager_thread = new Thread(new Runnable() {
             @Override
             public void run() {
