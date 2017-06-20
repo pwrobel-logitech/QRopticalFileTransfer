@@ -95,6 +95,25 @@ public class Qrfiles extends Activity {
         uparrowbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean is_switching_views = false;
+                synchronized (this){
+                    is_switching_views = Qrfiles.this.is_switching_views;
+                }
+                if (is_switching_views)
+                    return;
+
+                Qrfiles.this.is_switching_views = true;
+                new Timer().schedule(new TimerTask()
+                { //unblock button after certain interval - hack
+                    @Override
+                    public void run()
+                    {
+                        synchronized (Qrfiles.this){
+                            Qrfiles.this.is_switching_views = false;
+                        }
+                    }
+                }, 1000);
+
                 Qrfiles.this.main_layout.setVisibility(View.GONE);
                 Qrfiles.this.uparrowbutton.setOnClickListener(null);
                 uparrowbutton.setClickable(false);
@@ -107,6 +126,7 @@ public class Qrfiles extends Activity {
                     Qrfiles.this.uparrowbutton.requestLayout();
                     Qrfiles.this.is_in_decoder_view = false;
                     Qrfiles.this.is_in_qr_sender_view = true;
+                    //Qrfiles.this.is_switching_views = false;
                     return;
                 }
                 if (!Qrfiles.this.is_in_decoder_view) {
@@ -116,6 +136,7 @@ public class Qrfiles extends Activity {
                     Qrfiles.this.uparrowbutton.requestLayout();
                     Qrfiles.this.is_in_decoder_view = true;
                     Qrfiles.this.is_in_qr_sender_view = false;
+                    //Qrfiles.this.is_switching_views = false;
                     return;
                 }
             }
@@ -168,7 +189,9 @@ public class Qrfiles extends Activity {
     }
 
 
+    private boolean is_switching_views = false;
     private void switch_to_detector_view(){
+
 
         if (this.qrsurf != null)
             this.qrsurf.destroy_all_resources(); //actually, only deinits qrsurf manager thread
@@ -252,6 +275,8 @@ public class Qrfiles extends Activity {
         this.main_layout.setVisibility(View.VISIBLE);
         this.main_layout.requestLayout();
 
+
+
     }
 
 
@@ -260,6 +285,7 @@ public class Qrfiles extends Activity {
     String chosen_file_path;
     ChooserDialog fileselection_dialog_in_sender;
     private void switch_to_qrsender_view(){
+
         this.destroyall();  //destroy camera and detector stuff
 
         //set_decoder_elements();
@@ -345,6 +371,7 @@ public class Qrfiles extends Activity {
                 })
                 .build()
                 .show();
+
 
 
 
