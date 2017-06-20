@@ -43,6 +43,15 @@
         android:layout_margin="16dp"
         android:src="@mipmap/up_arrow_icon" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/foldericon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:clickable="true"
+        android:layout_margin="16dp"
+        app:srcCompat="@mipmap/fold3lens" />
+
 
 
 </android.support.design.widget.CoordinatorLayout>
