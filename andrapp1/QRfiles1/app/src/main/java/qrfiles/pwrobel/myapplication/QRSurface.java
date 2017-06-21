@@ -1,5 +1,6 @@
 package qrfiles.pwrobel.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
@@ -308,6 +309,7 @@ public class QRSurface extends GLSurfaceView implements
                 }
                 synchronized (QRSurface.this) {
                     QRSurface.this.nframe_last_produced = -1;
+                    QRSurface.this.nframe_data_last_produced = -1;
                     QRSurface.this.total_number_of_dataframes_produced_by_the_encoder = 0;
                 }
             }
@@ -333,6 +335,8 @@ public class QRSurface extends GLSurfaceView implements
             waiting_to_add_files = false;
             this.should_display_anything = true;
             this.is_header_generating = true;
+            this.nframe_last_produced = -1;
+            this.nframe_data_last_produced = -1;
         }
     }
 
@@ -405,6 +409,7 @@ public class QRSurface extends GLSurfaceView implements
     private double time_ns_interval_upload_updated = 1.0e8;
     private boolean is_header_generating = false;
     private int nframe_last_produced = -1;
+    private int nframe_data_last_produced = -1;
     private int total_number_of_dataframes_produced_by_the_encoder = 0;
     private double header_time_start_ns = 0.0;
     private double header_time_timeout_ns = 7e9;//7s
@@ -423,6 +428,8 @@ public class QRSurface extends GLSurfaceView implements
             produce_next_qr_grayscale_image_to_mem(this.surface_buffer.surfdata,
                                                    this.surface_buffer.produced_width_buffer);
         this.nframe_last_produced++;
+        if (!this.is_header_generating)
+            this.nframe_data_last_produced++;
         this.surface_buffer.current_width = this.surface_buffer.produced_width_buffer.asIntBuffer().get(0);
         this.surface_buffer.current_height = this.surface_buffer.current_width;
 
@@ -430,6 +437,24 @@ public class QRSurface extends GLSurfaceView implements
         this.surface_buffer.current_qrbuffer_size_height = this.surface_buffer.current_qrbuffer_size_width;
 
         Log.i("qrsurf", "got buff size : "+this.surface_buffer.current_height + " pow2 : "+this.surface_buffer.current_qrbuffer_size_width);
+
+        double currt = System.nanoTime();
+        if (this.total_number_of_dataframes_produced_by_the_encoder > 0)
+        if (currt - this.time_ns_last_upload_progressbar_done > this.time_ns_interval_upload_updated
+                || this.nframe_last_produced == this.total_number_of_dataframes_produced_by_the_encoder-1){
+            Log.i("qrsurf", "will draw progressbarsurf");
+            final double progr = ((double) this.nframe_data_last_produced) / ((double)this.total_number_of_dataframes_produced_by_the_encoder-1);
+            Activity a = (Activity) this.getContext();
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.PROGRESS, true);
+                }
+            });
+
+            this.time_ns_last_upload_progressbar_done = currt;
+        }
+
 
         if (stat == 1){
 
@@ -456,6 +481,7 @@ public class QRSurface extends GLSurfaceView implements
                     this.is_header_generating = true;
                     this.header_time_start_ns = System.nanoTime();
                     this.should_display_anything = true;
+                    this.time_ns_last_upload_progressbar_done = System.nanoTime();
                 }
 
         }
