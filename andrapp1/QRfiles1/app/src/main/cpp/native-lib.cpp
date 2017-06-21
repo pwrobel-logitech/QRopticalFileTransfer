@@ -22,6 +22,13 @@ long upper_power_of_two(long v)
 
 extern "C"
 JNIEXPORT jint JNICALL
+Java_qrfiles_pwrobel_myapplication_QRSurface_tell_1how_1much_1frames_1will_1be_1generated(
+        JNIEnv *env, jclass type) {
+    return (jint)tell_how_much_frames_will_be_generated();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_QRSurface_tell_1no_1more_1generating_1header(JNIEnv *env,
                                                                                 jclass type) {
     return (jint)tell_no_more_generating_header();

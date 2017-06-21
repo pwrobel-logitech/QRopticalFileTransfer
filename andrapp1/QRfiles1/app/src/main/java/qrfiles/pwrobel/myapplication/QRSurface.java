@@ -226,6 +226,7 @@ public class QRSurface extends GLSurfaceView implements
 
 
         Log.i("QRSurf", "ondrawframe");
+        boolean shoulddisplay = true;
         synchronized (this) {
             this.is_frame_drawing = false;
             this.notifyAll();
@@ -242,6 +243,10 @@ public class QRSurface extends GLSurfaceView implements
 
 
         try {
+            synchronized (this) {
+                this.is_frame_drawing = false;
+                this.notifyAll();
+            }
             this.qrsufr_manager_thread.join();
         } catch (InterruptedException e) {
             Log.i("QRSurfThr", "Failed to join thread");
@@ -301,6 +306,10 @@ public class QRSurface extends GLSurfaceView implements
                         break;
                     qrsurf_manager_thread_mainfunc();
                 }
+                synchronized (QRSurface.this) {
+                    QRSurface.this.nframe_last_produced = -1;
+                    QRSurface.this.total_number_of_dataframes_produced_by_the_encoder = 0;
+                }
             }
         });
         qrsufr_manager_thread.start();
@@ -355,8 +364,10 @@ public class QRSurface extends GLSurfaceView implements
                         double currtime = System.nanoTime();
                         if (currtime - this.header_time_start_ns > this.header_time_timeout_ns) {
                             this.is_header_generating = false;
-                            Log.i("PPP", "header stooops");
                             tell_no_more_generating_header();
+                            this.total_number_of_dataframes_produced_by_the_encoder
+                                = tell_how_much_frames_will_be_generated();
+                            Log.i("PPP", "header stooops, TOT frames : "+ this.total_number_of_dataframes_produced_by_the_encoder);
                         }
                     }
 
@@ -365,7 +376,7 @@ public class QRSurface extends GLSurfaceView implements
 
                     while (this.is_frame_drawing) {
                         try {
-                            this.wait(10000);
+                            this.wait(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -379,6 +390,10 @@ public class QRSurface extends GLSurfaceView implements
     }
 
 
+    private CustomProgressBar encoder_progressbar = null;
+    public synchronized void setCustomProgressBar(CustomProgressBar progbar){
+        this.encoder_progressbar = progbar;
+    }
 
     public void set_header_display_timeout(double header_timeout_s){
         synchronized (this) {
@@ -386,17 +401,20 @@ public class QRSurface extends GLSurfaceView implements
         }
     }
 
+    private double time_ns_last_upload_progressbar_done = System.nanoTime();
+    private double time_ns_interval_upload_updated = 1.0e8;
     private boolean is_header_generating = false;
     private int nframe_last_produced = -1;
+    private int total_number_of_dataframes_produced_by_the_encoder = 0;
     private double header_time_start_ns = 0.0;
     private double header_time_timeout_ns = 7e9;//7s
     //returns status, 1=end
     private int produce_new_qrdata_to_surf_buffer(){
         int status = 0;
         int nfiles = 0;
-        synchronized (this){
-            nfiles = this.files_to_send.size();
-        }
+
+        nfiles = this.files_to_send.size();
+
         if (nfiles == 0)
             return -1;
 
@@ -414,7 +432,7 @@ public class QRSurface extends GLSurfaceView implements
         Log.i("qrsurf", "got buff size : "+this.surface_buffer.current_height + " pow2 : "+this.surface_buffer.current_qrbuffer_size_width);
 
         if (stat == 1){
-            synchronized (this){
+
 
                 try {
                     Thread.sleep(2800);
@@ -431,7 +449,7 @@ public class QRSurface extends GLSurfaceView implements
                 Log.i("PPP", "frame producer ended, destroying..");
 
 
-            }
+
                 this.index_of_currently_processed_file++;
                 if (this.index_of_currently_processed_file < this.files_to_send.size()){
                     init_and_set_external_file_info(files_to_send.get(this.index_of_currently_processed_file), "", 580, 0.5);
@@ -473,6 +491,8 @@ public class QRSurface extends GLSurfaceView implements
     public static native int produce_next_qr_grayscale_image_to_mem(ByteBuffer produced_image, ByteBuffer produced_width);
 
     public static native int tell_no_more_generating_header();
+
+    public static native int tell_how_much_frames_will_be_generated();
 
     public static native int destroy_current_encoder();
 

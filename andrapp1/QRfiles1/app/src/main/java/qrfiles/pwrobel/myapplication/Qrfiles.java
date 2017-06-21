@@ -52,6 +52,8 @@ public class Qrfiles extends Activity {
 
     QRSurface qrsurf = null;
 
+    CustomProgressBar progressBar_encoder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -192,11 +194,13 @@ public class Qrfiles extends Activity {
     private boolean is_switching_views = false;
     private void switch_to_detector_view(){
 
+        Log.i("QTHRM", "about to destroy qrsurf resources");
 
         if (this.qrsurf != null)
             this.qrsurf.destroy_all_resources(); //actually, only deinits qrsurf manager thread
         this.qrsurf = null;
 
+        Log.i("QTHRM", "destroyed qrsurf resources");
         //setContentView(R.layout.activity_qrfiles);
 
 
@@ -275,7 +279,7 @@ public class Qrfiles extends Activity {
         this.main_layout.setVisibility(View.VISIBLE);
         this.main_layout.requestLayout();
 
-
+        Runtime.getRuntime().gc();
 
     }
 
@@ -302,7 +306,7 @@ public class Qrfiles extends Activity {
 
 
         this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
-        this.qrsurf.setFPS(15.0);
+        this.qrsurf.setFPS(16.0);
         this.qrsurf.set_header_display_timeout(7.0);
         this.qrsurf.setZOrderOnTop(true);
         this.qrsurf.init_qrsurf_thread();//starts thread
@@ -323,6 +327,9 @@ public class Qrfiles extends Activity {
         this.qrsender_view.requestLayout();
 
 
+
+        this.progressBar_encoder = (CustomProgressBar) this.findViewById(R.id.encoder_progressbar);
+        this.qrsurf.setCustomProgressBar(progressBar_encoder);
 
 
         adView = (AdView) this.findViewById(R.id.adView);
@@ -374,7 +381,7 @@ public class Qrfiles extends Activity {
 
 
 
-
+            Runtime.getRuntime().gc();
 
     }
 
@@ -441,6 +448,7 @@ public class Qrfiles extends Activity {
         this.camSurf = null;
         this.camworker = null;
 
+        Runtime.getRuntime().gc();
         System.gc();
     }
 
