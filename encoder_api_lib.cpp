@@ -31,6 +31,11 @@ int tell_no_more_generating_header(){
     return internal_frame_producer->tell_no_more_generating_header();
 };
 
+int tell_how_much_frames_will_be_generated(){
+    if (internal_frame_producer == NULL)
+        return -1;
+    return internal_frame_producer->tell_how_much_frames_will_be_generated();
+};
 
 int destroy_current_encoder(){
     if (internal_frame_producer != NULL){

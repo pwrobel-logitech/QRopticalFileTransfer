@@ -288,6 +288,10 @@ void Qr_frame_producer::setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint3
     this->total_frame_numbers_that_will_be_produced_ = this->chunk_length_ * N + rN;
 }
 
+int Qr_frame_producer::tell_how_much_frames_will_be_generated(){
+    return this->total_frame_numbers_that_will_be_produced_;
+}
+
 int Qr_frame_producer::tell_no_more_generating_header(){
     this->is_header_frame_generating_switch_pending_ = true;
     return 0;

@@ -222,6 +222,7 @@ protected:
     //Typical code to correct up to 2 bits of errors would stand as (255,251)
     //It would correspond that each bit of the series of 255 frames encodes only
     //the 251 bits of real data - 4 frames would constitue the overhead.
+    //if we know the wrong positions, then we have erasure and can correct up to 4 bits
     uint16_t RSn_;
     uint16_t RSk_;
 

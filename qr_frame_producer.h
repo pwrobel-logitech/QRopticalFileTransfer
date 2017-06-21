@@ -20,6 +20,9 @@ public:
     int produce_next_qr_grayscale_image_to_mem(char** produced_image, int *produced_width);
     int tell_no_more_generating_header(); // will generate header frame no more, -1 if the not enough header generated
 
+    //returns the amount of frames that will be produced by the encoder.
+    int tell_how_much_frames_will_be_generated();
+
     //static int needMetaData(FileChunk*);
     //static int needData(FileChunk*);
     static char* file;

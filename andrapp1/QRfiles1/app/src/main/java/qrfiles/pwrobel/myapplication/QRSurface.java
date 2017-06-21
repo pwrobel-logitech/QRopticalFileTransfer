@@ -404,6 +404,7 @@ public class QRSurface extends GLSurfaceView implements
         int stat =
             produce_next_qr_grayscale_image_to_mem(this.surface_buffer.surfdata,
                                                    this.surface_buffer.produced_width_buffer);
+        this.nframe_last_produced++;
         this.surface_buffer.current_width = this.surface_buffer.produced_width_buffer.asIntBuffer().get(0);
         this.surface_buffer.current_height = this.surface_buffer.current_width;
 
@@ -414,16 +415,22 @@ public class QRSurface extends GLSurfaceView implements
 
         if (stat == 1){
             synchronized (this){
+
+                try {
+                    Thread.sleep(2800);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 destroy_current_encoder();
+                for (int i = 0; i < this.surface_buffer.surfdata.capacity(); i++){
+                    this.surface_buffer.surfdata.put(i, (byte)0xff);
+                }
                 //this.waiting_to_add_files = false;
                 //this.should_display_anything = false;
                 Log.i("PPP", "frame producer ended, destroying..");
 
-                try {
-                    Thread.sleep(400);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
             }
                 this.index_of_currently_processed_file++;
                 if (this.index_of_currently_processed_file < this.files_to_send.size()){

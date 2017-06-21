@@ -23,7 +23,8 @@ int produce_next_qr_grayscale_image_to_mem(char** produced_image, int *produced_
 // -2 if internally encoder is not initialized yet
 int tell_no_more_generating_header();
 
-
+//after frame generation is done, this will tell in advance how much data frames will be generated
+int tell_how_much_frames_will_be_generated();
 
 //0 if destroyed successfully, -1 if it was destroyed internally before
 int destroy_current_encoder();
