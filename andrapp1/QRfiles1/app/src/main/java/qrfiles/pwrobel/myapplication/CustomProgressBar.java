@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -86,6 +87,13 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
         this.time_limit_for_timeout = sec;
     }
 
+    private String filename = "";
+    public synchronized void setFileName(String fname){
+        if (fname != null)
+            this.filename = fname;
+    }
+
+    private Rect textrect = new Rect();
     public synchronized void drawMe(long progr, progressBarType type, boolean shoulddraw) {
         if (shoulddraw == false){
             return;
@@ -182,16 +190,23 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
 
                         if (type == progressBarType.PROGRESS) {
                             rectanglePaint.setColor(Color.BLACK);
-                            rectanglePaint.setTextSize(30);
-                            c.drawText(progr/10.0f+" %", -20+w/2.0f, 0.68f*h, rectanglePaint);
+                            rectanglePaint.setTextSize(32);
+                            String stringtodraw = progr/10.0f+" %";
+                            rectanglePaint.getTextBounds(stringtodraw, 0, stringtodraw.length(), this.textrect);
+                            c.drawText(stringtodraw, (int)(w/2.0-this.textrect.width()/2.0),
+                                    (int)(h/2.0+this.textrect.height()/2.0), rectanglePaint);
                         }
 
                         if (type == progressBarType.TIMEOUT){
                             double timeval = ((this.time_limit_for_timeout-(progr/1000.0)*this.time_limit_for_timeout));
                             rectanglePaint.setColor(Color.BLACK);
-                            rectanglePaint.setTextSize(30);
-                            c.drawText(String.format( "%.2f", timeval)+"s"
-                                    , -20+w/2.0f, 0.68f*h, rectanglePaint);
+                            rectanglePaint.setTextSize(32);
+                            String stringtodraw = this.filename+String.format( "%.2f", timeval)+"s";
+                            Log.i("STRQ", stringtodraw);
+                            rectanglePaint.getTextBounds(stringtodraw, 0, stringtodraw.length(), this.textrect);
+                            c.drawText(stringtodraw, (int)(w/2.0-this.textrect.width()/2.0),
+                                       (int)(h/2.0+this.textrect.height()/2.0), rectanglePaint);
+                            //-20+w/2.0f, 0.68f*h
                         }
 
 

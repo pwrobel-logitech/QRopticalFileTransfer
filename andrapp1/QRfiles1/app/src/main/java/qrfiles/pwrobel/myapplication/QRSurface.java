@@ -339,6 +339,8 @@ public class QRSurface extends GLSurfaceView implements
             this.nframe_data_last_produced = -1;
             this.time_ns_last_upload_progressbar_done = System.nanoTime();
             this.time_ns_header_initialized = System.nanoTime();
+
+            this.update_descriptions_in_views();
         }
     }
 
@@ -374,6 +376,7 @@ public class QRSurface extends GLSurfaceView implements
                             this.total_number_of_dataframes_produced_by_the_encoder
                                 = tell_how_much_frames_will_be_generated();
                             Log.i("PPP", "header stooops, TOT frames : "+ this.total_number_of_dataframes_produced_by_the_encoder);
+                            this.description_status_1 = this.getStringResourceByName("upload_file_desc_string");
                         }
                     }
 
@@ -395,6 +398,12 @@ public class QRSurface extends GLSurfaceView implements
 
     }
 
+    private TextView encoder_status_textfield = null;
+    private TextView encoder_status_textfield2 = null;
+    public synchronized void setCustomTextViewStatus(TextView tv, TextView tv2){
+        this.encoder_status_textfield = tv;
+        this.encoder_status_textfield2 = tv2;
+    }
 
     private CustomProgressBar encoder_progressbar = null;
     public synchronized void setCustomProgressBar(CustomProgressBar progbar){
@@ -416,6 +425,10 @@ public class QRSurface extends GLSurfaceView implements
     private int total_number_of_dataframes_produced_by_the_encoder = 0;
     private double header_time_start_ns = 0.0;
     private double header_time_timeout_ns = 7e9;//7s
+
+    private String timeoutbar_descr_string = "";
+    private String description_status_1 = "";
+    private String file_trimmed_text = "";
     //returns status, 1=end
     private int produce_new_qrdata_to_surf_buffer(){
         int status = 0;
@@ -452,7 +465,12 @@ public class QRSurface extends GLSurfaceView implements
                 a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                        QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.PROGRESS, true);
+                        //QRSurface.this.encoder_progressbar.setFileName(files_to_send.get(QRSurface.this.index_of_currently_processed_file));
+                    QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.PROGRESS, true);
+                    if(QRSurface.this.encoder_status_textfield != null)
+                        QRSurface.this.encoder_status_textfield.setText(QRSurface.this.description_status_1);
+                    if(QRSurface.this.encoder_status_textfield2 != null)
+                        QRSurface.this.encoder_status_textfield2.setText(QRSurface.this.file_trimmed_text);
                     }
             });
 
@@ -473,8 +491,13 @@ public class QRSurface extends GLSurfaceView implements
                 a.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        QRSurface.this.encoder_progressbar.setFileName(timeoutbar_descr_string);
                         QRSurface.this.encoder_progressbar.setTimeLimitForDrawingTimeout(QRSurface.this.header_time_timeout_ns/1.0e9);
                         QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.TIMEOUT, true);
+                        if(QRSurface.this.encoder_status_textfield != null)
+                            QRSurface.this.encoder_status_textfield.setText(QRSurface.this.description_status_1);
+                        if(QRSurface.this.encoder_status_textfield2 != null)
+                            QRSurface.this.encoder_status_textfield2.setText(QRSurface.this.file_trimmed_text);
                     }
                 });
             this.time_ns_last_upload_progressbar_done = currt;
@@ -509,6 +532,8 @@ public class QRSurface extends GLSurfaceView implements
                     this.should_display_anything = true;
                     this.time_ns_last_upload_progressbar_done = System.nanoTime();
                     this.time_ns_header_initialized = System.nanoTime();
+
+                    this.update_descriptions_in_views();
                 }
 
         }
@@ -516,6 +541,27 @@ public class QRSurface extends GLSurfaceView implements
         return status;
     }
 
+
+    private void update_descriptions_in_views(){
+        this.timeoutbar_descr_string = this.getStringResourceByName("start_sequence_string");
+        this.description_status_1 = this.getStringResourceByName("start_sequence_upload_file_desc");
+        this.file_trimmed_text = trimFileNameText(files_to_send.get(QRSurface.this.index_of_currently_processed_file));
+    }
+
+
+    private String getStringResourceByName(String aString) {
+        Activity a = (Activity) this.getContext();
+        if (a == null)
+            return null;
+        String packageName = a.getPackageName();
+        int resId = a.getResources()
+                .getIdentifier(aString, "string", packageName);
+        if (resId == 0) {
+            return aString;
+        } else {
+            return a.getString(resId);
+        }
+    }
 
     static long upper_power_of_two(long v)
     {
@@ -527,6 +573,11 @@ public class QRSurface extends GLSurfaceView implements
         v |= v >> 16;
         v++;
         return v;
+    }
+
+    static String trimFileNameText(String filepath){
+        int index = filepath.lastIndexOf("/");
+        return filepath.substring(index + 1);
     }
 
     //native part

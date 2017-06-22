@@ -59,4 +59,24 @@
 
     </qrfiles.pwrobel.myapplication.SquareLayout>
 
+    <TextView
+        android:id="@+id/encoder_status_textfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text=" "
+        tools:text="" />
+
+    <TextView
+        android:id="@+id/encoder_status_textfield2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text=" "
+        tools:text="" />
+
+
+
 </android.widget.LinearLayout>

@@ -52,6 +52,8 @@ public class Qrfiles extends Activity {
 
     QRSurface qrsurf = null;
 
+    TextView encoder_status_textfield;
+    TextView encoder_status_textfield2;
     CustomProgressBar progressBar_encoder;
 
     @Override
@@ -331,6 +333,9 @@ public class Qrfiles extends Activity {
         this.progressBar_encoder = (CustomProgressBar) this.findViewById(R.id.encoder_progressbar);
         this.qrsurf.setCustomProgressBar(progressBar_encoder);
 
+        this.encoder_status_textfield = (TextView) this.findViewById(R.id.encoder_status_textfield);
+        this.encoder_status_textfield2 = (TextView) this.findViewById(R.id.encoder_status_textfield2);
+        this.qrsurf.setCustomTextViewStatus(this.encoder_status_textfield, this.encoder_status_textfield2);
 
         adView = (AdView) this.findViewById(R.id.adView);
 
