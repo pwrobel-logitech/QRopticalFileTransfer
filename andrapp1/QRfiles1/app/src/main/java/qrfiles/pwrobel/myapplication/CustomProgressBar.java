@@ -25,7 +25,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
 
 
 
-    public enum progressBarType {NOISE, PROGRESS};
+    public enum progressBarType {NOISE, PROGRESS, TIMEOUT};
 
     private final Paint rectanglePaint = new Paint();
 
@@ -79,6 +79,11 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
             Log.i("PRBAR", "progressbar surface destroyed");
             this.is_operational = false;
         //}
+    }
+
+    private double time_limit_for_timeout = 0;
+    public synchronized void setTimeLimitForDrawingTimeout(double sec){
+        this.time_limit_for_timeout = sec;
     }
 
     public synchronized void drawMe(long progr, progressBarType type, boolean shoulddraw) {
@@ -163,16 +168,30 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                             rectanglePaint.setColor(Color.rgb(redratio, greenratio, 0));
                         } else if (type == progressBarType.PROGRESS) {
                             rectanglePaint.setColor(Color.rgb(0x55, 0x55, 0xff));
+                        } else if (type == progressBarType.TIMEOUT) {
+                            rectanglePaint.setColor(Color.rgb(0xff, 0x88, 0x55));
                         }
 
                         c.drawColor(Color.rgb(0x7f, 0x7f, 0x7f));
 
-                        c.drawRect(new Rect(epsilon, epsilon, (int) (w * (progr / 1000.0f)) - epsilon, h - epsilon), rectanglePaint);
+                        if (type != progressBarType.TIMEOUT) {
+                            c.drawRect(new Rect(epsilon, epsilon, (int) (w * (progr / 1000.0f)) - epsilon, h - epsilon), rectanglePaint);
+                        }else{
+                            c.drawRect(new Rect((int)(w - w * (progr / 1000.0f))+epsilon, epsilon, w - epsilon, h - epsilon), rectanglePaint);
+                        }
 
                         if (type == progressBarType.PROGRESS) {
                             rectanglePaint.setColor(Color.BLACK);
                             rectanglePaint.setTextSize(30);
                             c.drawText(progr/10.0f+" %", -20+w/2.0f, 0.68f*h, rectanglePaint);
+                        }
+
+                        if (type == progressBarType.TIMEOUT){
+                            double timeval = ((this.time_limit_for_timeout-(progr/1000.0)*this.time_limit_for_timeout));
+                            rectanglePaint.setColor(Color.BLACK);
+                            rectanglePaint.setTextSize(30);
+                            c.drawText(String.format( "%.2f", timeval)+"s"
+                                    , -20+w/2.0f, 0.68f*h, rectanglePaint);
                         }
 
 

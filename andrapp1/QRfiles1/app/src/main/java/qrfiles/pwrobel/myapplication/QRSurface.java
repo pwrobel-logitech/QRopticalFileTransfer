@@ -337,6 +337,8 @@ public class QRSurface extends GLSurfaceView implements
             this.is_header_generating = true;
             this.nframe_last_produced = -1;
             this.nframe_data_last_produced = -1;
+            this.time_ns_last_upload_progressbar_done = System.nanoTime();
+            this.time_ns_header_initialized = System.nanoTime();
         }
     }
 
@@ -406,6 +408,7 @@ public class QRSurface extends GLSurfaceView implements
     }
 
     private double time_ns_last_upload_progressbar_done = System.nanoTime();
+    private double time_ns_header_initialized = System.nanoTime();
     private double time_ns_interval_upload_updated = 1.0e8;
     private boolean is_header_generating = false;
     private int nframe_last_produced = -1;
@@ -445,15 +448,38 @@ public class QRSurface extends GLSurfaceView implements
             Log.i("qrsurf", "will draw progressbarsurf");
             final double progr = ((double) this.nframe_data_last_produced) / ((double)this.total_number_of_dataframes_produced_by_the_encoder-1);
             Activity a = (Activity) this.getContext();
-            a.runOnUiThread(new Runnable() {
+            if (a != null)
+                a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.PROGRESS, true);
-                }
+                        QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.PROGRESS, true);
+                    }
             });
 
             this.time_ns_last_upload_progressbar_done = currt;
         }
+
+        currt = System.nanoTime();
+        if (total_number_of_dataframes_produced_by_the_encoder <= 0 &&
+                currt - this.time_ns_last_upload_progressbar_done > this.time_ns_interval_upload_updated)
+        {
+            /// do the header progressbar update
+            Activity a = (Activity) this.getContext();
+            double pr = (currt - this.time_ns_header_initialized) / this.header_time_timeout_ns;
+            if (pr > 1.0)
+                pr = 1.0;
+            final double progr = pr;
+            if (a != null)
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        QRSurface.this.encoder_progressbar.setTimeLimitForDrawingTimeout(QRSurface.this.header_time_timeout_ns/1.0e9);
+                        QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.TIMEOUT, true);
+                    }
+                });
+            this.time_ns_last_upload_progressbar_done = currt;
+        }
+
 
 
         if (stat == 1){
@@ -482,6 +508,7 @@ public class QRSurface extends GLSurfaceView implements
                     this.header_time_start_ns = System.nanoTime();
                     this.should_display_anything = true;
                     this.time_ns_last_upload_progressbar_done = System.nanoTime();
+                    this.time_ns_header_initialized = System.nanoTime();
                 }
 
         }
