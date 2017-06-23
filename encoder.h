@@ -193,6 +193,8 @@ public:
     //complementary to the above - set generation of frame number not from 0, but from some offset
     virtual void set_first_dataframe_number_offset(uint32_t numoffset) = 0;
 
+    virtual ~Encoder() {};
+
 protected:
 
 

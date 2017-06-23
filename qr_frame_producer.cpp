@@ -32,6 +32,8 @@ Qr_frame_producer::Qr_frame_producer()
 Qr_frame_producer::~Qr_frame_producer(){
     if(this->encoder_!=NULL)
         delete this->encoder_;
+    if(this->encoder_res_!=NULL)
+        delete this->encoder_res_;
     if(this->metadata_encoder_!=NULL)
         delete this->metadata_encoder_;
     finish_libqrencoder();
