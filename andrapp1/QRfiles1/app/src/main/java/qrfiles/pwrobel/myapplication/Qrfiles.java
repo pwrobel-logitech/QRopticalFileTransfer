@@ -219,8 +219,15 @@ public class Qrfiles extends Activity {
 
         Log.i("QTHRM", "about to destroy qrsurf resources");
 
-        if (this.qrsurf != null)
-            this.qrsurf.destroy_all_resources(); //actually, only deinits qrsurf manager thread
+        if(this.qrsurf != null){
+            this.qrsurf.destroy_all_resources();//actually, only deinits qrsurf manager thread
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Qrfiles.this.qrsurf.set_brightness_back_to_auto();
+                }
+            });
+        }
         this.qrsurf = null;
 
         Log.i("QTHRM", "destroyed qrsurf resources");
@@ -519,8 +526,15 @@ public class Qrfiles extends Activity {
             this.camSurf.deinitialize_resources();
 
 
-        if(this.qrsurf != null)
+        if(this.qrsurf != null){
             this.qrsurf.destroy_all_resources();
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Qrfiles.this.qrsurf.set_brightness_back_to_auto();
+                }
+            });
+        }
         this.qrsurf = null;
 
         /*

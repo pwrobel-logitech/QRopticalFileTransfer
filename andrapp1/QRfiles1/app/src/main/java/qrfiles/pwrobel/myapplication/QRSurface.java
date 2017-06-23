@@ -8,6 +8,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -15,6 +16,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.nio.ByteBuffer;
@@ -25,6 +27,8 @@ import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import static android.view.WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
 
 /**
  * Created by pwrobel on 18.06.17.
@@ -556,14 +560,22 @@ public class QRSurface extends GLSurfaceView implements
 
                     this.update_descriptions_in_views();
                 }else{
-
+                    final Activity a = (Activity) this.getContext();
+                    if (a != null)
+                        a.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                set_brightness_back_to_auto();
+                            }
+                        });
                     continuous_status_display_update_is_over = true;
 
-                    Activity a = (Activity) this.getContext();
+
                     if (a != null){
                         a.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                set_brightness_back_to_auto();
                                 if (encoder_progressbar != null) {
                                     encoder_progressbar.setVisibility(INVISIBLE);
                                     encoder_progressbar.requestLayout();
@@ -587,13 +599,38 @@ public class QRSurface extends GLSurfaceView implements
         return status;
     }
 
+    public void set_brightness_manual_max(){
+        Activity aa = (Activity) getContext();
+        if (aa != null){
+            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            android.provider.Settings.System.putInt(getContext().getContentResolver(),
+                android.provider.Settings.System.SCREEN_BRIGHTNESS, 255);
+        }
+    }
+
+    public void set_brightness_back_to_auto(){
+        Activity aa = (Activity) getContext();
+        if (aa != null){
+            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+        }
+    }
 
     private void update_descriptions_in_views(){
-        Activity a = (Activity) this.getContext();
+        final Activity a = (Activity) this.getContext();
         if (a != null)
             a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    Log.i("BR", "Setting the brightness to full");
+/*
+                    WindowManager.LayoutParams lp = a.getWindow().getAttributes();
+                    lp.screenBrightness =  BRIGHTNESS_OVERRIDE_FULL;
+                    a.getWindow().setAttributes(lp);
+*/
+
+                    set_brightness_manual_max();
+
                     if (encoder_progressbar != null) {
                         encoder_progressbar.setVisibility(VISIBLE);
                         encoder_progressbar.requestLayout();
