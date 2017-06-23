@@ -435,6 +435,8 @@ public class Qrfiles extends Activity {
                                 MimeTypeMap myMime = MimeTypeMap.getSingleton();
                                 Intent newIntent = new Intent(Intent.ACTION_VIEW);
                                 String mimeType = myMime.getMimeTypeFromExtension(fileExt(path));
+                                if (mimeType == null)
+                                    mimeType = "*/*";
                                 newIntent.setDataAndType(Uri.fromFile(pathFile),mimeType);
                                 newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 try {
