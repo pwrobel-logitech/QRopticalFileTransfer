@@ -44,7 +44,7 @@
         android:src="@mipmap/up_arrow_icon" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/foldericon"
+        android:id="@+id/folderfilebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"

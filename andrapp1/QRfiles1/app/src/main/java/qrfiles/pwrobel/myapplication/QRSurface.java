@@ -321,6 +321,7 @@ public class QRSurface extends GLSurfaceView implements
     private boolean waiting_to_add_files = true;
     public void add_new_files_to_send(ArrayList<String> filespath){
         synchronized (this){
+            this.index_of_currently_processed_file=-1;
             destroy_current_encoder();
             files_to_send.clear();
             this.index_of_currently_processed_file++;
@@ -337,6 +338,7 @@ public class QRSurface extends GLSurfaceView implements
             this.is_header_generating = true;
             this.nframe_last_produced = -1;
             this.nframe_data_last_produced = -1;
+            this.total_number_of_dataframes_produced_by_the_encoder = 0;
             this.time_ns_last_upload_progressbar_done = System.nanoTime();
             this.time_ns_header_initialized = System.nanoTime();
 

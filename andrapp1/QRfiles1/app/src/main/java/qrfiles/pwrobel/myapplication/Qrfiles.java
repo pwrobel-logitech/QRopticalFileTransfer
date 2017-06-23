@@ -45,6 +45,7 @@ public class Qrfiles extends Activity {
 
     //
     FloatingActionButton uparrowbutton = null;
+    FloatingActionButton folderfilebutton = null;
 
     View detector_view = null;
     View qrsender_view = null;
@@ -85,6 +86,7 @@ public class Qrfiles extends Activity {
         super.onResume();
     }
 
+
     void set_activity_button_listeners(){
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +102,7 @@ public class Qrfiles extends Activity {
             @Override
             public void onClick(View view) {
                 boolean is_switching_views = false;
-                synchronized (this){
+                synchronized (Qrfiles.this){
                     is_switching_views = Qrfiles.this.is_switching_views;
                 }
                 if (is_switching_views)
@@ -143,6 +145,21 @@ public class Qrfiles extends Activity {
                     //Qrfiles.this.is_switching_views = false;
                     return;
                 }
+            }
+        });
+
+        this.folderfilebutton = (FloatingActionButton) findViewById(R.id.folderfilebutton);
+
+        this.folderfilebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean is_switching_views = false;
+                synchronized (Qrfiles.this){
+                    is_switching_views = Qrfiles.this.is_switching_views;
+                }
+                if (is_switching_views)
+                    return;
+                Qrfiles.this.invoke_file_window(is_in_qr_sender_view);
             }
         });
     }
@@ -215,6 +232,7 @@ public class Qrfiles extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         set_activity_button_listeners();
+        this.folderfilebutton.setImageResource(R.mipmap.fold3lens);
 
 
         this.set_decoder_elements();
@@ -321,6 +339,8 @@ public class Qrfiles extends Activity {
         //    }
         //});
 
+        this.folderfilebutton.setImageResource(R.mipmap.fold3nolens);
+
         this.main_layout.setVisibility(View.VISIBLE);
         this.detector_view.setVisibility(View.GONE);
         this.qrsender_view.setVisibility(View.VISIBLE);
@@ -362,27 +382,8 @@ public class Qrfiles extends Activity {
         
 
 
+            this.invoke_file_window(true);
 
-        if (default_search_for_upload_homedir != null)
-            this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
-                .withFilter(false, false)
-                .withStartFile(default_search_for_upload_homedir)
-                .withDateFormat("HH:mm")
-                .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
-                .withChosenListener(new ChooserDialog.Result() {
-                    @Override
-                    public void onChoosePath(String path, File pathFile) {
-                        chosen_file_path = path;
-                        Toast.makeText(Qrfiles.this, "FILE: " + chosen_file_path, Toast.LENGTH_SHORT).show();
-                        //_tv.setText(_path);
-                        List<String> files = new ArrayList<String>();
-                        files.clear();
-                        files.add(0, chosen_file_path);
-                        Qrfiles.this.qrsurf.add_new_files_to_send((ArrayList<String>) files);
-                    }
-                })
-                .build()
-                .show();
 
 
 
@@ -390,6 +391,32 @@ public class Qrfiles extends Activity {
 
     }
 
+    private void invoke_file_window(boolean is_file_upload_selection_mode){
+        if(is_file_upload_selection_mode){
+            if (default_search_for_upload_homedir != null)
+                this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
+                        .withFilter(false, false)
+                        .withStartFile(default_search_for_upload_homedir)
+                        .withDateFormat("HH:mm")
+                        .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
+                        .withChosenListener(new ChooserDialog.Result() {
+                        @Override
+                        public void onChoosePath(String path, File pathFile) {
+                                chosen_file_path = path;
+                             Toast.makeText(Qrfiles.this, "FILE: " + chosen_file_path, Toast.LENGTH_SHORT).show();
+                             //_tv.setText(_path);
+                             List<String> files = new ArrayList<String>();
+                             files.clear();
+                             files.add(0, chosen_file_path);
+                             Qrfiles.this.qrsurf.add_new_files_to_send((ArrayList<String>) files);
+                            }
+                    })
+                        .build()
+                        .show();
+        }else{
+
+        }
+    }
 
     private void initall(){
         Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
