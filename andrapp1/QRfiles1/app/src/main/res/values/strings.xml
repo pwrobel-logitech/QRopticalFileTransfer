@@ -11,8 +11,9 @@
     <string name="draw_blink_succeeded_data_detection">Correctly saved the file : </string>
 
     <string name="start_sequence_string">Startup sequence : </string>
-    <string name="start_sequence_upload_file_desc">Initializing file : </string>
+    <string name="start_sequence_upload_file_desc">Sending start sequence for a file : </string>
     <string name="upload_file_desc_string">Sending file : </string>
+    <string name="ask_for_new_file_selection_to_upload">Select file to upload</string>
 
 
 
@@ -29,4 +30,6 @@
     <string name="dialog_ok">Select</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="title_choose_folder">Choose a folder</string>
+    <string name="title_choose_filetosend">Choose a file to send</string>
+    <string name="title_filebrowse">Browse received files</string>
 </resources>

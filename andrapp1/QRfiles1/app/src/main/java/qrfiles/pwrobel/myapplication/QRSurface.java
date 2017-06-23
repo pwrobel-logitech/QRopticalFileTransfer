@@ -332,6 +332,7 @@ public class QRSurface extends GLSurfaceView implements
             Log.i("qrsurf", "index : " + this.index_of_currently_processed_file+
                     ", file : " + files_to_send.get(this.index_of_currently_processed_file));
             init_and_set_external_file_info(files_to_send.get(this.index_of_currently_processed_file), "", 580, 0.5);
+            this.continuous_status_display_update_is_over = false;
             this.header_time_start_ns = System.nanoTime();
             waiting_to_add_files = false;
             this.should_display_anything = true;
@@ -405,6 +406,22 @@ public class QRSurface extends GLSurfaceView implements
     public synchronized void setCustomTextViewStatus(TextView tv, TextView tv2){
         this.encoder_status_textfield = tv;
         this.encoder_status_textfield2 = tv2;
+
+        Activity a = (Activity) this.getContext();
+        if (a != null)
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(encoder_status_textfield != null) {
+                        encoder_status_textfield.setText(getStringResourceByName("ask_for_new_file_selection_to_upload"));
+                        encoder_status_textfield.requestLayout();
+                    }
+                    if(encoder_status_textfield2 != null){
+                        encoder_status_textfield2.setText("");
+                        encoder_status_textfield2.requestLayout();
+                    }
+                }
+            });
     }
 
     private CustomProgressBar encoder_progressbar = null;
@@ -432,6 +449,7 @@ public class QRSurface extends GLSurfaceView implements
     private String description_status_1 = "";
     private String file_trimmed_text = "";
     //returns status, 1=end
+    private boolean continuous_status_display_update_is_over = true;
     private int produce_new_qrdata_to_surf_buffer(){
         int status = 0;
         int nfiles = 0;
@@ -463,7 +481,7 @@ public class QRSurface extends GLSurfaceView implements
             Log.i("qrsurf", "will draw progressbarsurf");
             final double progr = ((double) this.nframe_data_last_produced) / ((double)this.total_number_of_dataframes_produced_by_the_encoder-1);
             Activity a = (Activity) this.getContext();
-            if (a != null)
+            if (a != null && !this.continuous_status_display_update_is_over)
                 a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -493,7 +511,7 @@ public class QRSurface extends GLSurfaceView implements
                 a.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        QRSurface.this.encoder_progressbar.setFileName(timeoutbar_descr_string);
+                        QRSurface.this.encoder_progressbar.setFileName(timeoutbar_descr_string+" ");
                         QRSurface.this.encoder_progressbar.setTimeLimitForDrawingTimeout(QRSurface.this.header_time_timeout_ns/1.0e9);
                         QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.TIMEOUT, true);
                         if(QRSurface.this.encoder_status_textfield != null)
@@ -529,6 +547,7 @@ public class QRSurface extends GLSurfaceView implements
                 this.index_of_currently_processed_file++;
                 if (this.index_of_currently_processed_file < this.files_to_send.size()){
                     init_and_set_external_file_info(files_to_send.get(this.index_of_currently_processed_file), "", 580, 0.5);
+                    this.continuous_status_display_update_is_over = false;
                     this.is_header_generating = true;
                     this.header_time_start_ns = System.nanoTime();
                     this.should_display_anything = true;
@@ -536,6 +555,31 @@ public class QRSurface extends GLSurfaceView implements
                     this.time_ns_header_initialized = System.nanoTime();
 
                     this.update_descriptions_in_views();
+                }else{
+
+                    continuous_status_display_update_is_over = true;
+
+                    Activity a = (Activity) this.getContext();
+                    if (a != null){
+                        a.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (encoder_progressbar != null) {
+                                    encoder_progressbar.setVisibility(INVISIBLE);
+                                    encoder_progressbar.requestLayout();
+                                }
+                                if(encoder_status_textfield != null) {
+                                    encoder_status_textfield.setText(getStringResourceByName("ask_for_new_file_selection_to_upload"));
+                                    encoder_status_textfield.requestLayout();
+                                }
+                                if(encoder_status_textfield2 != null){
+                                    encoder_status_textfield2.setText("");
+                                    encoder_status_textfield2.requestLayout();
+                                }
+
+                            }
+                        });
+                    }
                 }
 
         }
@@ -545,6 +589,17 @@ public class QRSurface extends GLSurfaceView implements
 
 
     private void update_descriptions_in_views(){
+        Activity a = (Activity) this.getContext();
+        if (a != null)
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (encoder_progressbar != null) {
+                        encoder_progressbar.setVisibility(VISIBLE);
+                        encoder_progressbar.requestLayout();
+                    }
+                }
+            });
         this.timeoutbar_descr_string = this.getStringResourceByName("start_sequence_string");
         this.description_status_1 = this.getStringResourceByName("start_sequence_upload_file_desc");
         this.file_trimmed_text = trimFileNameText(files_to_send.get(QRSurface.this.index_of_currently_processed_file));

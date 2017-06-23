@@ -1,16 +1,20 @@
 package qrfiles.pwrobel.myapplication;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Process;
 import android.util.Log;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -398,12 +402,12 @@ public class Qrfiles extends Activity {
                         .withFilter(false, false)
                         .withStartFile(default_search_for_upload_homedir)
                         .withDateFormat("HH:mm")
-                        .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
+                        .withResources(R.string.title_choose_filetosend, R.string.title_choose, R.string.dialog_cancel)
                         .withChosenListener(new ChooserDialog.Result() {
                         @Override
                         public void onChoosePath(String path, File pathFile) {
                                 chosen_file_path = path;
-                             Toast.makeText(Qrfiles.this, "FILE: " + chosen_file_path, Toast.LENGTH_SHORT).show();
+                             //Toast.makeText(Qrfiles.this, "FILE: " + chosen_file_path, Toast.LENGTH_SHORT).show();
                              //_tv.setText(_path);
                              List<String> files = new ArrayList<String>();
                              files.clear();
@@ -415,8 +419,59 @@ public class Qrfiles extends Activity {
                         .show();
         }else{
 
+            if (default_search_for_upload_homedir != null)
+                this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
+                        .withFilter(false, false)
+                        .withStartFile(default_search_for_upload_homedir)
+                        .withDateFormat("HH:mm")
+                        .withResources(R.string.title_filebrowse, R.string.title_choose, R.string.dialog_cancel)
+                        .withChosenListener(new ChooserDialog.Result() {
+                            @Override
+                            public void onChoosePath(String path, File pathFile) {
+
+                                //Toast.makeText(Qrfiles.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
+
+
+                                MimeTypeMap myMime = MimeTypeMap.getSingleton();
+                                Intent newIntent = new Intent(Intent.ACTION_VIEW);
+                                String mimeType = myMime.getMimeTypeFromExtension(fileExt(path));
+                                newIntent.setDataAndType(Uri.fromFile(pathFile),mimeType);
+                                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                try {
+                                    startActivity(newIntent);
+                                } catch (ActivityNotFoundException e) {
+                                    Toast.makeText(Qrfiles.this, "No handler for this type of file.", Toast.LENGTH_LONG).show();
+                                }
+                                //LaunchOpenFileIntent(path);
+
+                            }
+                        })
+                        .build()
+                        .show();
+
         }
     }
+
+
+    private String fileExt(String url) {
+        if (url.indexOf("?") > -1) {
+            url = url.substring(0, url.indexOf("?"));
+        }
+        if (url.lastIndexOf(".") == -1) {
+            return null;
+        } else {
+            String ext = url.substring(url.lastIndexOf(".") + 1);
+            if (ext.indexOf("%") > -1) {
+                ext = ext.substring(0, ext.indexOf("%"));
+            }
+            if (ext.indexOf("/") > -1) {
+                ext = ext.substring(0, ext.indexOf("/"));
+            }
+            return ext.toLowerCase();
+
+        }
+    }
+
 
     private void initall(){
         Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
