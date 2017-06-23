@@ -61,11 +61,34 @@ public class Qrfiles extends Activity {
     TextView encoder_status_textfield2;
     CustomProgressBar progressBar_encoder;
 
+    boolean got_upload_request_from_intent = false;
+    private String upload_requested_path_by_system = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         File yourAppDir = new File(Environment.getExternalStorageDirectory()+"");
         default_search_for_upload_homedir = yourAppDir.getPath();
+
+        Intent intent = getIntent();
+
+        //check if opening this activity is not a request for file upload
+        this.got_upload_request_from_intent = false;
+        if (intent != null){
+            String datastring = intent.getDataString();
+            if (datastring != null){
+                if (datastring.startsWith("file:///")){
+                    String textafter = datastring.substring(7);
+                    if (textafter.length() > 0){
+                        this.got_upload_request_from_intent = true;
+                        this.upload_requested_path_by_system = textafter;
+                    }
+                }
+            }
+        }
+
+
+        Log.i("intent", "file : "+this.upload_requested_path_by_system);
+
     }
 
 
@@ -82,10 +105,24 @@ public class Qrfiles extends Activity {
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
-        this.switch_to_detector_view();
+        if (!this.got_upload_request_from_intent){
+            this.switch_to_detector_view();
+            this.initall();
+        }else{
+            this.is_in_qr_sender_view = true;
+            this.is_in_decoder_view = false;
+            setContentView(R.layout.activity_qrfiles);
+            this.detector_view = (View) findViewById(R.id.detector_layout);
+            this.qrsender_view = (View) findViewById(R.id.qrsender_layout);
+            this.main_layout = (View) findViewById(R.id.main_layout);
 
 
-        this.initall();
+            this.switch_to_qrsender_view();
+
+        }
+
+
+
 
         super.onResume();
     }
@@ -320,6 +357,7 @@ public class Qrfiles extends Activity {
     String chosen_file_path;
     ChooserDialog fileselection_dialog_in_sender;
     private void switch_to_qrsender_view(){
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         this.destroyall();  //destroy camera and detector stuff
 
@@ -335,6 +373,8 @@ public class Qrfiles extends Activity {
             e.printStackTrace();
         }
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
         this.qrsurf.setFPS(16.0);
@@ -342,11 +382,14 @@ public class Qrfiles extends Activity {
         this.qrsurf.setZOrderOnTop(true);
         this.qrsurf.init_qrsurf_thread();//starts thread
 
+        Qrfiles.this.set_activity_button_listeners();
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.down_arrow_icon);
+        Qrfiles.this.uparrowbutton.setImageBitmap(bmp);
                 uparrowbutton.setClickable(true);
                 uparrowbutton.requestLayout();
                 Log.i("clickable", "setting clickable to true2");
                 Log.i("clickable", "executed on the thread, id: " + android.os.Process.myTid());
-                Qrfiles.this.set_activity_button_listeners();
+
         //    }
         //});
 
@@ -393,8 +436,15 @@ public class Qrfiles extends Activity {
         
 
 
-            this.invoke_file_window(true);
-
+            if(!this.got_upload_request_from_intent) {
+                this.invoke_file_window(true);
+            } else {
+                this.got_upload_request_from_intent = false;
+                List<String> files = new ArrayList<String>();
+                files.clear();
+                files.add(0, this.upload_requested_path_by_system);
+                Qrfiles.this.qrsurf.add_new_files_to_send((ArrayList<String>) files);
+            }
 
 
 
