@@ -139,6 +139,9 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1recognized_1file_1nam
 extern "C"
 JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_initialize_1decoder(JNIEnv *env, jclass type) {
+#ifdef ANDROID
+    __android_log_print(ANDROID_LOG_INFO, "QDEC", "init decoder ");
+#endif
     return initialize_decoder();
 }
 
@@ -146,6 +149,9 @@ extern "C"
 JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_set_1decoded_1file_1path(JNIEnv *env, jclass type,
                                                                          jstring path_) {
+#ifdef ANDROID
+    __android_log_print(ANDROID_LOG_INFO, "QDEC", "set filepath ");
+#endif
     const char *path = env->GetStringUTFChars(path_, 0);
     int res = set_decoded_file_path(path);
     env->ReleaseStringUTFChars(path_, path);
@@ -167,12 +173,18 @@ extern "C"
 JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_tell_1decoder_1no_1more_1qr(JNIEnv *env,
                                                                             jclass type) {
+#ifdef ANDROID
+    __android_log_print(ANDROID_LOG_INFO, "QDEC", "nomoreqr ");
+#endif
     return tell_decoder_no_more_qr();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_deinitialize_1decoder(JNIEnv *env, jclass type) {
+#ifdef ANDROID
+    __android_log_print(ANDROID_LOG_INFO, "QDEC", "deinit decoder ");
+#endif
     return deinitialize_decoder();
 }
 
