@@ -636,6 +636,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     boolean is_waiting_for_deinit_to_complete = false;
     @Override
     public void closeCamAsync() {
+        if (camera == null)
+            return;
         handler.post(new Runnable() {
             @Override
             public void run() {
