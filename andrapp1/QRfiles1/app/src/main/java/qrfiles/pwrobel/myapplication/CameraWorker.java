@@ -661,7 +661,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     System.gc();
                 }
                 if(camsurf != null){
-                    camsurf.getSurfaceTexture().release();
+                    SurfaceTexture st = camsurf.getSurfaceTexture();
+                    if (st != null)
+                        st.release();
                 }
                 tell_decoder_no_more_qr();
                 deinitialize_decoder();

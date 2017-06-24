@@ -162,6 +162,7 @@ public class Qrfiles extends Activity {
                     {
                         synchronized (Qrfiles.this){
                             Qrfiles.this.is_switching_views = false;
+                            Qrfiles.this.notifyAll();
                         }
                     }
                 }, 1100);
@@ -216,6 +217,7 @@ public class Qrfiles extends Activity {
                     {
                         synchronized (Qrfiles.this){
                             Qrfiles.this.file_selection_window_requested = false;
+                            Qrfiles.this.notifyAll();
                         }
                     }
                 }, 1000);
@@ -242,11 +244,21 @@ public class Qrfiles extends Activity {
     @Override
     public void onPause(){
         super.onPause();
-        synchronized (this){
-            while (this.file_selection_window_requested || this.is_switching_views){}
-        }
+
         Log.i("ACTINFO", "Activity paused");
         this.destroyall();
+
+        synchronized (this){
+            while (this.file_selection_window_requested || this.is_switching_views){
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        this.is_in_qr_sender_view = false;
+        this.is_in_decoder_view = true;
     }
 
     @Override
