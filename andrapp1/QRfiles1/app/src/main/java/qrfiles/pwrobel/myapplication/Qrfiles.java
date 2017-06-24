@@ -105,7 +105,11 @@ public class Qrfiles extends Activity {
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
+        if (this.fileselection_dialog_in_sender != null)
+            this.fileselection_dialog_in_sender.closeit();
+
         if (!this.got_upload_request_from_intent){
+            this.is_in_qr_sender_view = false;
             this.switch_to_detector_view();
             this.initall();
         }else{
@@ -254,6 +258,9 @@ public class Qrfiles extends Activity {
     private boolean is_switching_views = false;
     private void switch_to_detector_view(){
 
+        if (this.fileselection_dialog_in_sender != null)
+            this.fileselection_dialog_in_sender.closeit();
+
         Log.i("QTHRM", "about to destroy qrsurf resources");
 
         if(this.qrsurf != null){
@@ -357,6 +364,10 @@ public class Qrfiles extends Activity {
     String chosen_file_path;
     ChooserDialog fileselection_dialog_in_sender;
     private void switch_to_qrsender_view(){
+
+        if (this.fileselection_dialog_in_sender != null)
+            this.fileselection_dialog_in_sender.closeit();
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         this.destroyall();  //destroy camera and detector stuff

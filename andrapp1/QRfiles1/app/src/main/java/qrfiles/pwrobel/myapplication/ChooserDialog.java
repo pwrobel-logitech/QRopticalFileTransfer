@@ -237,6 +237,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return adapter;
     }
 
+    public void closeit(){
+        _alertDialog.dismiss();
+    }
 
     private List<File> _entries = new ArrayList<File>();
     private File _currentDir;
