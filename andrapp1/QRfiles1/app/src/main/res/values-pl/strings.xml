@@ -11,6 +11,13 @@
     <string name="draw_blink_succeeded_data_detection">Pomyślnie zapisano plik : </string>
     <string name="upload_file_finalizing_msg">Kończenie pliku, proszę poczekać..</string>
 
+
+    <string name="menu_string_about">O programie</string>
+    <string name="menu_string_settings">Ustawienia</string>
+    <string name="menu_string_privacypolicy">Polityka prywatności</string>
+    <string name="menu_string_help">Pomoc</string>
+
+
     <string name="start_sequence_string">Sekwencja startowa : </string>
     <string name="start_sequence_upload_file_desc">Wysyłanie sekwencji startowej pliku : </string>
     <string name="upload_file_desc_string">Wysyłanie pliku : </string>

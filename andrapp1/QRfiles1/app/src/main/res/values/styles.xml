@@ -1,11 +1,16 @@
 <resources>
 
+    <style name="PopupMenuStyle" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@color/colorlightgrey2</item>
+    </style>
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorgrey1</item>
+        <item name="android:popupMenuStyle">@style/PopupMenuStyle</item>
     </style>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">true</item>
@@ -27,6 +32,13 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:panelBackground">@color/colorPrimaryDark</item>
     </style>
+
+    <style name="MyDarkToolbarStyle" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:colorBackground">@color/colorgrey1</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
+
 
 
 </resources>

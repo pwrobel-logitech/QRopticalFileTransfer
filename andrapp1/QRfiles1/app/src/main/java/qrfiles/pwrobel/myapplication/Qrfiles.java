@@ -15,6 +15,7 @@ import android.os.Process;
 import android.util.Log;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -61,6 +62,9 @@ public class Qrfiles extends Activity {
     TextView encoder_status_textfield2;
     CustomProgressBar progressBar_encoder;
 
+    private PopupMenu myMainMenu = null;
+    private FloatingActionButton fab = null;
+
     boolean got_upload_request_from_intent = false;
     private String upload_requested_path_by_system = null;
     @Override
@@ -92,6 +96,11 @@ public class Qrfiles extends Activity {
     }
 
 
+    private void setupMainMenu(){
+        this.myMainMenu = new PopupMenu(this, this.fab);;
+        this.myMainMenu.inflate(R.menu.mainmenu);
+        this.myMainMenu.show();
+    }
 
     boolean is_in_decoder_view = true;
     boolean is_in_qr_sender_view = false;
@@ -134,12 +143,13 @@ public class Qrfiles extends Activity {
 
     private boolean file_selection_window_requested = false;
     void set_activity_button_listeners(){
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
+                Qrfiles.this.setupMainMenu();
             }
         });
 
