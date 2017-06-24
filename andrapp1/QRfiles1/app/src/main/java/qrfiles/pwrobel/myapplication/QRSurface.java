@@ -157,8 +157,18 @@ public class QRSurface extends GLSurfaceView implements
         synchronized (this){
             should_display = this.should_display_anything;
         }
-        if (!should_display)
+        if (!should_display){
+            GLES20.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+            GLES20.glViewport(0, 0, this.surfw, this.surfh);
+
+            synchronized (this) {
+                this.is_frame_drawing = false;
+                this.notifyAll();
+            }
+
             return;
+        }
 
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
@@ -390,11 +400,13 @@ public class QRSurface extends GLSurfaceView implements
                     this.produce_new_qrdata_to_surf_buffer();
                     QRSurface.this.requestRender();
 
-                    while (this.is_frame_drawing) {
-                        try {
-                            this.wait(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                    synchronized (this){
+                        while (this.is_frame_drawing) {
+                            try {
+                                this.wait(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -542,6 +554,28 @@ public class QRSurface extends GLSurfaceView implements
                 for (int i = 0; i < this.surface_buffer.surfdata.capacity(); i++){
                     this.surface_buffer.surfdata.put(i, (byte)0xff);
                 }
+
+                //synchronized (this){
+                    //this.should_display_anything = false;
+                 //   this.is_frame_drawing = true;
+               // }
+
+                synchronized (this){
+                    this.should_display_anything = false;
+                    this.is_frame_drawing = true;
+                    QRSurface.this.requestRender();
+                    while (this.is_frame_drawing) {
+                        try {
+                            this.wait(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //this.should_display_anything = true;
+                }
+                //synchronized (this){
+                //    this.should_display_anything = true;
+                //}
                 //this.waiting_to_add_files = false;
                 //this.should_display_anything = false;
                 Log.i("PPP", "frame producer ended, destroying..");
