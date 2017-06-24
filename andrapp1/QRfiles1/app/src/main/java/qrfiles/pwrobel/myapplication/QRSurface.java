@@ -542,10 +542,18 @@ public class QRSurface extends GLSurfaceView implements
 
 
         if (stat == 1){
-
+                final Activity a = (Activity) this.getContext();
+                if (a != null)
+                    a.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(QRSurface.this.encoder_status_textfield != null)
+                                QRSurface.this.encoder_status_textfield.setText(getStringResourceByName("upload_file_finalizing_msg"));
+                        }
+                    });
 
                 try {
-                    Thread.sleep(2800);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -594,7 +602,7 @@ public class QRSurface extends GLSurfaceView implements
 
                     this.update_descriptions_in_views();
                 }else{
-                    final Activity a = (Activity) this.getContext();
+                    //final Activity a = (Activity) this.getContext();
                     if (a != null)
                         a.runOnUiThread(new Runnable() {
                             @Override
