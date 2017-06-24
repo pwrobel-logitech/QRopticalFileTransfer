@@ -437,6 +437,15 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     public synchronized void deinitialize_resources(){
         is_drawer_deinitialized = true;
 
+        if (pr1drawer != null) {
+            pr1drawer.setVisibility(GONE);
+            pr1drawer.requestLayout();
+        }
+        if (pr2drawer != null){
+            pr2drawer.setVisibility(GONE);
+            pr2drawer.requestLayout();
+        }
+
         this.pr1drawer = null;
         this.pr2drawer = null;
     };
