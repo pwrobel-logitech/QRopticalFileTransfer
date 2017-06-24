@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
@@ -53,7 +54,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     public CameraPreviewSurface camsurf;
     Context context;
     byte[] callbackbuffer;
-    byte[] greyscalebuffer;
+    //byte[] greyscalebuffer;
     boolean camera_initialized = false;
 
 
@@ -309,14 +310,16 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         //Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
         //Log.i("info", "Got byte arrQ of size "+data.length+" bytes");
 
-        applyGrayScale(greyscalebuffer, data, camwidth, camheight);
+        //applyGrayScale(greyscalebuffer, data, camwidth, camheight);
 
-        final byte[] dat = data;
+        //final byte[] dat = data;
         Activity a = (Activity) context;
 
+        //greyscalebuffer = data;
 
-        final int status = send_next_grayscale_buffer_to_decoder(greyscalebuffer, camwidth, camheight);
+        final int status = send_next_grayscale_buffer_to_decoder(data, camwidth, camheight);
 
+        //greyscalebuffer = null;
         int ntot = get_total_frames_of_data_that_will_be_produced();
         int lf = get_last_number_of_frame_detected();
         int hfn = get_last_number_of_header_frame_detected();
@@ -546,6 +549,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 param.getPreviewFpsRange(fpsrange);
                 param.setPreviewFpsRange(fpsrange[0], fpsrange[1]);
 
+                param.setPreviewFormat(ImageFormat.NV21);
+
                 param.set("vrmode", 1);
                 param.set("fast-fps-mode", 1);
 
@@ -562,8 +567,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 Log.i("camworker", "Preview w "+camwidth + " h " + camheight);
 
-                callbackbuffer = new byte[camheight*camwidth*4 * 2];
-                greyscalebuffer = new byte[camheight*camwidth];
+                //YUV-NV21 needs only that much bytes
+                callbackbuffer = new byte[(int)(camheight*camwidth*1.5) + 4];
+                //greyscalebuffer = new byte[camheight*camwidth];
 
                 try{
                     param.setPreviewSize(camwidth, camheight);
@@ -678,7 +684,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 CameraWorker.this.RS_info_set = false;
 
                 CameraWorker.this.callbackbuffer = null;
-                CameraWorker.this.greyscalebuffer = null;
+                //CameraWorker.this.greyscalebuffer = null;
                 System.gc();
                 synchronized (CameraWorker.this){
                     while(is_waiting_for_deinit_to_complete) {
@@ -1050,8 +1056,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
     /// data as NV21 input, pixels as 8bit greyscale output
-    public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
-        applygrayscalenative(pixels, data, width, height);
+    //public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
+    //    applygrayscalenative(pixels, data, width, height);
 /*
         byte p;
         int size = width*height;
@@ -1060,7 +1066,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             pixels[i] = p;
         }
 */
-    }
+    //}
 
     public void file_status_delivered(String filename){ //either failed or succeeded
         Log.i("FILESTATUS", "got file status, success : "+this.file_detected_and_finally_saved_successfully +
@@ -1193,7 +1199,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
     /////////native part
-    public static native void applygrayscalenative(byte [] pixels, byte [] data, int width, int height);
+    //public static native void applygrayscalenative(byte [] pixels, byte [] data, int width, int height);
 
     //native decoder/encoder lib part
 

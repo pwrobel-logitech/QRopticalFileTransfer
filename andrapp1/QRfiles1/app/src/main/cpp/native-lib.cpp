@@ -189,7 +189,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_deinitialize_1decoder(JNIEnv *en
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 extern "C"
 JNIEXPORT void JNICALL
 Java_qrfiles_pwrobel_myapplication_CameraWorker_applygrayscalenative(JNIEnv *env, jclass type,
@@ -210,7 +210,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_applygrayscalenative(JNIEnv *env
     env->ReleaseByteArrayElements(pixels_, pixels, 0);
     env->ReleaseByteArrayElements(data_, data, 0);
 }
-
+*/
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_qrfiles_pwrobel_myapplication_Qrfiles_stringFromJNI(
