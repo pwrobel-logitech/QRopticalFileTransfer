@@ -1,13 +1,19 @@
 package qrfiles.pwrobel.myapplication;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-
+import android.widget.TextView;
 
 
 import java.io.File;
@@ -112,9 +118,24 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         DirAdapter adapter = refreshDirs();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+        Activity a = (Activity)this._context;
+
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(_context,  R.style.MyDialogTheme);
+        //AlertDialog.Builder builder = new AlertDialog.Builder(_context , AlertDialog.THEME_HOLO_LIGHT);
+
         //builder.setTitle(R.string.dlg_choose dir_title);
-        builder.setTitle(_titleRes);
+        TextView title = new TextView(this._context);
+// You Can Customise your Title here
+
+        title.setText(a.getString(this._titleRes));
+        //title.setBackgroundColor(Color.rgb(0xaa, 0xaa, 0xaa));
+        title.setPadding(10, 27, 10, 10);
+        title.setGravity(Gravity.CENTER);
+        title.setTextColor(Color.rgb(0x33,0x33,0x33));
+        //title.setTextColor(Color.WHITE);
+        title.setTextSize(20);
+        //builder.setTitle(_titleRes);
+        builder.setCustomTitle(title);
         builder.setAdapter(adapter, this);
 
         if (_dirOnly) {
@@ -144,9 +165,19 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public ChooserDialog show() {
         //if (_result == null)
         //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
+
+
         if (_alertDialog == null || _list == null)
             throw new RuntimeException("call build() before show().");
         _alertDialog.show();
+
+        /*
+        final Button nButton = _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams nButtonLL = (LinearLayout.LayoutParams) nButton.getLayoutParams();
+        nButtonLL.gravity = Gravity.CENTER;
+        nButton.setBackgroundColor(Color.GRAY);
+        nButton.setLayoutParams(nButtonLL);
+*/
         return this;
     }
 
@@ -244,7 +275,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private List<File> _entries = new ArrayList<File>();
     private File _currentDir;
     private Context _context;
-    private AlertDialog _alertDialog;
+    private android.support.v7.app.AlertDialog _alertDialog;
     private ListView _list;
     private Result _result = null;
     private boolean _dirOnly;
