@@ -132,6 +132,7 @@ public class Qrfiles extends Activity {
     }
 
 
+    private boolean file_selection_window_requested = false;
     void set_activity_button_listeners(){
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +164,7 @@ public class Qrfiles extends Activity {
                             Qrfiles.this.is_switching_views = false;
                         }
                     }
-                }, 1000);
+                }, 700);
 
                 Qrfiles.this.main_layout.setVisibility(View.GONE);
                 Qrfiles.this.uparrowbutton.setOnClickListener(null);
@@ -204,7 +205,20 @@ public class Qrfiles extends Activity {
                 }
                 if (is_switching_views)
                     return;
+                if (file_selection_window_requested)
+                    return;
+                file_selection_window_requested = true;
                 Qrfiles.this.invoke_file_window(is_in_qr_sender_view);
+                new Timer().schedule(new TimerTask()
+                { //unblock file button after certain interval - hack
+                    @Override
+                    public void run()
+                    {
+                        synchronized (Qrfiles.this){
+                            Qrfiles.this.file_selection_window_requested = false;
+                        }
+                    }
+                }, 1000);
             }
         });
     }
