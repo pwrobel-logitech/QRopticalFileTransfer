@@ -43,7 +43,7 @@
             >
             <TextView
                 android:id="@+id/textViewfpinfo"
-                android:textSize="20dp"
+                android:textSize="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -51,16 +51,21 @@
             <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
                 android:id="@+id/numberPickerFPS"
                 android:orientation="horizontal"
+                android:textSize="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#aaaaaa"/>
 
     <TextView
         android:id="@+id/textView"
         android:textSize="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/menu_settingfragment_text" />
+        android:text="aa" />
 </LinearLayout>
 
     </ScrollView>
