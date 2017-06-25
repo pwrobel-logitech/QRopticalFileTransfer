@@ -96,7 +96,12 @@ public class SettingsFragment extends DialogFragment {
         //setStyle(style, theme);
     }
 
-    NumberPicker numberPickerFPS = null;
+    HorizontalNumberPicker numberPickerFPS = null;
+    HorizontalNumberPicker numberPickerError = null;
+    HorizontalNumberPicker numberPickerQrsize = null;
+    private int picker_obtainedFPS = -1;
+    private int picker_obtainedError = -1;
+    private int picker_obtainedQrsize = -1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,10 +110,23 @@ public class SettingsFragment extends DialogFragment {
         //((TextView)tv).setText("Dialog #" + mNum + ": using style ");
 
 
-        //numberPickerFPS = (NumberPicker) v.findViewById(R.id.numberPickerFPS);
-        //numberPickerFPS.setMinValue(5);
-        //numberPickerFPS.setMaxValue(60);
-        //numberPickerFPS.setValue(16);
+        numberPickerFPS = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerFPS);
+        numberPickerFPS.setMinValue(5);
+        numberPickerFPS.setMaxValue(60);
+        numberPickerFPS.setValue(16);
+
+        numberPickerError = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerError);
+        numberPickerError.setMinValue(15);
+        numberPickerError.setMaxValue(85);
+        numberPickerError.setValue(50);
+        numberPickerError.setStepSize(5);
+
+        numberPickerQrsize = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerQrsize);
+        numberPickerQrsize.setMinValue(90);
+        numberPickerQrsize.setMaxValue(1500);
+        numberPickerQrsize.setValue(580);
+        numberPickerQrsize.setStepSize(10);
+
 
         return v;
     }

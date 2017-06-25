@@ -40,6 +40,11 @@
 
 
 
+    <string name="info_err_selection">Maximum error : </string>
+    <string name="info_qrsize_selection">QR size : </string>
+    <string name="info_qrsize_selection2">bytes</string>
+
+
 
     <string name="defaultButtonMinus">-</string>
     <string name="defaultButtonPlus">+</string>

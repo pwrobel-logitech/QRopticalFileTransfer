@@ -43,7 +43,7 @@
             >
             <TextView
                 android:id="@+id/textViewfpinfo"
-                android:textSize="30dp"
+                android:textSize="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -51,10 +51,78 @@
             <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
                 android:id="@+id/numberPickerFPS"
                 android:orientation="horizontal"
-                android:textSize="30dp"
+                android:textSize="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#aaaaaa"/>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                >
+                <TextView
+                    android:id="@+id/textViewerrinfo"
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/info_err_selection" />
+                <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
+                    android:id="@+id/numberPickerError"
+                    android:orientation="horizontal"
+                    android:textSize="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textViewerrinfo2"
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="%" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#aaaaaa"/>
+
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                >
+                <TextView
+                    android:id="@+id/textViewqrsizeinfo"
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/info_qrsize_selection" />
+                <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
+                    android:id="@+id/numberPickerQrsize"
+                    android:orientation="horizontal"
+                    android:textSize="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textViewqrsizeinfo2"
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/info_qrsize_selection2" />
+            </LinearLayout>
+
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"
