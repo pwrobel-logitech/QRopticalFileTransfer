@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 /**
@@ -69,6 +70,7 @@ public class SettingsFragment extends DialogFragment {
        // }
 
 
+
         // Pick a style based on the num.
         //int style = DialogFragment.STYLE_NORMAL, theme = 0;
         //this.getDialog().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -94,6 +96,7 @@ public class SettingsFragment extends DialogFragment {
         //setStyle(style, theme);
     }
 
+    NumberPicker numberPickerFPS = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -102,6 +105,10 @@ public class SettingsFragment extends DialogFragment {
         //((TextView)tv).setText("Dialog #" + mNum + ": using style ");
 
 
+        //numberPickerFPS = (NumberPicker) v.findViewById(R.id.numberPickerFPS);
+        //numberPickerFPS.setMinValue(5);
+        //numberPickerFPS.setMaxValue(60);
+        //numberPickerFPS.setValue(16);
 
         return v;
     }

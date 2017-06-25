@@ -41,6 +41,9 @@
 
 
 
+    <string name="defaultButtonMinus">-</string>
+    <string name="defaultButtonPlus">+</string>
+
 
 
 

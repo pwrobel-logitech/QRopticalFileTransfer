@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="default_minValue">5</integer>
+    <integer name="default_maxValue">60</integer>
+    <integer name="default_value">16</integer>
+    <integer name="default_stepSize">1</integer>
+    <integer name="default_updateInterval">1</integer>
+</resources>

@@ -18,6 +18,7 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.widget.NumberPicker;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
@@ -123,7 +124,9 @@ public class Qrfiles extends Activity {
 
 
     //private int mSettingsStackLevel = 0;
+    private NumberPicker numberPickerFPS = null;
     void showSettingDialog() {
+
         //mSettingsStackLevel++;
 
         // DialogFragment.show() will take care of adding the fragment
@@ -139,6 +142,7 @@ public class Qrfiles extends Activity {
         // Create and show the dialog.
         SettingsFragment newFragment = SettingsFragment.newInstance();
         newFragment.show(ft, "dialog");
+
     }
 
 
