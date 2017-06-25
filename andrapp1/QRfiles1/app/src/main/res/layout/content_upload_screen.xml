@@ -32,7 +32,7 @@
                 android:layout_alignParentEnd="true"
 
 
-                app:adSize="BANNER"
+                app:adSize="SMART_BANNER"
                 app:adUnitId="ca-app-pub-3940256099942544/6300978111"></com.google.android.gms.ads.AdView>
 
 

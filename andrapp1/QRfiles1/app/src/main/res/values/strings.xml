@@ -37,4 +37,81 @@
     <string name="title_choose_folder">Choose a folder</string>
     <string name="title_choose_filetosend">Choose a file to send</string>
     <string name="title_filebrowse">Browse received files</string>
+
+
+
+
+
+
+
+
+
+
+    <string name="menu_settingfragment_text">
+
+5 02:23:33.192 10392-10392/? I/art: Late-enabling -Xcheck:jni
+06-25 02:23:33.390 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_dependencies_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_dependencies_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:33.889 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_0_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_0_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.012 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_1_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_1_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.091 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_2_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_2_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.166 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_3_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_3_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.229 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_4_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_4_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.313 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_5_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_5_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.394 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_6_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_6_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.469 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_7_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_7_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.563 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_8_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_8_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.641 10392-10392/qrfiles.pwrobel.myapplication W/art: Failed execv(/system/bin/dex2oat --runtime-arg -classpath --runtime-arg  --debuggable --instruction-set=arm --instruction-set-features=smp,-div,-atomic_ldrd_strd --runtime-arg -Xrelocate --boot-image=/system/framework/boot.art --runtime-arg -Xms64m --runtime-arg -Xmx512m --instruction-set-variant=cortex-a53 --instruction-set-features=default --dex-file=/data/app/qrfiles.pwrobel.myapplication-2/split_lib_slice_9_apk.apk --oat-file=/data/dalvik-cache/arm/data@app@qrfiles.pwrobel.myapplication-2@split_lib_slice_9_apk.apk@classes.dex) because non-0 exit status
+06-25 02:23:34.648 10392-10392/qrfiles.pwrobel.myapplication I/InstantRun: Starting Instant Run Server for qrfiles.pwrobel.myapplication
+06-25 02:23:34.909 10392-10392/qrfiles.pwrobel.myapplication W/linker: /data/app/qrfiles.pwrobel.myapplication-2/lib/arm/libqrencoder_wrapper.so: is missing DT_SONAME will use basename as a replacement: "libqrencoder_wrapper.so"
+06-25 02:23:34.917 10392-10392/qrfiles.pwrobel.myapplication W/linker: /data/app/qrfiles.pwrobel.myapplication-2/lib/arm/libRSencoder.so: is missing DT_SONAME will use basename as a replacement: "libRSencoder.so"
+06-25 02:23:34.928 10392-10392/qrfiles.pwrobel.myapplication W/linker: /data/app/qrfiles.pwrobel.myapplication-2/lib/arm/libRSdecoder.so: is missing DT_SONAME will use basename as a replacement: "libRSdecoder.so"
+06-25 02:23:34.937 10392-10392/qrfiles.pwrobel.myapplication W/linker: /data/app/qrfiles.pwrobel.myapplication-2/lib/arm/libRSencAPI.so: is missing DT_SONAME will use basename as a replacement: "libRSencAPI.so"
+06-25 02:23:34.943 10392-10392/qrfiles.pwrobel.myapplication W/linker: /data/app/qrfiles.pwrobel.myapplication-2/lib/arm/libRSdecAPI.so: is missing DT_SONAME will use basename as a replacement: "libRSdecAPI.so"
+06-25 02:23:34.986 10392-10392/qrfiles.pwrobel.myapplication I/intent: file : null
+06-25 02:23:34.989 10392-10392/qrfiles.pwrobel.myapplication I/ACTINFO: Activity resumed
+06-25 02:23:34.989 10392-10392/qrfiles.pwrobel.myapplication I/QTHRM: about to destroy qrsurf resources
+06-25 02:23:34.989 10392-10392/qrfiles.pwrobel.myapplication I/QTHRM: destroyed qrsurf resources
+06-25 02:23:35.852 10392-10392/qrfiles.pwrobel.myapplication I/QRSurf: constructor 2
+06-25 02:23:35.882 10392-10392/qrfiles.pwrobel.myapplication W/art: Before Android 4.1, method android.graphics.PorterDuffColorFilter android.support.graphics.drawable.VectorDrawableCompat.updateTintFilter(android.graphics.PorterDuffColorFilter, android.content.res.ColorStateList, android.graphics.PorterDuff$Mode) would have incorrectly overridden the package-private method in android.graphics.drawable.Drawable
+06-25 02:23:35.976 10392-10392/qrfiles.pwrobel.myapplication I/UIThr: executed on the UI thread, id: 10392
+06-25 02:23:35.998 10392-10591/qrfiles.pwrobel.myapplication I/CamThr: executed on the camera thread, id: 10591
+06-25 02:23:36.148 10392-10392/qrfiles.pwrobel.myapplication I/clickable: setting clickable to true1
+06-25 02:23:36.148 10392-10392/qrfiles.pwrobel.myapplication I/clickable: executed on the thread, id: 10392
+06-25 02:23:36.148 10392-10392/qrfiles.pwrobel.myapplication I/art: Starting a blocking GC Explicit
+06-25 02:23:36.167 10392-10392/qrfiles.pwrobel.myapplication I/art: Explicit concurrent mark sweep GC freed 1486(122KB) AllocSpace objects, 0(0B) LOS objects, 25% free, 7MB/10MB, paused 549us total 18.326ms
+06-25 02:23:36.167 10392-10392/qrfiles.pwrobel.myapplication I/UIThr: executed on the UI thread, id: 10392
+06-25 02:23:36.173 10392-10613/qrfiles.pwrobel.myapplication I/CamThr: executed on the camera thread, id: 10613
+06-25 02:23:36.180 10392-10615/qrfiles.pwrobel.myapplication D/OpenGLRenderer: Use EGL_SWAP_BEHAVIOR_PRESERVED: true
+06-25 02:23:36.347 10392-10615/qrfiles.pwrobel.myapplication I/Adreno-EGL:  EGL 1.4 QUALCOMM build:  (I14a17c7611)
+                                                                           OpenGL ES Shader Compiler Version: XE031.06.00.02
+                                                                           Build Date: 12/04/15 Fri
+                                                                           Local Branch: workspace
+                                                                           Remote Branch:
+                                                                           Local Patches:
+                                                                           Reconstruct Branch:
+06-25 02:23:36.376 10392-10615/qrfiles.pwrobel.myapplication I/OpenGLRenderer: Initialized EGL, version 1.4
+06-25 02:23:36.428 10392-10583/qrfiles.pwrobel.myapplication I/thr: executed on thread id: 10583
+06-25 02:23:36.428 10392-10583/qrfiles.pwrobel.myapplication I/draw: surface created
+06-25 02:23:36.429 10392-10392/qrfiles.pwrobel.myapplication I/PRBAR: progressbar surface created
+06-25 02:23:36.429 10392-10392/qrfiles.pwrobel.myapplication I/PRBAR: progressbar surface changed
+06-25 02:23:36.447 10392-10392/qrfiles.pwrobel.myapplication I/PRBAR: progressbar surface created
+06-25 02:23:36.447 10392-10392/qrfiles.pwrobel.myapplication I/PRBAR: progressbar surface changed
+06-25 02:23:36.490 10392-10583/qrfiles.pwrobel.myapplication I/thr: executed on thread id: 10583
+06-25 02:23:36.490 10392-10583/qrfiles.pwrobel.myapplication I/draw: surface changed, size w 720 h 1184argw 720 argh 1184
+06-25 02:23:36.929 10392-10613/qrfiles.pwrobel.myapplication I/CamPrevSize: size w 176; size h 144
+06-25 02:23:36.929 10392-10613/qrfiles.pwrobel.myapplication I/CamPrevSize: size w 320; size h 240
+06-25 02:23:36.929 10392-10613/qrfiles.pwrobel.myapplication I/CamPrevSize: size w 640; size h 480
+06-25 02:23:36.929 10392-10613/qrfiles.pwrobel.myapplication I/camworker: Preview w 640 h 480
+06-25 02:23:37.374 10392-10613/qrfiles.pwrobel.myapplication I/CreateDir: App dir already exists
+06-25 02:23:37.374 10392-10613/qrfiles.pwrobel.myapplication I/QDEC: init decoder
+06-25 02:23:37.375 10392-10613/qrfiles.pwrobel.myapplication I/QDEC: set filepath
+06-25 02:23:37.393 10392-10583/qrfiles.pwrobel.myapplication I/click: detector fully inited
+06-25 02:23:37.393 10392-10583/qrfiles.pwrobel.myapplication I/clickable: executed on the thread in cam surf, id: 10583
+06-25 02:23:37.646 10392-10392/qrfiles.pwrobel.myapplication I/PRBAR: progressbar surface destroyed
+06-25 02:23:37.651 10392-10392/qrfiles.pwrobel.myapplication I/PRBAR: progressbar surface destroyed
+06-25 02:23:39.012 10392-10392/qrfiles.pwrobel.myapplication I/MENU: settings selected
+06-25 02:23:41.747 10392-10392/qrfiles.pwrobel.myapplication W/InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed.
+
+
+    </string>
 </resources>

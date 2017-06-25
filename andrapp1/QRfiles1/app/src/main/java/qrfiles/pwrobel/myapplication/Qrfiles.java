@@ -1,6 +1,8 @@
 package qrfiles.pwrobel.myapplication;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Process;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
@@ -99,8 +102,46 @@ public class Qrfiles extends Activity {
     private void setupMainMenu(){
         this.myMainMenu = new PopupMenu(this, this.fab);;
         this.myMainMenu.inflate(R.menu.mainmenu);
+
+        this.myMainMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId())
+                {
+                    case R.id.menu_settings:
+                        Log.i("MENU", "settings selected");
+                        showSettingDialog();
+                        return true;
+                }
+                return false;
+            }
+        });
+
         this.myMainMenu.show();
     }
+
+
+
+    //private int mSettingsStackLevel = 0;
+    void showSettingDialog() {
+        //mSettingsStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        SettingsFragment newFragment = SettingsFragment.newInstance();
+        newFragment.show(ft, "dialog");
+    }
+
+
 
     boolean is_in_decoder_view = true;
     boolean is_in_qr_sender_view = false;
