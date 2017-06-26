@@ -143,6 +143,8 @@ public class Qrfiles extends Activity implements TransmissionController{
 
         // Create and show the dialog.
         SettingsFragment newFragment = SettingsFragment.newInstance();
+        newFragment.set_default_setup_settings(this.currFPSvalue, this.currErrorvalue,
+                this.currQrSizevalue, this.currStartSeqTime, this.currDumpPath);
         newFragment.setTransmissionContorller(this);
         newFragment.show(ft, "dialog");
 

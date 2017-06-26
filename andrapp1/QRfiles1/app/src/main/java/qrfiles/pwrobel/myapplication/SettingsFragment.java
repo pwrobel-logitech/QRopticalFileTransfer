@@ -2,6 +2,7 @@ package qrfiles.pwrobel.myapplication;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -101,6 +102,7 @@ public class SettingsFragment extends DialogFragment {
     int currErrorvalue = 50;
     int currQrSizevalue = 585;
     int currStartSeqTime = 7;
+    String currFileDumpPath = null;
     HorizontalNumberPicker numberPickerFPS = null;
     HorizontalNumberPicker numberPickerError = null;
     HorizontalNumberPicker numberPickerQrsize = null;
@@ -121,14 +123,47 @@ public class SettingsFragment extends DialogFragment {
         numberPickerFPS.setMaxValue(60);
         numberPickerFPS.setValue(currFPSvalue);
         numberPickerFPS.setOnLongPressUpdateInterval(200);
+
+        final ColorStateList def_blackcol_fps = numberPickerFPS.getTextValueView().getTextColors();
+
+        int value0 = currFPSvalue;
+        if (value0 <= 20){
+            numberPickerFPS.getTextValueView().setTextColor(def_blackcol_fps);
+        }
+        if (value0 == 21) {
+            numberPickerFPS.getTextValueView().setTextColor(Color.rgb(0x7f, 0x00, 0x00));
+        } else if (value0 == 22) {
+            numberPickerFPS.getTextValueView().setTextColor(Color.rgb(0x9f, 0x00, 0x00));
+        } else if (value0 >= 23){
+            numberPickerFPS.getTextValueView().setTextColor(Color.rgb(0xaf, 0x00, 0x00));
+        }
+
+
         numberPickerFPS.setListener(new HorizontalNumberPickerListener() {
             @Override
             public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
                 Log.i("Settings", "got new FPS : "+value);
                 currFPSvalue = value;
+
+
+
+                if (value <= 20){
+                    horizontalNumberPicker.getTextValueView().setTextColor(def_blackcol_fps);
+                }
+                if (value == 21) {
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0x7f, 0x00, 0x00));
+                } else if (value == 22) {
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0x9f, 0x00, 0x00));
+                } else if (value >= 23){
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0xaf, 0x00, 0x00));
+                }
+
+
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
             }
         });
+
+
 
         numberPickerError = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerError);
         numberPickerError.setMinValue(15);
@@ -136,14 +171,44 @@ public class SettingsFragment extends DialogFragment {
         numberPickerError.setValue(currErrorvalue);
         numberPickerError.setStepSize(5);
         numberPickerError.setOnLongPressUpdateInterval(300);
+
+        final ColorStateList def_blackcol_err = numberPickerError.getTextValueView().getTextColors();
+
+        int value01 = currErrorvalue;
+        if (value01 > 40){
+            numberPickerError.getTextValueView().setTextColor(def_blackcol_fps);
+        }
+        if (value01 >= 35 && value01 <= 40) {
+            numberPickerError.getTextValueView().setTextColor(Color.rgb(0x7f, 0x00, 0x00));
+        } else if (value01 >= 30 && value01 <= 35) {
+            numberPickerError.getTextValueView().setTextColor(Color.rgb(0x9f, 0x00, 0x00));
+        } else if (value01 >= 25 && value01 <= 30){
+            numberPickerError.getTextValueView().setTextColor(Color.rgb(0xaf, 0x00, 0x00));
+        }
+
         numberPickerError.setListener(new HorizontalNumberPickerListener() {
             @Override
             public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
                 Log.i("Settings", "got new errval : "+value);
                 currErrorvalue = value;
+
+                if (value > 40){
+                    horizontalNumberPicker.getTextValueView().setTextColor(def_blackcol_err);
+                }
+                if (value >= 35 && value <= 40) {
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0x7f, 0x00, 0x00));
+                } else if (value >= 30 && value <= 35) {
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0x9f, 0x00, 0x00));
+                } else if (value >= 25 && value <= 30){
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0xaf, 0x00, 0x00));
+                }
+
+
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
             }
         });
+
+
 
         numberPickerQrsize = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerQrsize);
         numberPickerQrsize.setMinValue(90);
@@ -151,12 +216,36 @@ public class SettingsFragment extends DialogFragment {
         numberPickerQrsize.setValue(currQrSizevalue);
         numberPickerQrsize.setStepSize(10);
         numberPickerQrsize.setOnLongPressUpdateInterval(200);
+        final ColorStateList def_blackcol = numberPickerQrsize.getTextValueView().getTextColors();
+
+        int value = currQrSizevalue;
+        if (value <= 585){
+            numberPickerQrsize.getTextValueView().setTextColor(def_blackcol);
+        }
+        if (value > 585 && value < 605) {
+            numberPickerQrsize.getTextValueView().setTextColor(Color.rgb(0x7f, 0x00, 0x00));
+        } else if (value >= 605 && value < 625) {
+            numberPickerQrsize.getTextValueView().setTextColor(Color.rgb(0x9f, 0x00, 0x00));
+        } else if (value >= 625){
+            numberPickerQrsize.getTextValueView().setTextColor(Color.rgb(0xaf, 0x00, 0x00));
+        }
+
         numberPickerQrsize.setListener(new HorizontalNumberPickerListener() {
             @Override
             public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
                 Log.i("Settings", "got new QRsize : "+value);
                 currQrSizevalue = value;
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+                if (value <= 585){
+                    horizontalNumberPicker.getTextValueView().setTextColor(def_blackcol);
+                }
+                if (value > 585 && value < 605) {
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0x7f, 0x00, 0x00));
+                } else if (value >= 605 && value < 625) {
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0x9f, 0x00, 0x00));
+                } else if (value >= 625){
+                    horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0xaf, 0x00, 0x00));
+                }
             }
         });
 
@@ -171,6 +260,7 @@ public class SettingsFragment extends DialogFragment {
             public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
                 Log.i("Settings", "got new start time : "+value);
                 currStartSeqTime = value;
+
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
             }
         });
@@ -179,6 +269,13 @@ public class SettingsFragment extends DialogFragment {
         return v;
     }
 
+    public void set_default_setup_settings(int fps, int err, int qrsize, int headertimeout, String dumppath){
+        this.currFPSvalue = fps;
+        this.currErrorvalue = err;
+        this.currQrSizevalue = qrsize;
+        this.currStartSeqTime = headertimeout;
+        this.currFileDumpPath = dumppath;
+    }
 
     private TransmissionController transmissionController = null;
     public void setTransmissionContorller(TransmissionController tc){
