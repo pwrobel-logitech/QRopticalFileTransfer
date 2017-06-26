@@ -250,6 +250,11 @@ public class QRSurface extends GLSurfaceView implements
 
     private boolean waiting_for_qrmanager_thread_to_finish = false;
     public void destroy_all_resources(){
+
+        synchronized (this){
+            //clear_ui();
+        }
+
         synchronized (this){
             should_display_anything = false;
             qrsurf_manager_thread_running = false;
@@ -292,6 +297,19 @@ public class QRSurface extends GLSurfaceView implements
     }
 
 
+    public synchronized void reset_producer(){
+        if (this.waiting_to_add_files)
+            return;
+
+
+
+        //this.update_descriptions_in_views();
+
+
+        synchronized (this){
+            force_encoder_reset = true;
+        }
+    }
 
     private boolean should_display_anything = false;
     private double fps = 5;
@@ -361,6 +379,7 @@ public class QRSurface extends GLSurfaceView implements
         }
     }
 
+    private boolean force_encoder_reset = false;
     private int index_of_currently_processed_file = -1;
     private List<String> files_to_send = new ArrayList<String>();
     private void qrsurf_manager_thread_mainfunc(){
@@ -374,6 +393,9 @@ public class QRSurface extends GLSurfaceView implements
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        if (this.waiting_to_add_files)
+           return;
 
         double framewaitns = 1e9 / this.fps;
         double current_ns = System.nanoTime();
@@ -398,7 +420,49 @@ public class QRSurface extends GLSurfaceView implements
                     }
 
                     this.produce_new_qrdata_to_surf_buffer();
+
+                    boolean forced_reset = false;
+                    synchronized (this){
+                        forced_reset = this.force_encoder_reset;
+                    }
+                    if (forced_reset){
+                        synchronized (this){
+                            this.force_encoder_reset = false;
+                            this.waiting_to_add_files = true;
+
+
+                            this.index_of_currently_processed_file=-1;
+
+                            files_to_send.clear();
+
+        //files_to_send.add(1, filespath.get(0));
+        //Log.i("qrsurf", "index : " + this.index_of_currently_processed_file+
+        //        ", file : " + files_to_send.get(this.index_of_currently_processed_file));
+        //init_and_set_external_file_info(files_to_send.get(this.index_of_currently_processed_file), "", 580, 0.5);
+                            this.continuous_status_display_update_is_over = false;
+                            this.header_time_start_ns = System.nanoTime();
+                            waiting_to_add_files = true;
+                            this.should_display_anything = false;
+                            this.is_header_generating = true;
+                            this.nframe_last_produced = -1;
+                            this.nframe_data_last_produced = -1;
+                            this.total_number_of_dataframes_produced_by_the_encoder = 0;
+                            this.time_ns_last_upload_progressbar_done = System.nanoTime();
+                            this.time_ns_header_initialized = System.nanoTime();
+
+
+
+                            destroy_current_encoder();
+                            for (int i = 0; i < this.surface_buffer.surfdata.capacity(); i++){
+                                this.surface_buffer.surfdata.put(i, (byte)0xff);
+                            }
+                        }
+                        this.end_transmission();
+                    }
+
                     QRSurface.this.requestRender();
+
+
 
                     synchronized (this){
                         while (this.is_frame_drawing) {
@@ -423,6 +487,10 @@ public class QRSurface extends GLSurfaceView implements
         this.encoder_status_textfield = tv;
         this.encoder_status_textfield2 = tv2;
 
+        this.clear_ui();
+    }
+
+    private void clear_ui(){
         Activity a = (Activity) this.getContext();
         if (a != null)
             a.runOnUiThread(new Runnable() {
@@ -602,43 +670,48 @@ public class QRSurface extends GLSurfaceView implements
 
                     this.update_descriptions_in_views();
                 }else{
-                    //final Activity a = (Activity) this.getContext();
-                    if (a != null)
-                        a.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                set_brightness_back_to_auto();
-                            }
-                        });
-                    continuous_status_display_update_is_over = true;
-
-
-                    if (a != null){
-                        a.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                set_brightness_back_to_auto();
-                                if (encoder_progressbar != null) {
-                                    encoder_progressbar.setVisibility(INVISIBLE);
-                                    encoder_progressbar.requestLayout();
-                                }
-                                if(encoder_status_textfield != null) {
-                                    encoder_status_textfield.setText(getStringResourceByName("ask_for_new_file_selection_to_upload"));
-                                    encoder_status_textfield.requestLayout();
-                                }
-                                if(encoder_status_textfield2 != null){
-                                    encoder_status_textfield2.setText("");
-                                    encoder_status_textfield2.requestLayout();
-                                }
-
-                            }
-                        });
-                    }
+                    this.end_transmission();
+                    waiting_to_add_files = true;
                 }
 
         }
 
         return status;
+    }
+
+    private void end_transmission(){
+        final Activity a = (Activity) this.getContext();
+        if (a != null)
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    set_brightness_back_to_auto();
+                }
+            });
+        continuous_status_display_update_is_over = true;
+
+
+        if (a != null){
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    set_brightness_back_to_auto();
+                    if (encoder_progressbar != null) {
+                        encoder_progressbar.setVisibility(INVISIBLE);
+                        encoder_progressbar.requestLayout();
+                    }
+                    if(encoder_status_textfield != null) {
+                        encoder_status_textfield.setText(getStringResourceByName("ask_for_new_file_selection_to_upload"));
+                        encoder_status_textfield.requestLayout();
+                    }
+                    if(encoder_status_textfield2 != null){
+                        encoder_status_textfield2.setText("");
+                        encoder_status_textfield2.requestLayout();
+                    }
+
+                }
+            });
+        }
     }
 
     public void set_brightness_manual_max(){
@@ -684,6 +757,9 @@ public class QRSurface extends GLSurfaceView implements
         this.file_trimmed_text = trimFileNameText(files_to_send.get(QRSurface.this.index_of_currently_processed_file));
     }
 
+    public synchronized void reset_settins(int fps, int errlev, int qrsize){
+
+    }
 
     private String getStringResourceByName(String aString) {
         Activity a = (Activity) this.getContext();

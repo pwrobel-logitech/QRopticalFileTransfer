@@ -107,6 +107,17 @@ public class Qrfiles extends Activity implements TransmissionController{
         this.myMainMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+
+                if(Qrfiles.this.qrsurf != null){
+                    Qrfiles.this.qrsurf.reset_producer();//actually, only deinits qrsurf manager thread
+                    Qrfiles.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Qrfiles.this.qrsurf.set_brightness_back_to_auto();
+                        }
+                    });
+                }
+
                 switch (item.getItemId())
                 {
                     case R.id.menu_settings:
