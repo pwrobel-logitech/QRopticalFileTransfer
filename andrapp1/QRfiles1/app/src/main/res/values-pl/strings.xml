@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TestowaApka1</string>
+    <string name="app_name">OpticalFileTransfer</string>
     <string name="action_settings">Ustawienia</string>
     <string name="draw_blink_encourage_new_transmission">Czekam na nową transmisję..</string>
     <string name="draw_blink_warning_header_not_detected">Nie wykryto sekwencji startowej. </string>

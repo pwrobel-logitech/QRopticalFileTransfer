@@ -15,9 +15,9 @@
     <application
         android:largeHeap="true"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/appico"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/appico"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
