@@ -43,7 +43,7 @@
     <string name="info_err_selection">Maximum error : </string>
     <string name="info_qrsize_selection">QR size : </string>
     <string name="info_qrsize_selection2">bytes</string>
-
+    <string name="info_start_seq_time">Start sequence time : </string>
 
 
     <string name="defaultButtonMinus">-</string>

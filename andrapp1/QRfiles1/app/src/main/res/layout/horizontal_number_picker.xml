@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:textSize="15dp"
         tools:text="-"
-        style="?android:attr/borderlessButtonStyle"
+        android:clickable="true"
+
         />
 
     <TextView
@@ -28,9 +29,11 @@
     <Button
         android:id="@+id/button_plus"
         android:textSize="15dp"
+        android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="+"
-        style="?android:attr/borderlessButtonStyle"
+
+
         />
 </LinearLayout>

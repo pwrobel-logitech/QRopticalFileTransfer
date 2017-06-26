@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -96,9 +97,14 @@ public class SettingsFragment extends DialogFragment {
         //setStyle(style, theme);
     }
 
+    int currFPSvalue = 17;
+    int currErrorvalue = 50;
+    int currQrSizevalue = 585;
+    int currStartSeqTime = 7;
     HorizontalNumberPicker numberPickerFPS = null;
     HorizontalNumberPicker numberPickerError = null;
     HorizontalNumberPicker numberPickerQrsize = null;
+    HorizontalNumberPicker numberPickerStartSeqTime = null;
     private int picker_obtainedFPS = -1;
     private int picker_obtainedError = -1;
     private int picker_obtainedQrsize = -1;
@@ -113,22 +119,77 @@ public class SettingsFragment extends DialogFragment {
         numberPickerFPS = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerFPS);
         numberPickerFPS.setMinValue(5);
         numberPickerFPS.setMaxValue(60);
-        numberPickerFPS.setValue(16);
+        numberPickerFPS.setValue(currFPSvalue);
+        numberPickerFPS.setOnLongPressUpdateInterval(200);
+        numberPickerFPS.setListener(new HorizontalNumberPickerListener() {
+            @Override
+            public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
+                Log.i("Settings", "got new FPS : "+value);
+                currFPSvalue = value;
+                SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+            }
+        });
 
         numberPickerError = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerError);
         numberPickerError.setMinValue(15);
         numberPickerError.setMaxValue(85);
-        numberPickerError.setValue(50);
+        numberPickerError.setValue(currErrorvalue);
         numberPickerError.setStepSize(5);
+        numberPickerError.setOnLongPressUpdateInterval(300);
+        numberPickerError.setListener(new HorizontalNumberPickerListener() {
+            @Override
+            public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
+                Log.i("Settings", "got new errval : "+value);
+                currErrorvalue = value;
+                SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+            }
+        });
 
         numberPickerQrsize = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerQrsize);
         numberPickerQrsize.setMinValue(90);
         numberPickerQrsize.setMaxValue(1500);
-        numberPickerQrsize.setValue(580);
+        numberPickerQrsize.setValue(currQrSizevalue);
         numberPickerQrsize.setStepSize(10);
+        numberPickerQrsize.setOnLongPressUpdateInterval(200);
+        numberPickerQrsize.setListener(new HorizontalNumberPickerListener() {
+            @Override
+            public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
+                Log.i("Settings", "got new QRsize : "+value);
+                currQrSizevalue = value;
+                SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+            }
+        });
+
+        numberPickerStartSeqTime = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerStartSeqTime);
+        numberPickerStartSeqTime.setMinValue(3);
+        numberPickerStartSeqTime.setMaxValue(30);
+        numberPickerStartSeqTime.setValue(currStartSeqTime);
+        numberPickerStartSeqTime.setStepSize(1);
+        numberPickerStartSeqTime.setOnLongPressUpdateInterval(200);
+        numberPickerStartSeqTime.setListener(new HorizontalNumberPickerListener() {
+            @Override
+            public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
+                Log.i("Settings", "got new start time : "+value);
+                currStartSeqTime = value;
+                SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+            }
+        });
 
 
         return v;
+    }
+
+
+    private TransmissionController transmissionController = null;
+    public void setTransmissionContorller(TransmissionController tc){
+        this.transmissionController = tc;
+    }
+
+    private void request_resetting_encoder_because_of_new_settings(){
+        if (this.transmissionController != null){
+            this.transmissionController.onNewTransmissionSettings(this.currFPSvalue, this.currErrorvalue,
+                    this.currQrSizevalue, this.currStartSeqTime, null);
+        }
     }
 
 }

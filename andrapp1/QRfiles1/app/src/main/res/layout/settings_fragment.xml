@@ -40,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:padding="10dp"
             >
             <TextView
                 android:id="@+id/textViewfpinfo"
@@ -66,6 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:padding="10dp"
                 >
                 <TextView
                     android:id="@+id/textViewerrinfo"
@@ -100,6 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:padding="10dp"
                 >
                 <TextView
                     android:id="@+id/textViewqrsizeinfo"
@@ -121,6 +124,42 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/info_qrsize_selection2" />
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#aaaaaa"/>
+
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                >
+                <TextView
+                    android:id="@+id/textViewstarttimeinfo"
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/info_start_seq_time" />
+                <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
+                    android:id="@+id/numberPickerStartSeqTime"
+                    android:orientation="horizontal"
+                    android:textSize="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textViewstarttimeinfo2"
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="s" />
             </LinearLayout>
 
             <View

@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Qrfiles extends Activity {
+public class Qrfiles extends Activity implements TransmissionController{
 
 
     //used to hold main camera thread with the higher priority
@@ -141,6 +141,7 @@ public class Qrfiles extends Activity {
 
         // Create and show the dialog.
         SettingsFragment newFragment = SettingsFragment.newInstance();
+        newFragment.setTransmissionContorller(this);
         newFragment.show(ft, "dialog");
 
     }
@@ -606,6 +607,21 @@ public class Qrfiles extends Activity {
         }
     }
 
+    int currFPSvalue = 17;
+    int currErrorvalue = 50;
+    int currQrSizevalue = 585;
+    int currStartSeqTime = 7;
+    String currDumpPath = null;
+    @Override
+    public void onNewTransmissionSettings(int fps, int errlevpercent, int qrsize, int startseqtime, String newdumppath) {
+        Log.i("Settings", "got new settings from settingsmenu, fps : "+fps+", err : "+errlevpercent
+                + ", qrsize : "+qrsize+", sseq : "+startseqtime+", dumppath : "+newdumppath);
+        this.currFPSvalue = fps;
+        this.currErrorvalue = errlevpercent;
+        this.currQrSizevalue = qrsize;
+        this.currStartSeqTime = startseqtime;
+        this.currDumpPath = newdumppath;
+    }
 
     private String fileExt(String url) {
         if (url.indexOf("?") > -1) {
@@ -716,7 +732,6 @@ public class Qrfiles extends Activity {
         System.loadLibrary("RSdecAPI");
         System.loadLibrary("native-lib");
     }
-
 
 
 }
