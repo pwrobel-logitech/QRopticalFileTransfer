@@ -71,9 +71,44 @@ public class Qrfiles extends Activity implements TransmissionController{
 
     boolean got_upload_request_from_intent = false;
     private String upload_requested_path_by_system = null;
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putInt("FPS", this.currFPSvalue);
+        savedInstanceState.putInt("Errlevel", this.currErrorvalue);
+        savedInstanceState.putInt("Qrsize", this.currQrSizevalue);
+        savedInstanceState.putString("filedumppath", this.currDumpPath);
+
+        Log.i("REST", "saved fps "+this.currFPSvalue);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+
+
+
+        this.currFPSvalue = savedInstanceState.getInt("FPS");
+        this.currErrorvalue = savedInstanceState.getInt("Errlevel");
+        this.currQrSizevalue = savedInstanceState.getInt("Qrsize");
+        this.currDumpPath = savedInstanceState.getString("filedumppath");
+        Log.i("REST", "restored fps "+this.currFPSvalue);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i("REST", "oncreate called");
+
         File yourAppDir = new File(Environment.getExternalStorageDirectory()+"");
         default_search_for_upload_homedir = yourAppDir.getPath();
 
@@ -319,6 +354,7 @@ public class Qrfiles extends Activity implements TransmissionController{
         }
         this.is_in_qr_sender_view = false;
         this.is_in_decoder_view = true;
+
     }
 
     @Override
