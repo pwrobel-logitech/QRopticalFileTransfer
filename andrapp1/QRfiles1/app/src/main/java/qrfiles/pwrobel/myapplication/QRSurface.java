@@ -297,7 +297,17 @@ public class QRSurface extends GLSurfaceView implements
     }
 
 
-    public synchronized void reset_producer(){
+    private int pending_fps = 17;
+    private int pending_errlevel = 50;
+    private int pending_qrsize = 585;
+    private int pending_header_timeout = 7;
+    public synchronized void reset_producer(int fps, int err, int qrsize, int headertimeout){
+
+        this.pending_fps = fps;
+        this.pending_errlevel = err;
+        this.pending_qrsize = qrsize;
+        this.pending_header_timeout = headertimeout;
+
         if (this.waiting_to_add_files)
             return;
 
@@ -363,7 +373,11 @@ public class QRSurface extends GLSurfaceView implements
             //files_to_send.add(1, filespath.get(0));
             Log.i("qrsurf", "index : " + this.index_of_currently_processed_file+
                     ", file : " + files_to_send.get(this.index_of_currently_processed_file));
-            init_and_set_external_file_info(files_to_send.get(this.index_of_currently_processed_file), "", 580, 0.5);
+            init_and_set_external_file_info(
+                    files_to_send.get(this.index_of_currently_processed_file), "",
+                    this.pending_qrsize, this.pending_errlevel / 100.0);
+            this.setFPS(this.pending_fps);
+            this.header_time_timeout_ns = this.pending_header_timeout * 1.0e9;
             this.continuous_status_display_update_is_over = false;
             this.header_time_start_ns = System.nanoTime();
             waiting_to_add_files = false;
@@ -660,7 +674,11 @@ public class QRSurface extends GLSurfaceView implements
 
                 this.index_of_currently_processed_file++;
                 if (this.index_of_currently_processed_file < this.files_to_send.size()){
-                    init_and_set_external_file_info(files_to_send.get(this.index_of_currently_processed_file), "", 580, 0.5);
+                    init_and_set_external_file_info(
+                            files_to_send.get(this.index_of_currently_processed_file), "",
+                            this.pending_qrsize, this.pending_errlevel / 100.0);
+                    this.setFPS(this.pending_fps);
+                    this.header_time_timeout_ns = this.pending_header_timeout * 1.0e9;
                     this.continuous_status_display_update_is_over = false;
                     this.is_header_generating = true;
                     this.header_time_start_ns = System.nanoTime();

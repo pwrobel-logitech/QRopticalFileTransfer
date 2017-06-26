@@ -108,20 +108,11 @@ public class Qrfiles extends Activity implements TransmissionController{
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                if(Qrfiles.this.qrsurf != null){
-                    Qrfiles.this.qrsurf.reset_producer();//actually, only deinits qrsurf manager thread
-                    Qrfiles.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Qrfiles.this.qrsurf.set_brightness_back_to_auto();
-                        }
-                    });
-                }
-
                 switch (item.getItemId())
                 {
                     case R.id.menu_settings:
                         Log.i("MENU", "settings selected");
+
                         showSettingDialog();
                         return true;
                 }
@@ -632,6 +623,17 @@ public class Qrfiles extends Activity implements TransmissionController{
         this.currQrSizevalue = qrsize;
         this.currStartSeqTime = startseqtime;
         this.currDumpPath = newdumppath;
+
+        if(Qrfiles.this.qrsurf != null){
+            Qrfiles.this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime);//actually, only deinits qrsurf manager thread
+            Qrfiles.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Qrfiles.this.qrsurf.set_brightness_back_to_auto();
+                }
+            });
+        }
+
     }
 
     private String fileExt(String url) {
