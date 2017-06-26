@@ -107,6 +107,7 @@ public class SettingsFragment extends DialogFragment {
     HorizontalNumberPicker numberPickerError = null;
     HorizontalNumberPicker numberPickerQrsize = null;
     HorizontalNumberPicker numberPickerStartSeqTime = null;
+    Button restore_default_settings_button = null;
     private int picker_obtainedFPS = -1;
     private int picker_obtainedError = -1;
     private int picker_obtainedQrsize = -1;
@@ -122,7 +123,7 @@ public class SettingsFragment extends DialogFragment {
         numberPickerFPS.setMinValue(5);
         numberPickerFPS.setMaxValue(60);
         numberPickerFPS.setValue(currFPSvalue);
-        numberPickerFPS.setOnLongPressUpdateInterval(200);
+        numberPickerFPS.setOnLongPressUpdateInterval(120);
 
         final ColorStateList def_blackcol_fps = numberPickerFPS.getTextValueView().getTextColors();
 
@@ -170,7 +171,7 @@ public class SettingsFragment extends DialogFragment {
         numberPickerError.setMaxValue(85);
         numberPickerError.setValue(currErrorvalue);
         numberPickerError.setStepSize(5);
-        numberPickerError.setOnLongPressUpdateInterval(300);
+        numberPickerError.setOnLongPressUpdateInterval(120);
 
         final ColorStateList def_blackcol_err = numberPickerError.getTextValueView().getTextColors();
 
@@ -215,7 +216,7 @@ public class SettingsFragment extends DialogFragment {
         numberPickerQrsize.setMaxValue(1500);
         numberPickerQrsize.setValue(currQrSizevalue);
         numberPickerQrsize.setStepSize(10);
-        numberPickerQrsize.setOnLongPressUpdateInterval(200);
+        numberPickerQrsize.setOnLongPressUpdateInterval(120);
         final ColorStateList def_blackcol = numberPickerQrsize.getTextValueView().getTextColors();
 
         int value = currQrSizevalue;
@@ -254,7 +255,7 @@ public class SettingsFragment extends DialogFragment {
         numberPickerStartSeqTime.setMaxValue(30);
         numberPickerStartSeqTime.setValue(currStartSeqTime);
         numberPickerStartSeqTime.setStepSize(1);
-        numberPickerStartSeqTime.setOnLongPressUpdateInterval(200);
+        numberPickerStartSeqTime.setOnLongPressUpdateInterval(100);
         numberPickerStartSeqTime.setListener(new HorizontalNumberPickerListener() {
             @Override
             public void onHorizontalNumberPickerChanged(HorizontalNumberPicker horizontalNumberPicker, int value) {
@@ -265,6 +266,24 @@ public class SettingsFragment extends DialogFragment {
             }
         });
 
+
+        this.restore_default_settings_button = (Button) v.findViewById(R.id.button_default_settings1);
+        this.restore_default_settings_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SettingsFragment.this.numberPickerFPS.getTextValueView().setTextColor(def_blackcol_fps);
+                SettingsFragment.this.numberPickerError.getTextValueView().setTextColor(def_blackcol_err);
+                SettingsFragment.this.numberPickerQrsize.getTextValueView().setTextColor(def_blackcol);
+
+                numberPickerFPS.setValue(17);
+                numberPickerError.setValue(50);
+                numberPickerQrsize.setValue(585);
+                numberPickerStartSeqTime.setValue(7);
+
+                SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+
+            }
+        });
 
         return v;
     }

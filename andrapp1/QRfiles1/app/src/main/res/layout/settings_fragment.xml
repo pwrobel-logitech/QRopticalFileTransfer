@@ -149,12 +149,15 @@
                 android:layout_height="2dp"
                 android:background="#aaaaaa"/>
 
-    <TextView
-        android:id="@+id/textView"
-        android:textSize="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="aa" />
+            <Button
+                android:id="@+id/button_default_settings1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:text="@string/info_button_restore_default_settings" />
+
+
 </LinearLayout>
 
     </ScrollView>

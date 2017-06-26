@@ -44,6 +44,7 @@
     <string name="info_qrsize_selection">QR size (bytes) : </string>
     <string name="info_qrsize_selection2">bytes</string>
     <string name="info_start_seq_time">Start sequence time (s) : </string>
+    <string name="info_button_restore_default_settings">Restore default settings</string>
 
 
     <string name="defaultButtonMinus">-</string>
