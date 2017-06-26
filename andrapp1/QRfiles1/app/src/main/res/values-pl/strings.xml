@@ -17,10 +17,10 @@
     <string name="menu_string_privacypolicy">Polityka prywatności</string>
     <string name="menu_string_help">Pomoc</string>
 
-    <string name="info_err_selection">Maksymalny błąd : </string>
-    <string name="info_qrsize_selection">rozmiar QR : </string>
+    <string name="info_err_selection">Maksymalny błąd (%) : </string>
+    <string name="info_qrsize_selection">rozmiar QR (bajty) : </string>
     <string name="info_qrsize_selection2">bajtów</string>
-    <string name="info_start_seq_time">Czas sekwencji startowej : </string>
+    <string name="info_start_seq_time">Czas sekwencji startowej (s) : </string>
 
 
     <string name="start_sequence_string">Sekwencja startowa : </string>

@@ -204,7 +204,8 @@ public class HorizontalNumberPicker extends LinearLayout {
     }
 
     private void setValue() {
-        String formatter = "%0" + String.valueOf(maxValue).length() + "d";
+        String formatter = "%1$4s";
+        showLeadingZeros = true;
         textValue.setText(showLeadingZeros ? String.format(formatter, value) : String.valueOf(value));
         if (listener != null) {
             listener.onHorizontalNumberPickerChanged(this, value);
