@@ -2,6 +2,7 @@ package qrfiles.pwrobel.myapplication;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -16,6 +17,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -515,7 +517,11 @@ public class QRSurface extends GLSurfaceView implements
                         encoder_status_textfield.requestLayout();
                     }
                     if(encoder_status_textfield2 != null){
-                        encoder_status_textfield2.setText("");
+                        encoder_status_textfield2.setText(" ");
+                        encoder_status_textfield2.setBackgroundResource(R.mipmap.down_arrow_icon);
+                        ViewGroup.LayoutParams params = encoder_status_textfield2.getLayoutParams();
+                        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        encoder_status_textfield2.setLayoutParams(params);
                         encoder_status_textfield2.requestLayout();
                     }
                 }
@@ -587,9 +593,14 @@ public class QRSurface extends GLSurfaceView implements
                     QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.PROGRESS, true);
                     if(QRSurface.this.encoder_status_textfield != null)
                         QRSurface.this.encoder_status_textfield.setText(QRSurface.this.description_status_1);
-                    if(QRSurface.this.encoder_status_textfield2 != null)
+                    if(QRSurface.this.encoder_status_textfield2 != null){
                         QRSurface.this.encoder_status_textfield2.setText(QRSurface.this.file_trimmed_text);
+                        encoder_status_textfield2.setBackgroundResource(0);
+                        ViewGroup.LayoutParams params = encoder_status_textfield2.getLayoutParams();
+                        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        encoder_status_textfield2.setLayoutParams(params);
                     }
+                }
             });
 
             this.time_ns_last_upload_progressbar_done = currt;
@@ -614,8 +625,14 @@ public class QRSurface extends GLSurfaceView implements
                         QRSurface.this.encoder_progressbar.drawMe((long)(1000 * progr), CustomProgressBar.progressBarType.TIMEOUT, true);
                         if(QRSurface.this.encoder_status_textfield != null)
                             QRSurface.this.encoder_status_textfield.setText(QRSurface.this.description_status_1);
-                        if(QRSurface.this.encoder_status_textfield2 != null)
+                        if(QRSurface.this.encoder_status_textfield2 != null){
                             QRSurface.this.encoder_status_textfield2.setText(QRSurface.this.file_trimmed_text);
+                            encoder_status_textfield2.setBackgroundResource(0);
+                            ViewGroup.LayoutParams params = encoder_status_textfield2.getLayoutParams();
+                            params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                            encoder_status_textfield2.setLayoutParams(params);
+                            encoder_status_textfield2.requestLayout();
+                        }
                     }
                 });
             this.time_ns_last_upload_progressbar_done = currt;
@@ -723,7 +740,13 @@ public class QRSurface extends GLSurfaceView implements
                         encoder_status_textfield.requestLayout();
                     }
                     if(encoder_status_textfield2 != null){
-                        encoder_status_textfield2.setText("");
+                        encoder_status_textfield2.setText(" ");
+                        //encoder_status_textfield2.setBackgroundColor(Color.argb(0x7f, 0xff, 0xff, 0xff));
+                        //encoder_status_textfield2.getBackground().setAlpha(100);
+                        encoder_status_textfield2.setBackgroundResource(R.mipmap.down_arrow_icon);
+                        ViewGroup.LayoutParams params = encoder_status_textfield2.getLayoutParams();
+                        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        encoder_status_textfield2.setLayoutParams(params);
                         encoder_status_textfield2.requestLayout();
                     }
 
