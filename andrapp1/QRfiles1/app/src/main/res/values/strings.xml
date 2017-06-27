@@ -9,6 +9,7 @@
     <string name="draw_blink_failed_header_detection">Failed to detect startup phase, please resend..</string>
     <string name="draw_blink_failed_data_detection">File transmission error for : </string>
     <string name="draw_blink_succeeded_data_detection">Correctly saved the file : </string>
+    <string name="draw_blink_pending_async">Processing file, wait.. </string>
 
     <string name="start_sequence_string">Startup sequence : </string>
     <string name="start_sequence_upload_file_desc">Sending start sequence for a file : </string>

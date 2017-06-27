@@ -9,7 +9,8 @@
     <string name="draw_blink_failed_header_detection">Nie udało się wykryć startu transmisji, spróbuj ponownie..</string>
     <string name="draw_blink_failed_data_detection">Błąd transmisji pliku : </string>
     <string name="draw_blink_succeeded_data_detection">Pomyślnie zapisano plik : </string>
-    <string name="upload_file_finalizing_msg">Kończenie pliku, proszę poczekać..</string>
+    <string name="draw_blink_pending_async">Przetwarzam plik, proszę czekać.. </string>
+
 
 
     <string name="menu_string_about">O programie</string>
@@ -29,5 +30,6 @@
     <string name="upload_file_desc_string">Wysyłanie pliku : </string>
     <string name="ask_for_new_file_selection_to_upload">Wybierz plik do wysłania</string>
     <string name="title_filebrowse">Przeglądaj odebrane pliki</string>
+    <string name="upload_file_finalizing_msg">Kończenie pliku, proszę poczekać..</string>
 
 </resources>

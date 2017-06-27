@@ -131,6 +131,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         this.str_failed_header_detection = this.getStringResourceByName("draw_blink_failed_header_detection");
         this.str_failed_data_detection = this.getStringResourceByName("draw_blink_failed_data_detection");
 
+        this.str_pending_async_text = this.getStringResourceByName("draw_blink_pending_async");
         this.str_succeeded_data_detection = this.getStringResourceByName("draw_blink_succeeded_data_detection");
 
         camsurf.setOnTouchListener(camsurf);
@@ -983,6 +984,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return this.should_draw_progressbars;
     }
 
+    public synchronized boolean should_draw_async_info(){
+        return this.should_deliver_pending_async_for_certain_time;
+    }
+
     String filename_detected_from_header;
     boolean is_header_detected = false;
     @Override  //deprecated
@@ -995,6 +1000,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     private double timeout_file_successfuly_saved_ms = 2000.0;
     private boolean should_deliver_info_file_successfully_saved_for_certain_time = false;
+    private boolean should_deliver_pending_async_for_certain_time = false;
     private double last_time_the_file_succ_saved = System.nanoTime()/1.0e6;
 
     private boolean got_dataframe_before_header_detection = false;
@@ -1014,6 +1020,15 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_NOTE;
 
         double currms = System.nanoTime() / 1.0e6;
+
+        if (this.should_deliver_pending_async_for_certain_time) {
+            status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_NOTE;
+            status.displaytext2 = "";
+            status.displaytext = this.str_pending_async_text;
+            status.should_draw_status = true;
+            return status;
+        }
+
         if (this.should_deliver_error_info_for_certain_time){
             if (currms - this.error_time_arrival_ms > this.error_message_time_duration_ms){
                 this.error_time_arrival_ms = currms;
@@ -1106,6 +1121,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.delivered_totalprogress = this.getCurrentProgressRatio();
             this.should_deliver_pending_info_for_drawer = true;
             this.last_filename_detected_from_header = get_last_recognized_file_name_str();
+            this.should_draw_progressbars = false;
+            this.should_deliver_pending_async_for_certain_time = true;
         }
 
         this.estimated_max_framerate = 0;
@@ -1115,6 +1132,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         int stat = deinitialize_decoder();
 
         {
+            synchronized (this){
+                this.should_deliver_pending_async_for_certain_time = false;
+            }
             for (int i = 0; i < RSn; i++) {
                 succesfull_positions_in_prev_chunk[i] = succesfull_positions_in_current_chunk[i];
                 succesfull_positions_in_current_chunk[i] = false;
@@ -1211,6 +1231,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     private String str_failed_header_detection;
     private String str_failed_data_detection;
     private String str_succeeded_data_detection;
+    private String str_pending_async_text;
     private String getStringResourceByName(String aString) {
         Activity a = (Activity) this.context;
         if (a == null)
