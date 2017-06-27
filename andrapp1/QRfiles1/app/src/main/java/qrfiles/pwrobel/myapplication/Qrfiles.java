@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -72,7 +74,7 @@ public class Qrfiles extends Activity implements TransmissionController{
     boolean got_upload_request_from_intent = false;
     private String upload_requested_path_by_system = null;
 
-
+/*
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
@@ -87,7 +89,7 @@ public class Qrfiles extends Activity implements TransmissionController{
         Log.i("REST", "saved fps "+this.currFPSvalue);
         super.onSaveInstanceState(savedInstanceState);
     }
-
+*//*
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -102,10 +104,14 @@ public class Qrfiles extends Activity implements TransmissionController{
         this.currDumpPath = savedInstanceState.getString("filedumppath");
         Log.i("REST", "restored fps "+this.currFPSvalue);
     }
+*/
 
+    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.preferences = this.getPreferences(Context.MODE_PRIVATE);
 
         Log.i("REST", "oncreate called");
 
@@ -185,6 +191,26 @@ public class Qrfiles extends Activity implements TransmissionController{
 
     }
 
+    static private int clamp(int val, int min, int max){
+        if (min > max)
+            return min;
+        return Math.max(min, Math.min(max, val));
+    }
+
+    private void readAndSanitizePrefs(){
+        this.preferences = this.getPreferences(Context.MODE_PRIVATE);
+
+        int fps = this.preferences.getInt("FPS", 17);
+        int errlev = this.preferences.getInt("Errlevel", 50);
+        int qrsize = this.preferences.getInt("Qrsize", 585);
+        String fdumppath = this.preferences.getString("filedumppath", null);
+
+        this.currFPSvalue = Qrfiles.clamp(fps, 5, 60);
+        this.currErrorvalue = Qrfiles.clamp(errlev, 15, 85);
+        this.currQrSizevalue = Qrfiles.clamp(qrsize, 90, 1500);
+        this.currDumpPath = fdumppath;
+
+    }
 
 
     boolean is_in_decoder_view = true;
@@ -193,6 +219,9 @@ public class Qrfiles extends Activity implements TransmissionController{
     @Override
     public void onResume(){
         Log.i("ACTINFO", "Activity resumed");
+
+
+        this.readAndSanitizePrefs();
 
 
         //setContentView(R.layout.activity_qrfiles);
@@ -354,6 +383,15 @@ public class Qrfiles extends Activity implements TransmissionController{
         }
         this.is_in_qr_sender_view = false;
         this.is_in_decoder_view = true;
+
+        this.preferences = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = this.preferences.edit();
+        editor.putInt("FPS", this.currFPSvalue);
+        editor.putInt("Errlevel", this.currErrorvalue);
+        editor.putInt("Qrsize", this.currQrSizevalue);
+        editor.putString("filedumppath", this.currDumpPath);
+        editor.commit();
+
 
     }
 
