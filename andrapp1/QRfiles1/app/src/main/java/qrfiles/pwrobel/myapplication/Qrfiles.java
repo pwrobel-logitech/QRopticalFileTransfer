@@ -269,7 +269,7 @@ public class Qrfiles extends Activity implements TransmissionController{
                 Log.i("clickable", "setting clickable to false");
                 if (Qrfiles.this.is_in_decoder_view) {
                     Qrfiles.this.switch_to_qrsender_view();
-                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.down_arrow_icon);
+                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.icdown3);
                     Qrfiles.this.uparrowbutton.setImageBitmap(bmp);
                     Qrfiles.this.uparrowbutton.requestLayout();
                     Qrfiles.this.is_in_decoder_view = false;
@@ -279,7 +279,7 @@ public class Qrfiles extends Activity implements TransmissionController{
                 }
                 if (!Qrfiles.this.is_in_decoder_view) {
                     Qrfiles.this.switch_to_detector_view();
-                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.up_arrow_icon);
+                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.icup3);
                     Qrfiles.this.uparrowbutton.setImageBitmap(bmp);
                     Qrfiles.this.uparrowbutton.requestLayout();
                     Qrfiles.this.is_in_decoder_view = true;
@@ -519,7 +519,7 @@ public class Qrfiles extends Activity implements TransmissionController{
         this.qrsurf.init_qrsurf_thread();//starts thread
 
         Qrfiles.this.set_activity_button_listeners();
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.down_arrow_icon);
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.icdown3);
         Qrfiles.this.uparrowbutton.setImageBitmap(bmp);
                 uparrowbutton.setClickable(true);
                 uparrowbutton.requestLayout();
