@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 import android.os.Process;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +41,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by pwrobel on 29.04.17.
@@ -100,6 +102,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     String last_received_file_name = "";
     ///
 
+
+    //after this time of has passed from the last received frame, the decoder is restarted
+    private double last_time_some_frame_received = System.nanoTime();
+    private boolean death_clock_ticking = false;
+    private double ns_death_timeout = 1.0e10;
 
     public void setContext(Context cont){
         context = cont;
@@ -323,6 +330,22 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         int ntot = get_total_frames_of_data_that_will_be_produced();
         int lf = get_last_number_of_frame_detected();
         int hfn = get_last_number_of_header_frame_detected();
+
+        double currt = System.nanoTime();
+
+        if (this.death_clock_ticking && (currt - this.last_time_some_frame_received > this.ns_death_timeout)){
+            Log.i("RST ERR", "No frames for the past " + this.ns_death_timeout+" nanosec - resetting decoder");
+            this.death_clock_ticking = false;
+            this.reset_decoder();
+            this.last_time_some_frame_received = System.nanoTime();
+            camera.addCallbackBuffer(callbackbuffer);
+            return;
+        }
+
+        if (status == 6 || status == 2) { //some frame has been detected, restart decoder death clock
+            last_time_some_frame_received = System.nanoTime();
+            death_clock_ticking = true;
+        }
 
         if (status == 4) { //got some async error
             synchronized (this){
@@ -1113,15 +1136,18 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.file_detection_ended = true;
             if(stat == 3 || stat == 4){
 
-                synchronized (this){
-                    this.got_chunkRS_decode_error = true;
+                if (this.is_header_detected) {
+                    synchronized (this) {
+                        this.got_chunkRS_decode_error = true;
+                    }
+                    Log.i("RST ERR", "Got unrecoverable chunk at the end - error");
+                    synchronized (this) {
+                        this.error_time_arrival_ms = System.nanoTime() / 1.0e6;
+                        this.should_deliver_error_info_for_certain_time = true;
+                    }
+                }else{
+                    Log.i("RST ERR", "Death 8s time passed, restarted, no data obtained");
                 }
-                Log.i("RST ERR", "Got unrecoverable chunk at the end - error");
-                synchronized (this) {
-                    this.error_time_arrival_ms = System.nanoTime() / 1.0e6;
-                    this.should_deliver_error_info_for_certain_time = true;
-                }
-
                 this.file_detected_and_finally_saved_successfully = false;
             }
             else if (stat == 7){
@@ -1147,6 +1173,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         this.did_any_header_frame_arrived = false;
         this.got_chunkRS_decode_error = false;
         this.got_dataframe_before_header_detection = false;
+
         System.gc();
     }
 
