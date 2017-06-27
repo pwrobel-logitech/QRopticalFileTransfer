@@ -10,6 +10,7 @@
     <string name="draw_blink_failed_data_detection">Błąd transmisji pliku : </string>
     <string name="draw_blink_succeeded_data_detection">Pomyślnie zapisano plik : </string>
     <string name="draw_blink_pending_async">Przetwarzam plik, proszę czekać.. </string>
+    <string name="draw_progress_chunk_name">Szum - fragment</string>
 
 
 

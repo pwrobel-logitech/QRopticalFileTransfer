@@ -171,8 +171,9 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                         ;
                         ///
 
-
+                        String add_text = "";
                         if (type == progressBarType.NOISE) {
+
                             rectanglePaint.setColor(Color.rgb(redratio, greenratio, 0));
                         } else if (type == progressBarType.PROGRESS) {
                             rectanglePaint.setColor(Color.rgb(0x55, 0x55, 0xff));
@@ -207,6 +208,18 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                             c.drawText(stringtodraw, (int)(w/2.0-this.textrect.width()/2.0),
                                        (int)(h/2.0+this.textrect.height()/2.0), rectanglePaint);
                             //-20+w/2.0f, 0.68f*h
+                        }
+
+                        if (type == progressBarType.NOISE){
+
+                            add_text = this.filename;
+                            rectanglePaint.setColor(Color.BLACK);
+                            rectanglePaint.setTextSize(32);
+
+
+                            rectanglePaint.getTextBounds(add_text, 0, add_text.length(), this.textrect);
+                            c.drawText(add_text, (int)(w/2.0-this.textrect.width()/2.0),
+                                    (int)(h/2.0+this.textrect.height()/2.0), rectanglePaint);
                         }
 
 

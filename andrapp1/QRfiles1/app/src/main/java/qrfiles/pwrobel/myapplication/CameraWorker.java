@@ -181,14 +181,22 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     private boolean is_residual = false;
     private int last_chunk_number = 0;
+    private int current_chunk_number = 0;
+    private int nchunks = 0;
     public synchronized void update_decoder_statistic(int newfrnum){
         if (RSn == 0)
             return;
         int nmainchunks = total_frame_number / RSn;
+        this.nchunks = nmainchunks;
+        if (total_frame_number % RSn != 0)
+            this.nchunks++;
 
 
         is_residual = (newfrnum >= (total_frame_number - RSn_res));
+
+
         int curr_chunk = newfrnum / RSn;
+        this.current_chunk_number = curr_chunk;
 
         if(curr_chunk != this.last_chunk_number){
             for(int i = 0; i < RSn; i++){
@@ -1018,6 +1026,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     public synchronized DisplayStatusInfo getDisplayStatusText() {
 
         status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_NOTE;
+        status.additional_err_text = this.getChunkInfoString() + " "+
+                ((int)(this.current_chunk_number+1))+"/"+this.nchunks;
 
         double currms = System.nanoTime() / 1.0e6;
 
@@ -1041,6 +1051,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 status.displaytext2 = "";
                 status.displaytext2 = this.last_filename_detected_from_header;
                 status.displaytext = this.str_failed_data_detection;
+
                 status.should_draw_status = true;
             }
             return status;
@@ -1091,6 +1102,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             return status;
         }
         return status;
+    }
+
+    public synchronized String getChunkInfoString(){
+        return this.getStringResourceByName("draw_progress_chunk_name");
     }
 
     /// data as NV21 input, pixels as 8bit greyscale output

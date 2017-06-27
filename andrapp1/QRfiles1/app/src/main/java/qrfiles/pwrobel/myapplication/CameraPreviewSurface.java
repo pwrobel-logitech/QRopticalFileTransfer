@@ -376,12 +376,18 @@ public class CameraPreviewSurface extends GLSurfaceView implements
             pr1drawer.drawMe((int)(1000.0*pr), CustomProgressBar.progressBarType.PROGRESS, should_draw_something_on_progressbar);
         }
         if(pr2drawer != null ) {//
+            final CameraController.DisplayStatusInfo status = this.camcontroller.getDisplayStatusText();
+            this.errbar_additional_text = status.additional_err_text;
+            if (CameraPreviewSurface.this.errbar_additional_text != null)
+                pr2drawer.setFileName(errbar_additional_text);
             pr2drawer.drawMe((int)(1000.0*nr), CustomProgressBar.progressBarType.NOISE, should_draw_something_on_progressbar);
         }
     }
 
+    private String errbar_additional_text = null;
     private synchronized void draw_notification_status_if_needed(){
         final CameraController.DisplayStatusInfo status = this.camcontroller.getDisplayStatusText();
+        this.errbar_additional_text = status.additional_err_text;
         if (this.decoder_status_textView1 != null && this.decoder_status_textView2 != null){
             Activity a = (Activity) getContext();
             final boolean should_draw_something_on_progressbar = this.camcontroller.shouldDrawProgressBars();

@@ -44,6 +44,7 @@ public interface CameraController {
         public String displaytext;
         public String displaytext2; //for the eventual second line
         public StatusDisplayType displayTextType;
+        public String additional_err_text;
         boolean should_draw_status;
     }
 
