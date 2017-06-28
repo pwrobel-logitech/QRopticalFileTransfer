@@ -204,12 +204,14 @@ public class Qrfiles extends Activity implements TransmissionController{
         int errlev = this.preferences.getInt("Errlevel", 50);
         int qrsize = this.preferences.getInt("Qrsize", 585);
         int timeout = this.preferences.getInt("timeout", 6);
+        int suggN = this.preferences.getInt("suggested_N", 511);
         String fdumppath = this.preferences.getString("filedumppath", null);
 
         this.currFPSvalue = Qrfiles.clamp(fps, 5, 60);
         this.currErrorvalue = Qrfiles.clamp(errlev, 20, 80);
         this.currQrSizevalue = Qrfiles.clamp(qrsize, 90, 1500);
         this.currStartSeqTime = Qrfiles.clamp(timeout, 3, 10);
+        this.currsuggested_N = Qrfiles.clamp(suggN, 255, 1023);
         this.currDumpPath = fdumppath;
 
     }
@@ -392,6 +394,7 @@ public class Qrfiles extends Activity implements TransmissionController{
         editor.putInt("Errlevel", this.currErrorvalue);
         editor.putInt("Qrsize", this.currQrSizevalue);
         editor.putInt("timeout", this.currStartSeqTime);
+        editor.putInt("suggested_N", this.currsuggested_N);
         editor.putString("filedumppath", this.currDumpPath);
         editor.commit();
 
@@ -583,7 +586,7 @@ public class Qrfiles extends Activity implements TransmissionController{
 
         this.progressBar_encoder = (CustomProgressBar) this.findViewById(R.id.encoder_progressbar);
         this.qrsurf.setCustomProgressBar(progressBar_encoder);
-        this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime);
+        this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime, currsuggested_N);
 
         this.encoder_status_textfield = (TextView) this.findViewById(R.id.encoder_status_textfield);
         this.encoder_status_textfield2 = (TextView) this.findViewById(R.id.encoder_status_textfield2);
@@ -693,6 +696,7 @@ public class Qrfiles extends Activity implements TransmissionController{
     int currErrorvalue = 50;
     int currQrSizevalue = 585;
     int currStartSeqTime = 6;
+    int currsuggested_N = 511;
     String currDumpPath = null;
     @Override
     public void onNewTransmissionSettings(int fps, int errlevpercent, int qrsize, int startseqtime, String newdumppath) {
@@ -705,7 +709,7 @@ public class Qrfiles extends Activity implements TransmissionController{
         this.currDumpPath = newdumppath;
 
         if(Qrfiles.this.qrsurf != null){
-            Qrfiles.this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime);//actually, only deinits qrsurf manager thread
+            Qrfiles.this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime, currsuggested_N);//actually, only deinits qrsurf manager thread
             Qrfiles.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

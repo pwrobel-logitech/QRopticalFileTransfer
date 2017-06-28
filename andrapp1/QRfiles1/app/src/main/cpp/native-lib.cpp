@@ -72,10 +72,11 @@ Java_qrfiles_pwrobel_myapplication_QRSurface_init_1and_1set_1external_1file_1inf
                                                                                   jstring filename_,
                                                                                   jstring filepath_,
                                                                                   jint suggested_qr_payload_length,
-                                                                                  jdouble suggested_err_fraction) {
+                                                                                  jdouble suggested_err_fraction,
+                                                                                  jint suggested_N) {
     const char *filename = env->GetStringUTFChars(filename_, 0);
     const char *filepath = env->GetStringUTFChars(filepath_, 0);
-    jint stat = init_and_set_external_file_info(filename, filepath, suggested_qr_payload_length, suggested_err_fraction, 511);
+    jint stat = init_and_set_external_file_info(filename, filepath, suggested_qr_payload_length, suggested_err_fraction, suggested_N);
     env->ReleaseStringUTFChars(filename_, filename);
     env->ReleaseStringUTFChars(filepath_, filepath);
     return stat;

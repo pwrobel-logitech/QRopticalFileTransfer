@@ -303,12 +303,14 @@ public class QRSurface extends GLSurfaceView implements
     private int pending_errlevel = 50;
     private int pending_qrsize = 585;
     private int pending_header_timeout = 6;
-    public synchronized void reset_producer(int fps, int err, int qrsize, int headertimeout){
+    private int pending_suggested_N = 511;
+    public synchronized void reset_producer(int fps, int err, int qrsize, int headertimeout, int suggested_N){
 
         this.pending_fps = fps;
         this.pending_errlevel = err;
         this.pending_qrsize = qrsize;
         this.pending_header_timeout = headertimeout;
+        this.pending_suggested_N = suggested_N;
 
         if (this.waiting_to_add_files)
             return;
@@ -377,7 +379,7 @@ public class QRSurface extends GLSurfaceView implements
                     ", file : " + files_to_send.get(this.index_of_currently_processed_file));
             init_and_set_external_file_info(
                     files_to_send.get(this.index_of_currently_processed_file), "",
-                    this.pending_qrsize, this.pending_errlevel / 100.0);
+                    this.pending_qrsize, this.pending_errlevel / 100.0, pending_suggested_N);
             this.setFPS(this.pending_fps);
             this.header_time_timeout_ns = this.pending_header_timeout * 1.0e9;
             this.continuous_status_display_update_is_over = false;
@@ -693,7 +695,7 @@ public class QRSurface extends GLSurfaceView implements
                 if (this.index_of_currently_processed_file < this.files_to_send.size()){
                     init_and_set_external_file_info(
                             files_to_send.get(this.index_of_currently_processed_file), "",
-                            this.pending_qrsize, this.pending_errlevel / 100.0);
+                            this.pending_qrsize, this.pending_errlevel / 100.0, pending_suggested_N);
                     this.setFPS(this.pending_fps);
                     this.header_time_timeout_ns = this.pending_header_timeout * 1.0e9;
                     this.continuous_status_display_update_is_over = false;
@@ -837,8 +839,8 @@ public class QRSurface extends GLSurfaceView implements
 
     public static native int init_and_set_external_file_info(String filename, String filepath,
                                                              int suggested_qr_payload_length,
-                                                             double suggested_err_fraction //NOTIMPL
-                                                              );
+                                                             double suggested_err_fraction,
+                                                             double suggested_N);
 
 
     //returns status, if status=1, the frame sequence is done

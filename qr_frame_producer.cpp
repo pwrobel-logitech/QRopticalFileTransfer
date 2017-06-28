@@ -157,6 +157,8 @@ void Qr_frame_producer::produce_metadata(){
     int optimal_rsk = (int)((1.0-this->suggested_err_ratio) * optimal_rsn);
     if (optimal_rsk < 1)
         optimal_rsk = 1;
+    if (optimal_rsk > optimal_rsn)
+        optimal_rsk = optimal_rsn;
     // estimate remain (n,k)
     int nch = utils::count_symbols_to_fit(optimal_rsn, 256, this->total_chars_per_QR_ - 4) - 1;
     int datalength_per_chunk = optimal_rsk * nch * utils::nbits_forsymcombinationsnumber(optimal_rsn) / 8;
