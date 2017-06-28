@@ -5,9 +5,13 @@ extern "C"{
 //gives standalone file name and path to that file we wish to encode
 //suggested_qr_payload_length = byte capacity of the given QR frame. Above 585 is problem with
 //fast decoding so far
+//err_fraction - ratio = (N-K)/N - this implies which K set for given N
+//suggested_N = N value of the RS code, default 511, for small chunk 255, for large 1023
 int init_and_set_external_file_info(const char* filename,
                                     const char* filepath,
-                                    int suggested_qr_payload_length);
+                                    int suggested_qr_payload_length,
+                                    double err_fraction,
+                                    int suggested_N);
 
 
 //we wish to get the next greyscale square memory buffer of size

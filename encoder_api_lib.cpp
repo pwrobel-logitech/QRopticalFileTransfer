@@ -6,10 +6,13 @@ Qr_frame_producer* internal_frame_producer = NULL;
 
 int init_and_set_external_file_info(const char* filename,
                                     const char* filepath,
-                                    int suggested_qr_payload_length){
+                                    int suggested_qr_payload_length,
+                                    double err_fraction,
+                                    int suggested_N){
     if (internal_frame_producer == NULL){
         internal_frame_producer = new Qr_frame_producer;
-        internal_frame_producer->set_external_file_info(filename, filepath, suggested_qr_payload_length);
+        internal_frame_producer->set_external_file_info(filename, filepath, suggested_qr_payload_length,
+                                                        err_fraction, suggested_N);
     }
     return 0;
 };

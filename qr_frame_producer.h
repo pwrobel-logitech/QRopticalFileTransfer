@@ -29,9 +29,14 @@ public:
 
     std::vector<char> metadata_; //metadata for the file is held here
 
-    int set_external_file_info(const char* filename, const char* filepath, int suggested_qr_payload_length);
+    int set_external_file_info(const char* filename, const char* filepath, int suggested_qr_payload_length,
+                               double suggested_errfraction, int suggested_N);
 
 private:
+
+    double suggested_err_ratio;
+    double suggested_N;
+
     int getFileData(FileChunk* chunk);
     void setup_metadata_encoder();
     void setup_encoder(uint32_t N, uint32_t K, uint32_t rN, uint32_t rK);

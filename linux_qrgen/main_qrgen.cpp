@@ -174,7 +174,7 @@ int produce_next_QR_frame_to_buffer(){
                 std::string path = executable_path;
                 if (fileNames[current_file_index].c_str()[0] == '/')
                     path = std::string("");
-                frame_producer->set_external_file_info(fileNames[current_file_index].c_str(), path.c_str(), qrbytesize);
+                frame_producer->set_external_file_info(fileNames[current_file_index].c_str(), path.c_str(), qrbytesize, 0.5, 511);
             }
 
         }

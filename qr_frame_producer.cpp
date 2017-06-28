@@ -27,6 +27,8 @@ Qr_frame_producer::Qr_frame_producer()
     this->nfr_done_ = 0;
     this->ndataframe_done_ = 0;
     this->is_header_frame_generating_switch_pending_ = false;
+    this->suggested_err_ratio = 0.5;
+    this->suggested_N = 511;
 }
 
 Qr_frame_producer::~Qr_frame_producer(){
@@ -78,7 +80,10 @@ void Qr_frame_producer::calculate_file_content_hash(int hash_chunk_size){
     *((uint32_t*)(&this->file_info_.hash[4])) = hs_whigh;
 };
 
-int Qr_frame_producer::set_external_file_info(const char* filename, const char* filepath, int suggested_qr_payload_length){
+int Qr_frame_producer::set_external_file_info(const char* filename, const char* filepath, int suggested_qr_payload_length,
+                                              double suggested_errfraction, int suggested_N){
+    this->suggested_err_ratio = suggested_errfraction;
+    this->suggested_N = suggested_N;
     this->total_chars_per_QR_ = suggested_qr_payload_length;
     this->setup_metadata_encoder();
     this->file_info_.filename = std::string(filename);
@@ -146,8 +151,12 @@ int Qr_frame_producer::estimate_capacity(int N, int K, int charperQR){
 void Qr_frame_producer::produce_metadata(){
     int spos = 0;
     bool cont = true;
-    int optimal_rsn = 511;
-    int optimal_rsk = 255;
+    int optimal_rsn = this->suggested_N;
+    if (optimal_rsn != 1023 || optimal_rsn != 255 || optimal_rsn != 511)
+        optimal_rsn = 511;
+    int optimal_rsk = (int)((1.0-this->suggested_err_ratio) * optimal_rsn);
+    if (optimal_rsk < 1)
+        optimal_rsk = 1;
     // estimate remain (n,k)
     int nch = utils::count_symbols_to_fit(optimal_rsn, 256, this->total_chars_per_QR_ - 4) - 1;
     int datalength_per_chunk = optimal_rsk * nch * utils::nbits_forsymcombinationsnumber(optimal_rsn) / 8;

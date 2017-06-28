@@ -70,7 +70,7 @@ int main(int argc, char **argv){
 
     Qr_frame_producer frame_producer;
 
-    frame_producer.set_external_file_info("textmy.txt", "/repos/qr/", 444);
+    frame_producer.set_external_file_info("textmy.txt", "/repos/qr/", 444, 0.5, 511);
 
     int num = 0;
     for(int i=0; i<7*40; i++){
@@ -98,7 +98,7 @@ int main(int argc, char **argv){
     memset(fname, 0, sizeof(fname));
     snprintf(fname, sizeof(fname), "%d.txt", b);
 
-    frame_producer.set_external_file_info(fname, "/repos/qr/qrenctestfiles/", 31);
+    frame_producer.set_external_file_info(fname, "/repos/qr/qrenctestfiles/", 31, 0.5, 511);
 
     int num = 0;
     for(int i=0; i<7*20; i++){
