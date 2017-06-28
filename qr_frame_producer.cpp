@@ -83,6 +83,10 @@ void Qr_frame_producer::calculate_file_content_hash(int hash_chunk_size){
 int Qr_frame_producer::set_external_file_info(const char* filename, const char* filepath, int suggested_qr_payload_length,
                                               double suggested_errfraction, int suggested_N){
     this->suggested_err_ratio = suggested_errfraction;
+    if (this->suggested_err_ratio <= 0.0)
+        this->suggested_err_ratio = 0.01;
+    if (this->suggested_err_ratio > 1.0)
+        this->suggested_err_ratio = 1.0;
     this->suggested_N = suggested_N;
     this->total_chars_per_QR_ = suggested_qr_payload_length;
     this->setup_metadata_encoder();
@@ -180,11 +184,11 @@ void Qr_frame_producer::produce_metadata(){
         curr_power += 1;
         int remN = (1 << curr_power) - 1;
         curr_size = this->estimate_capacity(remN,
-                                            (int)(k_factor*(remN - ((1 << curr_power) / 2))),
+                                            (int)((1.0-this->suggested_err_ratio)*k_factor*(remN - ((1 << curr_power) / 2))),
                                             this->total_chars_per_QR_);
     }while(curr_size<remain_length);
     int remN = (1 << curr_power) - 1;
-    int remK = (int)(k_factor*(remN - ((1 << curr_power) / 2)));
+    int remK = (int)((1.0-this->suggested_err_ratio)*k_factor*(remN - ((1 << curr_power) / 2)));
     if (remN > optimal_rsn)
         remN = optimal_rsn;
     if (remK > optimal_rsk)
