@@ -101,7 +101,7 @@ public class SettingsFragment extends DialogFragment {
     int currFPSvalue = 17;
     int currErrorvalue = 50;
     int currQrSizevalue = 585;
-    int currStartSeqTime = 7;
+    int currStartSeqTime = 6;
     String currFileDumpPath = null;
     HorizontalNumberPicker numberPickerFPS = null;
     HorizontalNumberPicker numberPickerError = null;
@@ -167,8 +167,8 @@ public class SettingsFragment extends DialogFragment {
 
 
         numberPickerError = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerError);
-        numberPickerError.setMinValue(15);
-        numberPickerError.setMaxValue(85);
+        numberPickerError.setMinValue(20);
+        numberPickerError.setMaxValue(80);
         numberPickerError.setValue(currErrorvalue);
         numberPickerError.setStepSize(5);
         numberPickerError.setOnLongPressUpdateInterval(120);
@@ -252,7 +252,7 @@ public class SettingsFragment extends DialogFragment {
 
         numberPickerStartSeqTime = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerStartSeqTime);
         numberPickerStartSeqTime.setMinValue(3);
-        numberPickerStartSeqTime.setMaxValue(30);
+        numberPickerStartSeqTime.setMaxValue(10);
         numberPickerStartSeqTime.setValue(currStartSeqTime);
         numberPickerStartSeqTime.setStepSize(1);
         numberPickerStartSeqTime.setOnLongPressUpdateInterval(100);
@@ -278,7 +278,7 @@ public class SettingsFragment extends DialogFragment {
                 numberPickerFPS.setValue(17);
                 numberPickerError.setValue(50);
                 numberPickerQrsize.setValue(585);
-                numberPickerStartSeqTime.setValue(7);
+                numberPickerStartSeqTime.setValue(6);
 
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
 

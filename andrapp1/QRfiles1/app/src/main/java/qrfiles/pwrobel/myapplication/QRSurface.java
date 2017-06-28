@@ -302,7 +302,7 @@ public class QRSurface extends GLSurfaceView implements
     private int pending_fps = 17;
     private int pending_errlevel = 50;
     private int pending_qrsize = 585;
-    private int pending_header_timeout = 7;
+    private int pending_header_timeout = 6;
     public synchronized void reset_producer(int fps, int err, int qrsize, int headertimeout){
 
         this.pending_fps = fps;

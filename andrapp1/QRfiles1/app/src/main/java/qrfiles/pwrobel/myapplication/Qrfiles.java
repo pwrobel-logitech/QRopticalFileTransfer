@@ -203,11 +203,13 @@ public class Qrfiles extends Activity implements TransmissionController{
         int fps = this.preferences.getInt("FPS", 17);
         int errlev = this.preferences.getInt("Errlevel", 50);
         int qrsize = this.preferences.getInt("Qrsize", 585);
+        int timeout = this.preferences.getInt("timeout", 6);
         String fdumppath = this.preferences.getString("filedumppath", null);
 
         this.currFPSvalue = Qrfiles.clamp(fps, 5, 60);
-        this.currErrorvalue = Qrfiles.clamp(errlev, 15, 85);
+        this.currErrorvalue = Qrfiles.clamp(errlev, 20, 80);
         this.currQrSizevalue = Qrfiles.clamp(qrsize, 90, 1500);
+        this.currStartSeqTime = Qrfiles.clamp(timeout, 3, 10);
         this.currDumpPath = fdumppath;
 
     }
@@ -389,6 +391,7 @@ public class Qrfiles extends Activity implements TransmissionController{
         editor.putInt("FPS", this.currFPSvalue);
         editor.putInt("Errlevel", this.currErrorvalue);
         editor.putInt("Qrsize", this.currQrSizevalue);
+        editor.putInt("timeout", this.currStartSeqTime);
         editor.putString("filedumppath", this.currDumpPath);
         editor.commit();
 
@@ -552,7 +555,7 @@ public class Qrfiles extends Activity implements TransmissionController{
 
         this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
         this.qrsurf.setFPS(16.0);
-        this.qrsurf.set_header_display_timeout(7.0);
+        this.qrsurf.set_header_display_timeout(6.0);
         this.qrsurf.setZOrderOnTop(true);
         this.qrsurf.init_qrsurf_thread();//starts thread
 
@@ -580,6 +583,7 @@ public class Qrfiles extends Activity implements TransmissionController{
 
         this.progressBar_encoder = (CustomProgressBar) this.findViewById(R.id.encoder_progressbar);
         this.qrsurf.setCustomProgressBar(progressBar_encoder);
+        this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime);
 
         this.encoder_status_textfield = (TextView) this.findViewById(R.id.encoder_status_textfield);
         this.encoder_status_textfield2 = (TextView) this.findViewById(R.id.encoder_status_textfield2);
@@ -688,7 +692,7 @@ public class Qrfiles extends Activity implements TransmissionController{
     int currFPSvalue = 17;
     int currErrorvalue = 50;
     int currQrSizevalue = 585;
-    int currStartSeqTime = 7;
+    int currStartSeqTime = 6;
     String currDumpPath = null;
     @Override
     public void onNewTransmissionSettings(int fps, int errlevpercent, int qrsize, int startseqtime, String newdumppath) {
