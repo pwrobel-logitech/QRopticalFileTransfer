@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
+/*
 void test_gen_qr_and_decode(){
     char* in = new char[14];
     snprintf(in, 5+1, "aBcdeFGhij");
@@ -19,15 +19,15 @@ in[2] = 0;
     generate_qr_greyscale_bitmap_data((const unsigned char*)in, 5, &out_qr_bmp, &outw, 3);
 
 
-/*
-    printf("\n");
-    for (int i = 0; i<outw; i++) {
-        for (int j = 0; j<outw; j++) {
-            printf("%01x ", 0xf & out_qr_bmp[i*outw+j]);
-        }
-        printf("\n");
-    }
-*/
+
+//    printf("\n");
+//   for (int i = 0; i<outw; i++) {
+//        for (int j = 0; j<outw; j++) {
+//            printf("%01x ", 0xf & out_qr_bmp[i*outw+j]);
+//        }
+//        printf("\n");
+//    }
+
 
     int out_datal;
     char *outdata;
@@ -40,7 +40,7 @@ in[2] = 0;
     }
 
     delete []in;
-}
+}*/
 
 
 int main(){

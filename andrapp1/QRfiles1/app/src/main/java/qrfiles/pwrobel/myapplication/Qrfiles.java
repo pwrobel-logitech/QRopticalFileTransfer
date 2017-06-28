@@ -815,6 +815,7 @@ public class Qrfiles extends Activity implements TransmissionController{
     static {
         System.loadLibrary("fec");
         System.loadLibrary("qrencoder_wrapper");
+        System.loadLibrary("qrdecoder_wrapper");
         System.loadLibrary("RSencoder");
         System.loadLibrary("RSdecoder");
         System.loadLibrary("RSencAPI");

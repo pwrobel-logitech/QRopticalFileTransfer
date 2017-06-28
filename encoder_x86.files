@@ -400,3 +400,5 @@ decoder_api_lib.cpp
 encoder_api_lib.cpp
 decoder/test2_pubapi.cpp
 globaldefs.h
+decoder/decoder_wrapper.cpp
+decoder/decoder_wrapper.h

@@ -14,36 +14,40 @@ OUTARCH=bin_fec_arm
 ZXINGARCH=arch_arm
 
 clean:
-	rm $(OUTARCH)/test_single $(OUTARCH)/decoder_test $(OUTARCH)/main $(OUTARCH)/libqrencoder* *.o *.so main $(OUTARCH)/libRSencoder.so $(OUTARCH)/libRSdecoder.so $(OUTARCH)/libRSencAPI.so $(OUTARCH)/libRSdecAPI.so
+	rm $(OUTARCH)/test_single $(OUTARCH)/main $(OUTARCH)/decoder_test $(OUTARCH)/libqrencoder* *.o *.so main $(OUTARCH)/libRSencoder.so $(OUTARCH)/libRSdecoder.so $(OUTARCH)/libRSencAPI.so $(OUTARCH)/libRSdecAPI.so
         
 fec_test: single_fac_test.cpp
 	$(CPP) $(CFLAGS) -DANDROID -pie single_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o $(OUTARCH)/test_single -L$(current_dir)/$(OUTARCH) -lfec
 
 lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper
-	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -DANDROID  -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp hash-library/sha256.cpp -o $(OUTARCH)/libRSencoder.so -L$(current_dir)/$(OUTARCH) -lfec -lqrencoder_wrapper -llog 
+	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC -DANDROID -shared open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp hash-library/sha256.cpp -o $(OUTARCH)/libRSencoder.so -L$(current_dir)/$(OUTARCH) -lfec -lqrencoder_wrapper -llog 
 	$(STRIP) $(current_dir)/$(OUTARCH)/libRSencoder.so
         
 main: main.cpp
 	$(CPP) $(CFLAGS) -DANDROID -pie -I$(current_dir) main.cpp -o $(OUTARCH)/main -Wl,-rpath=\$$ORIGIN -L$(current_dir)/$(OUTARCH) -lRSencoder
 
 libqrencode_wrapper:
-	$(CPP) $(CFLAGS) -fPIC -DSTATIC_IN_RELEASE=static -DMAJOR_VERSION=1 -DMINOR_VERSION=1 -DVERSION=\"1\" -DMICRO_VERSION=1 -I$(current_dir) -I$(current_dir)/.. -I$(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper.cpp -I$(current_dir)/zxing_lib/$(ZXINGARCH) -I$(current_dir)/$(LIBZXING) -I$(current_dir)/zxing_lib $(current_dir)/zxing_lib/BufferBitmapSource.cpp -fpermissive $(current_dir)/zxing_lib/$(ZXINGARCH)/libzxing.a $(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME)/*.c -fPIC -shared -o $(current_dir)/$(OUTARCH)/libqrencoder_wrapper.so
+	$(CPP) $(CFLAGS) -fPIC -DSTATIC_IN_RELEASE=static -DMAJOR_VERSION=1 -DMINOR_VERSION=1 -DVERSION=\"1\" -DMICRO_VERSION=1 -I$(current_dir) -I$(current_dir)/.. -I$(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper.cpp $(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME)/*.c -fPIC -shared -o $(current_dir)/$(OUTARCH)/libqrencoder_wrapper.so
 	$(STRIP) $(current_dir)/$(OUTARCH)/libqrencoder_wrapper.so
-	$(CPP) $(CFLAGS)  -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper_test.cpp -pie -o $(current_dir)/$(OUTARCH)/libqrencoder_test -L$(current_dir)/$(OUTARCH) -lqrencoder_wrapper
-
-decoder_lib: decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp
-	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/$(OUTARCH)/libRSdecoder.so -L$(current_dir)/$(OUTARCH) -lfec -lqrencoder_wrapper -llog 
-	$(STRIP) $(current_dir)/$(OUTARCH)/libRSdecoder.so
+	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper_test.cpp -pie -o $(current_dir)/$(OUTARCH)/libqrencoder_test -L$(current_dir)/$(OUTARCH) -lqrencoder_wrapper
 	
+libqrdecoder_wrapper: decoder/decoder_wrapper.cpp
+	$(CPP) $(CFLAGS) -fPIC decoder/decoder_wrapper.cpp -I$(current_dir)/zxing_lib/$(ZXINGARCH) -I$(current_dir)/$(LIBZXING) -I$(current_dir)/zxing_lib $(current_dir)/zxing_lib/BufferBitmapSource.cpp -fpermissive $(current_dir)/zxing_lib/$(ZXINGARCH)/libzxing.a -shared -o $(current_dir)/$(OUTARCH)/libqrdecoder_wrapper.so
+	$(STRIP) $(current_dir)/$(OUTARCH)/libqrdecoder_wrapper.so
+
+decoder_lib: decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp libqrdecoder_wrapper
+	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/.. -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp  $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp -shared -fPIC -o $(current_dir)/$(OUTARCH)/libRSdecoder.so -L$(current_dir)/$(OUTARCH)  -lfec -llog -lqrdecoder_wrapper
+	$(STRIP) $(current_dir)/$(OUTARCH)/libRSdecoder.so
+
 public_encoder_api_lib: lib encoder_api_lib.cpp
 	$(CPP) $(CFLAGS) -I$(current_dir) encoder_api_lib.cpp -fPIC -shared -o $(current_dir)/$(OUTARCH)/libRSencAPI.so -L$(current_dir)/$(OUTARCH) -lRSencoder -lqrencoder_wrapper
 	$(STRIP) $(current_dir)/$(OUTARCH)/libRSencAPI.so
-
+	
 public_decoder_api_lib: decoder_lib decoder_api_lib.cpp
-	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder_api_lib.cpp -fPIC -shared -o $(OUTARCH)/libRSdecAPI.so -L$(current_dir)/$(OUTARCH) -lRSdecoder -lqrencoder_wrapper 
+	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder_api_lib.cpp -fPIC -shared -o $(OUTARCH)/libRSdecAPI.so -L$(current_dir)/$(OUTARCH) -lRSdecoder -lqrdecoder_wrapper
 	$(STRIP) $(current_dir)/$(OUTARCH)/libRSdecAPI.so
-
+	
 decoder_test: decoder_lib decoder/decoder_test.cpp
-	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -pie -o $(current_dir)/$(OUTARCH)/decoder_test -L$(current_dir)/$(OUTARCH) -lRSdecoder -lqrencoder_wrapper
+	$(CPP) $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -pie -o $(current_dir)/$(OUTARCH)/decoder_test -L$(current_dir)/$(OUTARCH) -lRSdecoder 
 
 all: fec_test lib libqrencode_wrapper public_encoder_api_lib public_decoder_api_lib decoder_test main

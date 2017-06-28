@@ -1,5 +1,12 @@
 #include "encoder.h"
-#include "libqrencoder_wrapper/libqrencoder_wrapper.h"
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include <string.h>
+
+#include "../public_decoder_api.h"
 #include <pthread.h>
 
 //#ifdef DEBUG

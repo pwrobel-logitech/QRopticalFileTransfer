@@ -9,6 +9,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 configure_file(../../../androidarchs/${ANDROID_ABI}/libfec.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libfec.so COPYONLY)
 configure_file(../../../androidarchs/${ANDROID_ABI}/libqrencoder_wrapper.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libqrencoder_wrapper.so COPYONLY)
+configure_file(../../../androidarchs/${ANDROID_ABI}/libqrdecoder_wrapper.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libqrdecoder_wrapper.so COPYONLY)
 configure_file(../../../androidarchs/${ANDROID_ABI}/libRSencoder.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSencoder.so COPYONLY)
 configure_file(../../../androidarchs/${ANDROID_ABI}/libRSdecoder.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSdecoder.so COPYONLY)
 configure_file(../../../androidarchs/${ANDROID_ABI}/libRSdecAPI.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libRSdecAPI.so COPYONLY)
@@ -115,6 +116,14 @@ get_filename_component(ABSOLUTE_PATH3
 target_link_libraries(
     native-lib
     ${ABSOLUTE_PATH3})
+
+    get_filename_component(ABSOLUTE_PATH3b
+                           "${CMAKE_CURRENT_LIST_DIR}/../../../androidarchs/${ANDROID_ABI}/libqrdecoder_wrapper.so"
+                           ABSOLUTE)
+
+    target_link_libraries(
+        native-lib
+        ${ABSOLUTE_PATH3b})
 
 get_filename_component(ABSOLUTE_PATH4
                        "${CMAKE_CURRENT_LIST_DIR}/../../../androidarchs/${ANDROID_ABI}/libRSdecoder.so"

@@ -8,6 +8,10 @@
 
 #include "globaldefs.h"
 
+#include "decoder_wrapper.h"
+
+
+
 void* QR_frame_decoder::thrfunc(void* arg){
     AsyncInfo* as = (AsyncInfo*)arg;
     QR_frame_decoder* self = (QR_frame_decoder*)(as->chlistener);

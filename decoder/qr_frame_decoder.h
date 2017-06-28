@@ -1,5 +1,7 @@
-#include "../common_decoder_encoder.h"
+
 #include "rs_decoder.h"
+
+#include "../common_decoder_encoder.h"
 
 class QR_frame_decoder : public ChunkListener {
 public:
