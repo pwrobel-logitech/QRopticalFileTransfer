@@ -298,6 +298,19 @@ public class CameraPreviewSurface extends GLSurfaceView implements
                 final boolean should_draw_something_on_progressbar = this.camcontroller.shouldDrawProgressBars();
                 if (should_draw_something_on_progressbar == false){
                     draw_notification_status_if_needed();
+                }else{
+                    Activity a = (Activity) this.getContext();
+                    if (a != null){
+                        a.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                decoder_status_textView1.setVisibility(INVISIBLE);
+                                decoder_status_textView2.setVisibility(INVISIBLE);
+                                decoder_status_textView1.requestLayout();
+                                decoder_status_textView2.requestLayout();
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -419,7 +432,6 @@ public class CameraPreviewSurface extends GLSurfaceView implements
                     if((should_draw_something_on_progressbar == false) && blink_text_phase){ //uncomment that to get the blink behaviour
                         //if (decoder_status_textView1.getVisibility() == INVISIBLE){
                             decoder_status_textView1.setVisibility(VISIBLE);
-
                         //}
                         //if (decoder_status_textView2.getVisibility() == INVISIBLE)
                             decoder_status_textView2.setVisibility(VISIBLE);
