@@ -40,7 +40,7 @@ x86_decoder_test2: x86_decoder_lib decoder/test2_pubapi.cpp public_decoder_api_l
 	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder/test2_pubapi.cpp -fPIC -o $(current_dir)/bin_fec_x64/decoder_test2 -L$(current_dir)/bin_fec_x64 -lRSdecAPI -lRSdecoder -lfec
 
 main_linuxqr: x86_lib libqrencode_wrapper public_decoder_api_lib
-	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -I$(current_dir)/linux_qrgen -I/usr/include/SDL2 -Wl,-rpath=\$$ORIGIN linux_qrgen/main_qrgen.cpp linux_qrgen/glrenderer.cpp -o bin_fec_x64/sendqr -L$(current_dir)/bin_fec_x64 -lRSencoder -lSDL2 -lGL -lfec -lqrencoder_wrapper
+	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -I$(current_dir)/linux_qrgen -I/usr/include/SDL2 -Wl,-rpath=\$$ORIGIN linux_qrgen/main_qrgen.cpp linux_qrgen/glrenderer.cpp -o bin_fec_x64/sendqr -L$(current_dir)/bin_fec_x64 -lRSencoder -lSDL2 -lSDL2_ttf -lGL -lfec -lqrencoder_wrapper
 
 all: x86_lib fec_x86_test x86_decoder_test x86_decoder_test2 public_encoder_api_lib public_decoder_api_lib main main_linuxqr
 

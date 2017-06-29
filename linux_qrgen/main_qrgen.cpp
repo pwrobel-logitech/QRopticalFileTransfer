@@ -15,9 +15,8 @@
 using namespace TCLAP;
 using namespace std;
 
-//Window initial dimension constants
-const int SCREEN_WIDTH = 700;
-const int SCREEN_HEIGHT = 700;
+
+
 
 bool is_fullscreen = false;
 //Starts up SDL and creates window
@@ -152,6 +151,8 @@ void invalidate_screen(){
     }
 }
 
+int curr_data_frame_num = 0;
+int total_data_frame_num = 0;
 
 void create_thread(){
     mutex = SDL_CreateMutex();
@@ -165,6 +166,9 @@ void create_thread(){
         printf("\nSDL_CreateThread failed: %s\n", SDL_GetError());
     }
 }
+
+
+double first_frame_draw_time;
 
 int produce_next_QR_frame_to_buffer(){
     if(current_file_index < fileNames.size()){
@@ -184,10 +188,14 @@ int produce_next_QR_frame_to_buffer(){
             QRbuffh = QRbuffw;
             Nframe++;
             if (status == 1){
+                SDL_Delay(3000);
                 delete frame_producer;
                 frame_producer = NULL;
                 current_file_index++;
                 Nframe = 0;
+                curr_data_frame_num = 0;
+                is_in_header_generation_mode = true;
+                first_frame_draw_time = get_current_ms_time();
                 return 1;
             }
         }
@@ -195,9 +203,11 @@ int produce_next_QR_frame_to_buffer(){
     } else {
         if(frame_producer != NULL)
             delete frame_producer;
-        return 1;
+        return 2;
     }
 }
+
+
 
 bool init(bool is_fullscreen)
 {
@@ -229,6 +239,9 @@ bool init(bool is_fullscreen)
     return true;
 }
 
+bool exit_app = false;
+
+
 int MyThread(void *ptr)
 {
     double last_time = get_current_ms_time();
@@ -242,12 +255,14 @@ int MyThread(void *ptr)
     }
 
 
+    curr_data_frame_num = 0;
     produce_next_QR_frame_to_buffer();
     draw_frame();
     cnt++;
+    //curr_data_frame_num++;
     unlock_mutex();
 
-    double first_frame_draw_time = get_current_ms_time();
+    first_frame_draw_time = get_current_ms_time();
 
     while(is_thread_running) {
 
@@ -280,10 +295,19 @@ int MyThread(void *ptr)
             lock_mutex();
 
 
+            glrenderer::total_progress_to_draw = ((double)curr_data_frame_num) / 510.0;
 
             int status = produce_next_QR_frame_to_buffer();
+
+            if (!is_in_header_generation_mode){
+                curr_data_frame_num++;
+            }
+
             if(status == 0)
                 draw_frame();
+            if (status == 2){
+                is_thread_running = false;
+            }
             is_screen_valid = true;
 
             unlock_mutex();
@@ -302,6 +326,9 @@ int MyThread(void *ptr)
         //}
 
     }
+    lock_mutex();
+    exit_app = true;
+    unlock_mutex();
     return cnt;
 }
 
@@ -328,10 +355,15 @@ void request_display_change(){
 int draw_frame(){
     lock_mutex();
     SDL_GetWindowSize(gWindow, &sizeX, &sizeY);
-    glrenderer::set_viewport_size(sizeX, sizeY);
+    //glrenderer::set_viewport_size(sizeX, sizeY);
     glrenderer::renderGL(QRbuffw, QRbuffh, QRbuffer);
+
+
+    //SDL_UpdateWindowSurface(gWindow);
     SDL_GL_SwapWindow( gWindow );
+
     unlock_mutex();
+
     return 0;
 }
 
@@ -359,7 +391,7 @@ void do_SDL_setup(){
     //Create window
     gWindow = SDL_CreateWindow( "GL_RENDERER", SDL_WINDOWPOS_CENTERED_DISPLAY(screen_counter),
     SDL_WINDOWPOS_CENTERED_DISPLAY(screen_counter),
-    SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE );
+    SCREEN_WIDTH, SCREEN_HEIGHT + STATUSBAR_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE );
     if( gWindow == NULL )
     {
         printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -377,9 +409,17 @@ void do_SDL_setup(){
     //While application is running
         while( !quit )
         {
+            lock_mutex();
+            if (exit_app)
+                quit = true;
+            unlock_mutex();
             //Handle events on queue
             while( SDL_PollEvent( &e ) != 0 )
             {
+                lock_mutex();
+                if (exit_app)
+                    quit = true;
+                unlock_mutex();
                 PrintEvent(&e);
                 switch (e.type)
                 {
