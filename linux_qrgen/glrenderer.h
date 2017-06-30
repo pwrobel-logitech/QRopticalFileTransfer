@@ -35,3 +35,14 @@ namespace glrenderer {
 
 
 }
+
+
+namespace globals {
+    extern std::string binpath;
+    extern double startupsecs;
+    extern double curr_time_left;
+
+    extern const char* text_startupsequence;// = "Startup sequence ";
+    extern std::string current_filename;
+}
+

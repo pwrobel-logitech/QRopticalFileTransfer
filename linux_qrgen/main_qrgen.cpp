@@ -1,6 +1,6 @@
 //From the tclap library :
 //THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+#include <ctype.h>
 #include <string>
 #include <iostream>
 #include <algorithm>
@@ -179,6 +179,7 @@ int produce_next_QR_frame_to_buffer(){
                 if (fileNames[current_file_index].c_str()[0] == '/')
                     path = std::string("");
                 frame_producer->set_external_file_info(fileNames[current_file_index].c_str(), path.c_str(), qrbytesize, 0.5, 511);
+                globals::current_filename = std::string((fileNames[current_file_index]).c_str());
             }
 
         }
@@ -195,6 +196,7 @@ int produce_next_QR_frame_to_buffer(){
                 Nframe = 0;
                 curr_data_frame_num = 0;
                 is_in_header_generation_mode = true;
+                glrenderer::is_timeout_to_draw = true;
                 first_frame_draw_time = get_current_ms_time();
                 return 1;
             }
@@ -279,8 +281,15 @@ int MyThread(void *ptr)
         }
 
         if (is_in_header_generation_mode){
+            int currt = get_current_ms_time();
+            double tl = ((get_current_ms_time() - first_frame_draw_time)/1000.0);
+            glrenderer::total_progress_to_draw =  tl / globals::startupsecs;
+            globals::curr_time_left = initTime - tl;
+            if (globals::curr_time_left < 0.0)
+                globals::curr_time_left = 0.0;
             if (get_current_ms_time() >= first_frame_draw_time + initTime * 1000.0){
                 is_in_header_generation_mode = false;
+                glrenderer::is_timeout_to_draw = false;
                 frame_producer->tell_no_more_generating_header();
             }
         }
@@ -295,7 +304,18 @@ int MyThread(void *ptr)
             lock_mutex();
 
 
-            glrenderer::total_progress_to_draw = ((double)curr_data_frame_num) / 510.0;
+            if (!is_in_header_generation_mode){
+                glrenderer::total_progress_to_draw = 0;
+                int totframes = frame_producer->tell_how_much_frames_will_be_generated();
+                int nf = curr_data_frame_num;
+                if (nf > totframes-1)
+                    nf = totframes-1;
+                if (totframes > 1)
+                    glrenderer::total_progress_to_draw = ((double)curr_data_frame_num) / (totframes-1);
+                if (glrenderer::total_progress_to_draw>1.0)
+                    glrenderer::total_progress_to_draw=1.0;
+
+            }
 
             int status = produce_next_QR_frame_to_buffer();
 
@@ -510,6 +530,16 @@ void PrintEvent(const SDL_Event * event)
 
 int main(int argc, char** argv)
 {
+
+    globals::binpath = std::string(argv[0]);
+    int posslash = globals::binpath.length()-1;
+    while (isalpha(globals::binpath.c_str()[globals::binpath.length()-1])
+           || isdigit(globals::binpath.c_str()[globals::binpath.length()-1])){
+        globals::binpath.resize (globals::binpath.size () - 1);
+    }
+
+    printf ("Global path is the %s\n", globals::binpath.c_str());
+
 	try {  
 
     CmdLine cmd("Give it a file to send as a set of QR frames.", ' ', "0.9");
@@ -541,6 +571,8 @@ int main(int argc, char** argv)
     initTime = QRinitTime.getValue();
     targetFPS = QRtargetFPS.getValue();
     timeframe_delay = 1000.0 / ((double) targetFPS);
+
+    globals::startupsecs = (double)initTime;
 
     printf("QR size : %d\n", QRsizeArg.getValue());
 
