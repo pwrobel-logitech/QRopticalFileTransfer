@@ -7,6 +7,11 @@
 #include <vector>
 
 
+#define DLOG printf
+#ifdef RELEASE
+#define DLOG(fmt, ...) (0)
+#endif
+
 //Window initial dimension constants
 const int SCREEN_WIDTH = 660;
 const int SCREEN_HEIGHT = 660;

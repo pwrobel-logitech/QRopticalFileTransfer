@@ -211,7 +211,7 @@ int produce_next_QR_frame_to_buffer(){
         }
         if(frame_producer){
             int status = frame_producer->produce_next_qr_grayscale_image_to_mem(&QRbuffer, &QRbuffw);
-            printf("Got status from the frame producer : %d\n", status);
+            DLOG("Got status from the frame producer : %d\n", status);
             QRbuffh = QRbuffw;
             Nframe++;
             if (status == 1){
@@ -240,28 +240,28 @@ int produce_next_QR_frame_to_buffer(){
 bool init(bool is_fullscreen)
 {
     //gl sdl stuff
-    printf("Started to initialize opengl context \n");
+    DLOG("Started to initialize opengl context \n");
     glrenderer::gContext = SDL_GL_CreateContext( gWindow );
     if( glrenderer::gContext == NULL )
     {
-        printf( "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
+        fprintf(stderr, "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
     }
     else
     {
         SDL_GetWindowSize(gWindow, &sizeX, &sizeY);
-        printf("Got window size x: %d, y: %d \n", sizeX, sizeY);
+        DLOG("Got window size x: %d, y: %d \n", sizeX, sizeY);
         if( !glrenderer::initGL(sizeX, sizeY) )
         {
-            printf( "Unable to initialize OpenGL!\n" );
+            fprintf( stderr, "Unable to initialize OpenGL!\n" );
         }
         //render gl
         glrenderer::renderGL(QRbuffw, QRbuffh, QRbuffer);
     }
     int numdisplays = SDL_GetNumVideoDisplays();
-    printf("Numdisplays %d \n", numdisplays);
+    DLOG("Numdisplays %d \n", numdisplays);
     if(numdisplays <= 0)
     {
-        printf("Error in the number of the displays \n");
+        fprintf(stderr, "Error in the number of the displays \n");
         exit(0);
     }
     return true;
@@ -279,7 +279,7 @@ int MyThread(void *ptr)
 
     if(!init(false))
     {
-        printf( "Failed to initialize!\n" );
+        fprintf(stderr, "Failed to initialize!\n" );
     }
 
 
@@ -300,7 +300,7 @@ int MyThread(void *ptr)
             SDL_GetWindowSize(gWindow, &sizeX, &sizeY);
             if( !glrenderer::initGL(sizeX, sizeY) )
             {
-                printf( "Unable to initialize OpenGL!\n" );
+                fprintf(stderr, "Unable to initialize OpenGL!\n" );
             }
 
             draw_frame();
@@ -431,7 +431,7 @@ void do_SDL_setup(){
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
-        printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+        fprintf(stderr, "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
         success = false;
     }
     //Create window
@@ -440,7 +440,7 @@ void do_SDL_setup(){
     SCREEN_WIDTH, SCREEN_HEIGHT + STATUSBAR_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE );
     if( gWindow == NULL )
     {
-        printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+        fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError() );
         success = false;
     }
     create_thread();
@@ -470,7 +470,7 @@ void do_SDL_setup(){
                 switch (e.type)
                 {
                     case SDL_WINDOWEVENT:
-                        printf("Window event \n");
+                        DLOG("Window event \n");
                         invalidate_screen();
                         break;
                     case SDL_MOUSEMOTION:
@@ -488,7 +488,7 @@ void do_SDL_setup(){
         int threadReturnValue;
         //wait for thread to finish - join thread
         SDL_WaitThread(thread, &threadReturnValue);
-        printf("Thread returned value: %d \n", threadReturnValue);
+        DLOG("Thread returned value: %d \n", threadReturnValue);
         SDL_DestroyMutex(mutex);
         //Free resources and close SDL
         close();
@@ -501,57 +501,65 @@ void PrintEvent(const SDL_Event * event)
     if (event->type == SDL_WINDOWEVENT) {
         switch (event->window.event) {
         case SDL_WINDOWEVENT_SHOWN:
-            printf("Window %d shown \n", event->window.windowID);
+            DLOG("Window %d shown \n", event->window.windowID);
              break;
         case SDL_WINDOWEVENT_HIDDEN:
-            printf("Window %d hidden \n", event->window.windowID);
+            DLOG("Window %d hidden \n", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_EXPOSED:
-            printf("Window %d exposed \n", event->window.windowID);
+            DLOG("Window %d exposed \n", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_MOVED:
-            printf("Window %d moved to %d,%d \n",
+            DLOG("Window %d moved to %d,%d \n",
                 event->window.windowID, event->window.data1,
                 event->window.data2);
             break;
         case SDL_WINDOWEVENT_RESIZED:
-            printf("Window %d resized to %dx%d \n",
+            DLOG("Window %d resized to %dx%d \n",
                 event->window.windowID, event->window.data1,
                 event->window.data2);
             break;
         case SDL_WINDOWEVENT_MINIMIZED:
-            printf("Window %d minimized \n", event->window.windowID);
+            DLOG("Window %d minimized \n", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_MAXIMIZED:
-            printf("Window %d maximized \n", event->window.windowID);
+            DLOG("Window %d maximized \n", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_RESTORED:
-            printf("Window %d restored \n", event->window.windowID);
+            DLOG("Window %d restored \n", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_ENTER:
-            printf("Mouse entered window %d \n",
+            DLOG("Mouse entered window %d \n",
                 event->window.windowID);
             break;
         case SDL_WINDOWEVENT_LEAVE:
-            printf("Mouse left window %d \n", event->window.windowID);
+            DLOG("Mouse left window %d \n", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-            printf("Window %d gained keyboard focus \n",
+            DLOG("Window %d gained keyboard focus \n",
                 event->window.windowID);
             break;
         case SDL_WINDOWEVENT_FOCUS_LOST:
-            printf("Window %d lost keyboard focus \n",
+            DLOG("Window %d lost keyboard focus \n",
                 event->window.windowID);
             break;
         case SDL_WINDOWEVENT_CLOSE:
-            printf("Window %d closed \n", event->window.windowID);
+            DLOG("Window %d closed \n", event->window.windowID);
             break;
         default:
-            printf("Window %d got unknown event %d \n",
+            DLOG("Window %d got unknown event %d \n",
                 event->window.windowID, event->window.event);
             break;
         }
     }
+}
+
+double clamp(double val, double lower, double upper) {
+  return std::max(lower, std::min(val, upper));
+}
+
+int clamp(int val, int lower, int upper) {
+  return std::max(lower, std::min(val, upper));
 }
 
 int main(int argc, char** argv)
@@ -564,19 +572,19 @@ int main(int argc, char** argv)
         globals::binpath.resize (globals::binpath.size () - 1);
     }
 
-    printf ("Global path is the %s\n", globals::binpath.c_str());
+    DLOG ("Global path is the %s\n", globals::binpath.c_str());
 
 	try {  
 
     CmdLine cmd("Give it a file to send as a set of QR frames.", ' ', "0.9");
 
-    ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame", false, 580, "int");
+    ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame, range 90-1600", false, 585, "int");
     cmd.add( QRsizeArg );
 
-    ValueArg<int> QRtargetFPS("s", "fpsvalue", "Target FPS", false, 17, "int");
+    ValueArg<int> QRtargetFPS("s", "fpsvalue", "Target FPS, range 5-60", false, 17, "int");
     cmd.add( QRtargetFPS );
 
-    ValueArg<int> QRinitTime("t", "initialframetime", "Time duration(s) of the initial frames", false, 6, "int");
+    ValueArg<int> QRinitTime("t", "initialframetime", "Time duration(s) of the startup sequence - range 3-10s", false, 6, "int");
     cmd.add( QRinitTime );
 
     //SwitchArg reverseSwitch("r","reverse","Print name backwards", false);
@@ -596,14 +604,22 @@ int main(int argc, char** argv)
     qrbytesize = QRsizeArg.getValue();
     initTime = QRinitTime.getValue();
     targetFPS = QRtargetFPS.getValue();
+
+    qrbytesize = clamp (qrbytesize, 90, 1600);
+    initTime = clamp (initTime, 3, 10);
+    targetFPS = clamp (targetFPS, 5, 60);
+
     timeframe_delay = 1000.0 / ((double) targetFPS);
+
 
     globals::startupsecs = (double)initTime;
 
-    printf("QR size : %d\n", QRsizeArg.getValue());
+    DLOG("QR size : %d\n", QRsizeArg.getValue());
 
     for(vector<string>::iterator it = fileNames.begin(); it!=fileNames.end(); it++){
+#ifndef RELEASE
         std::cout << *it << std::endl;
+#endif
     }
 
 	} catch (ArgException &e)  // catch any exceptions
@@ -631,7 +647,7 @@ int main(int argc, char** argv)
       cwd[strlen(cwd) - 1] = 0;
     executable_path = std::string(cwd);
 
-    printf("path : %s \n", executable_path.c_str());
+    DLOG("path : %s \n", executable_path.c_str());
     if (qrbytesize < 16)
         qrbytesize = 16;
 

@@ -1,0 +1,49 @@
+#Make the custom toolchain first from the android NDK
+#$NDK/build/tools/make_standalone_toolchain.py \
+#    --arch arm --api 14 --install-dir /tmp/my-android-toolchain
+
+current_dir = $(shell pwd)
+LIBQRENCODER_LIBFOLDERNAME=libqrencode
+LIBZXING=zxing_lib/zxing-cpp/core/src
+CFLAGS=-Os -DRELEASE
+
+x86_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper
+	g++ -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC $(CFLAGS) -shared open_rs_encoder.cpp qr_frame_producer.cpp hash-library/sha256.cpp $(current_dir)/fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/release_x86_64_linux_uploader -lfec -lqrencoder_wrapper -lpthread
+	strip libRSencoder.so
+	cp $(current_dir)/libRSencoder.so $(current_dir)/release_x86_64_linux_uploader
+fec_x86_test: ka9q_fac_test.cpp single_fac_test.cpp fileutil/fileops.cpp
+	g++ $(CFLAGS) ka9q_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o release_x86_64_linux_uploader/fec_x86_test -L$(current_dir)/release_x86_64_linux_uploader -lfec
+	g++ $(CFLAGS) single_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o release_x86_64_linux_uploader/test_single -L$(current_dir)/release_x86_64_linux_uploader -lfec
+
+clean:
+	rm release_x86_64_linux_uploader/fec_x86_test release_x86_64_linux_uploader/sendqr release_x86_64_linux_uploader/test_single *.o *.so main release_x86_64_linux_uploader/libqrencoder_wrapper.so release_x86_64_linux_uploader/libqrencoder_test release_x86_64_linux_uploader/decoder_test release_x86_64_linux_uploader/libRSdecoder.so release_x86_64_linux_uploader/libRSencAPI.so release_x86_64_linux_uploader/libRSdecAPI.so release_x86_64_linux_uploader/libRSencoder.so release_x86_64_linux_uploader/decoder_test2 release_x86_64_linux_uploader/uplcam
+
+main: main.cpp
+	g++ -I$(current_dir) $(CFLAGS) main.cpp -o main -L$(current_dir) -lRSencoder -L$(current_dir)/release_x86_64_linux_uploader -lfec -lqrencoder_wrapper
+
+libqrencode_wrapper:
+	g++ $(CFLAGS) -DSTATIC_IN_RELEASE=static -DMAJOR_VERSION=1 -DMINOR_VERSION=1 -DVERSION=\"1\" -DMICRO_VERSION=1 -I$(current_dir) -I$(current_dir)/.. -I$(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME) -I$(current_dir)/libqrencoder_wrapper libqrencoder_wrapper/libqrencoder_wrapper.cpp $(current_dir)/../$(LIBQRENCODER_LIBFOLDERNAME)/*.c -fPIC -shared -o $(current_dir)/release_x86_64_linux_uploader/libqrencoder_wrapper.so  
+	strip release_x86_64_linux_uploader/libqrencoder_wrapper.so
+
+x86_decoder_lib: decoder/qr_frame_decoder.cpp decoder/rs_decoder.cpp decoder/qr_frame_decoder.cpp decoder/decoder_wrapper.cpp
+	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/fec_include -I$(current_dir)/decoder decoder/qr_frame_decoder.cpp $(current_dir)/decoder/rs_decoder.cpp $(current_dir)/fileutil/fileops.cpp $(current_dir)/hash-library/sha256.cpp decoder/decoder_wrapper.cpp -shared -fPIC -o $(current_dir)/release_x86_64_linux_uploader/libRSdecoder.so -L$(current_dir)/release_x86_64_linux_uploader -I$(current_dir)/$(LIBZXING) -I$(current_dir)/zxing_lib $(current_dir)/zxing_lib/BufferBitmapSource.cpp $(current_dir)/zxing_lib/arch_x86_64/libzxing.a -lfec -lpthread
+
+public_decoder_api_lib: x86_decoder_lib decoder_api_lib.cpp
+	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder_api_lib.cpp -fPIC -shared -o $(current_dir)/release_x86_64_linux_uploader/libRSdecAPI.so -L$(current_dir)/release_x86_64_linux_uploader -lRSdecoder 
+	
+public_encoder_api_lib: x86_lib encoder_api_lib.cpp
+	g++ $(CFLAGS) -I$(current_dir)  encoder_api_lib.cpp -fPIC -shared -o $(current_dir)/release_x86_64_linux_uploader/libRSencAPI.so -L$(current_dir)/release_x86_64_linux_uploader -lRSencoder -lqrencoder_wrapper
+	
+x86_decoder_test: x86_decoder_lib decoder/decoder_test.cpp x86_decoder_lib
+	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder/decoder_test.cpp -fPIC -o $(current_dir)/release_x86_64_linux_uploader/decoder_test -L$(current_dir)/release_x86_64_linux_uploader -lRSdecoder -lfec -lqrencoder_wrapper
+	
+x86_decoder_test2: x86_decoder_lib decoder/test2_pubapi.cpp public_decoder_api_lib
+	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/decoder decoder/test2_pubapi.cpp -fPIC -o $(current_dir)/release_x86_64_linux_uploader/decoder_test2 -L$(current_dir)/release_x86_64_linux_uploader -lRSdecAPI -lRSdecoder -lfec
+
+main_linuxqr: x86_lib libqrencode_wrapper
+	g++ $(CFLAGS) -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -I$(current_dir)/linux_qrgen -I/usr/include/SDL2 -Wl,-rpath=\$$ORIGIN linux_qrgen/main_qrgen.cpp linux_qrgen/glrenderer.cpp -o release_x86_64_linux_uploader/uplcam -L$(current_dir)/release_x86_64_linux_uploader -lRSencoder -lSDL2 -lSDL2_ttf -lGL -lfec -lqrencoder_wrapper
+	strip release_x86_64_linux_uploader/uplcam
+
+all: main_linuxqr
+
+

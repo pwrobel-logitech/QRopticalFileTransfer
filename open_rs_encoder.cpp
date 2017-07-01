@@ -325,16 +325,16 @@ bool OpenRSEncoder::create_data_for_QR(EncodedFrame &frame){
             uint32_t valget = utils::get_data((void*) data,j *nbits, nbits);
             DCHECK(valget==valset);
             if(valset!=valget){
-                printf("Failed set/get arr, jnch %d, i %d\n", j, i);
+                DLOG("Failed set/get arr, jnch %d, i %d\n", j, i);
             }
         //}
     }
     int num = this->is_header_frame_generating_ ? this->n_header_frame_processed_ : this->n_dataframe_processed_;
     apply_pos_xor_to_arr((char*)data, this->bytes_per_generated_frame_, num);
-    printf("qqr %d, ",num);
+    DLOG("qqr %d, ",num);
     int qrlen = frame.framedata_.size()-end_corruption_overhead;
-    for(int k = 0; k<qrlen;k++)printf("0x%02hhx ", frame.framedata_[k]);
-    printf("\n");
+    for(int k = 0; k<qrlen;k++)DLOG("0x%02hhx ", frame.framedata_[k]);
+    DLOG("\n");
     return true;
 }
 

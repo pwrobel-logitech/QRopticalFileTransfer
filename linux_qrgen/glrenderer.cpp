@@ -40,13 +40,15 @@ TTF_Font* Sans;// = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeSans.tt
 bool glrenderer::initGL(int sx, int sy)
 {
     if (TTF_Init() < 0) {
-        printf("Failed to initialize the SDL TTF module !");
+        fprintf(stderr,"Failed to initialize the SDL TTF module !");
     }
 
 
     std::string absfontpath = globals::binpath + "FreeSans.ttf";
 
     Sans = TTF_OpenFont(absfontpath.c_str(), 24);
+    if( Sans == NULL )
+        fprintf(stderr, "Failed to open %s font file !\n", absfontpath.c_str());
 
     Uint32 rmask, gmask, bmask, amask;
 

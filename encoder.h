@@ -27,6 +27,10 @@ extern "C"{
 #define DLOG (void)0
 #endif
 
+#ifdef RELEASE
+#define DLOG(fmt, ...) (0)
+#endif
+
 struct FileChunk;
 
 //interface to provide the raw file fragments for the encoder
