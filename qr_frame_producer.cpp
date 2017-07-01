@@ -150,7 +150,8 @@ int Qr_frame_producer::estimate_capacity(int N, int K, int charperQR){
 // MMMMTThhh..hhHHH..HH|NNKKnnkkQQQQQLLhhhh..hhcc..ccc
 // MM - 0xBAADA551 - magic byte seq
 // 2byte length total, 1 byte length of hash, XB hash metadata, XB hash metadata + variable length content |
-// 4B (N,K), 4B (n,k), 5Bfilelength(Q), 2B length fname, 1B hash length, XB file name, XB file hash content
+// 4B (N,K), 4B (n,k), 5Bfilelength(Q - now 4B len + 1byte version),
+// 2B length fname, 1B hash length, XB file name, XB file hash content
 
 void Qr_frame_producer::produce_metadata(){
     int spos = 0;
@@ -213,7 +214,7 @@ void Qr_frame_producer::produce_metadata(){
         *((uint16_t*) (pos+2+start)) = remK;
         pos += 4; //skip over remain (N,K) field
         *((uint32_t*)(start+pos)) = this->file_info_.filelength;
-        *((uint8_t*)(start+pos+4)) = 0; //remain
+        *((uint8_t*)(start+pos+4)) = 1; //version field
         pos += 5; //skip over the filelength field
         *((uint16_t*) (pos+start)) = this->file_info_.filename_without_any_path.length();
         pos += 2; //skip over filenamelength field

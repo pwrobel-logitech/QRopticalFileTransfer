@@ -75,6 +75,7 @@ QR_frame_decoder::QR_frame_decoder(){
     this->is_header_generating_ = true;
 
     this->qr_byte_length = 0;
+    this->encoder_version_ = 0;
     //
     this->header_decoder_ = new RS_decoder(this);
 
@@ -318,7 +319,8 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
 // MMMMTThhh..hhHHH..HH|NNKKnnkkQQQQQLLhhhh..hhcc..ccc
 // MM - 0xBAADA551 - magic byte seq
 // 2byte length total, 1 byte length of hash, XB hash metadata, XB hash metadata + variable length content |
-// 4B (N,K), 4B (n,k), 5Bfilelength(Q), 2B length fname, 1B hash length, XB file name, XB file hash content
+// 4B (N,K), 4B (n,k), 5Bfilelength(Q - now 4B len + 1B version),
+// 2B length fname, 1B hash length, XB file name, XB file hash content
 
 int QR_frame_decoder::analyze_header(){
     utils::ScopeLock l(this->async_info_.async_mutex_);
@@ -356,7 +358,8 @@ int QR_frame_decoder::analyze_header(){
         uint16_t k = *((uint16_t*)(start+pos-pos_start+6));
         pos += 8; //skip over nk fields
         uint32_t flength = *((uint32_t*)(pos-pos_start+start));
-        pos += 5; //skip over the file length
+        this->encoder_version_ = *((uint8_t*)(pos-pos_start+start+4));
+        pos += 5; //skip over the file length and version
         uint16_t fname_length = *((uint16_t*)(start+pos-pos_start));
         pos += 2; //skip the file name length field
         uint16_t fcontent_hash = *((uint16_t*)(start+pos-pos_start));

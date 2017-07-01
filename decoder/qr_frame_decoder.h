@@ -116,7 +116,7 @@ protected:
     ///Async part
     AsyncInfo async_info_;
 
-
+    uint8_t encoder_version_;
 
     static void* thrfunc(void*);
 
