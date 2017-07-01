@@ -7,3 +7,5 @@ make -f Makefile_armv7a clean
 rm androidarchs/x86_64/*
 rm androidarchs/armeabi/*
 rm androidarchs/armeabi-v7a/*
+rm -rf linux_OpticalFileUploader
+rm -rf linux_OpticalFileUploader.tar.gz

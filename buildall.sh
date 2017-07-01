@@ -12,3 +12,9 @@ mkdir androidarchs/armeabi-v7a
 cp bin_fec_x64/*.so androidarchs/x86_64
 cp bin_fec_arm/*.so androidarchs/armeabi
 cp bin_fec_armv7a/*.so androidarchs/armeabi-v7a
+
+
+mkdir release_x86_64_linux_uploader/lgpl_libqrencode_wrapper
+cp libqrencoder_wrapper/libqrencoder_wrapper.cpp libqrencoder_wrapper/libqrencoder_wrapper.h libqrencoder_wrapper/Makefile  release_x86_64_linux_uploader/lgpl_libqrencode_wrapper
+cp -R release_x86_64_linux_uploader linux_OpticalFileUploader
+tar -czf linux_OpticalFileUploader.tar.gz linux_OpticalFileUploader

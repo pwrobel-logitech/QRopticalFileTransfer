@@ -35,7 +35,9 @@ void glrenderer::set_viewport_size(int x, int y){
     resY = y;
 }
 
-TTF_Font* Sans;// = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 24);
+TTF_Font* Sans;// = TTF_OpenFont("/usr/share/fonts/truetype/freefont/NotoMono-Regular", 24);
+
+//https://en.wikipedia.org/wiki/SIL_Open_Font_License -
 
 bool glrenderer::initGL(int sx, int sy)
 {
@@ -44,9 +46,9 @@ bool glrenderer::initGL(int sx, int sy)
     }
 
 
-    std::string absfontpath = globals::binpath + "FreeSans.ttf";
+    std::string absfontpath = globals::binpath + "NotoMono-Regular.ttf";
 
-    Sans = TTF_OpenFont(absfontpath.c_str(), 24);
+    Sans = TTF_OpenFont(absfontpath.c_str(), 20);
     if( Sans == NULL )
         fprintf(stderr, "Failed to open %s font file !\n", absfontpath.c_str());
 
@@ -148,8 +150,8 @@ void glrenderer::drawbar(){
         std::string s = stream.str();
 
         std::string pname = getpurefilename(globals::current_filename);
-        if (pname.length()>30){
-            pname = pname.substr(0, 30);
+        if (pname.length()>20){
+            pname = pname.substr(0, 20);
             pname = pname + "..";
         }
 
@@ -205,8 +207,8 @@ void glrenderer::drawbar(){
         std::string s = stream.str();
 
         std::string pname = getpurefilename(globals::current_filename);
-        if (pname.length()>30){
-            pname = pname.substr(0, 30);
+        if (pname.length()>20){
+            pname = pname.substr(0, 20);
             pname = pname + "..";
         }
         std::string msg = std::string (text_startupsequence)+ pname+ " : " + s + "s";
