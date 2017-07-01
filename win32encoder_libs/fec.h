@@ -237,11 +237,11 @@ void *init_rs_char(int symsize,int gfpoly,
 void free_rs_char(void *rs);
 
 /* General purpose RS codec, integer symbols */
-void encode_rs_int(void *rs,int *data,int *parity);
-int decode_rs_int(void *rs,int *data,int *eras_pos,int no_eras);
-void *init_rs_int(int symsize,int gfpoly,int fcr,
+extern "C" void encode_rs_int(void *rs,int *data,int *parity);
+extern "C" int decode_rs_int(void *rs,int *data,int *eras_pos,int no_eras);
+extern "C" void *init_rs_int(int symsize,int gfpoly,int fcr,
 		  int prim,int nroots,int pad);
-void free_rs_int(void *rs);
+extern "C" void free_rs_int(void *rs);
 
 /* CCSDS standard (255,223) RS codec with conventional (*not* dual-basis)
  * symbol representation
