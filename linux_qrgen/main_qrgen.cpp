@@ -53,6 +53,7 @@ int qrbytesize = 0;
 int current_file_index = 0;
 int initTime = 5;
 int targetFPS = 14;
+int maxAllowedErrorPercent = 50;
 ////////////////////////////
 
 ///////consts resulting from the above QR info
@@ -188,7 +189,11 @@ int produce_next_QR_frame_to_buffer(){
                 std::string path = executable_path;
                 if ((fileNames[current_file_index].c_str())[0] == (pathseparator)[0])
                     path = std::string("");
-                frame_producer->set_external_file_info(fileNames[current_file_index].c_str(), path.c_str(), qrbytesize, 0.5, 511);
+                frame_producer->set_external_file_info(fileNames[current_file_index].c_str(),
+                                                       path.c_str(),
+                                                       qrbytesize,
+                                                       ((double)maxAllowedErrorPercent)/100.0,
+                                                       511);
                 globals::current_filename = std::string((fileNames[current_file_index]).c_str());
                 std::string fullfilename(path+std::string(pathseparator)+fileNames[current_file_index]);
                 bool exist = does_file_exist(fullfilename);
@@ -584,6 +589,9 @@ int main(int argc, char** argv)
     ValueArg<int> QRtargetFPS("s", "fpsvalue", "Target FPS, range 5-60", false, 17, "int");
     cmd.add( QRtargetFPS );
 
+    ValueArg<int> MaxErrorLevel("e", "percent_maxallowederror", "Maximum allowed error, range 20%-80%", false, 50, "int");
+    cmd.add( MaxErrorLevel );
+
     ValueArg<int> QRinitTime("t", "initialframetime", "Time duration(s) of the startup sequence - range 3-10s", false, 6, "int");
     cmd.add( QRinitTime );
 
@@ -604,10 +612,15 @@ int main(int argc, char** argv)
     qrbytesize = QRsizeArg.getValue();
     initTime = QRinitTime.getValue();
     targetFPS = QRtargetFPS.getValue();
+    maxAllowedErrorPercent = MaxErrorLevel.getValue();
 
     qrbytesize = clamp (qrbytesize, 90, 1600);
     initTime = clamp (initTime, 3, 10);
     targetFPS = clamp (targetFPS, 5, 60);
+    if (maxAllowedErrorPercent % 5 != 0)
+        maxAllowedErrorPercent -= (maxAllowedErrorPercent % 5);
+    maxAllowedErrorPercent = clamp (maxAllowedErrorPercent, 20, 80);
+
 
     timeframe_delay = 1000.0 / ((double) targetFPS);
 
