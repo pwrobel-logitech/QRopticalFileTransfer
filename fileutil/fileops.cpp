@@ -1,3 +1,7 @@
+#ifdef WIN
+#include <windows.h>
+#endif
+
 #include "fileops.h"
 
 
@@ -11,6 +15,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
+
+
 
 #ifdef ANDROID
 static const char LOG_TAG[] = "Qjni";
@@ -164,13 +170,19 @@ int read_file(char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
 };
 #endif
 
+
 namespace utils{
 
     void Dosleep(int milis){
         timespec t;
         t.tv_sec =  milis / 1000;
         t.tv_nsec = (milis % 1000) * 1000000;
+#ifndef WIN
         nanosleep(&t, NULL);
+#else
+        Sleep(milis);
+#endif
+
     }
 
     double currmili(){
@@ -290,7 +302,7 @@ namespace utils{
      for(i = 7; i >= 0; i--) putchar('0' + ((v >> i) & 1));
    }
 
-
+#ifndef WIN
    ScopeLock::ScopeLock(pthread_mutex_t &m){
        mp = &m;
        pthread_mutex_lock(mp);
@@ -298,6 +310,6 @@ namespace utils{
    ScopeLock::~ScopeLock(){
        pthread_mutex_unlock(mp);
    };
-
+#endif
 }
 

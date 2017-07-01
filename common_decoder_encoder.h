@@ -2,9 +2,12 @@
 #include <string>
 #include <vector>
 
+#ifndef COMMON_H
+#define COMMON_H
 const int fixed_metadata_arr_size = 1024*1024;
 const int fixed_filehash_buff_size = 32*1024;
-char fixed_filehash_buff[fixed_filehash_buff_size];
+extern char* fixed_filehash_buff;
+#endif
 
 const int fixed_N_metadata = 7;
 const int fixed_K_metadata = 3;

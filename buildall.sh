@@ -18,3 +18,8 @@ mkdir release_x86_64_linux_uploader/lgpl_libqrencode_wrapper
 cp libqrencoder_wrapper/libqrencoder_wrapper.cpp libqrencoder_wrapper/libqrencoder_wrapper.h libqrencoder_wrapper/Makefile  release_x86_64_linux_uploader/lgpl_libqrencode_wrapper
 cp -R release_x86_64_linux_uploader linux_OpticalFileUploader
 tar -czf linux_OpticalFileUploader.tar.gz linux_OpticalFileUploader
+
+mkdir win32encoder_libs/external_lgpl_rebuild
+cp libqrencoder_wrapper/libqrencoder_wrapper.cpp win32encoder_libs/external_lgpl_rebuild
+cp libqrencoder_wrapper/libqrencoder_wrapper.h win32encoder_libs/external_lgpl_rebuild
+cp public_encoder_api.h win32encoder_libs

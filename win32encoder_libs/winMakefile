@@ -6,6 +6,18 @@
 #define srandom srand
 #then build all of this with this makefile to get the dll + its import library .lib
 
-all: 
+fec: 
 	i686-w64-mingw32-gcc -U__i386__ -O2 -I. fec.c sim.c viterbi27.c viterbi27_port.c viterbi29.c viterbi29_port.c viterbi39.c viterbi39_port.c viterbi615.c viterbi615_port.c encode_rs_char.c encode_rs_int.c encode_rs_8.c decode_rs_char.c decode_rs_int.c decode_rs_8.c init_rs_char.c init_rs_int.c encode_rs_ccsds.c decode_rs_ccsds.c dotprod.c dotprod_port.c peakval.c peakval_port.c sumsq.c sumsq_port.c build/ccsds_tab.c build/ccsds_tal.c cpu_mode_generic.c -shared -Wl,--out-implib,fec.lib -o fec.dll
 	i686-w64-mingw32-strip fec.dll
+
+LIBQRENCODER_LIBFOLDERNAME=libqrencode
+qrencoder_wrapper:
+	i686-w64-mingw32-g++ -O2 -DSTATIC_IN_RELEASE=static -DMAJOR_VERSION=1 -DMINOR_VERSION=1 -DVERSION=\"1\" -DMICRO_VERSION=1 -I../../$(LIBQRENCODER_LIBFOLDERNAME) -I../libqrencoder_wrapper ../libqrencoder_wrapper/libqrencoder_wrapper.cpp ../../$(LIBQRENCODER_LIBFOLDERNAME)/*.c -shared -Wl,--out-implib,libqrencoder_wrapper.lib -o libqrencoder_wrapper.dll
+	i686-w64-mingw32-strip libqrencoder_wrapper.dll
+	
+frameencoder: qrencoder_wrapper
+	i686-w64-mingw32-g++ -DWIN  -O2 -I.. -I../hash-library -I../libqrencoder_wrapper ../open_rs_encoder.cpp ../qr_frame_producer.cpp ../fileutil/fileops.cpp -D_MSC_VER2 ../hash-library/sha256.cpp ../encoder_api_lib.cpp -shared -Wl,--out-implib,frameencoder.lib -o frameencoder.dll -L$(current_dir)/bin_fec_x64 -L. -lfec -lqrencoder_wrapper 
+	i686-w64-mingw32-strip frameencoder.dll
+	
+all: fec qrencoder_wrapper
+

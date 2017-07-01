@@ -6,6 +6,9 @@
 #include "globaldefs.h"
 #include <libgen.h>
 
+char fixed_localfilehash_buff[fixed_filehash_buff_size];
+char* fixed_filehash_buff = fixed_localfilehash_buff;
+
 Qr_frame_producer::Qr_frame_producer()
 {
     this->metadata_encoder_ = NULL;

@@ -82,6 +82,7 @@ namespace utils{
 
    void printbits(unsigned char v);
 
+#ifndef WIN
    class ScopeLock {
    public:
        ScopeLock(pthread_mutex_t &m);
@@ -89,7 +90,7 @@ namespace utils{
    private :
        pthread_mutex_t* mp;
    };
-
+#endif
 
 }
 
