@@ -1,0 +1,11 @@
+#also, befeore compiling, install in your linux the  i686-w64-mingw32-gcc
+#compile normal linux target, to have the build/ccsds_tab.c build/ccsds_tal.c
+#in the build folder beforehand
+#then add two lines at the beginning of the fec.h file :
+#define random rand
+#define srandom srand
+#then build all of this with this makefile to get the dll + its import library .lib
+
+all: 
+	i686-w64-mingw32-gcc -U__i386__ -O2 -I. fec.c sim.c viterbi27.c viterbi27_port.c viterbi29.c viterbi29_port.c viterbi39.c viterbi39_port.c viterbi615.c viterbi615_port.c encode_rs_char.c encode_rs_int.c encode_rs_8.c decode_rs_char.c decode_rs_int.c decode_rs_8.c init_rs_char.c init_rs_int.c encode_rs_ccsds.c decode_rs_ccsds.c dotprod.c dotprod_port.c peakval.c peakval_port.c sumsq.c sumsq_port.c build/ccsds_tab.c build/ccsds_tal.c cpu_mode_generic.c -shared -Wl,--out-implib,fec.lib -o fec.dll
+	i686-w64-mingw32-strip fec.dll
