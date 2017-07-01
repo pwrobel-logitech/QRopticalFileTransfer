@@ -16,7 +16,7 @@ qrencoder_wrapper:
 	i686-w64-mingw32-strip libqrencoder_wrapper.dll
 	
 frameencoder: qrencoder_wrapper
-	i686-w64-mingw32-g++ -DWIN  -O2 -I.. -I../hash-library -I../libqrencoder_wrapper ../open_rs_encoder.cpp ../qr_frame_producer.cpp ../fileutil/fileops.cpp -D_MSC_VER2 ../hash-library/sha256.cpp ../encoder_api_lib.cpp -shared -Wl,--out-implib,frameencoder.lib -o frameencoder.dll -L$(current_dir)/bin_fec_x64 -L. -lfec -lqrencoder_wrapper 
+	i686-w64-mingw32-g++ -DWIN  -O2 -I.. -I../hash-library -I../libqrencoder_wrapper ../open_rs_encoder.cpp ../qr_frame_producer.cpp ../fileutil/fileops.cpp -D_MSC_VER2 ../hash-library/sha256.cpp ../encoder_api_lib.cpp -shared -Wl,--out-implib,frameencoder.lib -o frameencoder.dll -L$(current_dir)/bin_fec_x64 -L. -lfec -lqrencoder_wrapper -static-libgcc -static-libstdc++
 	i686-w64-mingw32-strip frameencoder.dll
 	
 all: fec qrencoder_wrapper
