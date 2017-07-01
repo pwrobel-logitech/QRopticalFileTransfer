@@ -70,6 +70,15 @@ bool is_displaychange_requested = false;
 bool is_fullscreenchange_requested = false;
 bool is_requested_reread_winsize = false;
 
+inline bool does_file_exist(const std::string& name) {
+    if (FILE *file = fopen(name.c_str(), "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void create_thread();
 static int MyThread(void *ptr);
 int draw_frame();
@@ -153,6 +162,7 @@ void invalidate_screen(){
 
 int curr_data_frame_num = 0;
 int total_data_frame_num = 0;
+char* pathseparator = "/";
 
 void create_thread(){
     mutex = SDL_CreateMutex();
@@ -176,10 +186,26 @@ int produce_next_QR_frame_to_buffer(){
             if(frame_producer == NULL){
                 frame_producer = new Qr_frame_producer;
                 std::string path = executable_path;
-                if (fileNames[current_file_index].c_str()[0] == '/')
+                if ((fileNames[current_file_index].c_str())[0] == (pathseparator)[0])
                     path = std::string("");
                 frame_producer->set_external_file_info(fileNames[current_file_index].c_str(), path.c_str(), qrbytesize, 0.5, 511);
                 globals::current_filename = std::string((fileNames[current_file_index]).c_str());
+                std::string fullfilename(path+std::string(pathseparator)+fileNames[current_file_index]);
+                bool exist = does_file_exist(fullfilename);
+                if (!exist){
+                    fprintf(stderr, "File %s does not exist!\n", fullfilename.c_str());
+                    frame_producer = NULL;
+                    current_file_index++;
+                    Nframe = 0;
+                    curr_data_frame_num = 0;
+                    is_in_header_generation_mode = true;
+                    glrenderer::is_timeout_to_draw = true;
+                    first_frame_draw_time = get_current_ms_time();
+                    if (current_file_index >= fileNames.size())
+                        return 2;
+                    else
+                        return 1;
+                }
             }
 
         }
@@ -409,7 +435,7 @@ void do_SDL_setup(){
         success = false;
     }
     //Create window
-    gWindow = SDL_CreateWindow( "GL_RENDERER", SDL_WINDOWPOS_CENTERED_DISPLAY(screen_counter),
+    gWindow = SDL_CreateWindow( "Optical file transfer upload", SDL_WINDOWPOS_CENTERED_DISPLAY(screen_counter),
     SDL_WINDOWPOS_CENTERED_DISPLAY(screen_counter),
     SCREEN_WIDTH, SCREEN_HEIGHT + STATUSBAR_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE );
     if( gWindow == NULL )

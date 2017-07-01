@@ -12,7 +12,7 @@ int resX, resY;
 std::string globals::binpath;
 double globals::startupsecs;
 double globals::curr_time_left;
-const char* text_startupsequence = "Startup sequence";
+const char* text_startupsequence = "Startup sequence for ";
 std::string globals::current_filename;
 
 void glrenderer::setup_projection(){
@@ -79,6 +79,10 @@ int amask = 0x000000ff;
 
 std::string getpurefilename(std::string relativename){
 
+    if (relativename.find("/") == std::string::npos && relativename.find("\\") == std::string::npos){
+        return relativename;
+    }
+
     int pos = relativename.length()-1;
     while (relativename[pos] != '\\' && relativename[pos] != '/')
         pos--;
@@ -140,7 +144,14 @@ void glrenderer::drawbar(){
         std::stringstream stream;
         stream << std::fixed << std::setprecision(2) << glrenderer::total_progress_to_draw*100;
         std::string s = stream.str();
-        std::string msg = getpurefilename(globals::current_filename) + " : " + s + "%";
+
+        std::string pname = getpurefilename(globals::current_filename);
+        if (pname.length()>30){
+            pname = pname.substr(0, 30);
+            pname = pname + "..";
+        }
+
+        std::string msg = pname + " : " + s + "%";
 
 
         surfaceMessage = TTF_RenderUTF8_Solid(Sans, msg.c_str(), White);
@@ -188,9 +199,15 @@ void glrenderer::drawbar(){
 
 
         std::stringstream stream;
-        stream << std::fixed << std::setprecision(2) << globals::curr_time_left;
+        stream << std::fixed << std::setprecision(1) << globals::curr_time_left;
         std::string s = stream.str();
-        std::string msg = std::string (text_startupsequence)+ " : " + s + "s";
+
+        std::string pname = getpurefilename(globals::current_filename);
+        if (pname.length()>30){
+            pname = pname.substr(0, 30);
+            pname = pname + "..";
+        }
+        std::string msg = std::string (text_startupsequence)+ pname+ " : " + s + "s";
 
 
         surfaceMessage = TTF_RenderUTF8_Solid(Sans, msg.c_str(), White);
