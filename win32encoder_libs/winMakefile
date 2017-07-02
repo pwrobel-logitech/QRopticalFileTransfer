@@ -12,7 +12,7 @@ fec:
 
 LIBQRENCODER_LIBFOLDERNAME=libqrencode
 qrencoder_wrapper:
-	i686-w64-mingw32-g++ -O2 -DSTATIC_IN_RELEASE=static -DMAJOR_VERSION=1 -DMINOR_VERSION=1 -DVERSION=\"1\" -DMICRO_VERSION=1 -I../../$(LIBQRENCODER_LIBFOLDERNAME) -I../libqrencoder_wrapper ../libqrencoder_wrapper/libqrencoder_wrapper.cpp ../../$(LIBQRENCODER_LIBFOLDERNAME)/*.c -shared -Wl,--out-implib,libqrencoder_wrapper.lib -o libqrencoder_wrapper.dll -static-libgcc -static-libstdc++
+	i686-w64-mingw32-g++ -O2 -DSTATIC_IN_RELEASE=static -DMAJOR_VERSION=1 -DMINOR_VERSION=1 -DVERSION=\"1\" -DMICRO_VERSION=1 -I../../$(LIBQRENCODER_LIBFOLDERNAME) -I../libqrencoder_wrapper ../libqrencoder_wrapper/libqrencoder_wrapper.cpp ../../$(LIBQRENCODER_LIBFOLDERNAME)/*.c -shared -Wl,--out-implib,libqrencoder_wrapper.lib -o libqrencoder_wrapper.dll -L. -lfec -static-libgcc -static-libstdc++
 	i686-w64-mingw32-strip libqrencoder_wrapper.dll
 	
 frameencoder: qrencoder_wrapper
