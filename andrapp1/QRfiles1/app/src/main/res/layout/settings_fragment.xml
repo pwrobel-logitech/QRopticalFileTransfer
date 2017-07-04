@@ -40,7 +40,7 @@
             <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                >
+                android:padding="5dp">
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="wrap_content"
@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     app:backgroundTint="@color/greyA"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="5dp"
                     android:layout_gravity="right|center_vertical"
                     app:fabSize="mini"
                     app:srcCompat="@mipmap/ic_question" />
@@ -82,7 +82,7 @@
             <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                >
+                android:padding="5dp">
 
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|center_vertical"
                     app:backgroundTint="@color/greyA"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="5dp"
                     android:clickable="true"
                     app:fabSize="mini"
                     app:srcCompat="@mipmap/ic_question" />
@@ -131,7 +131,7 @@
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
+            android:padding="5dp">
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
@@ -160,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center_vertical"
                 app:backgroundTint="@color/greyA"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:clickable="true"
                 app:fabSize="mini"
                 app:srcCompat="@mipmap/ic_question" />
@@ -176,7 +176,7 @@
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
+            android:padding="5dp">
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
@@ -206,7 +206,7 @@
                 android:layout_gravity="right|center_vertical"
                 android:clickable="true"
                 app:backgroundTint="@color/greyA"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 app:fabSize="mini"
                 app:srcCompat="@mipmap/ic_question" />
         </FrameLayout>

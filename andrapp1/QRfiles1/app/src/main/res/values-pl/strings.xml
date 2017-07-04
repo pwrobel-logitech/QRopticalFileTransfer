@@ -23,7 +23,7 @@
     <string name="info_qrsize_selection">rozmiar QR (bajty) : </string>
     <string name="info_qrsize_selection2">bajtów</string>
     <string name="info_start_seq_time">Czas sekwencji startowej (s) : </string>
-    <string name="resulting_upload_speed">Maksymalna prędkość transmisji dla tych ustawień  : </string>
+    <string name="resulting_upload_speed">Maksymalna prędkość wysyłania : </string>
     <string name="info_button_restore_default_settings">Przywróć ustawienia domyślne</string>
 
 
