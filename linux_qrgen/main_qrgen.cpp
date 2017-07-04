@@ -581,9 +581,9 @@ int main(int argc, char** argv)
 
 	try {  
 
-    CmdLine cmd("Give it a file to send as a set of QR frames.", ' ', "0.9");
+    CmdLine cmd("Give it a file to send as a set of QR frames.", ' ', "0.0.1");
 
-    ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame, range 90-1600", false, 585, "int");
+    ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame, range 90-1500", false, 585, "int");
     cmd.add( QRsizeArg );
 
     ValueArg<int> QRtargetFPS("s", "fpsvalue", "Target FPS, range 5-60", false, 17, "int");
@@ -614,7 +614,7 @@ int main(int argc, char** argv)
     targetFPS = QRtargetFPS.getValue();
     maxAllowedErrorPercent = MaxErrorLevel.getValue();
 
-    qrbytesize = clamp (qrbytesize, 90, 1600);
+    qrbytesize = clamp (qrbytesize, 90, 1500);
     initTime = clamp (initTime, 3, 10);
     targetFPS = clamp (targetFPS, 5, 60);
     if (maxAllowedErrorPercent % 5 != 0)
