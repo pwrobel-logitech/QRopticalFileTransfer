@@ -55,8 +55,8 @@ int go2(){
     int* mem = new int[N];
     int* erasureloc = new int[N];
 
-    memset(mem, 0, N);
-    memset(erasureloc, 0, N);
+    memset(mem, 0, sizeof(int) * N);
+    memset(erasureloc, 0, sizeof(int) * N);
 
     mem[0] = 3;
     mem[1] = 2;
