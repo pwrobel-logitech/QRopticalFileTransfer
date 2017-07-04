@@ -209,7 +209,7 @@ public class Qrfiles extends Activity implements TransmissionController{
 
         this.currFPSvalue = Qrfiles.clamp(fps, 5, 60);
         this.currErrorvalue = Qrfiles.clamp(errlev, 20, 80);
-        this.currQrSizevalue = Qrfiles.clamp(qrsize, 90, 1500);
+        this.currQrSizevalue = Qrfiles.clamp(qrsize, 95, 1205);
         this.currStartSeqTime = Qrfiles.clamp(timeout, 3, 10);
         this.currsuggested_N = Qrfiles.clamp(suggN, 255, 1023);
         this.currDumpPath = fdumppath;

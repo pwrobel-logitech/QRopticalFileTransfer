@@ -149,6 +149,33 @@
                 android:layout_height="2dp"
                 android:background="#aaaaaa"/>
 
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:id="@+id/textResultinguplspeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/resulting_upload_speed"
+                    android:textSize="15dp" />
+
+
+            </LinearLayout>
+
+
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#aaaaaa"/>
+
             <Button
                 android:id="@+id/button_default_settings1"
                 android:layout_width="wrap_content"

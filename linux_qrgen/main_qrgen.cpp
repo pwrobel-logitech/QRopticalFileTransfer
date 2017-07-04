@@ -560,13 +560,22 @@ void PrintEvent(const SDL_Event * event)
 }
 
 double clamp(double val, double lower, double upper) {
+  if (val < lower)
+    fprintf(stderr, "Warning: Value %.2f is not in range of (%.2f - %.2f), cutting to %.2f\n", val, lower, upper, lower);
+  else if (val > upper)
+    fprintf(stderr, "Warning: Value %.2f is not in range of (%.2f - %.2f), cutting to %.2f\n", val, lower, upper, upper);
   return std::max(lower, std::min(val, upper));
 }
 
 int clamp(int val, int lower, int upper) {
+  if (val < lower)
+    fprintf(stderr, "Warning: Value %d is not in range of (%d - %d), cutting to %d\n", val, lower, upper, lower);
+  else if (val > upper)
+    fprintf(stderr, "Warning: Value %d is not in range of (%d - %d), cutting to %d\n", val, lower, upper, upper);
   return std::max(lower, std::min(val, upper));
 }
 
+//TODO : add proper QR byte size range in the windows version as well.
 int main(int argc, char** argv)
 {
 
@@ -583,7 +592,7 @@ int main(int argc, char** argv)
 
     CmdLine cmd("Give it a file to send as a set of QR frames.", ' ', "0.0.1");
 
-    ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame, range 90-1500", false, 585, "int");
+    ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame, range 95-1205", false, 585, "int");
     cmd.add( QRsizeArg );
 
     ValueArg<int> QRtargetFPS("s", "fpsvalue", "Target FPS, range 5-60", false, 17, "int");
@@ -614,7 +623,7 @@ int main(int argc, char** argv)
     targetFPS = QRtargetFPS.getValue();
     maxAllowedErrorPercent = MaxErrorLevel.getValue();
 
-    qrbytesize = clamp (qrbytesize, 90, 1500);
+    qrbytesize = clamp (qrbytesize, 95, 1205);
     initTime = clamp (initTime, 3, 10);
     targetFPS = clamp (targetFPS, 5, 60);
     if (maxAllowedErrorPercent % 5 != 0)

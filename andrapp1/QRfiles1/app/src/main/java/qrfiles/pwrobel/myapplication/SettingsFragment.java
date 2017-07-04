@@ -98,6 +98,19 @@ public class SettingsFragment extends DialogFragment {
         //setStyle(style, theme);
     }
 
+
+    private TextView textviewUploadSpeedInfo = null;
+    private void setEstimatedUploadSpeedInfo(){
+        double speed = 0;
+        speed = currFPSvalue * (1.0 - ((double)currErrorvalue)/100.0) * (((double)currQrSizevalue-4.0)/1024.0);
+        String currtext = getResources().getString(R.string.resulting_upload_speed) +
+                String.format( " %.2f KB/s", speed);
+        this.textviewUploadSpeedInfo.setText(currtext);
+        this.textviewUploadSpeedInfo.requestLayout();
+
+    }
+
+
     int currFPSvalue = 17;
     int currErrorvalue = 50;
     int currQrSizevalue = 585;
@@ -161,6 +174,7 @@ public class SettingsFragment extends DialogFragment {
 
 
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+                SettingsFragment.this.setEstimatedUploadSpeedInfo();
             }
         });
 
@@ -206,14 +220,15 @@ public class SettingsFragment extends DialogFragment {
 
 
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+                SettingsFragment.this.setEstimatedUploadSpeedInfo();
             }
         });
 
 
 
         numberPickerQrsize = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerQrsize);
-        numberPickerQrsize.setMinValue(90);
-        numberPickerQrsize.setMaxValue(1500);
+        numberPickerQrsize.setMinValue(95);
+        numberPickerQrsize.setMaxValue(1205);
         numberPickerQrsize.setValue(currQrSizevalue);
         numberPickerQrsize.setStepSize(10);
         numberPickerQrsize.setOnLongPressUpdateInterval(120);
@@ -247,6 +262,7 @@ public class SettingsFragment extends DialogFragment {
                 } else if (value >= 625){
                     horizontalNumberPicker.getTextValueView().setTextColor(Color.rgb(0xaf, 0x00, 0x00));
                 }
+                SettingsFragment.this.setEstimatedUploadSpeedInfo();
             }
         });
 
@@ -263,6 +279,7 @@ public class SettingsFragment extends DialogFragment {
                 currStartSeqTime = value;
 
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+                SettingsFragment.this.setEstimatedUploadSpeedInfo();
             }
         });
 
@@ -281,9 +298,13 @@ public class SettingsFragment extends DialogFragment {
                 numberPickerStartSeqTime.setValue(6);
 
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
+                SettingsFragment.this.setEstimatedUploadSpeedInfo();
 
             }
         });
+
+        this.textviewUploadSpeedInfo = (TextView) v.findViewById(R.id.textResultinguplspeed);
+        this.setEstimatedUploadSpeedInfo();
 
         return v;
     }
