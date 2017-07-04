@@ -2,6 +2,7 @@
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,6 +27,7 @@
 
 
 
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -35,6 +37,10 @@
 
 
 
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="wrap_content"
@@ -56,11 +62,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/floatingActionButtonq1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    app:backgroundTint="@color/greyA"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="right|center_vertical"
+                    app:fabSize="mini"
+                    app:srcCompat="@mipmap/ic_question" />
+            </FrameLayout>
 
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"
                 android:background="#aaaaaa"/>
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
@@ -69,6 +92,8 @@
                 android:layout_gravity="center"
                 android:padding="10dp"
                 >
+
+
                 <TextView
                     android:id="@+id/textViewerrinfo"
                     android:textSize="15dp"
@@ -82,8 +107,20 @@
                     android:textSize="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
             </LinearLayout>
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/floatingActionButtonq2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    app:backgroundTint="@color/greyA"
+                    android:layout_marginRight="10dp"
+                    android:clickable="true"
+                    app:fabSize="mini"
+                    app:srcCompat="@mipmap/ic_question" />
+
+            </FrameLayout>
 
             <View
                 android:layout_width="fill_parent"
@@ -91,6 +128,10 @@
                 android:background="#aaaaaa"/>
 
 
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
@@ -113,6 +154,17 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/floatingActionButtonq3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                app:backgroundTint="@color/greyA"
+                android:layout_marginRight="10dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@mipmap/ic_question" />
+        </FrameLayout>
 
 
             <View
@@ -121,6 +173,10 @@
                 android:background="#aaaaaa"/>
 
 
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
@@ -143,6 +199,17 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/floatingActionButtonq4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:clickable="true"
+                app:backgroundTint="@color/greyA"
+                android:layout_marginRight="10dp"
+                app:fabSize="mini"
+                app:srcCompat="@mipmap/ic_question" />
+        </FrameLayout>
 
             <View
                 android:layout_width="fill_parent"
