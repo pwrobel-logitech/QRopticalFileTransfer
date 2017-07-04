@@ -10,6 +10,8 @@
 
 #include "decoder_wrapper.h"
 
+char fixed_localfilehash_buff[fixed_filehash_buff_size];
+char* fixed_filehash_buff = fixed_localfilehash_buff;
 
 
 void* QR_frame_decoder::thrfunc(void* arg){
