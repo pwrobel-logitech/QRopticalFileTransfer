@@ -1031,6 +1031,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         double currms = System.nanoTime() / 1.0e6;
 
+        if (this.detector_is_quiet_time_for_notdisplay_nostartseq &&
+                currms*1.0e6 - this.detector_native_reset_ended_ns
+                        > this.detector_native_reset_ended_ns_quiet_interval_for_not_display_nostartseq)
+            this.detector_is_quiet_time_for_notdisplay_nostartseq = false;
+
         if (this.should_deliver_pending_async_for_certain_time) {
             status.displayTextType = DisplayStatusInfo.StatusDisplayType.TYPE_NOTE;
             status.displaytext2 = "";
@@ -1080,6 +1085,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             if (this.got_dataframe_before_header_detection){
                 status.displaytext2 = this.str_missed_to_detect_header;
                 double currtime = System.nanoTime()/1.0e6;
+
+                if (this.detector_is_quiet_time_for_notdisplay_nostartseq){
+                    status.should_draw_status = true;
+                    status.displaytext = this.str_encourage_new_transmission;
+                    status.displaytext2 = "";
+                    return status;
+                }
                 if (currtime - this.last_time_the_first_dataframe_arrived_without_headerframe >
                         this.timeout_no_header_detected_ms){
                     this.got_dataframe_before_header_detection = false;
@@ -1126,6 +1138,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         " Filename : " + filename);
     }
 
+    private double detector_native_reset_ended_ns = System.nanoTime();
+    private double detector_native_reset_ended_ns_quiet_interval_for_not_display_nostartseq = 4e9;
+    boolean detector_is_quiet_time_for_notdisplay_nostartseq = false;
     public void reset_decoder(){
         Log.i("RST", "reset of the decoder is detected");
 
@@ -1145,7 +1160,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         last_frame_number_arrived_so_far = -1;
         tell_decoder_no_more_qr();
         int stat = deinitialize_decoder();
-
+        detector_native_reset_ended_ns = System.nanoTime();
+        detector_is_quiet_time_for_notdisplay_nostartseq = true;
         {
             synchronized (this){
                 this.should_deliver_pending_async_for_certain_time = false;
