@@ -23,8 +23,12 @@ bool mydecoder_initialized = false;
 
 
 int initialize_decoder(){
-    if (mydecoder_initialized)
-        delete framedecoder;
+    if (mydecoder_initialized){
+        if (framedecoder != NULL){
+            immediate_status stat = framedecoder->destroy_and_get_filetransfer_status();
+            delete framedecoder;
+        }
+    }
     framedecoder = new QR_frame_decoder;
     mydecoder_initialized = true;
     return 0;
