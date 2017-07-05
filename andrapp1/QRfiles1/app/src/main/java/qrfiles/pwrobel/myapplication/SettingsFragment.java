@@ -1,11 +1,18 @@
 package qrfiles.pwrobel.myapplication;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -124,6 +131,10 @@ public class SettingsFragment extends DialogFragment {
     private int picker_obtainedFPS = -1;
     private int picker_obtainedError = -1;
     private int picker_obtainedQrsize = -1;
+    FloatingActionButton floatingActionButtonq1 = null;
+    FloatingActionButton floatingActionButtonq2 = null;
+    FloatingActionButton floatingActionButtonq3 = null;
+    FloatingActionButton floatingActionButtonq4 = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -305,6 +316,47 @@ public class SettingsFragment extends DialogFragment {
 
         this.textviewUploadSpeedInfo = (TextView) v.findViewById(R.id.textResultinguplspeed);
         this.setEstimatedUploadSpeedInfo();
+
+        floatingActionButtonq1 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq1);
+        floatingActionButtonq2 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq2);
+        floatingActionButtonq3 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq3);
+        floatingActionButtonq4 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq4);
+
+        floatingActionButtonq1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.app.FragmentManager fm = getActivity().getFragmentManager();
+                DialogQ1 q1 = new DialogQ1();
+                q1.show(fm, "dialog");
+            }
+        });
+
+        floatingActionButtonq2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.app.FragmentManager fm = getActivity().getFragmentManager();
+                DialogQ2 q2 = new DialogQ2();
+                q2.show(fm, "dialog");
+            }
+        });
+
+        floatingActionButtonq3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.app.FragmentManager fm = getActivity().getFragmentManager();
+                DialogQ3 q3 = new DialogQ3();
+                q3.show(fm, "dialog");
+            }
+        });
+
+        floatingActionButtonq4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.app.FragmentManager fm = getActivity().getFragmentManager();
+                DialogQ4 q4 = new DialogQ4();
+                q4.show(fm, "dialog");
+            }
+        });
 
         return v;
     }

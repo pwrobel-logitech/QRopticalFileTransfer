@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Process;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
@@ -41,7 +42,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Qrfiles extends Activity implements TransmissionController{
+public class Qrfiles extends FragmentActivity implements TransmissionController{
 
 
     //used to hold main camera thread with the higher priority

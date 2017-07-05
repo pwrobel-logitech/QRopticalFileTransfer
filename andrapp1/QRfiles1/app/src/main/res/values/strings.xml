@@ -56,6 +56,28 @@
 
 
 
+    <string name="text_content_q1">This sets the Frames Per Seconds (FPS) of the generated QR stream,
+        that the decoder tries to keep. Lower value gives slower transmission, but makes it easier
+        to ever succeed for older phones with slower camera, or under low light
+    conditions. For newer ones, you can try with about 20FPS and see if the transmission
+    will succeed. </string>
+
+    <string name="text_content_q2">This sets the amount of redundancy that the frame producer will generate.
+        With higher value, the transmission is less likely to fail, but the transmission speed will be
+    lower as well. If the noise bar during transmission reception is often green for you when the chunk number increases,
+        then you
+    can afford to lower this value to increase the transfer speed.</string>
+
+    <string name="text_content_q3">This sets the size of each produced QR frame. Bigger value allows to
+    obtain faster transmission, although on my phone I had serious trouble to finish transmission when going above
+    750.</string>
+
+    <string name="text_content_q4">This sets the time in seconds, that the initializing startup sequence
+    is displayed in the frame producer. It is neccssary to capture at least some fragment of this startup
+    sequence to allow proper initialization on the receiver end. Bigger value gives the receiver
+    more time to position phone camera to capture stream.</string>
+
+
 
 
 
