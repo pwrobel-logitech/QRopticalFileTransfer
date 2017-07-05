@@ -154,8 +154,19 @@ public class Qrfiles extends FragmentActivity implements TransmissionController{
                 {
                     case R.id.menu_settings:
                         Log.i("MENU", "settings selected");
-
                         showSettingDialog();
+                        return true;
+                    case R.id.menu_help:
+                        Log.i("MENU", "help selected");
+                        showHelpDialog();
+                        return true;
+                    case R.id.menu_about:
+                        Log.i("MENU", "about selected");
+                        showAboutDialog();
+                        return true;
+                    case R.id.menu_privacypolicy:
+                        Log.i("MENU", "privacy policy selected");
+                        showPrivacyPolicyDialog();
                         return true;
                 }
                 return false;
@@ -190,6 +201,27 @@ public class Qrfiles extends FragmentActivity implements TransmissionController{
         newFragment.setTransmissionContorller(this);
         newFragment.show(ft, "dialog");
 
+    }
+
+    void showHelpDialog() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        // Create and show the dialog.
+        HelpFragment newFragment = HelpFragment.newInstance();
+        newFragment.show(ft, "dialog");
+    }
+
+    void showAboutDialog() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        // Create and show the dialog.
+        AboutFragment newFragment = AboutFragment.newInstance();
+        newFragment.show(ft, "dialog");
+    }
+
+    void showPrivacyPolicyDialog() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        // Create and show the dialog.
+        PrivacyPolicyFragment newFragment = PrivacyPolicyFragment.newInstance();
+        newFragment.show(ft, "dialog");
     }
 
     static private int clamp(int val, int min, int max){
