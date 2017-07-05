@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Qrfiles extends FragmentActivity implements TransmissionController{
+public class Qrfiles extends AppCompatActivity implements TransmissionController{
 
 
     //used to hold main camera thread with the higher priority
