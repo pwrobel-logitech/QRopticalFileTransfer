@@ -710,10 +710,18 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
     private void invoke_file_window(boolean is_file_upload_selection_mode){
         if(is_file_upload_selection_mode){
+
+            File yourAppDir = null;
+            if (Environment.getExternalStorageState() != null){
+                yourAppDir = Environment.getExternalStorageDirectory();
+            }else {
+                yourAppDir = Environment.getDataDirectory();
+            }
+
             if (default_search_for_upload_homedir != null)
                 this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
                         .withFilter(false, false)
-                        .withStartFile(default_search_for_upload_homedir)
+                        .withStartFile(yourAppDir.getAbsolutePath())
                         .withDateFormat("HH:mm")
                         .withResources(R.string.title_choose_filetosend, R.string.title_choose, R.string.dialog_cancel)
                         .withChosenListener(new ChooserDialog.Result() {
