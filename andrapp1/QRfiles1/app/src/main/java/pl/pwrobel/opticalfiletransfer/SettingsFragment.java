@@ -7,6 +7,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.File;
 
 /**
  * Created by pwrobel on 25.06.17.
@@ -351,10 +355,30 @@ public class SettingsFragment extends DialogFragment {
         });
 
         dumpfolderameTextView = (TextView) v.findViewById(R.id.textViewnamedumpfolder);
-        dumpfolderameTextView.setText(this.currFileDumpPath);
+        File yourAppDir = null;
+        if (Environment.getExternalStorageState() != null){
+            yourAppDir = Environment.getExternalStorageDirectory();
+        }else {
+            yourAppDir = Environment.getDataDirectory();
+        }
+
+        dumpfolderameTextView.setText(getfullpath(currFileDumpPath));
         dumpfolderameTextView.requestLayout();
 
         return v;
+    }
+
+    @NonNull
+    private String getfullpath(String folder){
+        File yourAppDir = null;
+        if (Environment.getExternalStorageState() != null){
+            yourAppDir = Environment.getExternalStorageDirectory();
+        }else {
+            yourAppDir = Environment.getDataDirectory();
+        }
+
+        String fpath = yourAppDir.getAbsolutePath() + File.separator + folder;
+        return fpath;
     }
 
     public void set_default_setup_settings(int fps, int err, int qrsize, int headertimeout, String dumppath){
@@ -370,7 +394,8 @@ public class SettingsFragment extends DialogFragment {
                     @Override
                     public void run() {
                         if (dumpfolderameTextView != null){
-                            dumpfolderameTextView.setText(currFileDumpPath);
+
+                            dumpfolderameTextView.setText(getfullpath(currFileDumpPath));
                             dumpfolderameTextView.requestLayout();
                         }
                     }
