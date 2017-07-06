@@ -1,5 +1,6 @@
 package pl.pwrobel.opticalfiletransfer;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.res.ColorStateList;
@@ -125,6 +126,7 @@ public class SettingsFragment extends DialogFragment {
     FloatingActionButton floatingActionButtonq2 = null;
     FloatingActionButton floatingActionButtonq3 = null;
     FloatingActionButton floatingActionButtonq4 = null;
+    TextView dumpfolderameTextView = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -348,6 +350,10 @@ public class SettingsFragment extends DialogFragment {
             }
         });
 
+        dumpfolderameTextView = (TextView) v.findViewById(R.id.textViewnamedumpfolder);
+        dumpfolderameTextView.setText(this.currFileDumpPath);
+        dumpfolderameTextView.requestLayout();
+
         return v;
     }
 
@@ -356,7 +362,21 @@ public class SettingsFragment extends DialogFragment {
         this.currErrorvalue = err;
         this.currQrSizevalue = qrsize;
         this.currStartSeqTime = headertimeout;
-        this.currFileDumpPath = dumppath;
+        this.currFileDumpPath = dumppath; // only last folder name of the path, actually
+        if (dumpfolderameTextView != null){
+            Activity a = getActivity();
+            if (a != null){
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dumpfolderameTextView != null){
+                            dumpfolderameTextView.setText(currFileDumpPath);
+                            dumpfolderameTextView.requestLayout();
+                        }
+                    }
+                });
+            }
+        }
     }
 
     private TransmissionController transmissionController = null;
@@ -367,7 +387,7 @@ public class SettingsFragment extends DialogFragment {
     private void request_resetting_encoder_because_of_new_settings(){
         if (this.transmissionController != null){
             this.transmissionController.onNewTransmissionSettings(this.currFPSvalue, this.currErrorvalue,
-                    this.currQrSizevalue, this.currStartSeqTime, null);
+                    this.currQrSizevalue, this.currStartSeqTime, this.currFileDumpPath);
         }
     }
 

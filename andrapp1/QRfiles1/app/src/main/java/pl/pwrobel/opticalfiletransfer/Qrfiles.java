@@ -107,8 +107,6 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
         Log.i("REST", "oncreate called");
 
-        File yourAppDir = new File(Environment.getExternalStorageDirectory()+"");
-        default_search_for_upload_homedir = yourAppDir.getPath();
 
         Intent intent = getIntent();
 
@@ -234,7 +232,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         int qrsize = this.preferences.getInt("Qrsize", 585);
         int timeout = this.preferences.getInt("timeout", 6);
         int suggN = this.preferences.getInt("suggested_N", 511);
-        String fdumppath = this.preferences.getString("filedumppath", null);
+        String fdumppath = this.preferences.getString("filedumppath", "Downloads");
         this.pref_is_dismiss_help = this.preferences.getBoolean("is_dismiss_help", false);
         this.pref_is_blurshader = this.preferences.getBoolean("is_blurshader", true);
 
@@ -259,6 +257,28 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
 
         this.readAndSanitizePrefs();
+
+        File yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
+        default_search_for_upload_homedir = yourAppDir.getPath();
+
+        if(yourAppDir.exists() && !yourAppDir.isDirectory()){
+            currDumpPath+="2";
+            yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
+            default_search_for_upload_homedir = yourAppDir.getPath();
+        }
+
+        if(yourAppDir.exists() && !yourAppDir.isDirectory()){
+            currDumpPath+="3";
+            yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
+            default_search_for_upload_homedir = yourAppDir.getPath();
+        }
+
+        if(yourAppDir.exists() && !yourAppDir.isDirectory()){
+            currDumpPath+="8";
+            yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
+            default_search_for_upload_homedir = yourAppDir.getPath();
+        }
+
 
 
         //setContentView(R.layout.activity_qrfiles);
@@ -388,6 +408,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
     void set_decoder_elements(){
         camSurf = (CameraPreviewSurface) findViewById(R.id.glsurfaceView1);
+        camSurf.setDumpFolderName(this.currDumpPath);
         progressBar1_decoder = (CustomProgressBar) findViewById(R.id.surfaceView2);
         progressBar2_decoder = (CustomProgressBar) findViewById(R.id.surfaceView3);
 

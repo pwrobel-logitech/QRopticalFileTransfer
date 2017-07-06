@@ -537,7 +537,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         handler = new Handler(getLooper());
     }
 
-    public void initCamAsync(final int surfacew, final int surfaceh){
+    public void initCamAsync(final int surfacew, final int surfaceh, final String foldername){
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -615,6 +615,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 camera.setPreviewCallbackWithBuffer(CameraWorker.this);
                 camera.startPreview();
 
+                CameraWorker.this.filedump_directory_name = foldername;
                 CameraWorker.this.filedump_directory_fullpath =
                         create_dump_directory_if_not_present(CameraWorker.this.filedump_directory_name);
                 initialize_decoder();
@@ -1210,9 +1211,16 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
 
     private String filedump_directory_fullpath = null;
-    private String filedump_directory_name = "qrout";
-    private String create_dump_directory_if_not_present(String dirname){
-        File yourAppDir = new File(Environment.getExternalStorageDirectory()+File.separator+dirname);
+    private String filedump_directory_name = "Downloads";
+    public static String create_dump_directory_if_not_present(String dirname){
+        File yourAppDir = null;
+        if (Environment.getExternalStorageState() != null){
+             yourAppDir = new File(Environment.getExternalStorageDirectory()+File.separator+dirname);
+        }else {
+            yourAppDir = new File(Environment.getDataDirectory()
+                        + File.separator+dirname);
+        }
+
         if(!yourAppDir.exists() && !yourAppDir.isDirectory())
         {
             // create empty directory

@@ -40,6 +40,9 @@
     <string name="title_choose_filetosend">Choose a file to send</string>
     <string name="title_filebrowse">Browse received files</string>
 
+    <string name="dump_folder_descr">Download folder :</string>
+
+
 
 
     <string name="info_err_selection">Maximum error (%s) : </string>

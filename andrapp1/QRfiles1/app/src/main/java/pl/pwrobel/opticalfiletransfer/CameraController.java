@@ -8,7 +8,7 @@ public interface CameraController {
 
 
 
-    public void initCamAsync(int surfacew, int surfaceh);
+    public void initCamAsync(int surfacew, int surfaceh, String dumpfoldername);
 
     public void closeCamAsync();
 

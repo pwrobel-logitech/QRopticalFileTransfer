@@ -112,6 +112,11 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
     }
 
+    private String dumpfoldername = "Downloads";
+    public synchronized void setDumpFolderName(String dumpfoldname){
+        this.dumpfoldername = dumpfoldname;
+    }
+
     boolean surface_and_camera_prepared = false;
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -149,7 +154,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
                     e.printStackTrace();
                 }
         }
-        camcontroller.initCamAsync(width, height);
+        camcontroller.initCamAsync(width, height, dumpfoldername);
 
         synchronized (camcontroller) {
             while (!camcontroller.isCameraInitialized()){

@@ -236,7 +236,54 @@
 
             </LinearLayout>
 
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#aaaaaa"/>
 
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+            <TextView
+                android:id="@+id/textViewdescdumpfolder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:text="@string/dump_folder_descr" />
+
+
+                <TextView
+                    android:id="@+id/textViewnamedumpfolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="serif"
+                    android:padding="5dp"
+                    android:text="TextView" />
+            </LinearLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/floatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_gravity="right|center_vertical"
+                app:fabSize="mini"
+                app:backgroundTint="@color/greyA"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="9dp"
+                android:layout_marginTop="9dp"
+                app:srcCompat="@mipmap/fold3lens" />
+        </FrameLayout>
 
             <View
                 android:layout_width="fill_parent"
