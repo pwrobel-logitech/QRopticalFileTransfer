@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Qrfiles extends AppCompatActivity implements TransmissionController{
+public class Qrfiles extends AppCompatActivity implements TransmissionController, HelpDialogDismisser{
 
 
     //used to hold main camera thread with the higher priority
@@ -149,7 +149,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                         return true;
                     case R.id.menu_help:
                         Log.i("MENU", "help selected");
-                        showHelpDialog();
+                        if (!Qrfiles.this.helpdialogshown)
+                            showHelpDialog();
                         return true;
                     case R.id.menu_about:
                         Log.i("MENU", "about selected");
@@ -194,11 +195,15 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
     }
 
+    private boolean helpdialogshown = false;
     void showHelpDialog() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         // Create and show the dialog.
         HelpFragment newFragment = HelpFragment.newInstance();
+        newFragment.setHelpDialogDismisser(this);
+        newFragment.setStartDismissStatus(this.pref_is_dismiss_help);
         newFragment.show(ft, "dialog");
+        this.helpdialogshown = true;
     }
 
     void showAboutDialog() {
@@ -230,12 +235,16 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         int timeout = this.preferences.getInt("timeout", 6);
         int suggN = this.preferences.getInt("suggested_N", 511);
         String fdumppath = this.preferences.getString("filedumppath", null);
+        this.pref_is_dismiss_help = this.preferences.getBoolean("is_dismiss_help", false);
+        this.pref_is_blurshader = this.preferences.getBoolean("is_blurshader", true);
 
         this.currFPSvalue = Qrfiles.clamp(fps, 5, 60);
         this.currErrorvalue = Qrfiles.clamp(errlev, 20, 80);
         this.currQrSizevalue = Qrfiles.clamp(qrsize, 95, 1205);
         this.currStartSeqTime = Qrfiles.clamp(timeout, 3, 10);
         this.currsuggested_N = Qrfiles.clamp(suggN, 255, 1023);
+        if (this.currsuggested_N != 255 || this.currsuggested_N != 511 || this.currsuggested_N != 1023)
+            this.currsuggested_N = 511;
         this.currDumpPath = fdumppath;
 
     }
@@ -420,6 +429,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         editor.putInt("timeout", this.currStartSeqTime);
         editor.putInt("suggested_N", this.currsuggested_N);
         editor.putString("filedumppath", this.currDumpPath);
+        editor.putBoolean("is_dismiss_help", this.pref_is_dismiss_help);
+        editor.putBoolean("is_blurshader", this.pref_is_blurshader);
         editor.commit();
 
 
@@ -546,6 +557,25 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
         this.main_layout.setVisibility(View.VISIBLE);
         this.main_layout.requestLayout();
+
+        if (!this.pref_is_dismiss_help){
+            this.helpdialogshown = true;
+            new Timer().schedule(new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showHelpDialog();
+                        }
+                    });
+                }
+            }, 1000);
+
+        }
+
 
         Runtime.getRuntime().gc();
 
@@ -716,6 +746,9 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }
     }
 
+    boolean pref_is_dismiss_help = false;
+    boolean pref_is_blurshader = true;
+
     int currFPSvalue = 17;
     int currErrorvalue = 50;
     int currQrSizevalue = 585;
@@ -837,6 +870,16 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         System.gc();
     }
 
+    @Override
+    public void onSetDismissedStatus(boolean status) {
+        this.pref_is_dismiss_help = status;
+    }
+
+    @Override
+    public void onSetHelpWindowGone() {
+        this.helpdialogshown = false;
+    }
+
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
@@ -854,6 +897,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         System.loadLibrary("RSdecAPI");
         System.loadLibrary("native-lib");
     }
+
 
 
 }
