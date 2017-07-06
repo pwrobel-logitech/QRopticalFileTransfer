@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/white0"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="qrfiles.pwrobel.myapplication.Qrfiles">
+    tools:context="pl.pwrobel.opticalfiletransfer.Qrfiles">
 
 
     <LinearLayout
@@ -39,7 +39,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <qrfiles.pwrobel.myapplication.CustomProgressBar
+    <pl.pwrobel.opticalfiletransfer.CustomProgressBar
         android:id="@+id/encoder_progressbar"
         android:layout_width="fill_parent"
         android:layout_height="35dp"
@@ -47,18 +47,18 @@
         android:background="@android:color/white" />
 
 
-    <qrfiles.pwrobel.myapplication.SquareLayout
+    <pl.pwrobel.opticalfiletransfer.SquareLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:orientation="vertical">
 
-        <qrfiles.pwrobel.myapplication.QRSurface
+        <pl.pwrobel.opticalfiletransfer.QRSurface
             android:id="@+id/qrsurf"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             />
 
-    </qrfiles.pwrobel.myapplication.SquareLayout>
+    </pl.pwrobel.opticalfiletransfer.SquareLayout>
 
     <TextView
         android:id="@+id/encoder_status_textfield"

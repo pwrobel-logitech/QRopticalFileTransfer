@@ -22,27 +22,27 @@ long upper_power_of_two(long v)
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_QRSurface_tell_1how_1much_1frames_1will_1be_1generated(
+Java_pl_pwrobel_opticalfiletransfer_QRSurface_tell_1how_1much_1frames_1will_1be_1generated(
         JNIEnv *env, jclass type) {
     return (jint)tell_how_much_frames_will_be_generated();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_QRSurface_tell_1no_1more_1generating_1header(JNIEnv *env,
+Java_pl_pwrobel_opticalfiletransfer_QRSurface_tell_1no_1more_1generating_1header(JNIEnv *env,
                                                                                 jclass type) {
     return (jint)tell_no_more_generating_header();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_QRSurface_destroy_1current_1encoder(JNIEnv *env, jclass type) {
+Java_pl_pwrobel_opticalfiletransfer_QRSurface_destroy_1current_1encoder(JNIEnv *env, jclass type) {
     return destroy_current_encoder();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_QRSurface_produce_1next_1qr_1grayscale_1image_1to_1mem(
+Java_pl_pwrobel_opticalfiletransfer_QRSurface_produce_1next_1qr_1grayscale_1image_1to_1mem(
         JNIEnv *env, jclass type, jobject produced_image, jobject produced_width) {
     char* bbufmem = (char*)((env)->GetDirectBufferAddress(produced_image));
     char* obtained_mem;
@@ -67,7 +67,7 @@ Java_qrfiles_pwrobel_myapplication_QRSurface_produce_1next_1qr_1grayscale_1image
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_QRSurface_init_1and_1set_1external_1file_1info(JNIEnv *env,
+Java_pl_pwrobel_opticalfiletransfer_QRSurface_init_1and_1set_1external_1file_1info(JNIEnv *env,
                                                                                   jclass type,
                                                                                   jstring filename_,
                                                                                   jstring filepath_,
@@ -86,52 +86,52 @@ Java_qrfiles_pwrobel_myapplication_QRSurface_init_1and_1set_1external_1file_1inf
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1main_1RSN(JNIEnv *env, jclass type) {
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1main_1RSN(JNIEnv *env, jclass type) {
     return (jint)get_main_RSN();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1main_1RSK(JNIEnv *env, jclass type) {
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1main_1RSK(JNIEnv *env, jclass type) {
     return (jint)get_main_RSK();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1residual_1RSN(JNIEnv *env, jclass type) {
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1residual_1RSN(JNIEnv *env, jclass type) {
     return (jint)get_residual_RSN();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1residual_1RSK(JNIEnv *env, jclass type) {
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1residual_1RSK(JNIEnv *env, jclass type) {
     return (jint)get_residual_RSK();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1total_1frames_1of_1data_1that_1will_1be_1produced(
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1total_1frames_1of_1data_1that_1will_1be_1produced(
         JNIEnv *env, jclass type) {
     return (jint)get_total_frames_of_data_that_will_be_produced();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1number_1of_1frame_1detected(JNIEnv *env,
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1last_1number_1of_1frame_1detected(JNIEnv *env,
                                                                                        jclass type) {
     return (jint)get_last_number_of_frame_detected();
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1number_1of_1header_1frame_1detected(
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1last_1number_1of_1header_1frame_1detected(
         JNIEnv *env, jclass type) {
     return (jint)get_last_number_of_header_frame_detected();
 }
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1recognized_1file_1name_1str(JNIEnv *env,
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1last_1recognized_1file_1name_1str(JNIEnv *env,
                                                                                        jclass type) {
     std::string str(get_last_recognized_file_name_str());
     return env->NewStringUTF(str.c_str());
@@ -139,7 +139,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_get_1last_1recognized_1file_1nam
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_initialize_1decoder(JNIEnv *env, jclass type) {
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_initialize_1decoder(JNIEnv *env, jclass type) {
 #ifdef ANDROID
     __android_log_print(ANDROID_LOG_INFO, "QDEC", "init decoder ");
 #endif
@@ -148,7 +148,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_initialize_1decoder(JNIEnv *env,
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_set_1decoded_1file_1path(JNIEnv *env, jclass type,
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_set_1decoded_1file_1path(JNIEnv *env, jclass type,
                                                                          jstring path_) {
 #ifdef ANDROID
     __android_log_print(ANDROID_LOG_INFO, "QDEC", "set filepath ");
@@ -161,7 +161,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_set_1decoded_1file_1path(JNIEnv 
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_send_1next_1grayscale_1buffer_1to_1decoder(
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_send_1next_1grayscale_1buffer_1to_1decoder(
         JNIEnv *env, jclass type, jbyteArray grayscale_qr_data_, jint image_width,
         jint image_height) {
     jbyte *grayscale_qr_data = env->GetByteArrayElements(grayscale_qr_data_, NULL);
@@ -172,7 +172,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_send_1next_1grayscale_1buffer_1t
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_tell_1decoder_1no_1more_1qr(JNIEnv *env,
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_tell_1decoder_1no_1more_1qr(JNIEnv *env,
                                                                             jclass type) {
 #ifdef ANDROID
     __android_log_print(ANDROID_LOG_INFO, "QDEC", "nomoreqr ");
@@ -182,7 +182,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_tell_1decoder_1no_1more_1qr(JNIE
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_deinitialize_1decoder(JNIEnv *env, jclass type) {
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_deinitialize_1decoder(JNIEnv *env, jclass type) {
 #ifdef ANDROID
     __android_log_print(ANDROID_LOG_INFO, "QDEC", "deinit decoder ");
 #endif
@@ -193,7 +193,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_deinitialize_1decoder(JNIEnv *en
 /*
 extern "C"
 JNIEXPORT void JNICALL
-Java_qrfiles_pwrobel_myapplication_CameraWorker_applygrayscalenative(JNIEnv *env, jclass type,
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_applygrayscalenative(JNIEnv *env, jclass type,
                                                                      jbyteArray pixels_,
                                                                      jbyteArray data_, jint width,
                                                                      jint height) {
@@ -214,7 +214,7 @@ Java_qrfiles_pwrobel_myapplication_CameraWorker_applygrayscalenative(JNIEnv *env
 */
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_qrfiles_pwrobel_myapplication_Qrfiles_stringFromJNI(
+Java_pl_pwrobel_opticalfiletransfer_Qrfiles_stringFromJNI(
         JNIEnv* env,
         jobject /* this */) {
     std::string hello = "Hello from C++";

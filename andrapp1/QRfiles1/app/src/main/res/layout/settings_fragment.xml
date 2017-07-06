@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="FPS: " />
-            <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
+            <pl.pwrobel.opticalfiletransfer.HorizontalNumberPicker
                 android:id="@+id/numberPickerFPS"
                 android:orientation="horizontal"
                 android:textSize="15dp"
@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/info_err_selection" />
-                <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
+                <pl.pwrobel.opticalfiletransfer.HorizontalNumberPicker
                     android:id="@+id/numberPickerError"
                     android:orientation="horizontal"
                     android:textSize="15dp"
@@ -146,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/info_qrsize_selection" />
-                <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
+                <pl.pwrobel.opticalfiletransfer.HorizontalNumberPicker
                     android:id="@+id/numberPickerQrsize"
                     android:orientation="horizontal"
                     android:textSize="15dp"
@@ -191,7 +191,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/info_start_seq_time" />
-                <qrfiles.pwrobel.myapplication.HorizontalNumberPicker
+                <pl.pwrobel.opticalfiletransfer.HorizontalNumberPicker
                     android:id="@+id/numberPickerStartSeqTime"
                     android:orientation="horizontal"
                     android:textSize="15dp"

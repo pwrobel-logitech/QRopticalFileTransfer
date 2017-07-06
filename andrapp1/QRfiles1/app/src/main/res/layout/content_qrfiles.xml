@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_qrfiles"
-    tools:context="qrfiles.pwrobel.myapplication.Qrfiles">
+    tools:context="pl.pwrobel.opticalfiletransfer.Qrfiles">
 
 
     <LinearLayout
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <qrfiles.pwrobel.myapplication.CameraPreviewSurface
+            <pl.pwrobel.opticalfiletransfer.CameraPreviewSurface
                 android:id="@+id/glsurfaceView1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -54,7 +54,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
-                            <qrfiles.pwrobel.myapplication.CustomProgressBar
+                            <pl.pwrobel.opticalfiletransfer.CustomProgressBar
                                 android:id="@+id/surfaceView2"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -86,7 +86,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
-                        <qrfiles.pwrobel.myapplication.CustomProgressBar
+                        <pl.pwrobel.opticalfiletransfer.CustomProgressBar
                             android:id="@+id/surfaceView3"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
