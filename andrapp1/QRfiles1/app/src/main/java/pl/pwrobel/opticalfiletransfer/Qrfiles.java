@@ -1,5 +1,6 @@
 package pl.pwrobel.opticalfiletransfer;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
@@ -698,6 +699,25 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                 this.got_upload_request_from_intent = false;
                 List<String> files = new ArrayList<String>();
                 files.clear();
+
+                boolean canread = QRSurface.checkFileCanRead(new File(this.upload_requested_path_by_system));
+                if (!canread){
+                    final String fname = this.upload_requested_path_by_system;
+                    final Activity a = Qrfiles.this;
+                    if (a != null){
+                        a.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String p1 = a.getString(R.string.fileread_failed_descr1);
+                                String p2 = a.getString(R.string.fileread_failed_descr2);
+                                Toast d = Toast.makeText(a, p1+" "+fname+" "+p2, Toast.LENGTH_LONG);
+                                d.show();
+                            }
+                        });
+                    }
+                    return;
+                }
+
                 files.add(0, this.upload_requested_path_by_system);
                 Qrfiles.this.qrsurf.add_new_files_to_send((ArrayList<String>) files);
             }
@@ -727,6 +747,24 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                         .withChosenListener(new ChooserDialog.Result() {
                         @Override
                         public void onChoosePath(String path, File pathFile) {
+                            boolean canread = QRSurface.checkFileCanRead(new File(path));
+                            if (!canread){
+                                final String fname = path;
+                                final Activity a = Qrfiles.this;
+                                if (a != null){
+                                    a.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            String p1 = a.getString(R.string.fileread_failed_descr1);
+                                            String p2 = a.getString(R.string.fileread_failed_descr2);
+                                            Toast d = Toast.makeText(a, p1+" "+fname+" "+p2, Toast.LENGTH_LONG);
+                                            d.show();
+                                        }
+                                    });
+                                }
+                                return;
+                            }
+
                                 chosen_file_path = path;
                              //Toast.makeText(Qrfiles.this, "FILE: " + chosen_file_path, Toast.LENGTH_SHORT).show();
                              //_tv.setText(_path);
