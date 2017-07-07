@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -108,6 +111,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    private TextView filepath = null;
+    View vtitle = null;
     public ChooserDialog build() {
         if (_titleRes == 0 || _okRes == 0 || _cancelRes == 0)
             throw new RuntimeException("withResources() should be called at first.");
@@ -119,19 +124,37 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(_context,  R.style.MyDialogTheme);
         //AlertDialog.Builder builder = new AlertDialog.Builder(_context , AlertDialog.THEME_HOLO_LIGHT);
 
+
+
+
+        LayoutInflater inflater = (LayoutInflater)a.getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.vtitle = inflater.inflate(R.layout.file_chooser_title, null);
+
         //builder.setTitle(R.string.dlg_choose dir_title);
-        TextView title = new TextView(this._context);
-// You Can Customise your Title here
+        TextView title = (TextView) this.vtitle.findViewById(R.id.textViewf1);
+        this.filepath = (TextView) this.vtitle.findViewById(R.id.textViewf2);
+        try {
+            if (this.filepath != null)
+                this.filepath.setText(_currentDir.getCanonicalPath());
+        } catch (IOException e) {
+            Log.e("Err", "Canonical path request for filechooser failed");
+            e.printStackTrace();
+        }
+        // You Can Customise your Title here
 
         title.setText(a.getString(this._titleRes));
         //title.setBackgroundColor(Color.rgb(0xaa, 0xaa, 0xaa));
-        title.setPadding(10, 27, 10, 10);
+        //title.setPadding(10, 27, 10, 10);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(Color.rgb(0x33,0x33,0x33));
         //title.setTextColor(Color.WHITE);
         title.setTextSize(20);
         //builder.setTitle(_titleRes);
-        builder.setCustomTitle(title);
+
+        builder.setCustomTitle(this.vtitle);
+
+
+
         builder.setAdapter(adapter, this);
 
         if (_dirOnly) {
@@ -249,6 +272,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         refreshDirs();
+        if (this.vtitle != null){
+            this.filepath = (TextView) this.vtitle.findViewById(R.id.textViewf2);
+            try {
+                if (this.filepath != null){
+                    this.filepath.setText(_currentDir.getCanonicalPath());
+                    this.filepath.requestLayout();
+                }
+            } catch (IOException e) {
+                Log.e("Err", "Canonical path request for filechooser failed");
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
