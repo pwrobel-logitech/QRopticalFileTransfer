@@ -41,6 +41,8 @@
     <string name="title_filebrowse">Browse received files</string>
 
     <string name="dump_folder_descr">Download folder :</string>
+    <string name="fileread_failed_descr1">File </string>
+    <string name="fileread_failed_descr2"> cannot be read - no read permission perhaps. </string>
 
 
 

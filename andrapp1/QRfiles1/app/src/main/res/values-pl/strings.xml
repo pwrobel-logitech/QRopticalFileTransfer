@@ -27,6 +27,10 @@
     <string name="info_button_restore_default_settings">Przywróć ustawienia domyślne</string>
 
 
+    <string name="fileread_failed_descr1">Plik </string>
+    <string name="fileread_failed_descr2"> nie może być odczytany - prawdopodobnie brak uprawnień odczytu. </string>
+
+
     <string name="start_sequence_string">Sekwencja startowa : </string>
     <string name="start_sequence_upload_file_desc">Wysyłanie sekwencji startowej pliku : </string>
     <string name="upload_file_desc_string">Wysyłanie pliku : </string>

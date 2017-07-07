@@ -11,7 +11,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -360,6 +363,26 @@ public class QRSurface extends GLSurfaceView implements
             this.index_of_currently_processed_file++;
             for (int i = 0; i < filespath.size(); i++){
                 files_to_send.add(i, filespath.get(i));
+                boolean canread = checkFileCanRead(new File(filespath.get(i)));
+                if (!canread){
+                    final String fname = filespath.get(i);
+                    this.index_of_currently_processed_file = -1;
+                    files_to_send.clear();
+                    destroy_current_encoder();
+                    final Activity a = (Activity) this.getContext();
+                    if (a != null){
+                        a.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String p1 = a.getString(R.string.fileread_failed_descr1);
+                                String p2 = a.getString(R.string.fileread_failed_descr2);
+                                Toast d = Toast.makeText(a, p1+" "+fname+" "+p2, Toast.LENGTH_LONG);
+                                d.show();
+                            }
+                        });
+                    }
+                    return;
+                }
             }
             //files_to_send.add(1, filespath.get(0));
             Log.i("qrsurf", "index : " + this.index_of_currently_processed_file+
@@ -820,6 +843,22 @@ public class QRSurface extends GLSurfaceView implements
     static String trimFileNameText(String filepath){
         int index = filepath.lastIndexOf("/");
         return filepath.substring(index + 1);
+    }
+
+    public static boolean checkFileCanRead(File file){
+        if (!file.exists())
+            return false;
+        if (!file.canRead())
+            return false;
+        try {
+            FileReader fileReader = new FileReader(file.getAbsolutePath());
+            fileReader.read();
+            fileReader.close();
+        } catch (Exception e) {
+            Log.i("ERR", "Exception when checked file can read with message:"+e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     //native part
