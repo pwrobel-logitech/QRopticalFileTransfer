@@ -1108,6 +1108,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         return this.getStringResourceByName("draw_progress_chunk_name");
     }
 
+    public void set_is_blur(boolean is_blur){
+        if (this.camsurf != null)
+            this.camsurf.set_is_blur(is_blur);
+    }
+
     /// data as NV21 input, pixels as 8bit greyscale output
     //public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
     //    applygrayscalenative(pixels, data, width, height);

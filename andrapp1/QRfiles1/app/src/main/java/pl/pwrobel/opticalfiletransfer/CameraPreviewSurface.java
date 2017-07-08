@@ -221,6 +221,10 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         Log.i("clickable", "executed on the thread in cam surf, id: " + android.os.Process.myTid());
     }
 
+    private boolean isblur = true;
+    public synchronized void set_is_blur(boolean isbl){
+        this.isblur = isbl;
+    }
     @Override
     public void onDrawFrame(GL10 gl) {
 
@@ -256,6 +260,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         int urpevratio = mOffscreenShader.getHandle("prev_yx_ratio");
         int usuccratio = mOffscreenShader.getHandle("succratio");
         int usizes = mOffscreenShader.getHandle("sizeprev");
+        int uisblur = mOffscreenShader.getHandle("is_blur");
 
         GLES20.glUniformMatrix4fv(uTransformM, 1, false, mTransformM, 0);
         GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
@@ -263,6 +268,13 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         GLES20.glUniform2fv(usizes, 1, sizeprev, 0);
         GLES20.glUniform1f(urpevratio, m_prev_yx_ratio);
         GLES20.glUniform1f(usuccratio, (float)curr_succ_ratio_got_from_camworker);
+
+        synchronized (this) {
+            if (this.isblur)
+                GLES20.glUniform1f(uisblur, (float) 0.99f);
+            else
+                GLES20.glUniform1f(uisblur, (float) 0.01f);
+        }
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureHandle);

@@ -48,4 +48,6 @@ public interface CameraController {
 
     public DisplayStatusInfo getDisplayStatusText();
 
+    public void set_is_blur(boolean is_blur);
+
 }

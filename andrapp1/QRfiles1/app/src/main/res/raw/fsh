@@ -12,7 +12,7 @@ varying vec2 vTextureCoord;
 uniform vec2 ratios;
 
 float x, y, transx, transy, cx, cy , rs, red, green;
-
+uniform float is_blur;
 float distancefactor , distancefactorx, distancefactory;
 
 float darkness;
@@ -113,6 +113,7 @@ if ((x < 0.5-boundx || x > (0.5+boundx)) || (y < 0.5-boundy || y > (0.5+boundy))
             }
 
 
+if (is_blur > 0.5){
              t00 = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y-2.0/sizeprev.y));
              t01 = texture2D(sTexture, vec2(x-2.0/sizeprev.x,y+2.0/sizeprev.y));
              t10 = texture2D(sTexture, vec2(x+2.0/sizeprev.x,y-2.0/sizeprev.y));
@@ -130,6 +131,7 @@ if ((x < 0.5-boundx || x > (0.5+boundx)) || (y < 0.5-boundy || y > (0.5+boundy))
 */
              /*texcolor = 0.2*(Bmm+Bm0+Bmp+B0m+B0p+Bpm+Bp0+Bpp);*/
              texcolor = (1.0/6.0)*(2.0*texcolor + t00 + t01 + t10 + t11);
+}
 
              redf = red * (1.0-darkness)*texcolor;
              redf.y=0.0;

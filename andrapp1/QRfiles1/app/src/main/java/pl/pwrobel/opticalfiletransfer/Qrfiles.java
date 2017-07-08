@@ -836,6 +836,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.currStartSeqTime = startseqtime;
         this.currDumpPath = newdumppath;
         this.pref_is_blurshader = is_blur;
+        if (this.camworker != null)
+            this.camworker.set_is_blur(this.pref_is_blurshader);
 
         if(Qrfiles.this.qrsurf != null){
             Qrfiles.this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime, currsuggested_N);//actually, only deinits qrsurf manager thread
@@ -886,6 +888,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         });
         //this.camworker.initAsync();
 
+        if(this.camworker != null)
+            this.camworker.set_is_blur(this.pref_is_blurshader);
         /*
         synchronized (this.camSurf){
             while (!this.camSurf.surface_and_camera_prepared){
