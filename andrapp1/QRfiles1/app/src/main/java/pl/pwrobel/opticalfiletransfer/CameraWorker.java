@@ -1083,10 +1083,17 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             return status;
         }
         if (this.did_any_header_frame_arrived && (!this.is_header_detected)){
-            status.should_draw_status = true;
-            status.displaytext = this.str_started_header_detection;
-            status.displaytext2 = "";
-            return status;
+            if (!got_dataframe_before_header_detection){
+                status.should_draw_status = true;
+                status.displaytext = this.str_started_header_detection;
+                status.displaytext2 = "";
+                return status;
+            }else{
+                status.should_draw_status = true;
+                status.displaytext = this.str_encourage_new_transmission;
+                status.displaytext2 = this.str_missed_to_detect_header;;
+                return status;
+            }
         }
         if (this.did_any_header_frame_arrived && this.is_header_detected){
             status.should_draw_status = true;
