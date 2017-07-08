@@ -44,7 +44,37 @@
     <string name="fileread_failed_descr1">File </string>
     <string name="fileread_failed_descr2"> cannot be read - no read permission perhaps. </string>
 
+    <string name="help_donotshowagaintick">Don\'t show again</string>
+    <string name="help_title">Help</string>
+    <string name="helpd1">Use this app to receive/send small files as the stream of QR frames
+        through the phone\'s camera.
 
+        You can generate file QR stream from this app or also the
+        desktop PC - see
+    Windows and Linux programs for uploading files.</string>
+
+    <string name="helpd2">
+        Tips for successfull transmission :
+    </string>
+
+    <string name="helpd3">
+        1. Keep the camera straight - avoid tilting.
+    </string>
+
+    <string name="helpd4">
+        2. Make sure camera focus correctly - if not, try waving hand quickly in front of it, or tap the screen
+        to request autofocus.
+    </string>
+
+    <string name="helpd5">
+        3. Keep the highlight green if you can. The more green the highlight gets, the less error is generated, and higher the chance that the
+        transmission will succeed. Observe also the noise bar during transmission - avoid getting it fully red
+        when the chunk changes.
+    </string>
+
+    <string name="helpd6">
+        4. Try to capture significant part of the start sequence as well - without it the transmission will not even start.
+    </string>
 
 
     <string name="info_err_selection">Maximum error (%s) : </string>

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,20 +55,37 @@ public class HelpFragment extends DialogFragment {
     }
 
 
+    private boolean is_dismiss_from_ok_button = false;
     @Override
     public void onDismiss(final DialogInterface dialog) {
         super.onDismiss(dialog);
         if (this.dismisser != null){
-            this.dismisser.onSetHelpWindowGone();
+            //if (!is_dismiss_from_ok_button)
+                this.dismisser.onSetHelpWindowGone();
+            is_dismiss_from_ok_button = false;
         }
     }
 
-    CheckBox dismissbox;
+    CheckBox dismissbox = null;
+    TextView OKtext = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.help_fragment, container, false);
         this.dismissbox = (CheckBox) v.findViewById(R.id.checkBoxdismiss);
+        this.OKtext = (TextView) v.findViewById(R.id.textViewok1);
+        this.OKtext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((Activity)dismisser).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        is_dismiss_from_ok_button = true;
+                        HelpFragment.this.dismiss();
+                    }
+                });
+            }
+        });
         this.dismissbox.setChecked(this.defaultchecked);
         this.dismissbox.requestLayout();
         this.dismissbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -85,11 +103,12 @@ public class HelpFragment extends DialogFragment {
                                 @Override
                                 public void run() {
                                     HelpFragment.this.dismisser.onSetHelpWindowGone();
+                                    is_dismiss_from_ok_button = false;
                                     HelpFragment.this.dismiss();
                                 }
                             });
                         }
-                    }, 1000);
+                    }, 700);
 
                 }
             }

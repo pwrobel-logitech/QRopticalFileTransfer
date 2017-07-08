@@ -7,7 +7,9 @@
     <color name="colorgrey1">#7F7F7F</color>
     <color name="colorlightgrey2">#DDDDDD</color>
 
+    <color name="black0">#000000</color>
     <color name="greyA">#AAAAAA</color>
     <color name="greyB">#BBBBBB</color>
     <color name="greyC">#CCCCCC</color>
+    <color name="greyD">#DDDDDD</color>
 </resources>

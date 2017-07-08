@@ -67,6 +67,10 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     boolean got_upload_request_from_intent = false;
     private String upload_requested_path_by_system = null;
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+    }
 /*
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -580,7 +584,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.main_layout.setVisibility(View.VISIBLE);
         this.main_layout.requestLayout();
 
-        if (!this.pref_is_dismiss_help){
+        if (!this.pref_is_dismiss_help && (!this.helpdialogshown)){
             this.helpdialogshown = true;
             new Timer().schedule(new TimerTask()
             {
