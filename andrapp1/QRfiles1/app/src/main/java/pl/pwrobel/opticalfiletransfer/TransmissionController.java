@@ -8,6 +8,7 @@ package pl.pwrobel.opticalfiletransfer;
 
 public interface TransmissionController {
 
-    public void onNewTransmissionSettings(int fps, int errlevpercent, int qrsize, int currstartuptime, String newdumppath);
+    public void onNewTransmissionSettings(int fps, int errlevpercent, int qrsize, int currstartuptime, String newdumppath,
+                                          boolean is_blur);
 
 }

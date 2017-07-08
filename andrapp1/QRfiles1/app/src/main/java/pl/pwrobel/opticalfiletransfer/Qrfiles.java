@@ -192,7 +192,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         // Create and show the dialog.
         SettingsFragment newFragment = SettingsFragment.newInstance();
         newFragment.set_default_setup_settings(this.currFPSvalue, this.currErrorvalue,
-                this.currQrSizevalue, this.currStartSeqTime, this.currDumpPath);
+                this.currQrSizevalue, this.currStartSeqTime, this.currDumpPath, this.pref_is_blurshader);
         newFragment.setTransmissionContorller(this);
         newFragment.show(ft, "dialog");
 
@@ -827,7 +827,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     int currsuggested_N = 511;
     String currDumpPath = null;
     @Override
-    public void onNewTransmissionSettings(int fps, int errlevpercent, int qrsize, int startseqtime, String newdumppath) {
+    public void onNewTransmissionSettings(int fps, int errlevpercent, int qrsize, int startseqtime, String newdumppath, boolean is_blur) {
         Log.i("Settings", "got new settings from settingsmenu, fps : "+fps+", err : "+errlevpercent
                 + ", qrsize : "+qrsize+", sseq : "+startseqtime+", dumppath : "+newdumppath);
         this.currFPSvalue = fps;
@@ -835,6 +835,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.currQrSizevalue = qrsize;
         this.currStartSeqTime = startseqtime;
         this.currDumpPath = newdumppath;
+        this.pref_is_blurshader = is_blur;
 
         if(Qrfiles.this.qrsurf != null){
             Qrfiles.this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime, currsuggested_N);//actually, only deinits qrsurf manager thread

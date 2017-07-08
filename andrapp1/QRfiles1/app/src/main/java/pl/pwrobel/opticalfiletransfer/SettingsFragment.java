@@ -14,7 +14,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.io.File;
@@ -131,6 +135,8 @@ public class SettingsFragment extends DialogFragment {
     FloatingActionButton floatingActionButtonq3 = null;
     FloatingActionButton floatingActionButtonq4 = null;
     TextView dumpfolderameTextView = null;
+    CheckBox checkBoxblur = null;
+    boolean pref_is_blurshader = true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -303,6 +309,9 @@ public class SettingsFragment extends DialogFragment {
                 numberPickerError.setValue(50);
                 numberPickerQrsize.setValue(585);
                 numberPickerStartSeqTime.setValue(6);
+                pref_is_blurshader = true;
+                checkBoxblur.setChecked(pref_is_blurshader);
+                checkBoxblur.requestLayout();
 
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
                 SettingsFragment.this.setEstimatedUploadSpeedInfo();
@@ -365,6 +374,20 @@ public class SettingsFragment extends DialogFragment {
         dumpfolderameTextView.setText(getfullpath(currFileDumpPath));
         dumpfolderameTextView.requestLayout();
 
+        checkBoxblur = (CheckBox) v.findViewById(R.id.checkBoxblur);
+        checkBoxblur.setChecked(this.pref_is_blurshader);
+        checkBoxblur.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SettingsFragment.this.pref_is_blurshader = isChecked;
+                request_resetting_encoder_because_of_new_settings();
+            }
+        });
+
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getDialog().getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         return v;
     }
 
@@ -381,12 +404,13 @@ public class SettingsFragment extends DialogFragment {
         return fpath;
     }
 
-    public void set_default_setup_settings(int fps, int err, int qrsize, int headertimeout, String dumppath){
+    public void set_default_setup_settings(int fps, int err, int qrsize, int headertimeout, String dumppath, boolean blurcheck){
         this.currFPSvalue = fps;
         this.currErrorvalue = err;
         this.currQrSizevalue = qrsize;
         this.currStartSeqTime = headertimeout;
         this.currFileDumpPath = dumppath; // only last folder name of the path, actually
+        this.pref_is_blurshader = blurcheck;
         if (dumpfolderameTextView != null){
             Activity a = getActivity();
             if (a != null){
@@ -412,7 +436,7 @@ public class SettingsFragment extends DialogFragment {
     private void request_resetting_encoder_because_of_new_settings(){
         if (this.transmissionController != null){
             this.transmissionController.onNewTransmissionSettings(this.currFPSvalue, this.currErrorvalue,
-                    this.currQrSizevalue, this.currStartSeqTime, this.currFileDumpPath);
+                    this.currQrSizevalue, this.currStartSeqTime, this.currFileDumpPath, this.pref_is_blurshader);
         }
     }
 

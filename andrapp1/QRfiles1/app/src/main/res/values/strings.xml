@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TestApp1</string>
+    <string name="app_name">OpticalFileTransfer</string>
     <string name="action_settings">Settings</string>
     <string name="draw_blink_encourage_new_transmission">Waiting for a new transmission..</string>
     <string name="draw_blink_warning_header_not_detected">Missed start sequence. </string>
@@ -83,7 +83,7 @@
     <string name="info_start_seq_time">Start sequence time (s) : </string>
     <string name="resulting_upload_speed">Max. upload speed : </string>
     <string name="info_button_restore_default_settings">Restore default settings</string>
-
+    <string name="chceck_blurshader">Preview blur effect</string>
 
     <string name="defaultButtonMinus">-</string>
     <string name="defaultButtonPlus">+</string>
