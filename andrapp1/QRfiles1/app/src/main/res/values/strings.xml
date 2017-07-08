@@ -114,6 +114,8 @@
 
 
 
+    <string name="link_win">"http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html"</string>
+    <string name="link_lin">"http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.html"</string>
 
 
     <string name="menu_settingfragment_text">

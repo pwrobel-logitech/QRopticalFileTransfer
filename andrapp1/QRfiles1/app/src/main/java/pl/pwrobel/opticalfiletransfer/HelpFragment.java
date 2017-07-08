@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by pwrobel on 25.06.17.
@@ -54,6 +57,22 @@ public class HelpFragment extends DialogFragment {
         //setStyle(STYLE_NORMAL, R.style.SettingFragmentDialog);
     }
 
+    private static void internaladdLinks(TextView textView, String linkThis, String toThis) {
+        Pattern pattern = Pattern.compile(linkThis);
+        String scheme = toThis;
+        android.text.util.Linkify.addLinks(textView, pattern, scheme, new android.text.util.Linkify.MatchFilter() {
+            @Override
+            public boolean acceptMatch(CharSequence s, int start, int end) {
+                return true;
+            }
+        }, new android.text.util.Linkify.TransformFilter() {
+
+            @Override
+            public String transformUrl(Matcher match, String url) {
+                return "";
+            }
+        });
+    }
 
     private boolean is_dismiss_from_ok_button = false;
     @Override
@@ -68,6 +87,7 @@ public class HelpFragment extends DialogFragment {
 
     CheckBox dismissbox = null;
     TextView OKtext = null;
+    TextView textViewhelpd1 = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,6 +106,11 @@ public class HelpFragment extends DialogFragment {
                 });
             }
         });
+
+        this.textViewhelpd1 = (TextView) v.findViewById(R.id.textViewhelpd1);
+        internaladdLinks(this.textViewhelpd1, "Windows", ((Activity)dismisser).getString(R.string.link_win));
+        internaladdLinks(this.textViewhelpd1, "Linux", ((Activity)dismisser).getString(R.string.link_lin));
+
         this.dismissbox.setChecked(this.defaultchecked);
         this.dismissbox.requestLayout();
         this.dismissbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
