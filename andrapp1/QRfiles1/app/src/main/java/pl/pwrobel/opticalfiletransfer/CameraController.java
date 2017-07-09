@@ -7,6 +7,7 @@ package pl.pwrobel.opticalfiletransfer;
 public interface CameraController {
 
 
+    public void setNewDumpPath(String newpath);
 
     public void initCamAsync(int surfacew, int surfaceh, String dumpfoldername);
 

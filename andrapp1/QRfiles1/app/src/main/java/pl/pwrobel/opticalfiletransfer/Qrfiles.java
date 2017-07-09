@@ -846,6 +846,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
             this.currDumpPath = newdumppath;
             File yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
             default_search_for_upload_homedir = yourAppDir.getPath();
+            if (this.camworker != null)
+                this.camworker.setNewDumpPath(yourAppDir.getAbsolutePath());
             //this.destroyall();
             //this.initall();
         }

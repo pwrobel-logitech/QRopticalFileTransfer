@@ -311,6 +311,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         //final byte[] dat = data;
         Activity a = (Activity) context;
 
+        synchronized (CameraWorker.this){
+            if (folder_reset_pending){
+                folder_reset_pending = false;
+                reset_decoder();
+                camera.addCallbackBuffer(callbackbuffer);
+            }
+        }
+
         //greyscalebuffer = data;
 
         final int status = send_next_grayscale_buffer_to_decoder(data, camwidth, camheight);
@@ -537,11 +545,28 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         handler = new Handler(getLooper());
     }
 
+    String newdumppath = null;
+    boolean folder_reset_pending = false;
+    @Override
+    public void setNewDumpPath(final String newpath) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!CameraWorker.this.filedump_directory_name.equals(newpath)){
+                    synchronized (CameraWorker.this){
+                        folder_reset_pending = true;
+                        filedump_directory_fullpath = newpath;
+                    }
+                }
+            }
+        });
+    }
+
     public void initCamAsync(final int surfacew, final int surfaceh, final String foldername){
         handler.post(new Runnable() {
             @Override
             public void run() {
-
+                newdumppath = foldername;
                 int sw = surfacew;
                 int sh = surfaceh;
 

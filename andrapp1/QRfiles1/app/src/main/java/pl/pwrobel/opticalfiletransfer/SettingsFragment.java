@@ -313,9 +313,17 @@ public class SettingsFragment extends DialogFragment {
                 numberPickerError.setValue(50);
                 numberPickerQrsize.setValue(585);
                 numberPickerStartSeqTime.setValue(6);
+                currFileDumpPath = "Downloads";
                 pref_is_blurshader = true;
                 checkBoxblur.setChecked(pref_is_blurshader);
                 checkBoxblur.requestLayout();
+
+                if (dumpfolderameTextView != null){
+
+                    dumpfolderameTextView.setText(getfullpath(currFileDumpPath));
+                    dumpfolderameTextView.requestLayout();
+                }
+
 
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
                 SettingsFragment.this.setEstimatedUploadSpeedInfo();
