@@ -16,6 +16,7 @@
     <string name="start_sequence_upload_file_desc">Sending start sequence for a file : </string>
     <string name="upload_file_desc_string">Sending file : </string>
     <string name="ask_for_new_file_selection_to_upload">Select file to upload</string>
+    <string name="ask_folder_choose">Select file download location</string>
     <string name="upload_file_finalizing_msg">Finishing file, please wait..</string>
 
 

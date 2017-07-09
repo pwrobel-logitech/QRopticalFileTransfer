@@ -20,8 +20,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by pwrobel on 25.06.17.
@@ -134,6 +137,7 @@ public class SettingsFragment extends DialogFragment {
     FloatingActionButton floatingActionButtonq2 = null;
     FloatingActionButton floatingActionButtonq3 = null;
     FloatingActionButton floatingActionButtonq4 = null;
+    FloatingActionButton folderselect = null;
     TextView dumpfolderameTextView = null;
     CheckBox checkBoxblur = null;
     boolean pref_is_blurshader = true;
@@ -381,6 +385,47 @@ public class SettingsFragment extends DialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SettingsFragment.this.pref_is_blurshader = isChecked;
                 request_resetting_encoder_because_of_new_settings();
+            }
+        });
+
+        folderselect = (FloatingActionButton) v.findViewById(R.id.folderselect);
+        folderselect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File yourAppDir = null;
+                if (Environment.getExternalStorageState() != null){
+                    yourAppDir = Environment.getExternalStorageDirectory();
+                }else {
+                    yourAppDir = Environment.getDataDirectory();
+                }
+                ChooserDialog d = new ChooserDialog().withCustomParentDir(yourAppDir.getAbsolutePath()).with(getActivity())
+                        .withFilter(true, false)
+                        .withStartFile(yourAppDir.getAbsolutePath())
+                        .withDateFormat("HH:mm")
+                        .withResources(R.string.ask_folder_choose, R.string.title_choose, R.string.dialog_cancel)
+                        .withChosenListener(new ChooserDialog.Result() {
+
+                            @Override
+                            public void onChoosePath(String dir, File dirFile) {
+                                Log.i("Folder", "Selected folder "+dir);
+                                File yourAppDir = null;
+                                if (Environment.getExternalStorageState() != null){
+                                    yourAppDir = Environment.getExternalStorageDirectory();
+                                }else {
+                                    yourAppDir = Environment.getDataDirectory();
+                                }
+                                currFileDumpPath = dir;
+                                String lastfold = dir.replace(yourAppDir.getAbsolutePath(), "");
+                                if (lastfold.startsWith(File.separator) && lastfold.length() > 1)
+                                    lastfold = lastfold.substring(1);
+                                currFileDumpPath = lastfold;
+                                dumpfolderameTextView.setText(dir);
+                                dumpfolderameTextView.requestLayout();
+                                request_resetting_encoder_because_of_new_settings();
+                            }
+                        })
+                        .build()
+                        .show();
             }
         });
 

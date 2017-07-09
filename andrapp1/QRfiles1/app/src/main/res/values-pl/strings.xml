@@ -14,6 +14,8 @@
 
 
 
+
+
     <string name="menu_string_about">O programie</string>
     <string name="menu_string_settings">Ustawienia</string>
     <string name="menu_string_privacypolicy">Polityka prywatności</string>
@@ -39,6 +41,19 @@
     <string name="upload_file_desc_string">Wysyłanie pliku : </string>
     <string name="ask_for_new_file_selection_to_upload">Wybierz plik do wysłania</string>
     <string name="title_filebrowse">Przeglądaj odebrane pliki</string>
+
+    <string name="title_choose">Wybierz</string>
+    <string name="title_choose_dict_file">Wybierz folder</string>
+    <string name="dialog_ok">Zaznacz</string>
+    <string name="dialog_cancel">Anuluj</string>
+    <string name="title_choose_folder">Wybierz folder</string>
+    <string name="title_choose_filetosend">Wybierz plik do wysłania</string>
+    <string name="dump_folder_descr">Folder zapisu plików</string>
+
+
+
     <string name="upload_file_finalizing_msg">Kończenie pliku, proszę poczekać..</string>
+
+    <string name="ask_folder_choose">Wybierz folder zapisu plików</string>
 
 </resources>

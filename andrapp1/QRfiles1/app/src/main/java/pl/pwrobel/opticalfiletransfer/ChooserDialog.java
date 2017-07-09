@@ -38,27 +38,32 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog with(Context cxt) {
         this._context = cxt;
+        //custom_parent_dir = null;
         return this;
     }
 
     public ChooserDialog withFilter(FileFilter ff) {
         withFilter(false, false, (String[]) null);
         this._fileFilter = ff;
+        //custom_parent_dir = null;
         return this;
     }
 
     public ChooserDialog withFilter(boolean dirOnly, boolean allowHidden, FileFilter ff) {
         withFilter(dirOnly, allowHidden, (String[]) null);
         this._fileFilter = ff;
+        //custom_parent_dir = null;
         return this;
     }
 
     public ChooserDialog withFilter(boolean allowHidden, String... suffixes) {
+        //custom_parent_dir = null;
         return withFilter(false, allowHidden, suffixes);
     }
 
     public ChooserDialog withFilter(boolean dirOnly, boolean allowHidden, String... suffixes) {
         this._dirOnly = dirOnly;
+        //custom_parent_dir = null;
         if (suffixes == null)
             this._fileFilter = dirOnly ? filterDirectoriesOnly : filterFiles;
         else
@@ -68,12 +73,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog withFilterRegex(boolean dirOnly, boolean allowHidden, String pattern, int flags) {
         this._dirOnly = dirOnly;
+        //custom_parent_dir = null;
         this._fileFilter = new RegexFileFilter(_dirOnly, allowHidden, pattern, flags);
         return this;
     }
 
     public ChooserDialog withFilterRegex(boolean dirOnly, boolean allowHidden, String pattern) {
         this._dirOnly = dirOnly;
+        //custom_parent_dir = null;
         this._fileFilter = new RegexFileFilter(_dirOnly, allowHidden, pattern, Pattern.CASE_INSENSITIVE);
         return this;
     }
@@ -86,16 +93,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         if(!_currentDir.isDirectory())
             _currentDir = _currentDir.getParentFile();
-
+        //custom_parent_dir = null;
         return this;
     }
 
     public ChooserDialog withChosenListener(Result r) {
+        //custom_parent_dir = null;
         this._result = r;
         return this;
     }
 
     public ChooserDialog withResources(int titleRes, int okRes, int cancelRes) {
+        //custom_parent_dir = null;
         this._titleRes = titleRes;
         this._okRes = okRes;
         this._cancelRes = cancelRes;
@@ -103,10 +112,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withDateFormat() {
+        //custom_parent_dir = null;
         return this.withDateFormat("yyyy/MM/dd HH:mm:ss");
     }
 
     public ChooserDialog withDateFormat(String format) {
+        //custom_parent_dir = null;
         this._dateFormat = format;
         return this;
     }
@@ -208,7 +219,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         File[] files = _currentDir.listFiles(_fileFilter);
 
         // Add the ".." entry
+        boolean adddd = false;
         if (_currentDir.getParent() != null)
+            adddd = true;
+        if ((this.custom_parent_dir != null &&
+                (_currentDir.getAbsolutePath().equals(custom_parent_dir))))
+            adddd = false;
+        if (adddd)
             _entries.add(new File(".."));
 
         if (files != null) {
@@ -224,6 +241,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         });
     }
 
+    //if not-null - then it acts as the restricting parent dir;
+    private String custom_parent_dir = null;
+
+    public ChooserDialog withCustomParentDir(String custom_parent_dir){
+        this.custom_parent_dir = custom_parent_dir;
+        return this;
+    }
+
     private void listDirs2() {
         _entries.clear();
 
@@ -231,7 +256,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         File[] files = _currentDir.listFiles();
 
         // Add the ".." entry
+        boolean adddd = false;
         if (_currentDir.getParent() != null)
+            adddd = true;
+        if ((this.custom_parent_dir != null &&
+                (_currentDir.getAbsolutePath().equals(custom_parent_dir))))
+            adddd = false;
+        if (adddd)
             _entries.add(new File(".."));
 
         if (files != null) {

@@ -115,6 +115,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     private String dumpfoldername = "Downloads";
     public synchronized void setDumpFolderName(String dumpfoldname){
         this.dumpfoldername = dumpfoldname;
+        //if (this.camcontroller != null)
+        //    this.camcontroller.
     }
 
     boolean surface_and_camera_prepared = false;

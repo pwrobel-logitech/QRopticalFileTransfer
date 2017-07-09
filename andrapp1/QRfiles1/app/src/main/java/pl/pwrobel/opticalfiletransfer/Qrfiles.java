@@ -743,7 +743,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
             }
 
             if (default_search_for_upload_homedir != null)
-                this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
+                this.fileselection_dialog_in_sender = new ChooserDialog().withCustomParentDir(null).with(this)
                         .withFilter(false, false)
                         .withStartFile(yourAppDir.getAbsolutePath())
                         .withDateFormat("HH:mm")
@@ -783,7 +783,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }else{
 
             if (default_search_for_upload_homedir != null)
-                this.fileselection_dialog_in_sender = new ChooserDialog().with(this)
+                this.fileselection_dialog_in_sender = new ChooserDialog().withCustomParentDir(null).with(this)
                         .withFilter(false, false)
                         .withStartFile(default_search_for_upload_homedir)
                         .withDateFormat("HH:mm")
@@ -834,10 +834,22 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.currErrorvalue = errlevpercent;
         this.currQrSizevalue = qrsize;
         this.currStartSeqTime = startseqtime;
-        this.currDumpPath = newdumppath;
+
         this.pref_is_blurshader = is_blur;
         if (this.camworker != null)
             this.camworker.set_is_blur(this.pref_is_blurshader);
+
+
+
+
+        if (!newdumppath.equals(this.currDumpPath)){
+            this.currDumpPath = newdumppath;
+            File yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
+            default_search_for_upload_homedir = yourAppDir.getPath();
+            //this.destroyall();
+            //this.initall();
+        }
+
 
         if(Qrfiles.this.qrsurf != null){
             Qrfiles.this.qrsurf.reset_producer(currFPSvalue, currErrorvalue, currQrSizevalue, currStartSeqTime, currsuggested_N);//actually, only deinits qrsurf manager thread
