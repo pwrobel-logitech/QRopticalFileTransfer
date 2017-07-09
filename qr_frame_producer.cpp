@@ -110,7 +110,7 @@ int Qr_frame_producer::set_external_file_info(const char* filename, const char* 
         return -1;
 
     uint32_t fsize = get_file_size_fp(this->file_info_.fp);
-    if(fsize > 0) {
+    if(fsize >= 0) {
         this->file_info_.filelength = fsize;
         //hash file
         this->calculate_file_content_hash(fixed_filehash_buff_size);
