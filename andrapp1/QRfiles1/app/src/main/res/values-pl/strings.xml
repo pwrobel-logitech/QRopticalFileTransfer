@@ -30,6 +30,11 @@
     <string name="chceck_blurshader">Efekt rozmycia podglądu</string>
 
 
+    <string name="empty_directory">Pusty katalog</string>
+    <string name="storage_removed">Pamięć została odmontowana lub usunięta.</string>
+    <string name="choose_file">Wybierz plik</string>
+    <string name="error_selecting_file">Błąd wybierania pliku</string>
+    <string name="internal_storage">Pamięć wewnętrzna</string>
     <string name="fileread_failed_descr1">Plik </string>
     <string name="fileread_failed_descr2"> nie może być odczytany - prawdopodobnie brak uprawnień odczytu. </string>
 
@@ -55,5 +60,71 @@
     <string name="upload_file_finalizing_msg">Kończenie pliku, proszę poczekać..</string>
 
     <string name="ask_folder_choose">Wybierz folder zapisu plików</string>
+
+
+
+    <string name="helpd1">Use this app to receive/send small files as the stream of QR frames
+        through the phone\'s camera.
+
+        You can generate file QR stream from this app or also the
+        desktop PC - see
+    Windows and Linux programs for uploading files.</string>
+
+    <string name="helpd2">
+        Tips for successfull transmission :
+    </string>
+
+    <string name="helpd3">
+        1. Keep the camera straight - avoid tilting.
+    </string>
+
+    <string name="helpd4">
+        2. Make sure camera focus correctly - if not, try waving hand quickly in front of it, or tap the screen
+        to request autofocus.
+    </string>
+
+    <string name="helpd5">
+        3. Keep the highlight green if you can. The more green the highlight gets, the less error is generated, and higher the chance that the
+        transmission will succeed. Observe also the noise bar during transmission - avoid getting it fully red
+        when the chunk changes.
+    </string>
+
+    <string name="helpd6">
+        4. Try to capture significant part of the start sequence as well - without it the transmission will not even start.
+    </string>
+
+    <string name="defaultButtonMinus">-</string>
+    <string name="defaultButtonPlus">+</string>
+
+    <string name="text_content_q1">This sets the Frames Per Seconds (FPS) of the generated QR stream,
+        that the decoder tries to keep. Lower value gives slower transmission, but makes it easier
+        to ever succeed for older phones with slower camera, or under low light
+    conditions. For newer ones, you can try with about 20FPS and see if the transmission
+    will succeed. </string>
+
+    <string name="text_content_q2">This sets the amount of redundancy that the frame producer will generate.
+        With higher value, the transmission is less likely to fail, but the transmission speed will be
+    lower as well. If the noise bar during transmission reception is often green for you when the chunk number increases,
+        then you
+    can afford to lower this value to increase the transfer speed.</string>
+
+    <string name="text_content_q3">This sets the size of each produced QR frame. Bigger value allows to
+    obtain faster transmission, although on my phone I had serious trouble to finish transmission when going above
+    750.</string>
+
+    <string name="text_content_q4">This sets the time in seconds, that the initializing startup sequence
+    is displayed in the frame producer. It is neccssary to capture at least some fragment of this startup
+    sequence to allow proper initialization on the receiver end. Bigger value gives the receiver
+    more time to position phone camera to capture stream.</string>
+
+
+
+    <string name="link_win">"http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html"</string>
+    <string name="link_lin">"http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.html"</string>
+
+
+    <string name="menu_settingfragment_text">
+
+    5 02:23:33.192 10392-10392/? I/art: Late-enablin</string>
 
 </resources>
