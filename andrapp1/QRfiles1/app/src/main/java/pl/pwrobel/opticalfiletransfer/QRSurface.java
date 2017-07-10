@@ -747,19 +747,42 @@ public class QRSurface extends GLSurfaceView implements
         }
     }
 
+    private int lastbrihtnesslevel = 127;
+    private boolean automax_already_set = false;
     public void set_brightness_manual_max(){
+        if (automax_already_set)
+            return;
         Activity aa = (Activity) getContext();
         if (aa != null){
-            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+
+
+
+            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+
+            int currbrightnessValue = Settings.System.getInt(
+                    aa.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS,
+                    0
+            );
+
+            if (currbrightnessValue >= 0)
+                this.lastbrihtnesslevel = currbrightnessValue;
+
             android.provider.Settings.System.putInt(getContext().getContentResolver(),
                 android.provider.Settings.System.SCREEN_BRIGHTNESS, 255);
+            this.automax_already_set = true;
         }
     }
 
     public void set_brightness_back_to_auto(){
         Activity aa = (Activity) getContext();
         if (aa != null){
-            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            android.provider.Settings.System.putInt(getContext().getContentResolver(),
+                    android.provider.Settings.System.SCREEN_BRIGHTNESS, this.lastbrihtnesslevel);
+            this.automax_already_set = false;
         }
     }
 
