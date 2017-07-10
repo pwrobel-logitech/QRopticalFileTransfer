@@ -752,6 +752,8 @@ public class QRSurface extends GLSurfaceView implements
     private boolean automax_already_set = false;
 
     public void setup_initial_brightness(){
+        if (automax_already_set)
+            return;
         Activity aa = (Activity) getContext();
         if (aa != null){
             Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
@@ -763,7 +765,9 @@ public class QRSurface extends GLSurfaceView implements
             );
             if (currbrightnessValue >= 0)
                 this.lastbrihtnesslevel = currbrightnessValue;
+
         }
+        //Log.i("QQQQQQ", "set initial brightness "+ this.lastbrihtnesslevel);
     }
 
     public void set_brightness_manual_max(){
@@ -790,10 +794,12 @@ public class QRSurface extends GLSurfaceView implements
                 android.provider.Settings.System.SCREEN_BRIGHTNESS, 255);
             this.automax_already_set = true;
         }
+        //Log.i("QQQQQ", "Set bright max "+this.automax_already_set+ "  act "+aa);
     }
 
     public void set_brightness_back_to_auto(){
         Activity aa = (Activity) getContext();
+        //Log.i("QQQQQQQ", "BR to auto val "+this.lastbrihtnesslevel + " activ "+aa);
         if (aa != null){
             Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
                     Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
@@ -810,7 +816,7 @@ public class QRSurface extends GLSurfaceView implements
                 @Override
                 public void run() {
 
-                    Log.i("BR", "Setting the brightness to full");
+                    //Log.i("BR", "Setting the brightness to full");
 /*
                     WindowManager.LayoutParams lp = a.getWindow().getAttributes();
                     lp.screenBrightness =  BRIGHTNESS_OVERRIDE_FULL;

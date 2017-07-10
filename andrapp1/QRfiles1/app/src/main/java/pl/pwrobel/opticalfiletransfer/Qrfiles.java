@@ -603,6 +603,9 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }
 
 
+        Toast.makeText(this, (String)this.getString(R.string.download_mode_switch_text),
+                Toast.LENGTH_LONG).show();
+
         Runtime.getRuntime().gc();
 
     }
@@ -637,6 +640,10 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         this.qrsurf = (QRSurface) findViewById(R.id.qrsurf);
+
+        if (this.qrsurf != null)
+            this.qrsurf.setup_initial_brightness();
+
         this.qrsurf.setFPS(16.0);
         this.qrsurf.set_header_display_timeout(6.0);
         this.qrsurf.setZOrderOnTop(true);
@@ -727,6 +734,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
             }
 
 
+        Toast.makeText(this, (String)this.getString(R.string.upload_mode_switch_text),
+                Toast.LENGTH_LONG).show();
 
             Runtime.getRuntime().gc();
 
