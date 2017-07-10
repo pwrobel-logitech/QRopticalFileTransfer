@@ -72,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     app:backgroundTint="@color/greyA"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="2dp"
                     android:layout_gravity="right|center_vertical"
                     app:fabSize="mini"
                     app:srcCompat="@mipmap/ic_question" />
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|center_vertical"
                     app:backgroundTint="@color/greyA"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="2dp"
                     android:clickable="true"
                     app:fabSize="mini"
                     app:srcCompat="@mipmap/ic_question" />
@@ -164,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center_vertical"
                 app:backgroundTint="@color/greyA"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="2dp"
                 android:clickable="true"
                 app:fabSize="mini"
                 app:srcCompat="@mipmap/ic_question" />
@@ -210,7 +210,7 @@
                 android:layout_gravity="right|center_vertical"
                 android:clickable="true"
                 app:backgroundTint="@color/greyA"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="2dp"
                 app:fabSize="mini"
                 app:srcCompat="@mipmap/ic_question" />
         </FrameLayout>
@@ -284,7 +284,7 @@
                 android:layout_gravity="right|center_vertical"
                 app:fabSize="mini"
                 app:backgroundTint="@color/greyA"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="2dp"
                 android:layout_marginBottom="9dp"
                 android:layout_marginTop="9dp"
                 app:srcCompat="@mipmap/fold3lens" />
