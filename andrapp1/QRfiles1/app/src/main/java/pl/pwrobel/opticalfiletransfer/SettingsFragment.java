@@ -22,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -443,6 +444,8 @@ public class SettingsFragment extends DialogFragment {
         });
 
         final AdView adView2 = (AdView) v.findViewById(R.id.adView);
+        adView2.setVisibility(View.GONE);
+        adView2.requestLayout();
 
         final Activity a = this.getActivity();
         new Timer().schedule(new TimerTask()
@@ -462,6 +465,24 @@ public class SettingsFragment extends DialogFragment {
                                 .build();
 
                         adView2.loadAd(adRequest);
+                        adView2.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                super.onAdClosed();
+                            }
+
+                            public void onAdFailedToLoad(int var1) {
+                                super.onAdFailedToLoad(var1);
+                                adView2.setVisibility(View.GONE);
+                                adView2.requestLayout();
+                            }
+
+                            public void onAdLoaded() {
+                                super.onAdLoaded();
+                                adView2.setVisibility(View.VISIBLE);
+                                adView2.requestLayout();
+                            }
+                        });
                     }
                 });
             }
