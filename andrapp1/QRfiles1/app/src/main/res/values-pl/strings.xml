@@ -127,6 +127,36 @@
     <string name="link_lin">"http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.html"</string>
 
 
+    <string name="privacypolicy1">
+          The privacy policy for this app can be found under this link, but it is also presented here below:
+
+        This application does not collect or store any of your data. It only uses the camera to capture
+        the stream of QR frames in order to recreate as a file. So it needs camera system permission and
+        both the permission to read and write to the file storage - only to do the file transmission.
+        No other usage of files occurs other than to do the transmission.
+        This application also requires permission for writing of the system settings. It only needs to use it
+        in order to brighten up the screen at the time when file is being transmitted as a stream of QR frames and
+        go back to original brightness after it has finished - that lets the receiver camera pick up the image more easily.
+        No other system settings other than this brightness manipulation are changed.
+
+
+        This app uses the Google\'s advertisement services to display the advertisement banner in the
+        free version of this app. It might collect some of your data - see the https://www.google.com/policies/privacy/
+        to know more about Google privacy policy.
+        Links to Other Sites
+
+This app contains links to other sites. If you click on a third-party link, you will be directed to that site.
+        Note that these external sites are not operated by me.
+        Therefore, I strongly advise you to review the Privacy Policy of these websites.
+        I have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.
+
+        This application can also request some action from other applications, like opening a file by some external application.
+        No information other than query terms are passed to the intent then (like in the case of opening a file or link, only the
+        link or file path and mimetype is passed to the external application - nothing else) - so the privacy policy of this external apps
+        should be looked up then.
+    </string>
+
+
     <string name="menu_settingfragment_text">
 
     5 02:23:33.192 10392-10392/? I/art: Late-enablin</string>
