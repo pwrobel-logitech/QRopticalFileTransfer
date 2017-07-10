@@ -8,6 +8,10 @@
     android:layout_height="match_parent"
    >
 
+
+<include layout="@layout/add_layout"
+    android:id="@+id/addidinsettings"/>
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
@@ -314,9 +318,14 @@
                 android:text="@string/info_button_restore_default_settings" />
 
 
+
+
+
 </LinearLayout>
 
     </ScrollView>
+
+
 
 
     </LinearLayout>

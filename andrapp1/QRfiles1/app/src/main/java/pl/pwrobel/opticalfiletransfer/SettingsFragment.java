@@ -22,9 +22,14 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by pwrobel on 25.06.17.
@@ -436,6 +441,31 @@ public class SettingsFragment extends DialogFragment {
                         .show();
             }
         });
+
+        final AdView adView2 = (AdView) v.findViewById(R.id.adView);
+
+        final Activity a = this.getActivity();
+        new Timer().schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                if (a != null)
+                    a.runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        AdRequest adRequest = new AdRequest.Builder()
+                                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                                .addTestDevice("motorola_3g-001")
+                                .build();
+
+                        adView2.loadAd(adRequest);
+                    }
+                });
+            }
+        }, 1000);
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setFlags(

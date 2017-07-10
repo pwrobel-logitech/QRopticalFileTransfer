@@ -333,6 +333,7 @@ public class QRSurface extends GLSurfaceView implements
                 synchronized (QRSurface.this){
                     qrsurf_manager_thread_running = true;
                     waiting_for_qrmanager_thread_to_finish = false;
+                    setup_initial_brightness();
                 }
                 while (true){
                     boolean shouldend = false;
@@ -749,6 +750,22 @@ public class QRSurface extends GLSurfaceView implements
 
     private int lastbrihtnesslevel = 127;
     private boolean automax_already_set = false;
+
+    public void setup_initial_brightness(){
+        Activity aa = (Activity) getContext();
+        if (aa != null){
+            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            int currbrightnessValue = Settings.System.getInt(
+                    aa.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS,
+                    0
+            );
+            if (currbrightnessValue >= 0)
+                this.lastbrihtnesslevel = currbrightnessValue;
+        }
+    }
+
     public void set_brightness_manual_max(){
         if (automax_already_set)
             return;
