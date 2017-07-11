@@ -319,7 +319,7 @@ public class SettingsFragment extends DialogFragment {
                 numberPickerError.setValue(50);
                 numberPickerQrsize.setValue(585);
                 numberPickerStartSeqTime.setValue(6);
-                currFileDumpPath = "Downloads";
+                currFileDumpPath = "Download";
                 pref_is_blurshader = true;
                 checkBoxblur.setChecked(pref_is_blurshader);
                 checkBoxblur.requestLayout();

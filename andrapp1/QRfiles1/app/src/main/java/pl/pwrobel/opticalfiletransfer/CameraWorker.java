@@ -1291,7 +1291,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
 
     private String filedump_directory_fullpath = null;
-    private String filedump_directory_name = "Downloads";
+    private String filedump_directory_name = "Download";
     public static String create_dump_directory_if_not_present(String dirname){
         File yourAppDir = null;
         if (Environment.getExternalStorageState() != null){

@@ -237,7 +237,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         int qrsize = this.preferences.getInt("Qrsize", 585);
         int timeout = this.preferences.getInt("timeout", 6);
         int suggN = this.preferences.getInt("suggested_N", 511);
-        String fdumppath = this.preferences.getString("filedumppath", "Downloads");
+        String fdumppath = this.preferences.getString("filedumppath", "Download");
         this.pref_is_dismiss_help = this.preferences.getBoolean("is_dismiss_help", false);
         this.pref_is_blurshader = this.preferences.getBoolean("is_blurshader", true);
 
