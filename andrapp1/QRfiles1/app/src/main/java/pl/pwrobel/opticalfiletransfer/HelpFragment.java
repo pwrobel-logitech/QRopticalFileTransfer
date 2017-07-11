@@ -56,10 +56,11 @@ public class HelpFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(STYLE_NORMAL, R.style.SettingFragmentDialog);
         //setStyle(STYLE_NORMAL, R.style.SettingFragmentDialog);
     }
 
-    private static void internaladdLinks(TextView textView, String linkThis, String toThis) {
+    public static void internaladdLinks(TextView textView, String linkThis, String toThis) {
         Pattern pattern = Pattern.compile(linkThis);
         String scheme = toThis;
         android.text.util.Linkify.addLinks(textView, pattern, scheme, new android.text.util.Linkify.MatchFilter() {

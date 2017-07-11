@@ -129,22 +129,28 @@
     <string name="link_lin">"http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.html"</string>
 
 
+    <string name="privpolicy_tilte">Privacy Policy</string>
     <string name="privacypolicy1">
-          The privacy policy for this app can be found under this link, but it is also presented here below:
-
-        This application does not collect or store any of your data. It only uses the camera to capture
+        The privacy policy for this app can be found under this link, but it is also presented here below:
+        \n\n
+        \tThis application does not collect or store any of your data. It only uses the camera to capture
         the stream of QR frames in order to recreate as a file. So it needs camera system permission and
         both the permission to read and write to the file storage - only to do the file transmission.
-        No other usage of files occurs other than to do the transmission.
-        This application also requires permission for writing of the system settings. It only needs to use it
+        No other usage of files occurs other than to do the transmission.\n
+        This application also requires permission for system setting write. It only needs to use those system settings permission
         in order to brighten up the screen at the time when file is being transmitted as a stream of QR frames and
         go back to original brightness after it has finished - that lets the receiver camera pick up the image more easily.
         No other system settings other than this brightness manipulation are changed.
 
 
         This app uses the Google\'s advertisement services to display the advertisement banner in the
-        free version of this app. It might collect some of your data - see the https://www.google.com/policies/privacy/
-        to know more about Google privacy policy.
+        free version of this app. It might collect some of your data - see the Google privacy policy.
+        In order to use this ad services, this app in its free
+        version requires permission to network. It does not, however use the network for any other purpose
+        than delivering ads through the Admob service. In the non-free version, the network permission are
+        not necessary, since there is no ads.
+
+
         Links to Other Sites
 
 This app contains links to other sites. If you click on a third-party link, you will be directed to that site.
@@ -156,7 +162,14 @@ This app contains links to other sites. If you click on a third-party link, you 
         No information other than query terms are passed to the intent then (like in the case of opening a file or link, only the
         link or file path and mimetype is passed to the external application - nothing else) - so the privacy policy of this external apps
         should be looked up then.
+
     </string>
+
+    <string name="linkifystr1">Google privacy policy</string>
+    <string name="linkifyval1">https://www.google.com/policies/privacy/</string>
+    <string name="linkifystr2">under this link</string>
+    <string name="linkifyval2">http://wrobel.wroclaw.pl/opticalfiletransfer/en/privacypolicy.html</string>
+
 
 
     <string name="menu_settingfragment_text">
