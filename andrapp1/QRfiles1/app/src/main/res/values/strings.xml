@@ -172,6 +172,16 @@ This application contains links to other sites. If you click on a third-party li
     <string name="linkifyval2">http://wrobel.wroclaw.pl/opticalfiletransfer/en/privacypolicy.html</string>
 
 
+
+
+
+
+
+    <string name="textabout1">aabout</string>
+
+
+
+
     <string name="menu_settingfragment_text">
 
 5 02:23:33.192 10392-10392/? I/art: Late-enabling -Xcheck:jni
