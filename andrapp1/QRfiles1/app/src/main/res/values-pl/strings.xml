@@ -60,6 +60,8 @@
     <string name="dump_folder_descr">Folder zapisu plików</string>
 
 
+    <string name="failed_writability_test1">Cannot write to location </string>
+    <string name="failed_writability_test2">, perhaps mounted readonly ? Transmission will likely fail. You might want to restart system.</string>
 
     <string name="upload_file_finalizing_msg">Kończenie pliku, proszę poczekać..</string>
 

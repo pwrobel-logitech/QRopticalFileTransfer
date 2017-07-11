@@ -49,6 +49,11 @@
     <string name="fileread_failed_descr1">File </string>
     <string name="fileread_failed_descr2"> cannot be read - no read permission perhaps. </string>
 
+
+    <string name="failed_writability_test1">Cannot write to location </string>
+    <string name="failed_writability_test2">, perhaps mounted readonly ? Transmission will likely fail. You might want to restart system.</string>
+
+
     <string name="help_donotshowagaintick">Don\'t show again</string>
     <string name="help_title">Help</string>
     <string name="helpd1">Use this app to receive/send small files as the stream of QR frames

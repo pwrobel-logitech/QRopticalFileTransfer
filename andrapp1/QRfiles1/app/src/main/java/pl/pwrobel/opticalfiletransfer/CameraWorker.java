@@ -12,9 +12,13 @@ import android.os.HandlerThread;
 import android.os.Process;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -540,6 +544,43 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     }
 
+    private static boolean isFileWritable(File file) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+            FileChannel fc=raf.getChannel();
+            FileLock fl=fc.lock();
+            fl.release();
+            raf.write(0x47);
+            fc.close();
+            raf.close();
+            return true;
+        }
+        catch(Exception ex) {
+            return false;
+        }
+
+    }
+
+    private void testForFolderWritablility(String fullfolderpath){
+        File f = new File(fullfolderpath+File.separator+"sAmplE_checkwrite_xYz128file__tmpcachE.tmp");
+        if (!isFileWritable(f)){
+            final Activity a = (Activity) CameraWorker.this.context;
+            if (a != null){
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast d = Toast.makeText(a,
+                                a.getString(R.string.failed_writability_test1) + " " +
+                                        CameraWorker.this.filedump_directory_fullpath + " " +
+                                        a.getString(R.string.failed_writability_test2)
+                                , Toast.LENGTH_LONG);
+                        d.show();
+                    }
+                });
+            }
+        }
+        f.delete();
+    }
 
     public synchronized void waitUntilReady() {
         handler = new Handler(getLooper());
@@ -644,6 +685,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 CameraWorker.this.filedump_directory_fullpath =
                         create_dump_directory_if_not_present(CameraWorker.this.filedump_directory_name);
                 initialize_decoder();
+                testForFolderWritablility(filedump_directory_fullpath);
                 set_decoded_file_path(CameraWorker.this.filedump_directory_fullpath);
 
                 CameraWorker.this.succesfull_positions_in_prev_chunk = new boolean[MAX_CHUNK_LENGTH];
@@ -1232,6 +1274,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         this.file_status_delivered(this.last_received_file_name);
         initialize_decoder();
+        testForFolderWritablility(filedump_directory_fullpath);
         set_decoded_file_path(this.filedump_directory_fullpath);
         this.file_detection_ended = false;
         synchronized (this){
