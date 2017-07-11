@@ -82,7 +82,8 @@ public class AboutFragment extends DialogFragment {
                         {
                             AdRequest adRequest = new AdRequest.Builder()
                                     .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                                    .addTestDevice("motorola_3g-001")
+                                    .addTestDevice("B8E41997327A892A4FD057B12AD2C843")
+                                    .addTestDevice("974226D4036724BE09FB80898BA1B4BE")
                                     .build();
 
                             adView3.loadAd(adRequest);
