@@ -81,7 +81,7 @@ void apply_pos_xor_to_arr(char* data, int datalen, unsigned frpos){
 uint32_t get_file_size(const char* filepath){
     uint32_t size = 0;
     FILE * fp;
-    fp = fopen (filepath, "r");
+    fp = fopen (filepath, "rb");
     fseek(fp, 0L, SEEK_END);
     size = ftell(fp);
     fclose(fp);
@@ -100,14 +100,14 @@ void* FileOpenToRead(const char* fn){
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_INFO, "FUTIL", "fopen r %s", fn);
 #endif
-    return (void*)fopen(fn, "r");
+    return (void*)fopen(fn, "rb");
 }
 
 void* FileOpenToWrite(const char* fn){
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_INFO, "FUTIL", "fopen w %s", fn);
 #endif
-    return (void*)fopen(fn, "w");
+    return (void*)fopen(fn, "wb");
 }
 
 void FileClose(void* fn){
@@ -122,7 +122,7 @@ int FileRename(const char *oldname, const char *newname){
 };
 
 int read_file(const char* filepath, char* data_after_read, uint32_t offset, uint32_t size){ //-1 error
-    FILE * fp = fopen (filepath, "r");
+    FILE * fp = fopen (filepath, "rb");
     if(fp == NULL)
         return -1;
     if (fseek(fp, offset, SEEK_SET) != 0)
