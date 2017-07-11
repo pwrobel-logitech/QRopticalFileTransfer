@@ -51,7 +51,7 @@
 
 
     <string name="failed_writability_test1">Cannot write to location </string>
-    <string name="failed_writability_test2">, perhaps mounted readonly ? Transmission will likely fail. You might want to restart system.</string>
+    <string name="failed_writability_test2">, perhaps storage mounted readonly or lack of permission ? Transmission will likely fail. You might also want to restart system.</string>
 
 
     <string name="help_donotshowagaintick">Don\'t show again</string>
