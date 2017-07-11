@@ -42,6 +42,9 @@
     <string name="fileread_failed_descr1">Plik </string>
     <string name="fileread_failed_descr2"> nie może być odczytany - prawdopodobnie brak uprawnień odczytu. </string>
 
+    <string name="textfilesaved_toast1">Zapisano : </string>
+    <string name="textfilesaved_toast2"></string>
+
     <string name="help_donotshowagaintick">Nie pokazuj ponownie</string>
     <string name="help_title">Pomoc</string>
 

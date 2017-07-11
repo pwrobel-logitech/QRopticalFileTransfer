@@ -1193,6 +1193,22 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 */
     //}
 
+    private void deliver_filesaved_toast(){
+        final Activity a = (Activity) context;
+        if (a != null){
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast d = Toast.makeText(a,
+                            a.getString(R.string.textfilesaved_toast1)+" "+filedump_directory_fullpath+File.separator+
+                                    last_filename_detected_from_header+" "+ a.getString(R.string.textfilesaved_toast2)
+                            , Toast.LENGTH_LONG);
+                    d.show();
+                }
+            });
+        }
+    }
+
     public void file_status_delivered(String filename){ //either failed or succeeded
         Log.i("FILESTATUS", "got file status, success : "+this.file_detected_and_finally_saved_successfully +
         " Filename : " + filename);
@@ -1265,6 +1281,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 this.file_detected_and_finally_saved_successfully = true;
                 should_deliver_info_file_successfully_saved_for_certain_time = true;
                 this.last_time_the_file_succ_saved = System.nanoTime()/1.0e6;
+                this.deliver_filesaved_toast();
             }
 
         }
