@@ -89,7 +89,7 @@
     </string>
 
 
-    <string name="info_err_selection">Maximum error (%s) : </string>
+    <string name="info_err_selection">Maximum error (%) : </string>
     <string name="info_qrsize_selection">QR size (bytes) : </string>
     <string name="info_qrsize_selection2">bytes</string>
     <string name="info_start_seq_time">Start sequence time (s) : </string>
@@ -179,8 +179,38 @@ This application contains links to other sites. If you click on a third-party li
 
 
 
-    <string name="textabout1">aabout</string>
+    <string name="textabout1">
 
+        Optical file transfer is application that uses stream of QR frames to transfer files between
+        phones and from desktop PC to phone (see the Windows and Linux complementary applications for file upload from
+        desktop PC).
+
+    </string>
+
+
+    <string name="textabout2">
+    \n
+       Advantages \n
+        \u2022 Minimal preparations once parameters are tweaked - just point the camera on the QR stream and wait.\n
+        \u2022 Fully off-line.\n
+        \u2022 It is wireless and does emit little RF noise to the environment, compared to WiFi or BT - so you can do
+        wireless file transmission while the phones are in the airplane mode and you do not have infrared port in any of them.
+
+        \n\n
+        Disadvantages \n
+        \u2022 It is slow, so only reasonable for small files.\n
+        \u2022 Does not have any guarantee
+        to finish - requires initial tweaking of transmission settings on the producer side
+        to get optimal transmission speed while keeping errors/noise below the threshold.\n
+        \u2022 Affected by noise such as sun reflexes, low brightness on producer side or inability for
+        the camera to focus for prolonged time.\n
+
+    </string>
+
+    <string name="textabout3">
+    At the moment, where the QR stream is produced, the screen is brighten up automatically
+
+    </string>
 
 
 
