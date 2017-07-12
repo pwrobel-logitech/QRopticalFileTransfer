@@ -46,6 +46,97 @@
                 android:layout_height="wrap_content"
                 android:text="@string/textabout2"/>
 
+            <TextView
+                android:id="@+id/textViewabout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout3"/>
+
+
+            <TextView
+                android:id="@+id/textViewabout4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:text="@string/textabout4"/>
+
+            <TextView
+                android:id="@+id/textViewabout5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout5"/>
+
+            <TextView
+                android:id="@+id/textViewabout6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout6"/>
+
+            <TextView
+                android:id="@+id/textViewabout7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout7"/>
+
+            <TextView
+                android:id="@+id/textViewabout8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout8"/>
+
+            <TextView
+                android:id="@+id/textViewabout9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout9"/>
+
+            <TextView
+                android:id="@+id/textViewabout10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout10"/>
+
+            <TextView
+                android:id="@+id/textViewabout11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout11"/>
+
+            <TextView
+                android:id="@+id/textViewabout12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:text="@string/textabout12"/>
+
+            <TextView
+                android:id="@+id/textViewabout13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout13"/>
+
+            <TextView
+                android:id="@+id/textViewabout14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout14"/>
+
+            <TextView
+                android:id="@+id/textViewabout15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:text="@string/textabout15"/>
+
+            <TextView
+                android:id="@+id/textViewabout16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout16"/>
+
         </LinearLayout>
     </ScrollView>
 

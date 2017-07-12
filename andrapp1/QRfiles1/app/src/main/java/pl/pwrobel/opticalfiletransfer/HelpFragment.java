@@ -5,6 +5,12 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
+import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -60,10 +67,115 @@ public class HelpFragment extends DialogFragment {
         //setStyle(STYLE_NORMAL, R.style.SettingFragmentDialog);
     }
 
+    public static final String[] STRINGE = new String[0];
+    private static final boolean addLinksspannable(Spannable spannable, Pattern pattern,
+                                         String defaultScheme, String[] schemes,
+                                         Linkify.MatchFilter matchFilter, Linkify.TransformFilter transformFilter) {
+        final String[] schemesCopy;
+        if (defaultScheme == null) defaultScheme = "";
+        if (schemes == null || schemes.length < 1) {
+            schemes = STRINGE;
+        }
+
+        schemesCopy = new String[schemes.length + 1];
+        schemesCopy[0] = defaultScheme;
+        for (int index = 0; index < schemes.length; index++) {
+            String scheme = schemes[index];
+            schemesCopy[index + 1] = (scheme == null) ? "" : scheme;//scheme.toLowerCase(Locale.ROOT);
+        }
+
+        boolean hasMatches = false;
+        Matcher m = pattern.matcher(spannable);
+
+        while (m.find()) {
+            int start = m.start();
+            int end = m.end();
+            boolean allowed = true;
+
+            if (matchFilter != null) {
+                allowed = matchFilter.acceptMatch(spannable, start, end);
+            }
+
+            if (allowed) {
+                String url = makeUrl(m.group(0), schemesCopy, m, transformFilter);
+
+                applyLink(url, start, end, spannable);
+                hasMatches = true;
+            }
+        }
+
+        return hasMatches;
+    }
+
+
+    private static final void applyLink(String url, int start, int end, Spannable text) {
+        URLSpan span = new URLSpan(url);
+
+        text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    private static final String makeUrl(String url, String[] prefixes,
+                                        Matcher matcher, Linkify.TransformFilter filter) {
+        if (filter != null) {
+            url = filter.transformUrl(matcher, url);
+        }
+
+        boolean hasPrefix = false;
+
+        for (int i = 0; i < prefixes.length; i++) {
+            if (url.regionMatches(true, 0, prefixes[i], 0, prefixes[i].length())) {
+                hasPrefix = true;
+
+                // Fix capitalization if necessary
+                if (!url.regionMatches(false, 0, prefixes[i], 0, prefixes[i].length())) {
+                    url = prefixes[i] + url.substring(prefixes[i].length());
+                }
+
+                break;
+            }
+        }
+
+        if (!hasPrefix && prefixes.length > 0) {
+            url = prefixes[0] + url;
+        }
+
+        return url;
+    }
+
+    private static final void addLinkMovementMethod(TextView t) {
+        MovementMethod m = t.getMovementMethod();
+
+        if ((m == null) || !(m instanceof LinkMovementMethod)) {
+            if (t.getLinksClickable()) {
+                t.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+        }
+    }
+
+
+    private static final void addLinksC0(TextView text, Pattern pattern,
+                                      String defaultScheme, String[] schemes,
+                                      Linkify.MatchFilter matchFilter, Linkify.TransformFilter transformFilter) {
+        SpannableString spannable = SpannableString.valueOf(text.getText());
+
+        boolean linksAdded = addLinksspannable(spannable, pattern, defaultScheme, schemes, matchFilter,
+                transformFilter);
+        if (linksAdded) {
+            text.setText(spannable);
+            addLinkMovementMethod(text);
+        }
+    }
+
+    private static final void addLinksC(TextView text, Pattern pattern,
+                                      String scheme, Linkify.MatchFilter matchFilter,
+                                      Linkify.TransformFilter transformFilter) {
+        addLinksC0(text, pattern, scheme, null, matchFilter, transformFilter);
+    }
+
     public static void internaladdLinks(TextView textView, String linkThis, String toThis) {
         Pattern pattern = Pattern.compile(linkThis);
         String scheme = toThis;
-        android.text.util.Linkify.addLinks(textView, pattern, scheme, new android.text.util.Linkify.MatchFilter() {
+        addLinksC(textView, pattern, scheme, new android.text.util.Linkify.MatchFilter() {
             @Override
             public boolean acceptMatch(CharSequence s, int start, int end) {
                 return true;
