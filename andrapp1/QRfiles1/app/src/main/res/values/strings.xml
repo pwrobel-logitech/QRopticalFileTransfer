@@ -209,7 +209,7 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="textabout3">
-    At the moment, where the QR stream is produced, the screen is brighten up automatically - that requires
+    At the moment, on the phone where the QR stream is produced, the screen is brighten up automatically - that requires
         write system settings permission.\n
 
     </string>
@@ -307,9 +307,15 @@ This application contains links to other sites. If you click on a third-party li
         uploader program for the desktop linux - see the directory \'lgpl_libqrencode_wrapper\'. Just like
         for the desktop version, the Libqrencode code needs to be pulled and provided in directory named as LIBQRENCODER_LIBFOLDERNAME in
          the makefile (+CROSS for the toolchain prefix).\n
-
     </string>
 
+    <string name="linkab14astr1">windows download page</string>
+    <string name="linkab14aval1">http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html</string>
+    <string name="textabout14a">
+    For Windows supplementary uploader program all the LGPL code, sligthly modifed then, is provided as a
+        single dll named encoder_util_lib.dll - and the full Visual Studio 2017 solution + code, to rebuild that library is
+        provided on the windows download page as well under the \'Third party licences\' section.\n
+    </string>
 
     <string name="textabout15">
     Additional notes\n

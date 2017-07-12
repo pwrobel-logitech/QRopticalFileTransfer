@@ -124,6 +124,12 @@
                 android:text="@string/textabout14"/>
 
             <TextView
+                android:id="@+id/textViewabout14a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout14a"/>
+
+            <TextView
                 android:id="@+id/textViewabout15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -81,6 +81,8 @@ public class AboutFragment extends DialogFragment {
         final TextView textViewabout13 = (TextView) v.findViewById(R.id.textViewabout13);
         final TextView textViewabout14 = (TextView) v.findViewById(R.id.textViewabout14);
 
+        final TextView textViewabout14a = (TextView) v.findViewById(R.id.textViewabout14a);
+
         if (a != null) {
             HelpFragment.internaladdLinks(textViewabout6, a.getString(R.string.linkab6str1),
                     a.getString(R.string.linkab6val1));
@@ -127,6 +129,8 @@ public class AboutFragment extends DialogFragment {
             HelpFragment.internaladdLinks(textViewabout14, a.getString(R.string.linkab14str2),
                     a.getString(R.string.linkab14val2));
 
+            HelpFragment.internaladdLinks(textViewabout14a, a.getString(R.string.linkab14astr1),
+                    a.getString(R.string.linkab14aval1));
         }
 
 
