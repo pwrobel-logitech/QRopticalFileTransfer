@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OpticalFileTransfer</string>
+    <string name="app_name">OptycznyTransferPlików</string>
 
     <string name="upload_mode_switch_text">Tryb wysyłania plików</string>
     <string name="download_mode_switch_text">Tryb pobierania plików</string>
@@ -72,64 +72,98 @@
 
 
 
-    <string name="helpd1">Use this app to receive/send small files as the stream of QR frames
-        through the phone\'s camera.
+
+
+    <string name="helpd1">Use this app to receive/send small files (1MB limit per file in the free version of this app)
+        as the stream of QR frames
+        through the phone\'s camera.\n
 
         You can generate file QR stream from this app or also the
         desktop PC - see
-    Windows and Linux programs for uploading files.</string>
+    Windows and Linux programs for uploading files.\n</string>
 
     <string name="helpd2">
-        Tips for successfull transmission :
+        <i>Tips for successfull transmission :\n</i>
     </string>
 
     <string name="helpd3">
-        1. Keep the camera straight - avoid tilting.
+        <b>1.</b> Keep the camera straight - avoid tilting.
     </string>
 
     <string name="helpd4">
-        2. Make sure camera focus correctly - if not, try waving hand quickly in front of it, or tap the screen
+        <b>2.</b> Make sure camera autofocus correctly - if not, try waving hand quickly in front of it, or tap the screen
         to request autofocus.
     </string>
 
     <string name="helpd5">
-        3. Keep the highlight green if you can. The more green the highlight gets, the less error is generated, and higher the chance that the
-        transmission will succeed. Observe also the noise bar during transmission - avoid getting it fully red
-        when the chunk changes.
+        <b>3.</b> Keep the highlight green if you can. The greener the highlight gets, the less error is generated, and higher the chance that the
+        transmission will succeed. \nObserve also the noise bar during transmission - avoid getting it fully red
+        when the chunk changes.\n
     </string>
 
     <string name="helpd6">
-        4. Try to capture significant part of the start sequence as well - without it the transmission will not even start.
+        <b>4.</b> Try to capture significant part of the start sequence as well with the camera focused - without it the transmission will not even start.
     </string>
+
+
+
 
     <string name="defaultButtonMinus">-</string>
     <string name="defaultButtonPlus">+</string>
 
-    <string name="text_content_q1">This sets the Frames Per Seconds (FPS) of the generated QR stream,
-        that the decoder tries to keep. Lower value gives slower transmission, but makes it easier
-        to ever succeed for older phones with slower camera, or under low light
-    conditions. For newer ones, you can try with about 20FPS and see if the transmission
-    will succeed. </string>
 
-    <string name="text_content_q2">This sets the amount of redundancy that the frame producer will generate.
-        With higher value, the transmission is less likely to fail, but the transmission speed will be
-    lower as well. If the noise bar during transmission reception is often green for you when the chunk number increases,
+
+
+    <string name="text_content_q1">
+        <center>This sets the Frames Per Seconds (FPS) of the generated QR stream by the file uploader.</center> \n\n
+
+        Larger value : \n\n
+        <big><b>+</b></big> Increase transmission speed\n\n
+        but, at the same time:\n\n
+        <big><b>-</b></big> Increase the chance for the failure of transmission if the receiver cannot pick up frames fast enough\n
+
+        </string>
+
+    <string name="text_content_q2">This sets the amount of redundancy that the QR frame producer will generate.\n\n
+
+
+        Larger value :\n\n
+
+        <big><b>+</b></big> Transmission more resilient for errors\n\n
+        but, at the same time : \n\n
+        <big><b>-</b></big> Transmission is slower\n\n
+
+       If the noise bar during transmission reception is often green for you when the chunk number increases/transmission ends,
         then you
-    can afford to lower this value to increase the transfer speed.</string>
+    can afford to lower this maximum error value to increase transfer speed.</string>
 
-    <string name="text_content_q3">This sets the size of each produced QR frame. Bigger value allows to
-    obtain faster transmission, although on my phone I had serious trouble to finish transmission when going above
-    750.</string>
+    <string name="text_content_q3">This sets the size of each produced QR frame. \n\n
+        Larger value :\n\n
+
+        <big><b>+</b></big> Faster transmission\n\n
+        but, at the same time : \n\n
+        <big><b>-</b></big> Increase the chance for failure in the receiver and requires better camera positioning/focus.\n\n
+
+        When this size go above about 850B, there are often serious problems of receiving anything with reasonable speed.</string>
 
     <string name="text_content_q4">This sets the time in seconds, that the initializing startup sequence
-    is displayed in the frame producer. It is neccssary to capture at least some fragment of this startup
-    sequence to allow proper initialization on the receiver end. Bigger value gives the receiver
-    more time to position phone camera to capture stream.</string>
+    is displayed in the frame producer.\n\n
+        It is neccssary to capture at least some fragment of this startup
+    sequence to allow proper initialization on the receiver end.\n\n
+
+        Larger value :\n\n
+
+        <big><b>+</b></big> Gives more time to manually align camera, catch camera focus, etc.\n\n
+        but, at the same time : \n\n
+        <big><b>-</b></big> Makes the transmission unnecessary few seconds longer, if the start sequence can already be
+        quickly captured.\n\n
+
+    </string>
 
 
 
-    <string name="link_win">"http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html"</string>
-    <string name="link_lin">"http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.html"</string>
+    <string name="link_win">http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html</string>
+    <string name="link_lin">http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.html</string>
 
 
     <string name="privpolicy_tilte">Privacy Policy</string>
@@ -177,8 +211,177 @@ This application contains links to other sites. If you click on a third-party li
 
 
 
+
+
+
+    <string name="linkifyab1str1">Windows</string>
+    <string name="linkifyab1str2">Linux</string>
+    <string name="textabout1">
+
+        Optical file transfer is application that uses stream of QR frames to transfer files between
+        phones and from desktop PC to phone (see the Windows and Linux complementary applications for file upload from
+        desktop PC).
+
+    </string>
+
+
+    <string name="textabout2">
+    \n
+       <i>Advantages</i> \n
+        <big><b>\u2022</b></big> Minimal preparations required once parameters are tweaked - just point the camera on the QR stream and wait for the file to transfer.\n
+        <big><b>\u2022</b></big> Fully off-line - no network setup at all.\n
+        <big><b>\u2022</b></big> It is wireless and does emit little RF noise to the environment, compared to WiFi or BT - so you can do
+        wireless file transmission while the phones are in the airplane mode and you do not have infrared port in any of them.
+
+        \n\n
+        <i>Disadvantages</i> \n
+        <big><b>\u2022</b></big> It is very slow, so only reasonable for small files.\n
+        <big><b>\u2022</b></big> Does not have any guarantee
+        to finish - requires initial tweaking of transmission settings on the producer side
+        to get optimal transmission speed while keeping errors/noise below the threshold.\n
+        <big><b>\u2022</b></big> Affected by noise such as sun reflexes, low brightness on producer side or inability for
+        the camera to focus for prolonged time.\n
+
+    </string>
+
+    <string name="textabout3">
+    At the moment, on the phone where the QR stream is produced, the screen is brighten up automatically - that requires
+        write system settings permission.\n
+        \n
+        This is the free version - it can capture files of max 1MB in size. See the pro version
+        in the play store, which has this limitation removed.\n
+
+    </string>
+
+    <string name="textabout4">
+    Third party licences\n
+
+    </string>
+
+    <string name="textabout5">
+    Following third-party libraries are being used, with their respective licences :\n
+
+    </string>
+
+
+    <string name="linkab6str1">ZXing</string>
+    <string name="linkab6val1">https://github.com/zxing/zxing</string>
+    <string name="linkab6str2">Apache 2.0 licence</string>
+    <string name="linkab6val2">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="textabout6">
+    <big><b>\u2022</b></big> ZXing - uses the Apache 2.0 licence.\n
+    </string>
+
+
+    <string name="linkab7str1">Android File Chooser</string>
+    <string name="linkab7val1">https://github.com/hedzr/android-file-chooser</string>
+    <string name="linkab7str2">Apache 2.0 licence</string>
+    <string name="linkab7val2">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="textabout7">
+    <big><b>\u2022</b></big> Android File Chooser - under the Apache 2.0 licence.\n
+    </string>
+
+    <string name="linkab8str1">Horizontal Number Picker</string>
+    <string name="linkab8val1">https://github.com/hrules6872/HorizontalNumberPicker</string>
+    <string name="linkab8str2">Apache 2.0 licence</string>
+    <string name="linkab8val2">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="textabout8">
+    <big><b>\u2022</b></big> Horizontal Number Picker - under the Apache 2.0 licence.\n
+    </string>
+
+
+    <string name="linkab9str1">Hashing Library</string>
+    <string name="linkab9val1">http://create.stephan-brumme.com/hash-library/</string>
+    <string name="linkab9str2">zlib licence</string>
+    <string name="linkab9val2">http://www.zlib.net/zlib_license.html</string>
+    <string name="textabout9">
+    <big><b>\u2022</b></big> SHA256 Hashing Library - on zlib licence.\n
+    </string>
+
+
+    <string name="linkab10str1">KA9Q library</string>
+    <string name="linkab10val1">https://github.com/Opendigitalradio/ka9q-fec</string>
+    <string name="linkab10str2">LGPL licence</string>
+    <string name="linkab10val2">https://www.gnu.org/licenses/lgpl-3.0.en.html</string>
+    <string name="textabout10">
+    <big><b>\u2022</b></big> KA9Q library - on LGPL licence. See the LGPL compliance note below.\n
+    </string>
+
+
+    <string name="linkab11str1">Libqrencode library</string>
+    <string name="linkab11val1">https://github.com/fukuchi/libqrencode</string>
+    <string name="linkab11str2">LGPL licence</string>
+    <string name="linkab11val2">https://www.gnu.org/licenses/lgpl-3.0.en.html</string>
+    <string name="textabout11">
+    <big><b>\u2022</b></big> Libqrencode library - on LGPL licence. See the LGPL compliance note below.\n
+    </string>
+
+
+    <string name="textabout12">
+    LGPL compliance note.\n
+    </string>
+
+    <string name="linkab13str1">on this page</string>
+    <string name="linkab13val1">https://developer.android.com/ndk/guides/standalone_toolchain.html</string>
+    <string name="linkab13str2">KA9Q code</string>
+    <string name="linkab13val2">https://github.com/Opendigitalradio/ka9q-fec</string>
+    <string name="textabout13">
+    Both the libqrencode and ka9q library are under the LGPL licence - so in this application they
+        are used as a separate native shared libraries. \n\n
+        The ka9q is simply compiled with the Google\'s NDK toolchain for arm and armv7a. To get such
+        toolchain, simply download the NDK r14b (the version used for all the native code in this app) and
+        generate standalone toolchain from it - see the instructions for the toolchain on this page.\n
+        With such toolchain, generate the libfec.so yourself by grabbing the KA9Q code (I have made no modifications to that code)
+        and cross-compiling it
+        for architecture of your choice with the gcc/g++ provided in the toolchain.\n
+    </string>
+
+    <string name="linkab14str1">Libqrencode</string>
+    <string name="linkab14val1">https://github.com/fukuchi/libqrencode</string>
+    <string name="linkab14str2">in the package</string>
+    <string name="linkab14val2">http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/linux_OpticalFileUploader.tar.gz</string>
+    <string name="textabout14">
+    Regarding the Libqrencode, it is only being used for the wrapper library named libqrencoder_wrapper.so - the code for
+        the wrapper + sample Makefile to use when cross-compiling it is provided in the package that contains the
+        uploader program for the desktop linux - see the directory \'lgpl_libqrencode_wrapper\'. Just like
+        for the desktop version, the Libqrencode code needs to be pulled and provided in directory named as LIBQRENCODER_LIBFOLDERNAME in
+         the makefile (+CROSS for the toolchain prefix).\n
+    </string>
+
+    <string name="linkab14astr1">windows download page</string>
+    <string name="linkab14aval1">http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html</string>
+    <string name="textabout14a">
+    For Windows supplementary uploader program all the LGPL code, sligthly modifed then, is provided as a
+        single dll named encoder_util_lib.dll - and the full Visual Studio 2017 solution + code, to rebuild that library is
+        provided on the windows download page as well under the <i>Third party licences</i> section.\n
+    </string>
+
+    <string name="textabout15">
+    Additional notes\n
+    </string>
+
+    <string name="textabout16">
+    This software is provided \'as-is\', without any express or implied warranty.
+</string>
+
+
+
+
+    <string name="size_exceed_dialog_msg1">Unfortunately, the free version of this app does not manages
+    transfer of files of over 1MB in size :-( \n\n
+    See the <b><i>OpticalFileTransfer pro</i></b> on the store, where the theoretical limit for a single file is 2GB.</string>
+
+
+
+
     <string name="menu_settingfragment_text">
 
-    5 02:23:33.192 10392-10392/? I/art: Late-enablin</string>
+5 02:23:33.192 10392-10392/? I/art: Late-enabling -Xcheck:jni
+
+
+    </string>
+
+
+
 
 </resources>
