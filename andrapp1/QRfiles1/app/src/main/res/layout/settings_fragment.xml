@@ -290,6 +290,12 @@
                 app:srcCompat="@mipmap/fold3lens" />
         </FrameLayout>
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/optionalview1"
+            >
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"
@@ -303,6 +309,8 @@
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
                 android:text="@string/chceck_blurshader" />
+
+        </LinearLayout>
 
             <View
                 android:layout_width="fill_parent"
