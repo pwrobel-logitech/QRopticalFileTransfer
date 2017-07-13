@@ -58,7 +58,8 @@
 
     <string name="help_donotshowagaintick">Don\'t show again</string>
     <string name="help_title">Help</string>
-    <string name="helpd1">Use this app to receive/send small files as the stream of QR frames
+    <string name="helpd1">Use this app to receive/send small files (1MB limit per file in the free version of this app)
+        as the stream of QR frames
         through the phone\'s camera.\n
 
         You can generate file QR stream from this app or also the
@@ -349,6 +350,15 @@ This application contains links to other sites. If you click on a third-party li
     <string name="textabout16">
     This software is provided \'as-is\', without any express or implied warranty.
 </string>
+
+
+
+
+    <string name="size_exceed_dialog_msg1">Unfortunately, the free version of this app does not manages
+    transfer of files of over 1MB in size :-( \n\n
+    See the <b><i>OpticalFileTransfer pro</i></b> on the store, where the theoretical limit for a single file is 2GB.</string>
+
+
 
 
     <string name="menu_settingfragment_text">

@@ -36,7 +36,13 @@ import java.util.TimerTask;
 
 public class Qrfiles extends AppCompatActivity implements TransmissionController, HelpDialogDismisser{
 
-    private int limit_max_received_file_size = 1024*1024; // 1MB
+    // important for premium / free differentiation
+    public static int limit_max_received_file_size = 1024*1024+37; // ~1MB
+
+    public static int smearCustom(int hashCode) {
+        hashCode ^= (hashCode >>> 20) ^ (hashCode >>> 12);
+        return 37+hashCode ^ (hashCode >>> 7) ^ (hashCode >>> 4);
+    }
 
     //used to hold main camera thread with the higher priority
     CameraWorker camworker;
@@ -263,6 +269,10 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
 
         this.readAndSanitizePrefs();
+        //sanitize size
+        int smear = Qrfiles.smearCustom(Qrfiles.limit_max_received_file_size);
+        if (smear != 1122649)
+            return;
 
         File yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
         default_search_for_upload_homedir = yourAppDir.getPath();

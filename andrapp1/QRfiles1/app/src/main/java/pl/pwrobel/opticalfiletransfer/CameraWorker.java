@@ -31,7 +31,8 @@ import java.util.List;
  * Created by pwrobel on 29.04.17.
  */
 
-public class CameraWorker extends HandlerThread implements CameraController, Camera.PreviewCallback{
+public class CameraWorker extends HandlerThread implements CameraController, Camera.PreviewCallback,
+        SizeExceededDialogDismisser{
 
 
     public volatile Handler handler;
@@ -301,6 +302,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         Log.i("SUC", "success ratio : " + success_ratio_in_smallpos + " fps "+this.estimated_max_framerate);
     }
 
+    private boolean size_exceeded_dialog_shown = false;
+    @Override
+    public void onSetSizeExceededDialogGone() {
+        synchronized (this){
+            size_exceeded_dialog_shown = false;
+        }
+    }
+
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         //synchronized (this){
@@ -381,6 +390,35 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             synchronized (this){
                 this.is_header_detected = true;
                 this.got_dataframe_before_header_detection = false;
+                // size restriction that the receiver can pick up
+                this.filesize_carried_in_the_detected_header = get_last_recognized_file_size();
+                if (this.filesize_carried_in_the_detected_header >=0 &&
+                        this.filesize_carried_in_the_detected_header > Qrfiles.limit_max_received_file_size){
+                    final Activity ac = (Activity) context;
+                    if (ac != null){
+                        boolean should_show_dialog = false;
+                        synchronized (CameraWorker.this){
+                            should_show_dialog = !size_exceeded_dialog_shown;
+                        }
+                        if (should_show_dialog)
+                            ac.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (ac != null){
+                                        android.app.FragmentManager fm = ac.getFragmentManager();
+                                        SizeExceededDialog d = new SizeExceededDialog();
+                                        d.setDismisserListener(CameraWorker.this);
+                                        synchronized (CameraWorker.this){
+                                            size_exceeded_dialog_shown = true;
+                                        }
+                                        d.show(fm, "dialog");
+                                    }
+                                }});
+                        this.reset_decoder();
+                        camera.addCallbackBuffer(callbackbuffer);
+                        return;
+                    }
+                }
             }
         }
 
@@ -1046,6 +1084,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     String filename_detected_from_header;
     boolean is_header_detected = false;
+    int filesize_carried_in_the_detected_header = -1;
     @Override  //deprecated
     public synchronized String getFileNameCapturedFromHeader() {
         if (this.is_header_detected){
@@ -1297,6 +1336,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         synchronized (this){
             this.should_draw_progressbars = false;
             this.is_header_detected = false;
+            this.filesize_carried_in_the_detected_header = -1;
         }
         this.is_residual = false;
         this.did_any_header_frame_arrived = false;
