@@ -112,22 +112,12 @@
                 android:text="@string/textabout12"/>
 
             <TextView
-                android:id="@+id/textViewabout13"
-                android:layout_width="match_parent"
+                android:id="@+id/textViewabout12L"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/textabout13"/>
+                android:clickable="true"
+                android:text="@string/textabout12L"/>
 
-            <TextView
-                android:id="@+id/textViewabout14"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/textabout14"/>
-
-            <TextView
-                android:id="@+id/textViewabout14a"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/textabout14a"/>
 
             <TextView
                 android:id="@+id/textViewabout15"

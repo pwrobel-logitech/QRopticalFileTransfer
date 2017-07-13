@@ -321,6 +321,13 @@ This application contains links to other sites. If you click on a third-party li
     LGPL compliance note.\n
     </string>
 
+    <string name="menu_string_aboutlgpl">LGPL compliance note</string>
+
+
+    <string name="textabout12L">
+    <i><u>See the LGP compliance note.</u></i>\n
+    </string>
+
     <string name="linkab13str1">on this page</string>
     <string name="linkab13val1">https://developer.android.com/ndk/guides/standalone_toolchain.html</string>
     <string name="linkab13str2">KA9Q code</string>

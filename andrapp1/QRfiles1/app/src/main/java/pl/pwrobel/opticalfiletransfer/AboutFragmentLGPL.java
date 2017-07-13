@@ -22,7 +22,7 @@ import java.util.TimerTask;
  * Created by pwrobel on 25.06.17.
  */
 
-public class AboutFragment extends DialogFragment {
+public class AboutFragmentLGPL extends DialogFragment {
 
     static AboutFragment newInstance() {
         AboutFragment f = new AboutFragment();
@@ -50,14 +50,14 @@ public class AboutFragment extends DialogFragment {
 
 
 
-    private TextView texok3 = null;
+    private TextView texok4 = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.about_fragment, container, false);
+        View v = inflater.inflate(R.layout.aboutlgpl_fragment, container, false);
 
-        texok3 = (TextView) v.findViewById(R.id.texok3);
-        texok3.setOnClickListener(new View.OnClickListener() {
+        texok4 = (TextView) v.findViewById(R.id.texok4);
+        texok4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
@@ -71,66 +71,15 @@ public class AboutFragment extends DialogFragment {
 
         TextView textViewabout1 = (TextView) v.findViewById(R.id.textViewabout1);
 
-        final TextView textViewabout7 = (TextView) v.findViewById(R.id.textViewabout7);
-        final TextView textViewabout8 = (TextView) v.findViewById(R.id.textViewabout8);
-        final TextView textViewabout9 = (TextView) v.findViewById(R.id.textViewabout9);
 
-        final TextView textViewabout10 = (TextView) v.findViewById(R.id.textViewabout10);
-        final TextView textViewabout11 = (TextView) v.findViewById(R.id.textViewabout11);
 
         final TextView textViewabout13 = (TextView) v.findViewById(R.id.textViewabout13);
         final TextView textViewabout14 = (TextView) v.findViewById(R.id.textViewabout14);
 
         final TextView textViewabout14a = (TextView) v.findViewById(R.id.textViewabout14a);
 
-        final TextView textViewabout12L = (TextView) v.findViewById(R.id.textViewabout12L);
-        textViewabout12L.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AboutFragmentLGPL ab = new AboutFragmentLGPL();
-                android.app.FragmentManager fm = getActivity().getFragmentManager();
-                ab.show(fm, "dialog");
-            }
-        });
-
-
         if (a != null) {
-            HelpFragment.internaladdLinks(textViewabout6, a.getString(R.string.linkab6str1),
-                    a.getString(R.string.linkab6val1));
-            HelpFragment.internaladdLinks(textViewabout6, a.getString(R.string.linkab6str2),
-                    a.getString(R.string.linkab6val2));
 
-            HelpFragment.internaladdLinks(textViewabout1, a.getString(R.string.linkifyab1str1),
-                    a.getString(R.string.link_win));
-            HelpFragment.internaladdLinks(textViewabout1, a.getString(R.string.linkifyab1str2),
-                    a.getString(R.string.link_lin));
-
-            HelpFragment.internaladdLinks(textViewabout7, a.getString(R.string.linkab7str1),
-                    a.getString(R.string.linkab7val1));
-            HelpFragment.internaladdLinks(textViewabout7, a.getString(R.string.linkab7str2),
-                    a.getString(R.string.linkab7val2));
-
-            HelpFragment.internaladdLinks(textViewabout8, a.getString(R.string.linkab8str1),
-                    a.getString(R.string.linkab8val1));
-            HelpFragment.internaladdLinks(textViewabout8, a.getString(R.string.linkab8str2),
-                    a.getString(R.string.linkab8val2));
-
-            HelpFragment.internaladdLinks(textViewabout9, a.getString(R.string.linkab9str1),
-                    a.getString(R.string.linkab9val1));
-            HelpFragment.internaladdLinks(textViewabout9, a.getString(R.string.linkab9str2),
-                    a.getString(R.string.linkab9val2));
-
-            HelpFragment.internaladdLinks(textViewabout10, a.getString(R.string.linkab10str1),
-                    a.getString(R.string.linkab10val1));
-            HelpFragment.internaladdLinks(textViewabout10, a.getString(R.string.linkab10str2),
-                    a.getString(R.string.linkab10val2));
-
-            HelpFragment.internaladdLinks(textViewabout11, a.getString(R.string.linkab11str1),
-                    a.getString(R.string.linkab11val1));
-            HelpFragment.internaladdLinks(textViewabout11, a.getString(R.string.linkab11str2),
-                    a.getString(R.string.linkab11val2));
-
-            /*
             HelpFragment.internaladdLinks(textViewabout13, a.getString(R.string.linkab13str1),
                     a.getString(R.string.linkab13val1));
             HelpFragment.internaladdLinks(textViewabout13, a.getString(R.string.linkab13str2),
@@ -143,15 +92,19 @@ public class AboutFragment extends DialogFragment {
 
             HelpFragment.internaladdLinks(textViewabout14a, a.getString(R.string.linkab14astr1),
                     a.getString(R.string.linkab14aval1));
-                    */
         }
 
 
+
+
+
+
+
+        //a = this.getActivity();
+        /*
         final AdView adView3 = (AdView) v.findViewById(R.id.adView);
         adView3.setVisibility(View.GONE);
         adView3.requestLayout();
-
-        //a = this.getActivity();
         new Timer().schedule(new TimerTask()
         {
             @Override
@@ -192,7 +145,7 @@ public class AboutFragment extends DialogFragment {
                     });
             }
         }, 1000);
-
+        */
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
