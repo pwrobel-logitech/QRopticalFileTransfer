@@ -137,6 +137,14 @@ Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1last_1recognized_1file_1na
     return env->NewStringUTF(str.c_str());
 }
 
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_pl_pwrobel_opticalfiletransfer_CameraWorker_get_1last_1recognized_1file_1size(JNIEnv *env,
+                                                                                   jclass type) {
+    return (jint)get_last_recognized_file_size();
+}
+
 extern "C"
 JNIEXPORT jint JNICALL
 Java_pl_pwrobel_opticalfiletransfer_CameraWorker_initialize_1decoder(JNIEnv *env, jclass type) {

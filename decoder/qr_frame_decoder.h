@@ -42,6 +42,9 @@ public:
     //once the header detection has been done, copy the file name to the provided memory
     void copy_recognized_filename_to_provided_memory(char* str, int maxlen);
 
+    //-1 if it is not known yet
+    int get_last_recognized_file_size();
+
     ////////////End API
 
     int notifyNewChunk(int chunklength, const char* chunkdata, int context);

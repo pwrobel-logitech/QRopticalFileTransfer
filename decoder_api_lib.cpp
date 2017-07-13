@@ -106,6 +106,15 @@ const char* get_last_recognized_file_name_str(){
     return (const char*)filename_array;
 };
 
+int get_last_recognized_file_size(){
+    int size = -1;
+    if (!mydecoder_initialized)
+        return -1;
+    if (framedecoder != NULL)
+        size = framedecoder->get_last_recognized_file_size();
+    return size;
+};
+
 int get_main_RSN(){
     if (!mydecoder_initialized)
         return (int)API_NOT_INITIALIZED;

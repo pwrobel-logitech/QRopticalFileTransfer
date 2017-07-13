@@ -277,6 +277,15 @@ void QR_frame_decoder::copy_recognized_filename_to_provided_memory(char* str, in
     }
 }
 
+int QR_frame_decoder::get_last_recognized_file_size(){
+    int size = -1;
+    pthread_mutex_lock(&(this->async_info_.async_mutex_));
+    if (this->header_detection_done_)
+        size = this->file_info_.filelength;
+    pthread_mutex_unlock(&(this->async_info_.async_mutex_));
+    return size;
+};
+
 void QR_frame_decoder::setup_detector_after_header_recognized(){
     //printf("QQQFL : %d\n", this->file_info_.filelength);
     //exit(0);

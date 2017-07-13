@@ -1381,6 +1381,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     public static native int get_last_number_of_header_frame_detected();
 
     public static native String get_last_recognized_file_name_str();
+    public static native int get_last_recognized_file_size();
 
     public static native int get_main_RSN();
     public static native int get_main_RSK();

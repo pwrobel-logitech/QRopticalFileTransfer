@@ -65,6 +65,10 @@ int get_last_number_of_header_frame_detected();
 //get_total_frames_of_data_that_will_be_produced() > 0 or /*when status is 2*/
 const char* get_last_recognized_file_name_str();
 
+
+//this tells the size of the last recoginzed file in bytes. -1 if not known yet
+int get_last_recognized_file_size();
+
 //this get the RS correction codes settings for the residual and the main decoder
 //in case they are not known - for example, when the header has not been recognized yet - they are -1
 int get_main_RSN();

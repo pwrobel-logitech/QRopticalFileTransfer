@@ -36,6 +36,7 @@ import java.util.TimerTask;
 
 public class Qrfiles extends AppCompatActivity implements TransmissionController, HelpDialogDismisser{
 
+    private int limit_max_received_file_size = 1024*1024; // 1MB
 
     //used to hold main camera thread with the higher priority
     CameraWorker camworker;
