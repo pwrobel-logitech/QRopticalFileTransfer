@@ -1,0 +1,365 @@
+<resources>
+    <string name="app_name">Передача оптического файла</string>
+
+    <string name="upload_mode_switch_text">Режим отправки файлов</string>
+    <string name="download_mode_switch_text">Режим приема файлов</string>
+
+    <string name="action_settings">настройки</string>
+    <string name="draw_blink_encourage_new_transmission">Ожидание новой передачи..</string>
+    <string name="draw_blink_warning_header_not_detected">Пропущенная последовательность запуска. </string>
+    <string name="draw_blink_started_header_detection">Подготовка к запуску.</string>
+    <string name="draw_blink_detected_file1">Обнаруженный файл: </string>
+    <string name="draw_blink_detected_file2">Ожидание данных..</string>
+    <string name="draw_blink_failed_header_detection">Не удалось обнаружить фазу запуска, повторите попытку..</string>
+    <string name="draw_blink_failed_data_detection">Ошибка передачи файлов: </string>
+    <string name="draw_blink_succeeded_data_detection">Правильно сохранил файл: </string>
+    <string name="draw_blink_pending_async">Обработайте файл, подождите.. </string>
+    <string name="draw_progress_chunk_name">Шум - кусок</string>
+
+    <string name="start_sequence_string">Последовательность запуска: </string>
+    <string name="start_sequence_upload_file_desc">Отправка начальной последовательности для файла: </string>
+    <string name="upload_file_desc_string">Отправка файла: </string>
+    <string name="ask_for_new_file_selection_to_upload">Выберите файл для отправки</string>
+    <string name="ask_folder_choose">Выбрать место для приема файлов</string>
+    <string name="upload_file_finalizing_msg">Завершающий файл, пожалуйста, подождите..</string>
+
+
+
+    <string name="menu_string_about">Около</string>
+    <string name="menu_string_settings">настройки</string>
+    <string name="menu_string_privacypolicy">Политика конфиденциальности</string>
+    <string name="menu_string_help">Помогите</string>
+
+
+
+    <string name="empty_directory">Пустой каталог</string>
+    <string name="storage_removed">Хранение было удалено или размонтировано.</string>
+    <string name="choose_file">Выберите файл</string>
+    <string name="error_selecting_file">Ошибка при выборе файла</string>
+    <string name="internal_storage">Внутреннее хранилище</string>
+    <string name="title_choose">выберите</string>
+    <string name="title_choose_dict_file">Выберите словарь</string>
+    <string name="dialog_ok">Выбрать</string>
+    <string name="dialog_cancel">Отмена</string>
+    <string name="title_choose_folder">Выберите папку</string>
+    <string name="title_choose_filetosend">Выберите файл для отправки</string>
+    <string name="title_filebrowse">Просмотр полученных файлов</string>
+
+    <string name="dump_folder_descr">Загрузить папку:</string>
+    <string name="fileread_failed_descr1">файл </string>
+    <string name="fileread_failed_descr2"> Не может быть прочитан - возможно, нет разрешения на чтение. </string>
+
+    <string name="textfilesaved_toast1">Новый файл : </string>
+    <string name="textfilesaved_toast2">сохранены</string>
+
+    <string name="failed_writability_test1">Не удается записать в папку </string>
+    <string name="failed_writability_test2">, Возможно, только для чтения или отсутствия разрешения? Передача, скорее всего, не удастся. Вы также можете перезапустить приложение / систему и повторить попытку.</string>
+
+
+    <string name="help_donotshowagaintick">Не показывать снова</string>
+    <string name="help_title">Помогите</string>
+    <string name="helpd1">Используйте это приложение для приема / отправки небольших файлов (ограничение 1 МБ на файл в бесплатной версии этого приложения) Как поток QR-кадров Через камеру телефона. \n Вы можете создать файл QR-потока из этого приложения, а также
+        Настольный ПК - см. Windows и Linux для загрузки файлов. \n</string>
+
+    <string name="helpd2">
+        <i>Советы по успешной передаче:\n</i>
+    </string>
+
+    <string name="helpd3">
+        <b>1.</b> Держите камеру прямой - избегайте наклона.
+    </string>
+
+    <string name="helpd4">
+        <b>2.</b> Убедитесь, что камера автофокусирована правильно - если нет, попробуйте быстро размахивать рукой перед ней или коснитесь экрана Запросить автофокусировку.
+    </string>
+
+    <string name="helpd5">
+        <b>3.</b> Если хотите, выделите зеленый цвет. Чем более зеленой становится выделение, тем меньше возникает ошибка, и тем выше вероятность того, что Передача будет успешной. \n Соблюдайте также шумовой бар во время передачи - избегайте его полного крашения
+        При изменении фрагмента. \n
+    </string>
+
+    <string name="helpd6">
+        <b>4.</b> Попытайтесь захватить значительную часть последовательности запуска, а также сфокусированную камеру - без нее передача даже не начнется.
+    </string>
+
+
+    <string name="info_err_selection">Максимальная ошибка (%): </string>
+    <string name="info_qrsize_selection">Размер QR (байты) : </string>
+    <string name="info_qrsize_selection2">байтов</string>
+    <string name="info_start_seq_time">Время начала (ы) : </string>
+    <string name="resulting_upload_speed">Максимум. скорость загрузки :</string>
+    <string name="info_button_restore_default_settings">Восстановить настройки по умолчанию</string>
+    <string name="chceck_blurshader">Предварительный эффект размытия</string>
+
+    <string name="defaultButtonMinus">-</string>
+    <string name="defaultButtonPlus">+</string>
+
+
+
+
+    <string name="text_content_q1">
+        <center>Это устанавливает количество кадров в секунду (FPS) генерируемого QR-потока файловым загрузчиком</center> \n\n
+        Большее значение : \n\n
+        <big><b>+</b></big> Увеличьте скорость передачи\n\n
+        но в то же время:\n\n
+        <big><b>-</b></big> Увеличьте вероятность отказа при передаче, если приемник не может забрать
+        Кадров достаточно быстро\n
+
+        </string>
+
+    <string name="text_content_q2">Это устанавливает объем избыточности, который генерирует производитель кодов QR.\n\n
+
+
+        Большее значение :\n\n
+
+        <big><b>+</b></big> Передача более надежна для ошибок\n\n
+        но в то же время : \n\n
+        <big><b>-</b></big> Более медленная передача\n\n
+
+       Если шумовой бар во время приема передачи часто зелёный для вас, когда количество каналов увеличивается / заканчивается,
+        затем вы Может позволить вам уменьшить это максимальное значение ошибки, чтобы увеличить скорость передачи.</string>
+
+    <string name="text_content_q3">Это устанавливает размер каждого созданного QR-кадра. \n\n
+        Большее значение :\n\n
+
+        <big><b>+</b></big> Быстрая передача\n\n
+        Но в то же время : \n\n
+        <big><b>-</b></big> Увеличьте вероятность отказа в
+Приемник также требует лучшего позиционирования / фокусировки камеры.\n\n
+
+        Когда этот размер превышает примерно 850B, часто возникают серьезные проблемы с получением какой-либо разумной скорости.</string>
+
+    <string name="text_content_q4">Это устанавливает время в секундах, что инициализирующая последовательность запуска
+     Отображается в устройстве кадра.\n\n
+        Необходимо зафиксировать хотя бы фрагмент этой последовательности запуска, чтобы обеспечить правильную инициализацию на конце приемника.\n\n
+        Большее значение :\n\n
+        <big><b>+</b></big> Дает больше времени, чтобы вручную выровнять камеру, захватить фокус камеры и т. Д.\n\n
+        но в то же время : \n\n
+        <big><b>-</b></big> Делает передачу ненужной на несколько секунд дольше, если начальная последовательность уже может быть
+        Быстро захвачен.\n\n
+
+    </string>
+
+
+
+    <string name="link_win">http://wrobel.wroclaw.pl/opticalfiletransfer/ru/win/index.html</string>
+    <string name="link_lin">http://wrobel.wroclaw.pl/opticalfiletransfer/ru/lin/index.html</string>
+
+
+    <string name="privpolicy_tilte">Privacy Policy</string>
+    <string name="privacypolicy1">
+        The privacy policy for this app can be found under this link, but it is also presented here below:
+        \n\n
+        \tThis application does not collect any of your data. It only uses the camera to capture
+        the stream of QR frames in order to recreate as a file. So it needs camera system permission and
+        both the permission to read and write to the file storage - only to do the file transmission.
+        No other usage of files occurs other than to do the transmission.\n\n
+
+        This application also requires permission for system setting write. It only needs to use those system settings permission
+        in order to brighten up the screen at the time when file is being transmitted as a stream of QR frames and
+        go back to original brightness after it has finished - that lets the receiver camera pick up the image more easily.
+        No other system settings other than this brightness manipulation are changed.\n\n
+
+
+        This app uses the Google\'s advertisement services to display the advertisement banner in its free version.
+        It might collect some of your data - see the Google privacy policy to know more.
+        In order to use this ad service, this app in its free
+        version requires permission for the network - it does not transmits other data through the network other than what
+        is needed for the Google\'s advertisement service.
+        In the non-free version, the network permissions are
+        not necessary, since there is no ads then.
+
+
+        \n\n
+
+This application contains links to other sites. If you click on a third-party link, you will be directed to that site.
+        Note that these external sites are not operated by me.
+        Therefore, I strongly advise you to review the Privacy Policy of these websites.
+        I have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.
+\n\n
+        This application can also request some action from other applications, like opening a file by some external application.
+        No information other than query terms are passed to the intent then (like in the case of opening a file or link, only the
+        link or file path and mimetype is passed to the external application - nothing else) - so the privacy policy of this external apps
+        should be looked up then.
+
+    </string>
+
+    <string name="linkifystr1">Google privacy policy</string>
+    <string name="linkifyval1">https://www.google.com/policies/privacy/</string>
+    <string name="linkifystr2">under this link</string>
+    <string name="linkifyval2">http://wrobel.wroclaw.pl/opticalfiletransfer/en/privacypolicy.html</string>
+
+
+
+
+
+
+    <string name="linkifyab1str1">Windows</string>
+    <string name="linkifyab1str2">Linux</string>
+    <string name="textabout1">
+
+        Оптическая передача файлов - это приложение, которое использует поток QR-кадров для передачи файлов между
+        Телефонов и от настольного ПК до телефона (см. Дополнительные приложения Windows и Linux для загрузки файлов с настольный ПК).
+
+    </string>
+
+
+    <string name="textabout2">
+    \n
+       <i>преимущества</i> \n
+        <big><b>\u2022</b></big> Минимальные приготовления необходимы после настройки параметров - просто наведите камеру на QR-поток и дождитесь передачи файла.\n
+        <big><b>\u2022</b></big> Полностью автономно - нет настройки сети вообще.\n
+        <big><b>\u2022</b></big> Это беспроводная сеть и излучает небольшой радиочастотный шум для окружающей среды, по сравнению с WiFi или BT - так что вы можете делать
+        Беспроводной передачи файлов, когда телефоны находятся в режиме полета, и у вас нет инфракрасного порта в любом из них.
+
+        \n\n
+        <i>Недостатки</i> \n
+        <big><b>\u2022</b></big> Он очень медленный, поэтому он подходит только для небольших файлов.\n
+        <big><b>\u2022</b></big> Нет гарантии на завершение - для этого требуется первоначальная настройка параметров передачи на стороне производителя, чтобы получить оптимальную скорость передачи, сохраняя погрешности / шум ниже порога.\n
+        <big><b>\u2022</b></big> Затронуты такие шумы, как солнечные рефлексы, низкая яркость на стороне производителя или невозможность использования камеры.\n
+
+    </string>
+
+    <string name="textabout3">
+    На данный момент, на телефоне, где производится QR-поток, экран автоматически скрашивается - для этого требуется разрешение на установку системы записи.\n
+        \n
+        Это бесплатная версия - она может захватывать файлы размером не более 1 МБ. См. Версию <u> OpticalFileTransfer pro </u> в магазине воспроизведения, которая теоретически может обрабатывать до 2 ГБ - хотя это будет длиться долгое время.\n
+
+    </string>
+
+    <string name="textabout4">
+    Third party licences\n
+
+    </string>
+
+    <string name="textabout5">
+    Following third-party libraries are being used, with their respective licences :\n
+
+    </string>
+
+
+    <string name="linkab6str1">ZXing</string>
+    <string name="linkab6val1">https://github.com/zxing/zxing</string>
+    <string name="linkab6str2">Apache 2.0 licence</string>
+    <string name="linkab6val2">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="textabout6">
+    <big><b>\u2022</b></big> ZXing - uses the Apache 2.0 licence.\n
+    </string>
+
+
+    <string name="linkab7str1">Android File Chooser</string>
+    <string name="linkab7val1">https://github.com/hedzr/android-file-chooser</string>
+    <string name="linkab7str2">Apache 2.0 licence</string>
+    <string name="linkab7val2">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="textabout7">
+    <big><b>\u2022</b></big> Android File Chooser - under the Apache 2.0 licence.\n
+    </string>
+
+    <string name="linkab8str1">Horizontal Number Picker</string>
+    <string name="linkab8val1">https://github.com/hrules6872/HorizontalNumberPicker</string>
+    <string name="linkab8str2">Apache 2.0 licence</string>
+    <string name="linkab8val2">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="textabout8">
+    <big><b>\u2022</b></big> Horizontal Number Picker - under the Apache 2.0 licence.\n
+    </string>
+
+
+    <string name="linkab9str1">Hashing Library</string>
+    <string name="linkab9val1">http://create.stephan-brumme.com/hash-library/</string>
+    <string name="linkab9str2">zlib licence</string>
+    <string name="linkab9val2">http://www.zlib.net/zlib_license.html</string>
+    <string name="textabout9">
+    <big><b>\u2022</b></big> SHA256 Hashing Library - on zlib licence.\n
+    </string>
+
+
+    <string name="linkab10str1">KA9Q library</string>
+    <string name="linkab10val1">https://github.com/Opendigitalradio/ka9q-fec</string>
+    <string name="linkab10str2">LGPL licence</string>
+    <string name="linkab10val2">https://www.gnu.org/licenses/lgpl-3.0.en.html</string>
+    <string name="textabout10">
+    <big><b>\u2022</b></big> KA9Q library - on LGPL licence. See the LGPL compliance note below.\n
+    </string>
+
+
+    <string name="linkab11str1">Libqrencode library</string>
+    <string name="linkab11val1">https://github.com/fukuchi/libqrencode</string>
+    <string name="linkab11str2">LGPL licence</string>
+    <string name="linkab11val2">https://www.gnu.org/licenses/lgpl-3.0.en.html</string>
+    <string name="textabout11">
+    <big><b>\u2022</b></big> Libqrencode library - on LGPL licence. See the LGPL compliance note below.\n
+    </string>
+
+
+    <string name="textabout12">
+    LGPL compliance note.\n
+    </string>
+
+
+    <string name="menu_string_aboutlgpl">LGPL compliance note</string>
+
+
+    <string name="textabout12L">
+    <i><u>See the LGP compliance note.</u></i>\n
+    </string>
+
+    <string name="linkab13str1">on this page</string>
+    <string name="linkab13val1">https://developer.android.com/ndk/guides/standalone_toolchain.html</string>
+    <string name="linkab13str2">KA9Q code</string>
+    <string name="linkab13val2">https://github.com/Opendigitalradio/ka9q-fec</string>
+    <string name="textabout13">
+    Both the libqrencode and ka9q library are under the LGPL licence - so in this application they
+        are used as a separate native shared libraries. \n\n
+        The ka9q is simply compiled with the Google\'s NDK toolchain for arm and armv7a. To get such
+        toolchain, simply download the NDK r14b (the version used for all the native code in this app) and
+        generate standalone toolchain from it - see the instructions for the toolchain on this page.\n
+        With such toolchain, generate the libfec.so yourself by grabbing the KA9Q code (I have made no modifications to that code)
+        and cross-compiling it
+        for architecture of your choice with the gcc/g++ provided in the toolchain.\n
+    </string>
+
+    <string name="linkab14str1">Libqrencode</string>
+    <string name="linkab14val1">https://github.com/fukuchi/libqrencode</string>
+    <string name="linkab14str2">in the package</string>
+    <string name="linkab14val2">http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/linux_OpticalFileUploader.tar.gz</string>
+    <string name="textabout14">
+    Regarding the Libqrencode, it is only being used for the wrapper library named libqrencoder_wrapper.so - the code for
+        the wrapper + sample Makefile to use when cross-compiling it is provided in the package that contains the
+        uploader program for the desktop linux - see the directory \'lgpl_libqrencode_wrapper\'. Just like
+        for the desktop version, the Libqrencode code needs to be pulled and provided in directory named as LIBQRENCODER_LIBFOLDERNAME in
+         the makefile (+CROSS for the toolchain prefix).\n
+    </string>
+
+    <string name="linkab14astr1">windows download page</string>
+    <string name="linkab14aval1">http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html</string>
+    <string name="textabout14a">
+    For Windows supplementary uploader program all the LGPL code, sligthly modifed then, is provided as a
+        single dll named encoder_util_lib.dll - and the full Visual Studio 2017 solution + code, to rebuild that library is
+        provided on the windows download page as well under the <i>Third party licences</i> section.\n
+    </string>
+
+    <string name="textabout15">
+    Additional notes\n
+    </string>
+
+    <string name="textabout16">
+    This software is provided \'as-is\', without any express or implied warranty.
+</string>
+
+
+
+
+    <string name="size_exceed_dialog_msg1">Unfortunately, the free version of this app does not manages
+    transfer of files of over 1MB in size :-( \n\n
+    See the <b><i>OpticalFileTransfer pro</i></b> on the store, where the theoretical limit for a single file is 2GB.</string>
+
+
+
+
+    <string name="menu_settingfragment_text">
+
+5 02:23:33.192 10392-10392/? I/art: Late-enabling -Xcheck:jni
+
+
+    </string>
+</resources>
