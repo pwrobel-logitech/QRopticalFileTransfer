@@ -115,6 +115,11 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //sanitize size
+        int smear = Qrfiles.smearCustom(Qrfiles.limit_max_received_file_size);
+        if (smear != 1122649)
+            return;
+
         this.preferences = this.getPreferences(Context.MODE_PRIVATE);
 
         Log.i("REST", "oncreate called");
@@ -615,7 +620,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
 
         Toast.makeText(this, (String)this.getString(R.string.download_mode_switch_text),
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
 
         Runtime.getRuntime().gc();
 
@@ -747,7 +752,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
 
         Toast.makeText(this, (String)this.getString(R.string.upload_mode_switch_text),
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
 
             Runtime.getRuntime().gc();
 

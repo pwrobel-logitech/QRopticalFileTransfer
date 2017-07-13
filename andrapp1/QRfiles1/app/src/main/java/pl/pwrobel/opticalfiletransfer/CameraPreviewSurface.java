@@ -69,6 +69,14 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     }
 
     public void init(){
+
+        //sanitize size
+        int smear = Qrfiles.smearCustom(Qrfiles.limit_max_received_file_size);
+        if (smear != 1122649){
+            ((Activity)mContext).finish();
+            return;
+        }
+
         this.setZOrderOnTop(false);
         mRatio[0] = 1;
         mRatio[1] = 1;
