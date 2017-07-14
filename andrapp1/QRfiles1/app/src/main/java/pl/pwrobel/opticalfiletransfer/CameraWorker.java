@@ -624,6 +624,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
     }
 
+    /*
     private static boolean isFileWritable(File file) {
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "rw");
@@ -640,10 +641,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
 
     }
+    */
 
     private void testForFolderWritablility(String fullfolderpath){
-        File f = new File(fullfolderpath+File.separator+"sAmplE_checkwrite_xYz128file__tmpcachE.tmp");
-        if (!isFileWritable(f)){
+        //File f = new File(fullfolderpath+File.separator+"sAmplE_checkwrite_xYz128file__tmpcachE.tmp");
+        File fp = new File(fullfolderpath);
+        boolean writable = fp.canWrite();
+        if (!writable){
             final Activity a = (Activity) CameraWorker.this.context;
             if (a != null){
                 a.runOnUiThread(new Runnable() {
@@ -659,7 +663,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 });
             }
         }
-        f.delete();
+        //f.delete();
     }
 
     public synchronized void waitUntilReady() {
