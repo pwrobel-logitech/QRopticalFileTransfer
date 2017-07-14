@@ -65,6 +65,21 @@
 
     </style>
 
+    <style name="SettingFragmentDialogNoFullScreen" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">#333333</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">#333333</item>
+        <item name="android:textColor">#333333</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/greyC</item>
+
+        <item name="android:windowFullscreen">false</item>
+
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowIsFloating">true</item>
+
+    </style>
 
 
 </resources>

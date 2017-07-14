@@ -22,6 +22,13 @@ public class SizeExceededDialog extends DialogFragment {
         this.dismisserListener = dismisserListener;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NORMAL, R.style.SettingFragmentDialogNoFullScreen);
+        //setStyle(STYLE_NORMAL, R.style.SettingFragmentDialog);
+    }
+
     /*
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
