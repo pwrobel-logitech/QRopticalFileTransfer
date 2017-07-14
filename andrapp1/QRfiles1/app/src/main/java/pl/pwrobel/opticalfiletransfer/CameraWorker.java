@@ -328,7 +328,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             if (folder_reset_pending){
                 folder_reset_pending = false;
                 reset_decoder();
-                camera.addCallbackBuffer(callbackbuffer);
+                if (camera != null){
+                    try {
+                        camera.addCallbackBuffer(callbackbuffer);
+                    }catch (Exception e){
+                        Log.e("camworker", "addcallbackBuffer failure in onPreviewFrame");
+                    }
+                }
             }
         }
 
@@ -348,7 +354,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.death_clock_ticking = false;
             this.reset_decoder();
             this.last_time_some_frame_received = System.nanoTime();
-            camera.addCallbackBuffer(callbackbuffer);
+            if (camera != null){
+                try {
+                    camera.addCallbackBuffer(callbackbuffer);
+                }catch (Exception e){
+                    Log.e("camworker", "addcallbackBuffer failure in onPreviewFrame");
+                }
+            }
             return;
         }
 
@@ -368,14 +380,26 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 this.error_time_arrival_ms = System.nanoTime() / 1.0e6;
                 this.should_deliver_error_info_for_certain_time = true;
             }
-            camera.addCallbackBuffer(callbackbuffer);
+            if (camera != null){
+                try {
+                    camera.addCallbackBuffer(callbackbuffer);
+                }catch (Exception e){
+                    Log.e("camworker", "addcallbackBuffer failure in onPreviewFrame");
+                }
+            }
             return;
         }
 
         if (status == 10){ //got header in the middle of data detection
             Log.i("RST HDR", "Got header in the middle of data detection");
             this.reset_decoder();
-            camera.addCallbackBuffer(callbackbuffer);
+            if (camera != null){
+                try {
+                    camera.addCallbackBuffer(callbackbuffer);
+                }catch (Exception e){
+                    Log.e("camworker", "addcallbackBuffer failure in onPreviewFrame");
+                }
+            }
             return;
         }
 
@@ -415,7 +439,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                                     }
                                 }});
                         this.reset_decoder();
-                        camera.addCallbackBuffer(callbackbuffer);
+                        if (camera != null){
+                            try {
+                                camera.addCallbackBuffer(callbackbuffer);
+                            }catch (Exception e){
+                                Log.e("camworker", "addcallbackBuffer failure in onPreviewFrame");
+                            }
+                        }
                         return;
                     }
                 }
@@ -507,7 +537,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if(ntot > 0 && lf > 0)
             if(lf >= ntot - 1){
                 this.reset_decoder();
-                camera.addCallbackBuffer(callbackbuffer);
+                if (camera != null){
+                    try {
+                        camera.addCallbackBuffer(callbackbuffer);
+                    }catch (Exception e){
+                        Log.e("camworker", "addcallbackBuffer failure in onPreviewFrame");
+                    }
+                }
                 return;
             }
                 //if(!triggered_autoestimated_end){
@@ -578,7 +614,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         }*/
 
-        camera.addCallbackBuffer(callbackbuffer);
+        if (camera != null){
+            try {
+                camera.addCallbackBuffer(callbackbuffer);
+            }catch (Exception e){
+                Log.e("camworker", "addcallbackBuffer failure in onPreviewFrame");
+            }
+        }
 
     }
 
@@ -729,9 +771,23 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
 
 
-                camera.addCallbackBuffer(callbackbuffer);
-                camera.setPreviewCallbackWithBuffer(CameraWorker.this);
-                camera.startPreview();
+                try {
+                    camera.addCallbackBuffer(callbackbuffer);
+                }catch (Exception e){
+                    Log.e("camworker", "addCAllbackbuffer exception");
+                }
+
+                try {
+                    camera.setPreviewCallbackWithBuffer(CameraWorker.this);
+                }catch (Exception e){
+                    Log.e("camworker", "setPreviewCallbackWithBuffer exception");
+                }
+
+                try {
+                    camera.startPreview();
+                } catch (Exception e){
+                    Log.e("camworker", "startpreview exception");
+                }
 
                 CameraWorker.this.filedump_directory_name = foldername;
                 CameraWorker.this.filedump_directory_fullpath =
