@@ -75,8 +75,8 @@
     </string>
 
     <string name="helpd4">
-        <b>2.</b> Make sure camera autofocus correctly - if not, try waving hand quickly in front of it, or tap the screen
-        to request autofocus.
+        <b>2.</b> Make sure camera autofocus correctly - if not, try waving hand quickly in front of it, or <b><i>tap the screen
+        to request autofocus</i></b>.
     </string>
 
     <string name="helpd5">
