@@ -44,6 +44,27 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         return 37+hashCode ^ (hashCode >>> 7) ^ (hashCode >>> 4);
     }
 
+    public static void openProVersionOnPlayStore(Activity act){
+        final Activity a = act;
+        if (a != null){
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String appPackageName = a.getPackageName(); // getPackageName() from Context or Activity object
+                    if (!appPackageName.contains("pro")); //must end with pro - the free version cannot contain the "pro" string !
+                    {
+                        appPackageName = appPackageName + "pro";
+                    }
+                    try {
+                        a.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        a.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    }
+                }
+            });
+        }
+    }
+
     //used to hold main camera thread with the higher priority
     CameraWorker camworker;
     CustomProgressBar progressBar1_decoder;
@@ -174,6 +195,10 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                     case R.id.menu_privacypolicy:
                         Log.i("MENU", "privacy policy selected");
                         showPrivacyPolicyDialog();
+                        return true;
+                    case R.id.menu_proversion:
+                        Log.i("MENU", "pro update selected.");
+                        openProVersionOnPlayStore(Qrfiles.this);
                         return true;
                 }
                 return false;

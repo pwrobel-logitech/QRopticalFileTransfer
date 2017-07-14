@@ -23,6 +23,7 @@
     <string name="menu_string_about">O programie</string>
     <string name="menu_string_settings">Ustawienia</string>
     <string name="menu_string_privacypolicy">Polityka prywatności</string>
+    <string name="menu_string_proversion">Update</string>
     <string name="menu_string_help">Pomoc</string>
 
     <string name="info_err_selection">Maksymalny błąd (%) : </string>
