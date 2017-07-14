@@ -938,6 +938,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 //param.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
                 //camera.setParameters(param);
                 //Log.i("Focus", "auto");
+                if (camera != null)
                     camera.autoFocus(new Camera.AutoFocusCallback() {
                         @Override
                         public void onAutoFocus(boolean success, Camera camera2) {
