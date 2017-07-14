@@ -77,6 +77,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
             return;
         }
 
+        this.setOnTouchListener(this);
+
         this.setZOrderOnTop(false);
         mRatio[0] = 1;
         mRatio[1] = 1;
