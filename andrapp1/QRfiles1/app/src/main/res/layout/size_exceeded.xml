@@ -1,0 +1,79 @@
+<LinearLayout android:id="@+id/linearLayoutsizeexceed"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+
+    android:background="@color/greyC"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+
+
+    <TextView
+        android:id="@+id/textViewSE1a"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/size_exceed_dialog_msg1a" />
+    <TextView
+        android:id="@+id/textViewSE1b"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="@string/size_exceed_dialog_msg1b" />
+    <TextView
+        android:id="@+id/textViewSE1c"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/size_exceed_dialog_msg1c" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutThatDoesNotScroll22"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+
+        android:background="@color/greyB"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+
+
+            android:background="@color/greyC"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/textViewokSE"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="OK"
+                android:textColor="@color/okcustomubutton1"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+
+
+        </RelativeLayout>
+        </LinearLayout>
+
+</LinearLayout>
+

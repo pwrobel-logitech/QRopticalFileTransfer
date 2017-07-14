@@ -354,6 +354,9 @@ This application contains links to other sites. If you click on a third-party li
     transfer of files of over 1MB in size :-( \n\n
     See the <b><i>OpticalFileTransfer pro</i></b> on the store, where the theoretical limit for a single file is 2GB.</string>
 
+    <string name="size_exceed_dialog_msg1a">К сожалению, бесплатная версия этого приложения не управляет передачей файлов размером более 1 МБ. \n\n Смотрите: \n </string>
+    <string name="size_exceed_dialog_msg1b"><b><u>Передача оптического файла pro</u></b></string>
+    <string name="size_exceed_dialog_msg1c">\n в хранилище, где теоретический предел для одного файла равен 2ГБ +, у него нет рекламных объявлений и есть больше настроек.</string>
 
 
 
