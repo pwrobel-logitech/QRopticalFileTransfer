@@ -702,9 +702,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                 camera = Camera.open();
 
-                camera.cancelAutoFocus();
+                if (camera != null)
+                    camera.cancelAutoFocus();
 
-                Camera.Parameters param = camera.getParameters();
+                Camera.Parameters param = null;
+                if (camera != null)
+                    param = camera.getParameters();
+
                 List<Camera.Size> psize = param.getSupportedPreviewSizes();
 
                 int []fpsrange = new int [2];
