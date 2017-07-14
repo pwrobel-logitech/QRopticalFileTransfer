@@ -254,6 +254,21 @@ This application contains links to other sites. If you click on a third-party li
 
     </string>
 
+    <string name="textabout3a">
+    At the moment, on the phone where the QR stream is produced, the screen is brighten up automatically - that requires
+        write system settings permission.\n
+        \n
+        This is the free version - it can capture files of max 1MB in size. See the : \n
+    </string>
+
+    <string name="textabout3b">
+        <u>OpticalFileTransfer pro</u>
+    </string>
+
+    <string name="textabout3c">
+     \n version in the play store, which can theoretically handle up to 2GB - although this would last unreasonably long. +The Pro version does not have advertisements and has more settings. \n
+    </string>
+
     <string name="textabout4">
     Third party licences\n
 

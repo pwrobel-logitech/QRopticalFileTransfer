@@ -228,6 +228,20 @@ This application contains links to other sites. If you click on a third-party li
 
     </string>
 
+    <string name="textabout3a">
+    На данный момент, на телефоне, где производится QR-поток, экран автоматически скрашивается - для этого требуется разрешение на установку системы записи.\n
+        \n
+        Это бесплатная версия - она может захватывать файлы размером не более 1 МБ. См. Версию \n
+    </string>
+
+    <string name="textabout3b">
+        <u>Передача оптического файла pro</u>
+    </string>
+
+    <string name="textabout3c">
+     \n в магазине воспроизведения, которая теоретически может обрабатывать до 2 ГБ - хотя это будет длиться долгое время. +Версия Pro не имеет рекламы и имеет больше настроек.\n
+    </string>
+
     <string name="textabout4">
     Third party licences\n
 

@@ -65,6 +65,22 @@ public class AboutFragment extends DialogFragment {
         });
 
 
+        final TextView textViewabout3b = (TextView) v.findViewById(R.id.textViewabout3b);
+        textViewabout3b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Activity a = getActivity();
+                if (a != null)
+                    a.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (a != null)
+                                Qrfiles.openProVersionOnPlayStore(a);
+                        }
+                    });
+            }
+        });
+
 
         final TextView textViewabout6 = (TextView) v.findViewById(R.id.textViewabout6);
         final Activity a = this.getActivity();

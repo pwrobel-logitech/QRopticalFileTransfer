@@ -47,10 +47,24 @@
                 android:text="@string/textabout2"/>
 
             <TextView
-                android:id="@+id/textViewabout3"
+                android:id="@+id/textViewabout3a"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/textabout3"/>
+                android:text="@string/textabout3a"/>
+
+            <TextView
+                android:id="@+id/textViewabout3b"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:clickable="true"
+                android:text="@string/textabout3b"/>
+
+            <TextView
+                android:id="@+id/textViewabout3c"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout3c"/>
 
 
             <TextView
