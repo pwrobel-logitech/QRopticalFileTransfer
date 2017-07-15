@@ -14,7 +14,7 @@ OUTARCH=bin_fec_arm
 ZXINGARCH=arch_arm
 
 clean:
-	rm $(OUTARCH)/test_single $(OUTARCH)/main $(OUTARCH)/decoder_test $(OUTARCH)/libqrencoder* *.o *.so main $(OUTARCH)/libRSencoder.so $(OUTARCH)/libRSdecoder.so $(OUTARCH)/libRSencAPI.so $(OUTARCH)/libRSdecAPI.so
+	rm $(OUTARCH)/test_single $(OUTARCH)/main $(OUTARCH)/decoder_test $(OUTARCH)/libqrencoder* *.o *.so main $(OUTARCH)/libRSencoder.so $(OUTARCH)/libRSdecoder.so $(OUTARCH)/libRSencAPI.so $(OUTARCH)/libRSdecAPI.so $(OUTARCH)/libqrdecoder_wrapper.so
         
 fec_test: single_fac_test.cpp
 	$(CPP) $(CFLAGS) -DANDROID -pie single_fac_test.cpp -Wl,-rpath=\$$ORIGIN -o $(OUTARCH)/test_single -L$(current_dir)/$(OUTARCH) -lfec
