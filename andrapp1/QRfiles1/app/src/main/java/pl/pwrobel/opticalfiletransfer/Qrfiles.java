@@ -65,6 +65,19 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }
     }
 
+    public static void watchYoutubeVideo(Activity act, String id){
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            if (act != null)
+                act.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            if (act != null)
+                act.startActivity(webIntent);
+        }
+    }
+
     //used to hold main camera thread with the higher priority
     CameraWorker camworker;
     CustomProgressBar progressBar1_decoder;
@@ -187,6 +200,9 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                         Log.i("MENU", "help selected");
                         if (!Qrfiles.this.helpdialogshown)
                             showHelpDialog();
+                        return true;
+                    case R.id.menu_videolink:
+                        Qrfiles.watchYoutubeVideo(Qrfiles.this, Qrfiles.this.getString(R.string.video_id));
                         return true;
                     case R.id.menu_about:
                         Log.i("MENU", "about selected");

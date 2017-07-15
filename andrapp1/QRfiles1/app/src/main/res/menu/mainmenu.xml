@@ -10,13 +10,18 @@
         android:layout_height="wrap_content"
         android:title="@string/menu_string_settings" />
 
+    <item android:id="@+id/menu_about"
+        android:title="@string/menu_string_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <item android:id="@+id/menu_help"
         android:title="@string/menu_string_help"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <item android:id="@+id/menu_about"
-        android:title="@string/menu_string_about"
+    <item android:id="@+id/menu_videolink"
+        android:title="@string/menu_string_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
