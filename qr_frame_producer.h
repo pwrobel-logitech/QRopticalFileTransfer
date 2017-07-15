@@ -9,7 +9,7 @@
 #include "open_rs_encoder.h"
 
 
-class Qr_frame_producer : public FileDataProvider
+class __attribute__((visibility ("default"))) Qr_frame_producer : public FileDataProvider
 {
 public:
     Qr_frame_producer();

@@ -3,7 +3,7 @@
 
 #include "../common_decoder_encoder.h"
 
-class QR_frame_decoder : public ChunkListener {
+class __attribute__ ((visibility ("default"))) QR_frame_decoder : public ChunkListener {
 public:
 
     QR_frame_decoder();
