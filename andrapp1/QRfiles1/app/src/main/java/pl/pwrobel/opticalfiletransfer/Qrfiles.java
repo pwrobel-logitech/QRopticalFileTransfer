@@ -185,6 +185,12 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     private void setupMainMenu(){
         this.myMainMenu = new PopupMenu(this, this.fab);;
         this.myMainMenu.inflate(R.menu.mainmenu);
+        Menu popupMenu = this.myMainMenu.getMenu();
+        MenuItem optionupgr = (MenuItem)popupMenu.findItem(R.id.menu_proversion);
+        boolean ispro = false;
+        ispro = getResources().getBoolean(R.bool.is_pro_version);
+        if (ispro)
+            optionupgr.setVisible(false);
 
         this.myMainMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
             @Override
@@ -522,7 +528,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_qrfiles, menu);
+        //getMenuInflater().inflate(R.menu.menu_qrfiles, menu);
         return true;
     }
 

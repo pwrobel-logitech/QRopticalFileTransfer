@@ -154,6 +154,8 @@ public class SettingsFragment extends DialogFragment {
         //View tv = v.findViewById(R.id.text);
         //((TextView)tv).setText("Dialog #" + mNum + ": using style ");
 
+        boolean ispro = false;
+        ispro = getResources().getBoolean(R.bool.is_pro_version);
 
         numberPickerFPS = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerFPS);
         numberPickerFPS.setMinValue(5);
@@ -442,6 +444,14 @@ public class SettingsFragment extends DialogFragment {
                         .show();
             }
         });
+
+
+        if (!ispro)
+            folderselect.setVisibility(View.GONE);
+
+        View blurview = v.findViewById(R.id.optionalview1);
+        if (!ispro)
+            blurview.setVisibility(View.GONE);
 
         final AdView adView2 = (AdView) v.findViewById(R.id.adView);
         adView2.setVisibility(View.GONE);

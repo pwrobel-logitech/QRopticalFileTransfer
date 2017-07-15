@@ -4,5 +4,5 @@
     <bool name="use_activity">true</bool>
     <bool name="use_provider">false</bool>
 
-    <bool name="is_pro_version">true</bool>
+    <bool name="is_pro_version">false</bool>
 </resources>
