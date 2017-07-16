@@ -98,21 +98,21 @@ uint32_t get_file_size_fp(void* fp){
 // system-dependent file manipulation functions
 void* FileOpenToRead(const char* fn){
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "FUTIL", "fopen r %s", fn);
+        //__android_log_print(ANDROID_LOG_INFO, "FUTIL", "fopen r %s", fn);
 #endif
     return (void*)fopen(fn, "rb");
 }
 
 void* FileOpenToWrite(const char* fn){
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "FUTIL", "fopen w %s", fn);
+        //__android_log_print(ANDROID_LOG_INFO, "FUTIL", "fopen w %s", fn);
 #endif
     return (void*)fopen(fn, "wb");
 }
 
 void FileClose(void* fn){
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "FUTIL", "fclose %d", (int)fn);
+        //__android_log_print(ANDROID_LOG_INFO, "FUTIL", "fclose %d", (int)fn);
 #endif
     fclose((FILE*)fn);
 }

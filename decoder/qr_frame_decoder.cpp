@@ -170,7 +170,7 @@ immediate_status QR_frame_decoder::destroy_and_get_filetransfer_status(){
     //pthread_mutex_lock(&(this->async_info_.async_mutex_));
 
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "DEL", "XXXX1");
+        //__android_log_print(ANDROID_LOG_INFO, "DEL", "XXXX1");
 #endif
     if(this->file_info_.fp){
         if(this->file_info_.fp != NULL){
@@ -207,7 +207,7 @@ QR_frame_decoder::~QR_frame_decoder(){
 
 immediate_status QR_frame_decoder::tell_no_more_qr(){
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "FINISH", "telling native no more qr..");
+        //__android_log_print(ANDROID_LOG_INFO, "FINISH", "telling native no more qr..");
 #endif
     bool switched_to_residual_data_decoder;
     pthread_mutex_lock(&(this->async_info_.async_mutex_));
@@ -336,7 +336,7 @@ void QR_frame_decoder::setup_detector_after_header_recognized(){
 int QR_frame_decoder::analyze_header(){
     utils::ScopeLock l(this->async_info_.async_mutex_);
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX0 start analyze header, TEST1S %d", strtol("0x90695ffc", NULL, 16));
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX0 start analyze header, TEST1S %d", strtol("0x90695ffc", NULL, 16));
 #endif
     if(this->header_detection_done_) //detection already succeeded earlier
         return 1;
@@ -444,7 +444,7 @@ int QR_frame_decoder::analyze_header(){
         this->file_info_.filelength = flength;
         this->file_info_.filename = std::string(start + 45, fname_length);
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ got header correctly %s", this->file_info_.filename.c_str());
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "QQ got header correctly %s", this->file_info_.filename.c_str());
 #endif
         this->file_info_.filepath = this->api_told_filepath_;
         if(this->file_info_.fp != NULL){
@@ -662,8 +662,8 @@ int QR_frame_decoder::notifyNewChunk(int chunklength, const char* chunkdata, int
             this->flush_data_to_file(chunkdata, datalen);
         this->main_chunk_data_tmp_.resize(0); // eradicate, after flushing to file
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new data chunk chl %d, contx %d, datalen %d",
-                            chunklength, context, datalen);
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "XX4 got new data chunk chl %d, contx %d, datalen %d",
+        //                    chunklength, context, datalen);
 #endif
     }
 

@@ -237,7 +237,7 @@ void RS_decoder::internal_getdata_from_internal_memory(){
     as->is_switched_to_residual_data_decoder_ = this->chunk_listener_->getIsSwitchedToResidualDataDecoder();
 
 #ifdef ANDROID
-        __android_log_print(ANDROID_LOG_INFO, "NATIVE", "YY1 preparing async %f", utils::currmili() - ct);
+        //__android_log_print(ANDROID_LOG_INFO, "NATIVE", "YY1 preparing async %f", utils::currmili() - ct);
 #endif
 
     printf("YYY queriying dec RSN %d\n", this->RSn_);
