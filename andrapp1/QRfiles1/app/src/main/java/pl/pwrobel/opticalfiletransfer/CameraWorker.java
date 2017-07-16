@@ -299,7 +299,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         synchronized (this){
             success_ratio_in_smallpos = succratio;
         }
-        Log.i("SUC", "success ratio : " + success_ratio_in_smallpos + " fps "+this.estimated_max_framerate);
+        //Log.i("SUC", "success ratio : " + success_ratio_in_smallpos + " fps "+this.estimated_max_framerate);
     }
 
     private boolean size_exceeded_dialog_shown = false;
@@ -350,7 +350,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         double currt = System.nanoTime();
 
         if (this.death_clock_ticking && (currt - this.last_time_some_frame_received > this.ns_death_timeout)){
-            Log.i("RST ERR", "No frames for the past " + this.ns_death_timeout+" nanosec - resetting decoder");
+            //Log.i("RST ERR", "No frames for the past " + this.ns_death_timeout+" nanosec - resetting decoder");
             this.death_clock_ticking = false;
             this.reset_decoder();
             this.last_time_some_frame_received = System.nanoTime();
@@ -374,7 +374,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 this.got_chunkRS_decode_error = true;
                 this.last_filename_detected_from_header = get_last_recognized_file_name_str();
             }
-            Log.i("RST ERR", "Got unrecoverable chunk - error");
+            //Log.i("RST ERR", "Got unrecoverable chunk - error");
             this.reset_decoder();
             synchronized (this) {
                 this.error_time_arrival_ms = System.nanoTime() / 1.0e6;
@@ -391,7 +391,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
 
         if (status == 10){ //got header in the middle of data detection
-            Log.i("RST HDR", "Got header in the middle of data detection");
+            //Log.i("RST HDR", "Got header in the middle of data detection");
             this.reset_decoder();
             if (camera != null){
                 try {
@@ -528,11 +528,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 */
 
         if(status > 0)
-            Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+
-                    " lashHdrProducedN "+get_last_number_of_header_frame_detected() +
-                    " lastDatFrProducedN "+get_last_number_of_frame_detected() +
-                    " RSM(" + get_main_RSN() +","+get_main_RSK()+");RSR("+get_residual_RSN()+","+get_residual_RSK()+") "+
-                    " laststatus "+status);
+            //Log.i("APIINFO", "Totalframes : " + get_total_frames_of_data_that_will_be_produced()+
+            //        " lashHdrProducedN "+get_last_number_of_header_frame_detected() +
+            //        " lastDatFrProducedN "+get_last_number_of_frame_detected() +
+            //        " RSM(" + get_main_RSN() +","+get_main_RSK()+");RSR("+get_residual_RSN()+","+get_residual_RSK()+") "+
+            //        " laststatus "+status);
 
         if(ntot > 0 && lf > 0)
             if(lf >= ntot - 1){
@@ -731,7 +731,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 CameraWorker.this.camwidth = camwidth;
                 CameraWorker.this.camheight = camheight;
 
-                Log.i("camworker", "Preview w "+camwidth + " h " + camheight);
+                //Log.i("camworker", "Preview w "+camwidth + " h " + camheight);
 
                 //YUV-NV21 needs only that much bytes
                 callbackbuffer = new byte[(int)(camheight*camwidth*1.5) + 4];
@@ -1088,7 +1088,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             if (is_surface_portrait != is_prev_size_portrait)
                 continue;
 
-            Log.i("CamPrevSize", "size w "+ size.width + "; size h "+size.height);
+            //Log.i("CamPrevSize", "size w "+ size.width + "; size h "+size.height);
             int bigger_size, smaller_size;
             if (size.width > size.height){
                 bigger_size = size.width;
@@ -1107,7 +1107,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if (found_sorted_index == 0)
             for (int i = 0; i < l.size(); i++) {
                 Camera.Size size = l.get(i);
-                Log.i("CamPrevSize", "size w "+ size.width + "; size h "+size.height);
+                //Log.i("CamPrevSize", "size w "+ size.width + "; size h "+size.height);
                 int bigger_size, smaller_size;
                 if (size.width > size.height){
                     bigger_size = size.width;
@@ -1207,8 +1207,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             nr = 0;
         else
             nr /= ((double) (RSn_curr-RSk_curr)) / ((double) RSn_curr); // relative to the maximum allowed RS error level
-        if (nr>0)
-            Log.i("FFF", "nr "+nr);
+        //if (nr>0)
+        //    Log.i("FFF", "nr "+nr);
         return nr;
     }
 
@@ -1223,8 +1223,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         double pr = 0;
         if (this.total_frame_number > 1)
             pr = ((double)this.last_frame_number_arrived_so_far)/((double)this.total_frame_number-1);
-        if (pr > 0)
-            Log.i("FFF", "pr "+pr);
+        //if (pr > 0)
+        //    Log.i("FFF", "pr "+pr);
         return pr;
     }
 
@@ -1413,7 +1413,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     private double detector_native_reset_ended_ns_quiet_interval_for_not_display_nostartseq = 4e9;
     boolean detector_is_quiet_time_for_notdisplay_nostartseq = false;
     public void reset_decoder(){
-        Log.i("RST", "reset of the decoder is detected");
+        //Log.i("RST", "reset of the decoder is detected");
 
         synchronized (this){
             this.time_detector_reseted = System.nanoTime();
@@ -1454,7 +1454,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.last_frame_number = 0;
             this.total_frame_number = -1;
 
-            Log.i("RST", "stat value "+stat);
+            //Log.i("RST", "stat value "+stat);
             this.file_detection_ended = true;
             if(stat == 3 || stat == 4){
 
@@ -1462,13 +1462,13 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     synchronized (this) {
                         this.got_chunkRS_decode_error = true;
                     }
-                    Log.i("RST ERR", "Got unrecoverable chunk at the end - error");
+                    //Log.i("RST ERR", "Got unrecoverable chunk at the end - error");
                     synchronized (this) {
                         this.error_time_arrival_ms = System.nanoTime() / 1.0e6;
                         this.should_deliver_error_info_for_certain_time = true;
                     }
                 }else{
-                    Log.i("RST ERR", "Death 8s time passed, restarted, no data obtained");
+                    //Log.i("RST ERR", "Death 8s time passed, restarted, no data obtained");
                 }
                 this.file_detected_and_finally_saved_successfully = false;
             }

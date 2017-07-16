@@ -156,7 +156,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
         this.preferences = this.getPreferences(Context.MODE_PRIVATE);
 
-        Log.i("REST", "oncreate called");
+        //Log.i("REST", "oncreate called");
 
 
         Intent intent = getIntent();
@@ -177,7 +177,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }
 
 
-        Log.i("intent", "file : "+this.upload_requested_path_by_system);
+        //Log.i("intent", "file : "+this.upload_requested_path_by_system);
 
     }
 
@@ -199,11 +199,11 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                 switch (item.getItemId())
                 {
                     case R.id.menu_settings:
-                        Log.i("MENU", "settings selected");
+                        //Log.i("MENU", "settings selected");
                         showSettingDialog();
                         return true;
                     case R.id.menu_help:
-                        Log.i("MENU", "help selected");
+                        //Log.i("MENU", "help selected");
                         if (!Qrfiles.this.helpdialogshown)
                             showHelpDialog();
                         return true;
@@ -211,15 +211,15 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                         Qrfiles.watchYoutubeVideo(Qrfiles.this, Qrfiles.this.getString(R.string.video_id));
                         return true;
                     case R.id.menu_about:
-                        Log.i("MENU", "about selected");
+                        //Log.i("MENU", "about selected");
                         showAboutDialog();
                         return true;
                     case R.id.menu_privacypolicy:
-                        Log.i("MENU", "privacy policy selected");
+                        //Log.i("MENU", "privacy policy selected");
                         showPrivacyPolicyDialog();
                         return true;
                     case R.id.menu_proversion:
-                        Log.i("MENU", "pro update selected.");
+                        //Log.i("MENU", "pro update selected.");
                         openProVersionOnPlayStore(Qrfiles.this);
                         return true;
                 }
@@ -317,7 +317,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     boolean is_in_filechooser_view = false;
     @Override
     public void onResume(){
-        Log.i("ACTINFO", "Activity resumed");
+        //Log.i("ACTINFO", "Activity resumed");
 
 
         this.readAndSanitizePrefs();
@@ -420,7 +420,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                 Qrfiles.this.uparrowbutton.setOnClickListener(null);
                 uparrowbutton.setClickable(false);
                 uparrowbutton.requestLayout();
-                Log.i("clickable", "setting clickable to false");
+                //Log.i("clickable", "setting clickable to false");
                 if (Qrfiles.this.is_in_decoder_view) {
                     Qrfiles.this.switch_to_qrsender_view();
                     Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.icdown3);
@@ -495,7 +495,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     public void onPause(){
         super.onPause();
 
-        Log.i("ACTINFO", "Activity paused");
+        //Log.i("ACTINFO", "Activity paused");
         this.destroyall();
 
         synchronized (this){
@@ -554,7 +554,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         if (this.fileselection_dialog_in_sender != null)
             this.fileselection_dialog_in_sender.closeit();
 
-        Log.i("QTHRM", "about to destroy qrsurf resources");
+        //Log.i("QTHRM", "about to destroy qrsurf resources");
 
         if(this.qrsurf != null){
             this.qrsurf.destroy_all_resources();//actually, only deinits qrsurf manager thread
@@ -567,7 +567,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }
         this.qrsurf = null;
 
-        Log.i("QTHRM", "destroyed qrsurf resources");
+        //Log.i("QTHRM", "destroyed qrsurf resources");
         //setContentView(R.layout.activity_qrfiles);
 
 
@@ -640,8 +640,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         uparrowbutton.setClickable(true);
                 uparrowbutton.requestLayout();
 
-                Log.i("clickable", "setting clickable to true1");
-        Log.i("clickable", "executed on the thread, id: " + android.os.Process.myTid());
+                //Log.i("clickable", "setting clickable to true1");
+        //Log.i("clickable", "executed on the thread, id: " + android.os.Process.myTid());
 
 
         this.main_layout.setVisibility(View.VISIBLE);
@@ -717,8 +717,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         Qrfiles.this.uparrowbutton.setImageBitmap(bmp);
                 uparrowbutton.setClickable(true);
                 uparrowbutton.requestLayout();
-                Log.i("clickable", "setting clickable to true2");
-                Log.i("clickable", "executed on the thread, id: " + android.os.Process.myTid());
+                //Log.i("clickable", "setting clickable to true2");
+                //Log.i("clickable", "executed on the thread, id: " + android.os.Process.myTid());
 
         //    }
         //});
@@ -901,8 +901,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     String currDumpPath = null;
     @Override
     public void onNewTransmissionSettings(int fps, int errlevpercent, int qrsize, int startseqtime, String newdumppath, boolean is_blur) {
-        Log.i("Settings", "got new settings from settingsmenu, fps : "+fps+", err : "+errlevpercent
-                + ", qrsize : "+qrsize+", sseq : "+startseqtime+", dumppath : "+newdumppath);
+        //Log.i("Settings", "got new settings from settingsmenu, fps : "+fps+", err : "+errlevpercent
+        //        + ", qrsize : "+qrsize+", sseq : "+startseqtime+", dumppath : "+newdumppath);
         this.currFPSvalue = fps;
         this.currErrorvalue = errlevpercent;
         this.currQrSizevalue = qrsize;
@@ -959,7 +959,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
 
     private void initall(){
-        Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
+        //Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
         this.camworker = new CameraWorker("CameraDetectorThread");
         this.camworker.setContext(this);
         this.camworker.start();
@@ -970,7 +970,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.camworker.handler.post(new Runnable() {
             @Override
             public void run() {
-                Log.i("CamThr", "executed on the camera thread, id: " + android.os.Process.myTid());
+                //Log.i("CamThr", "executed on the camera thread, id: " + android.os.Process.myTid());
             }
         });
         //this.camworker.initAsync();

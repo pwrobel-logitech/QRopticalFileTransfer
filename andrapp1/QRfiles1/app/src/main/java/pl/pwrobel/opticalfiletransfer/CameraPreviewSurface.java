@@ -132,8 +132,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     boolean surface_and_camera_prepared = false;
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
-        Log.i("draw", "surface changed, size w "+ this.getWidth()+ " h "+this.getHeight() + "argw "+width+" argh "+height);
+       // Log.i("thr", "executed on thread id: " + android.os.Process.myTid());
+        //Log.i("draw", "surface changed, size w "+ this.getWidth()+ " h "+this.getHeight() + "argw "+width+" argh "+height);
 
         int[] mTextureHandles = new int[1];
         GLES20.glGenTextures(1, mTextureHandles, 0);
@@ -229,8 +229,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
             this.notifyAll();
         }
 
-        Log.i("click", "detector fully inited");
-        Log.i("clickable", "executed on the thread in cam surf, id: " + android.os.Process.myTid());
+        //Log.i("click", "detector fully inited");
+        //Log.i("clickable", "executed on the thread in cam surf, id: " + android.os.Process.myTid());
     }
 
     private boolean isblur = true;

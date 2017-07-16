@@ -57,21 +57,21 @@ public class QRSurface extends GLSurfaceView implements
     Context mContext; //interface for the main activity
     public QRSurface(Context context) {
         super(context);
-        Log.i("QRSurf", "constructor 1");
+        //Log.i("QRSurf", "constructor 1");
         mContext = context;
         this.init_qrsurf();
     }
 
     public QRSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.i("QRSurf", "constructor 2");
+        //Log.i("QRSurf", "constructor 2");
         mContext = context;
         this.init_qrsurf();
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        Log.i("QRSurf", "surface created");
+        //Log.i("QRSurf", "surface created");
 
         try {
             mOffscreenShader.setProgram(R.raw.qrvsh, R.raw.qrfsh, mContext);
@@ -87,7 +87,7 @@ public class QRSurface extends GLSurfaceView implements
     private int surfw = 0, surfh = 0;
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        Log.i("QRSurf", "surface changed w"+width + " h "+height);
+        //Log.i("QRSurf", "surface changed w"+width + " h "+height);
         this.surfw = width;
         this.surfh = height;
 
@@ -232,7 +232,7 @@ public class QRSurface extends GLSurfaceView implements
         /////////////////////////////////////////////////////////
 
 
-        Log.i("QRSurf", "ondrawframe");
+        //Log.i("QRSurf", "ondrawframe");
         boolean shoulddisplay = true;
         synchronized (this) {
             this.is_frame_drawing = false;
@@ -411,7 +411,7 @@ public class QRSurface extends GLSurfaceView implements
 
         if (current_ns - this.last_ns_time_frame_requested_for_display > framewaitns){
             last_ns_time_frame_requested_for_display = current_ns;
-            Log.i("qrsurf", "manager thread wants new frame");
+            //Log.i("qrsurf", "manager thread wants new frame");
             if (should_display_anything){
                 synchronized (this){
                     this.is_frame_drawing = true;
@@ -423,7 +423,7 @@ public class QRSurface extends GLSurfaceView implements
                             tell_no_more_generating_header();
                             this.total_number_of_dataframes_produced_by_the_encoder
                                 = tell_how_much_frames_will_be_generated();
-                            Log.i("PPP", "header stooops, TOT frames : "+ this.total_number_of_dataframes_produced_by_the_encoder);
+                            //Log.i("PPP", "header stooops, TOT frames : "+ this.total_number_of_dataframes_produced_by_the_encoder);
                             this.description_status_1 = this.getStringResourceByName("upload_file_desc_string");
                         }
                     }
@@ -569,13 +569,13 @@ public class QRSurface extends GLSurfaceView implements
         this.surface_buffer.current_qrbuffer_size_width = (int)upper_power_of_two((long)this.surface_buffer.current_width);
         this.surface_buffer.current_qrbuffer_size_height = this.surface_buffer.current_qrbuffer_size_width;
 
-        Log.i("qrsurf", "got buff size : "+this.surface_buffer.current_height + " pow2 : "+this.surface_buffer.current_qrbuffer_size_width);
+        //Log.i("qrsurf", "got buff size : "+this.surface_buffer.current_height + " pow2 : "+this.surface_buffer.current_qrbuffer_size_width);
 
         double currt = System.nanoTime();
         if (this.total_number_of_dataframes_produced_by_the_encoder > 0)
         if (currt - this.time_ns_last_upload_progressbar_done > this.time_ns_interval_upload_updated
                 || this.nframe_last_produced == this.total_number_of_dataframes_produced_by_the_encoder-1){
-            Log.i("qrsurf", "will draw progressbarsurf");
+            //Log.i("qrsurf", "will draw progressbarsurf");
             final double progr = ((double) this.nframe_data_last_produced) / ((double)this.total_number_of_dataframes_produced_by_the_encoder-1);
             Activity a = (Activity) this.getContext();
             if (a != null && !this.continuous_status_display_update_is_over)
@@ -678,7 +678,7 @@ public class QRSurface extends GLSurfaceView implements
                 //}
                 //this.waiting_to_add_files = false;
                 //this.should_display_anything = false;
-                Log.i("PPP", "frame producer ended, destroying..");
+                //Log.i("PPP", "frame producer ended, destroying..");
 
 
 

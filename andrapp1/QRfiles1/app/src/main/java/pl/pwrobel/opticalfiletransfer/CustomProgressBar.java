@@ -58,7 +58,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         //synchronized (holder) {
-            Log.i("PRBAR", "progressbar surface created");
+            //Log.i("PRBAR", "progressbar surface created");
             this.is_operational = true;
         //}
 
@@ -67,7 +67,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
     @Override
     public synchronized void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         //synchronized (holder) {
-            Log.i("PRBAR", "progressbar surface changed");
+            //Log.i("PRBAR", "progressbar surface changed");
             this.is_operational = true;
         //}
     }
@@ -75,7 +75,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
     @Override
     public synchronized void surfaceDestroyed(SurfaceHolder holder) {
         //synchronized (holder){//
-            Log.i("PRBAR", "progressbar surface destroyed");
+            //Log.i("PRBAR", "progressbar surface destroyed");
             this.is_operational = false;
         //}
     }
@@ -201,7 +201,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
                             rectanglePaint.setColor(Color.BLACK);
                             rectanglePaint.setTextSize(32);
                             String stringtodraw = this.filename+String.format( "%.2f", timeval)+"s";
-                            Log.i("STRQ", stringtodraw);
+                            //Log.i("STRQ", stringtodraw);
                             rectanglePaint.getTextBounds(stringtodraw, 0, stringtodraw.length(), this.textrect);
                             c.drawText(stringtodraw, (int)(w/2.0-this.textrect.width()/2.0),
                                        (int)(h/2.0+this.textrect.height()/2.0), rectanglePaint);
@@ -253,7 +253,7 @@ public class CustomProgressBar extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.i("PRBAR", "on touch in the progressbar");
+        //Log.i("PRBAR", "on touch in the progressbar");
         return false;
     }
 }
