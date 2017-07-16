@@ -165,8 +165,8 @@
 
 
 
-    <string name="link_win">http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html</string>
-    <string name="link_lin">http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.html</string>
+    <string name="link_win">http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.php</string>
+    <string name="link_lin">http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.php</string>
 
 
     <string name="privpolicy_tilte">Privacy Policy</string>
@@ -374,7 +374,7 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="linkab14astr1">windows download page</string>
-    <string name="linkab14aval1">http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.html</string>
+    <string name="linkab14aval1">http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.php</string>
     <string name="textabout14a">
     For Windows supplementary uploader program all the LGPL code, sligthly modifed then, is provided as a
         single dll named encoder_util_lib.dll - and the full Visual Studio 2017 solution + code, to rebuild that library is
