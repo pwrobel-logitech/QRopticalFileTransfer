@@ -797,6 +797,37 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     Log.e("camworker", "startpreview exception");
                 }
 
+                final Camera.Parameters param2 = param;
+                final Camera cam2 = camera;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //param.setRecordingHint(true);
+                        if (param2 != null) {
+                            List<String> focusModes = param2.getSupportedFocusModes();
+                            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
+                                try {
+                                    param2.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                                } catch (Exception e){
+                                    Log.e("camworker", "Error setting the FOCUS_MODE_CONTINUOUS_PICTURE initCamAsync.");
+                                }
+                            } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)){
+                                try {
+                                    param2.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                                } catch (Exception e){
+                                    Log.e("camworker", "Error setting the FOCUS_MODE_AUTO initCamAsync.");
+                                }
+                            }
+                        }
+                        if (cam2 != null)
+                            try {
+                                cam2.setParameters(param2);
+                            } catch (Exception e){
+                                Log.e("camworker", "Error setting params afer 500ms delay");
+                            }
+                    }
+                }, 500);
+
                 CameraWorker.this.filedump_directory_name = foldername;
                 CameraWorker.this.filedump_directory_fullpath =
                         create_dump_directory_if_not_present(CameraWorker.this.filedump_directory_name);
@@ -942,71 +973,81 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 //param.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
                 //camera.setParameters(param);
                 //Log.i("Focus", "auto");
+                Camera.Parameters param = null;
                 if (camera != null)
-                    camera.autoFocus(new Camera.AutoFocusCallback() {
-                        @Override
-                        public void onAutoFocus(boolean success, Camera camera2) {
-                            if (camera == null)
-                                return;
-                            Log.i("Focus", "camera autofocused, success = " + success);
+                    param = camera.getParameters();
+                if (param != null) {
+                    List<String> focusModes = param.getSupportedFocusModes();
+                    if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)){
+                        try {
+                            param.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                        } catch (Exception e){
+                            Log.e("camworker", "Error setting the FOCUS_MODE_CONTINUOUS_PICTURE initCamAsync.");
+                        }
+                    }
+                }
 
-                            if(camera != null)
-                                camera.cancelAutoFocus();
+                try{
+                    if(camera != null)
+                        camera.setParameters(param);
+                }catch (Exception e){
+                    Log.e("camworker", "Error setting the parameters in initCamAsync.");
+                }
 
-                            Camera.Parameters param = camera.getParameters();
-                            //param.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
-                            //camera.setParameters(param);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (camera != null)
+                            camera.autoFocus(new Camera.AutoFocusCallback() {
+                                @Override
+                                public void onAutoFocus(boolean success, Camera camera2) {
+                                    if (camera == null)
+                                        return;
+                                    Log.i("Focus", "camera autofocused, success = " + success);
 
-                            //camera.autoFocus(null);
-                            //Log.i("Focus", "fixed");
+                                    //if(camera != null)
+                                    //    camera.cancelAutoFocus();
+
+                                    Camera.Parameters param = camera.getParameters();
+                                    //param.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
+                                    //camera.setParameters(param);
+
+                                    //camera.autoFocus(null);
+                                    //Log.i("Focus", "fixed");
 
 
-                            //param.setRecordingHint(true);
-                            if (param != null) {
-                                List<String> focusModes = param.getSupportedFocusModes();
-                                if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)){
-                                    try {
-                                        param.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                                    } catch (Exception e){
-                                        Log.e("camworker", "Error setting the FOCUS_MODE_CONTINUOUS_PICTURE initCamAsync.");
+                                    //param.setRecordingHint(true);
+
+
+
+
+
+                                    //param.setRecordingHint(true);
+                                    if (param != null) {
+                                        List<String> focusModes = param.getSupportedFocusModes();
+                                        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
+                                            try {
+                                                param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                                            } catch (Exception e){
+                                                Log.e("camworker", "Error setting the FOCUS_MODE_CONTINUOUS_PICTURE initCamAsync.");
+                                            }
+                                        }
                                     }
-                                }
-                            }
-
-                            try{
-                                if(camera != null)
-                                    camera.setParameters(param);
-                            }catch (Exception e){
-                                Log.e("camworker", "Error setting the parameters in initCamAsync.");
-                            }
+                                    //int nareas = param.getMaxNumFocusAreas();
+                                    //if (nareas > 0) {
+                                    //ArrayList<Camera.Area> focusAreas = new ArrayList<Camera.Area>(1);
+                                    //focusAreas.add(new Camera.Area(new Rect(-100, -100, 100, 100), 1000));
+                                    //param.setFocusAreas(focusAreas);
+                                    //param.setMeteringAreas(focusAreas);
+                                    //}
 
 
-                            //param.setRecordingHint(true);
-                            if (param != null) {
-                                List<String> focusModes = param.getSupportedFocusModes();
-                                if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
-                                    try {
-                                        param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-                                    } catch (Exception e){
-                                        Log.e("camworker", "Error setting the FOCUS_MODE_CONTINUOUS_PICTURE initCamAsync.");
+                                    try{
+                                        if(camera != null)
+                                            camera.setParameters(param);
+                                    }catch (Exception e){
+                                        Log.e("camworker", "Error setting the parameters in initCamAsync.");
                                     }
-                                }
-                            }
-                            //int nareas = param.getMaxNumFocusAreas();
-                            //if (nareas > 0) {
-                            //ArrayList<Camera.Area> focusAreas = new ArrayList<Camera.Area>(1);
-                            //focusAreas.add(new Camera.Area(new Rect(-100, -100, 100, 100), 1000));
-                            //param.setFocusAreas(focusAreas);
-                            //param.setMeteringAreas(focusAreas);
-                            //}
-
-
-                            try{
-                                if(camera != null)
-                                    camera.setParameters(param);
-                            }catch (Exception e){
-                                Log.e("camworker", "Error setting the parameters in initCamAsync.");
-                            }
 
 
 
@@ -1031,8 +1072,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                             */
 
 
-                        }
-                    });
+                                }
+                            });
+                    }
+                },150);
+
+
                 //camera.cancelAutoFocus();
                 //camera.autoFocus(null);
             }
