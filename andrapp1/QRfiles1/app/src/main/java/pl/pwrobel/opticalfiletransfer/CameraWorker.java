@@ -1116,7 +1116,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         });
 
 
-        int found_sorted_index = 0;
+        int found_sorted_index = -1;
         for (int i = 0; i < l.size(); i++) {
             Camera.Size size = l.get(i);
 
@@ -1149,7 +1149,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
 
         //backup mode - no matching portraits mode between preview sizes and surface proportion found
-        if (found_sorted_index == 0)
+        if (found_sorted_index == -1)
             for (int i = 0; i < l.size(); i++) {
                 Camera.Size size = l.get(i);
                 //Log.i("CamPrevSize", "size w "+ size.width + "; size h "+size.height);
@@ -1168,8 +1168,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             }
 
         //last resort
-        if(found_sorted_index == 0)//have not found
-            found_sorted_index = l.size() - 1;
+        if(found_sorted_index == -1)//have not found
+            found_sorted_index = 0;//l.size() - 1;
 
         //find the selected index in the unsorted array
         Camera.Size founds = l.get(found_sorted_index);
