@@ -120,6 +120,7 @@ public class AboutFragmentLGPL extends DialogFragment {
                                     .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                                     .addTestDevice("B8E41997327A892A4FD057B12AD2C843")
                                     .addTestDevice("974226D4036724BE09FB80898BA1B4BE")
+                                    .addTestDevice("565FCDDC3CCE41C9B34DE6365FCF267C")
                                     .build();
 
                             adView3.loadAd(adRequest);
