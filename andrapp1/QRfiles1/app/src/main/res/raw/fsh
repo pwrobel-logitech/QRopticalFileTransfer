@@ -26,10 +26,10 @@ void main(){
    x = vTextureCoord.x;
    y = vTextureCoord.y;
    if(prev_yx_ratio > 1.0 ){
-      boundx = 0.27;
+      boundx = 0.285;
       boundy = boundx/prev_yx_ratio;
    }else {
-      boundy = 0.27;
+      boundy = 0.285;
       boundx = boundy*prev_yx_ratio;
    }
    distancefactor = 1.0;
