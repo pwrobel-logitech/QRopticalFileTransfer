@@ -322,7 +322,7 @@ public class SettingsFragment extends DialogFragment {
                 numberPickerQrsize.setValue(585);
                 numberPickerStartSeqTime.setValue(6);
                 currFileDumpPath = "Download";
-                pref_is_blurshader = true;
+                pref_is_blurshader = false;
                 checkBoxblur.setChecked(pref_is_blurshader);
                 checkBoxblur.requestLayout();
 
@@ -450,8 +450,8 @@ public class SettingsFragment extends DialogFragment {
             folderselect.setVisibility(View.GONE);
 
         View blurview = v.findViewById(R.id.optionalview1);
-        if (!ispro)
-            blurview.setVisibility(View.GONE);
+        //if (!ispro)
+        //    blurview.setVisibility(View.GONE);
 
         final AdView adView2 = (AdView) v.findViewById(R.id.adView);
         adView2.setVisibility(View.GONE);

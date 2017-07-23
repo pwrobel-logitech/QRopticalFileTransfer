@@ -298,7 +298,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         int suggN = this.preferences.getInt("suggested_N", 511);
         String fdumppath = this.preferences.getString("filedumppath", "Download");
         this.pref_is_dismiss_help = this.preferences.getBoolean("is_dismiss_help", false);
-        this.pref_is_blurshader = this.preferences.getBoolean("is_blurshader", true);
+        this.pref_is_blurshader = this.preferences.getBoolean("is_blurshader", false);
 
         this.currFPSvalue = Qrfiles.clamp(fps, 5, 60);
         this.currErrorvalue = Qrfiles.clamp(errlev, 20, 80);
@@ -892,7 +892,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     }
 
     boolean pref_is_dismiss_help = false;
-    boolean pref_is_blurshader = true;
+    boolean pref_is_blurshader = false;
 
     int currFPSvalue = 17;
     int currErrorvalue = 50;
