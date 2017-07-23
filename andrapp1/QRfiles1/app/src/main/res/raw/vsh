@@ -9,8 +9,11 @@ uniform mat4 uOrientationM;
 varying vec2 vTextureCoord;
 uniform vec2 sizeprev;
 
+varying vec2 origpos;
+
 void main(){
 	gl_Position = vec4(aPosition, 0.0, 1.0);
+	origpos = 0.5*vec2(aPosition.x, aPosition.y);
 	vTextureCoord = (uTransformM * (0.5*(1.0 + uOrientationM * gl_Position))).xy;
-	gl_Position.xy *= ratios;
+	gl_Position.xy *= 1.0*ratios;
 }
