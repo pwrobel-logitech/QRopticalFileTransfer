@@ -646,8 +646,11 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     */
 
     private void testForFolderWritablility(String fullfolderpath){
-        File fp = new File(fullfolderpath+File.separator+"sAmplE_checkwrite_xYz128file__tmpcachE.tmp");
-        boolean writable = fp.canWrite();
+        File fp = new File(fullfolderpath);
+        String state = Environment.getExternalStorageState();
+        boolean writable = ((!Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)));
+        if (!fp.canWrite())
+            writable = false;
         if (!writable){
             final Activity a = (Activity) CameraWorker.this.context;
             if (a != null){
