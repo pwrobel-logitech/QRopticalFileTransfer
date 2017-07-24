@@ -2,6 +2,7 @@ package pl.pwrobel.opticalfiletransfer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -12,6 +13,7 @@ import android.os.HandlerThread;
 import android.os.Process;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -644,8 +646,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     */
 
     private void testForFolderWritablility(String fullfolderpath){
-        //File f = new File(fullfolderpath+File.separator+"sAmplE_checkwrite_xYz128file__tmpcachE.tmp");
-        File fp = new File(fullfolderpath);
+        File fp = new File(fullfolderpath+File.separator+"sAmplE_checkwrite_xYz128file__tmpcachE.tmp");
         boolean writable = fp.canWrite();
         if (!writable){
             final Activity a = (Activity) CameraWorker.this.context;
@@ -653,12 +654,16 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 a.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast d = Toast.makeText(a,
-                                a.getString(R.string.failed_writability_test1) + " " +
-                                        CameraWorker.this.filedump_directory_fullpath + " " +
-                                        a.getString(R.string.failed_writability_test2)
-                                , Toast.LENGTH_LONG);
-                        d.show();
+                        for (int i = 0; i < 2; i++){
+                            Toast d = Toast.makeText(a,
+                                    a.getString(R.string.failed_writability_test1) + " '" +
+                                            CameraWorker.this.filedump_directory_fullpath + "'" +
+                                            a.getString(R.string.failed_writability_test2)
+                                    , Toast.LENGTH_LONG);
+                            TextView v = (TextView) d.getView().findViewById(android.R.id.message);
+                            v.setTextColor(Color.RED);
+                            d.show();
+                        }
                     }
                 });
             }
