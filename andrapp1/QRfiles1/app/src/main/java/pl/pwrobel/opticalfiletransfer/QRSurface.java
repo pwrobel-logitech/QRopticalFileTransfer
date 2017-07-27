@@ -3,6 +3,7 @@ package pl.pwrobel.opticalfiletransfer;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -10,6 +11,7 @@ import android.opengl.Matrix;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -515,6 +517,32 @@ public class QRSurface extends GLSurfaceView implements
                     ViewGroup.LayoutParams params2 = fill.getLayoutParams();
                     params2.height = locfld[1];
                     fill.setLayoutParams(params2);
+
+                    Display display = a.getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    int width = size.x;
+                    int height = size.y;
+
+                    if (height == 0){
+                        height = 1;
+                        width = 0;
+                    }
+
+                    float ratio = 1.0f / (((float)width) / height);
+
+                    //View sqrl = a.findViewById(R.id.sqrl);
+                    //ViewGroup.LayoutParams pp = QRSurface.this.getLayoutParams();
+                    //int nw = (int)(width * 0.5);
+                    //params2.width = nw;
+                    //QRSurface.this.setLayoutParams(pp);
+
+                    if (ratio < 4.0f/3.0f + 0.01){
+                        View add = a.findViewById(R.id.adViewUpl);
+                        if (add != null)
+                            add.setVisibility(GONE);
+                    }
+
                     if(encoder_status_textfield != null) {
                         encoder_status_textfield.setText(getStringResourceByName("ask_for_new_file_selection_to_upload"));
                         encoder_status_textfield.requestLayout();

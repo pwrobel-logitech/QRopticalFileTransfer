@@ -29,9 +29,17 @@
                 android:layout_alignParentBottom="true"
                 android:gravity="center_horizontal|center_vertical">
 
-                <include
-                    android:id="@+id/addidinsender"
-                    layout="@layout/add_layout" />
+
+                <com.google.android.gms.ads.AdView
+                    android:id="@+id/adViewUpl"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+
+
+                    app:adSize="SMART_BANNER"
+                    app:adUnitId="ca-app-pub-4071491951244437/9289547101"></com.google.android.gms.ads.AdView>
 
 
             </LinearLayout>
@@ -46,14 +54,16 @@
 
 
         <pl.pwrobel.opticalfiletransfer.SquareLayout
+            android:id="@+id/sqrl"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
+            android:gravity="center"
             android:orientation="vertical">
 
             <pl.pwrobel.opticalfiletransfer.QRSurface
                 android:id="@+id/qrsurf"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </pl.pwrobel.opticalfiletransfer.SquareLayout>
 

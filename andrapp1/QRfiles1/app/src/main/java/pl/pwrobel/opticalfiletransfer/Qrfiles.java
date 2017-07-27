@@ -742,7 +742,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.encoder_status_textfield2 = (TextView) this.findViewById(R.id.encoder_status_textfield2);
         this.qrsurf.setCustomTextViewStatus(this.encoder_status_textfield, this.encoder_status_textfield2);
 
-        adView = (AdView) this.findViewById(R.id.adView);
+        adView = (AdView) this.findViewById(R.id.adViewUpl);
 
         new Timer().schedule(new TimerTask()
         {
