@@ -17,7 +17,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 	<dimen name="list_padding">0dp</dimen>
 	<dimen name="list_item_padding">16dp</dimen>
-	<dimen name="fab_margin">16dp</dimen>
+	<dimen name="fab_margin">9dp</dimen>
 	<color name="material_deep_teal_200">#999999</color>
 	<color name="material_deep_teal_500">#595959</color>
 </resources>

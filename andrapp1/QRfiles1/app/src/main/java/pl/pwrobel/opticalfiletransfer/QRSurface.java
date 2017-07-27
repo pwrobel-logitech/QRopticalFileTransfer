@@ -2,6 +2,7 @@ package pl.pwrobel.opticalfiletransfer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -9,6 +10,7 @@ import android.opengl.Matrix;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -500,11 +502,19 @@ public class QRSurface extends GLSurfaceView implements
     }
 
     private void clear_ui(){
-        Activity a = (Activity) this.getContext();
+        final Activity a = (Activity) this.getContext();
         if (a != null)
             a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    View fill = a.findViewById(R.id.uplfit);
+                    //fill.setBackgroundColor(Color.BLUE);
+                    View upl = a.findViewById(R.id.folderfilebutton);
+                    int locfld[] = new int[2];
+                    upl.getLocationOnScreen(locfld);
+                    ViewGroup.LayoutParams params2 = fill.getLayoutParams();
+                    params2.height = locfld[1];
+                    fill.setLayoutParams(params2);
                     if(encoder_status_textfield != null) {
                         encoder_status_textfield.setText(getStringResourceByName("ask_for_new_file_selection_to_upload"));
                         encoder_status_textfield.requestLayout();
