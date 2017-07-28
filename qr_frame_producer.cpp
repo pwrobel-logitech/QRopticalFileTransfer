@@ -179,7 +179,7 @@ void Qr_frame_producer::produce_metadata(){
     int curr_size = 0;
     int curr_power = 3;
     if (chunk_length == 1) // for big chunk present in different amount, elongate minimum residual one as well
-        curr_power = 5;
+        curr_power = 6;
     else if (chunk_length == 2)
         curr_power = 6;
     else if (chunk_length >= 3)
