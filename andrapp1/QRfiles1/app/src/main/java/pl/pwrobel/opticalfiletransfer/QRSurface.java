@@ -537,7 +537,7 @@ public class QRSurface extends GLSurfaceView implements
                     //params2.width = nw;
                     //QRSurface.this.setLayoutParams(pp);
 
-                    if (ratio < 4.0f/3.0f + 0.01){
+                    if (ratio < 4.0f/3.0f + 0.01 || height < 900 || width < 560){
                         View add = a.findViewById(R.id.adViewUpl);
                         if (add != null)
                             add.setVisibility(GONE);
