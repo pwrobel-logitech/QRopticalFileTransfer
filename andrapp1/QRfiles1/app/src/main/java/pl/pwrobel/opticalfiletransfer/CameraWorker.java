@@ -193,8 +193,15 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
 
 
+        int curr_RSn = RSn;
+        if (is_residual)
+            curr_RSn = RSn_res;
 
-        this.succesfull_positions_in_current_chunk[newfrnum % RSn] = true;
+        int nfn = newfrnum;
+        if (is_residual)
+            nfn -= (nfn / RSn)*RSn;
+
+        this.succesfull_positions_in_current_chunk[nfn % curr_RSn] = true;
 
 
         if (newfrnum != last_frame_number)
@@ -1240,9 +1247,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             RSk_curr = RSk_res;
         double nr = 0;
         int succn = 0;
+        int nfn = this.last_frame_number_arrived_so_far;
+        if (is_residual)
+            nfn -= (nfn / RSn)*RSn;
         if (RSn_curr > 0)
         {
-            for (int i = 0; i < this.last_frame_number_arrived_so_far % RSn_curr; i++){
+            for (int i = 0; i < nfn % RSn_curr; i++){
                 if (succesfull_positions_in_current_chunk[i]==false)
                     succn++;
             }
@@ -1254,6 +1264,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 else
                     nr = ((double)succn) /
                             ((double)((-(this.last_frame_number_arrived_so_far / RSn)*RSn+this.last_frame_number_arrived_so_far) % RSn_res));
+                //Log.i("QQQQ", "succn "+succn + ", nr "+nr + ", RSn_curr "+RSn_curr + ", lasfrarrsofar "+ this.last_frame_number_arrived_so_far);
             }
         }
         if (RSn_curr == 0 || RSk_curr == 0)
