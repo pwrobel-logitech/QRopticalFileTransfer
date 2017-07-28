@@ -175,28 +175,30 @@ void Qr_frame_producer::produce_metadata(){
     this->datalength_per_chunk_ = datalength_per_chunk;
     this->remain_length_ = remain_length;
     this->chunk_length_ = chunk_length;
-    double k_factor = 0.9; // for residual chunks allow more errors. For normal chunks it's not used, so = 1
+    double k_factor = 1.0; // for residual chunks allow more errors. For normal chunks it's not used, so = 1
     int curr_size = 0;
     int curr_power = 3;
     if (chunk_length == 1) // for big chunk present in different amount, elongate minimum residual one as well
-        curr_power = 4;
-    else if (chunk_length == 2)
         curr_power = 5;
-    else if (chunk_length >= 3)
+    else if (chunk_length == 2)
         curr_power = 6;
+    else if (chunk_length >= 3)
+        curr_power = 7;
+    int remK;
     do{
         curr_power += 1;
         int remN = (1 << curr_power) - 1;
+        remK = (int)((1.0-this->suggested_err_ratio)*k_factor*remN);//*(remN - ((1 << curr_power) / 2)));
         curr_size = this->estimate_capacity(remN,
-                                            (int)((1.0-this->suggested_err_ratio)*k_factor*(remN - ((1 << curr_power) / 2))),
+                                            remK,
                                             this->total_chars_per_QR_);
     }while(curr_size<remain_length);
     int remN = (1 << curr_power) - 1;
-    int remK = (int)((1.0-this->suggested_err_ratio)*k_factor*(remN - ((1 << curr_power) / 2)));
-    if (remN > optimal_rsn)
-        remN = optimal_rsn;
-    if (remK > optimal_rsk)
-        remK = optimal_rsk;
+    //int remK = (int)((1.0-this->suggested_err_ratio)*k_factor*(remN - ((1 << curr_power) / 2)));
+    if (remN > 2 * optimal_rsn)
+        remN = 2 * optimal_rsn;
+    if (remK > 2 * optimal_rsk)
+        remK = 2 * optimal_rsk;
     this->setup_encoder(optimal_rsn, optimal_rsk, remN, remK);
     // fill metadata array
     while (cont){
