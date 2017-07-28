@@ -198,7 +198,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             curr_RSn = RSn_res;
 
         int nfn = newfrnum;
-        if (is_residual)
+        if (is_residual && RSn > 0)
             nfn -= (nfn / RSn)*RSn;
 
         this.succesfull_positions_in_current_chunk[nfn % curr_RSn] = true;
@@ -1248,7 +1248,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         double nr = 0;
         int succn = 0;
         int nfn = this.last_frame_number_arrived_so_far;
-        if (is_residual)
+        if (is_residual && RSn > 0)
             nfn -= (nfn / RSn)*RSn;
         if (RSn_curr > 0)
         {
