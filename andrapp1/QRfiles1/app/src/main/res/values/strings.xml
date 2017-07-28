@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">OpticalFileTransfer</string>
 
+
+    <string name="failed_init_camera">Failed to initialize camera! Try starting again..</string>
+
+
     <string name="upload_mode_switch_text">File upload mode</string>
     <string name="download_mode_switch_text">File download mode</string>
 

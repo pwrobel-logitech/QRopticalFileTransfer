@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Передача оптического файла</string>
 
+    <string name="failed_init_camera">Не удалось инициализировать камеру! Попробуйте начать снова..</string>
+
     <string name="upload_mode_switch_text">Режим отправки файлов</string>
     <string name="download_mode_switch_text">Режим приема файлов</string>
 

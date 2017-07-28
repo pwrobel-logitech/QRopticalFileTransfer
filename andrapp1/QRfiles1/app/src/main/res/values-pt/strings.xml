@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ÓpticosBaixarArquivos</string>
 
+    <string name="failed_init_camera">Falha ao inicializar a câmera! Tente começar de novo ..</string>
+
     <string name="upload_mode_switch_text">Modo de carregamento de arquivos</string>
     <string name="download_mode_switch_text">Modo de recebimento de arquivo</string>
 

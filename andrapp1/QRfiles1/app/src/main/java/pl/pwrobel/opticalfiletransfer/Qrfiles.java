@@ -47,34 +47,58 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     public static void openProVersionOnPlayStore(Activity act){
         final Activity a = act;
         if (a != null){
-            a.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            //a.runOnUiThread(new Runnable() {
+            //    @Override
+            //    public void run() {
                     String appPackageName = a.getPackageName(); // getPackageName() from Context or Activity object
                     if (!appPackageName.contains("pro")); //must end with pro - the free version cannot contain the "pro" string !
                     {
                         appPackageName = appPackageName + "pro";
                     }
+                    Intent googleplayint = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     try {
-                        a.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                        //if(((Qrfiles)act).camworker != null)
+                        //    ((Qrfiles)act).camworker.closeCamAsync();
+
+                        a.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        try {
+                            Thread.sleep(350);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     } catch (android.content.ActivityNotFoundException anfe) {
-                        a.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                        a.startActivity(googleplayint);
+                        try {
+                            Thread.sleep(350);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
+                //}
+           // });
         }
     }
 
     public static void watchYoutubeVideo(Activity act, String id){
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.youtube.com/watch?v=" + id));
+                Uri.parse("http://www.youtube.com/watch?v=" + id)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
             if (act != null)
-                act.startActivity(appIntent);
+                act.startActivity(webIntent);
+            try {
+                Thread.sleep(350);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } catch (ActivityNotFoundException ex) {
             if (act != null)
-                act.startActivity(webIntent);
+                act.startActivity(appIntent);
+            try {
+                Thread.sleep(350);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

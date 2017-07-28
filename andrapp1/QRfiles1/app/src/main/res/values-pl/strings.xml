@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">OptycznyTransferPlików</string>
 
+    <string name="failed_init_camera">Nie udało się zainicjalizować kamery! Spróbuj wystartować ponownie..</string>
+
     <string name="upload_mode_switch_text">Tryb wysyłania plików</string>
     <string name="download_mode_switch_text">Tryb pobierania plików</string>
 

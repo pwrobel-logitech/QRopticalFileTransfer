@@ -2,6 +2,7 @@ package pl.pwrobel.opticalfiletransfer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -715,7 +716,45 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     camera.release();
                 }
 
-                camera = Camera.open();
+                try {
+                    Thread.sleep(10);
+                    camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+                }catch (Exception e){
+                    final Activity a = (Activity) CameraWorker.this.context;
+                    //Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                    //homeIntent.addCategory( Intent.CATEGORY_HOME );
+                    //homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    //a.startActivity(homeIntent);
+                    Log.e("Camera", "Failed to connect to camera service");
+
+                    if (a != null)
+                        a.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (a != null){
+                                    Toast d = Toast.makeText(a, "Failed to initialize camera! Try starting again..", Toast.LENGTH_LONG);
+                                    TextView v = (TextView) d.getView().findViewById(android.R.id.message);
+                                                                v.setTextColor(Color.RED);
+                                    d.show();
+                                }
+                            }
+                        });
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    Intent homeIntent2 = new Intent(Intent.ACTION_MAIN);
+                    homeIntent2.addCategory( Intent.CATEGORY_HOME );
+                    homeIntent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    a.startActivity(homeIntent2);
+
+                    synchronized (CameraWorker.this) {
+                        camera_initialized = true;
+                        CameraWorker.this.notifyAll();
+                    }
+                    return;
+                }
 
                 if (camera != null)
                     camera.cancelAutoFocus();
