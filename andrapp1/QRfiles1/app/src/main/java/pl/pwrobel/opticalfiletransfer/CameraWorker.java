@@ -732,9 +732,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                             @Override
                             public void run() {
                                 if (a != null){
-                                    Toast d = Toast.makeText(a, "Failed to initialize camera! Try starting again..", Toast.LENGTH_LONG);
+                                    Toast d = Toast.makeText(a, a.getString(R.string.failed_init_camera), Toast.LENGTH_LONG);
                                     TextView v = (TextView) d.getView().findViewById(android.R.id.message);
-                                                                v.setTextColor(Color.RED);
+                                    v.setTextColor(Color.RED);
                                     d.show();
                                 }
                             }
