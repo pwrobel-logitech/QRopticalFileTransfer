@@ -468,8 +468,11 @@ void do_SDL_setup(){
             while( SDL_PollEvent( &e ) != 0 )
             {
                 lock_mutex();
-                if (exit_app)
+                if (exit_app) {
                     quit = true;
+                    unlock_mutex();
+                    break;
+                }
                 unlock_mutex();
                 PrintEvent(&e);
                 switch (e.type)
@@ -481,11 +484,18 @@ void do_SDL_setup(){
                     case SDL_MOUSEMOTION:
                         break;
                     case SDL_QUIT:
+                        lock_mutex();
                         quit = true;
+                        unlock_mutex();
                     case SDL_KEYDOWN:
-                        if(e.key.keysym.sym == SDLK_ESCAPE)
+                        if(e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q){
+                            lock_mutex();
                             quit = true; //quit
-                        break;
+                            exit_app = true;
+                            unlock_mutex();
+                            break;
+                        }
+
                 }
             }
         }
