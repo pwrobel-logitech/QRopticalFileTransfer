@@ -403,9 +403,21 @@ void request_display_change(){
     unlock_mutex();
 }
 
+
+bool old_fulscreen_status = false;
+void ToggleFullscreen(SDL_Window* Window) {
+    //Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;
+    //bool IsFullscreen = SDL_GetWindowFlags(Window) & FullscreenFlag;
+    SDL_SetWindowFullscreen(Window, is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    SDL_ShowCursor(!is_fullscreen);
+    old_fulscreen_status = is_fullscreen;
+}
+
 int draw_frame(){
     lock_mutex();
     SDL_GetWindowSize(gWindow, &sizeX, &sizeY);
+    if (is_fullscreen != old_fulscreen_status)
+        ToggleFullscreen(gWindow);
     //glrenderer::set_viewport_size(sizeX, sizeY);
     glrenderer::renderGL(QRbuffw, QRbuffh, QRbuffer);
 
@@ -428,6 +440,7 @@ void close()
 }
 
 SDL_Event event;
+
 
 void do_SDL_setup(){
 
@@ -494,6 +507,11 @@ void do_SDL_setup(){
                             exit_app = true;
                             unlock_mutex();
                             break;
+                        }
+                        if(e.key.keysym.sym == SDLK_f){
+                            lock_mutex();
+                            is_fullscreen = !is_fullscreen;
+                            unlock_mutex();
                         }
 
                 }
