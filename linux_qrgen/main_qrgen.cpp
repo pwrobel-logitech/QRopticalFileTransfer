@@ -404,12 +404,50 @@ void request_display_change(){
 }
 
 
+int CURR_SCREEN_WIDTH = SCREEN_WIDTH;
+int CURR_SCREEN_HEIGHT = SCREEN_HEIGHT;
+int CURR_STATUSBAR_HEIGHT = STATUSBAR_HEIGHT;
+int CURR_STATUSBAR_EPSILON = STATUSBAR_EPSILON;
+
 bool old_fulscreen_status = false;
-void ToggleFullscreen(SDL_Window* Window) {
+void ToggleFullscreen(SDL_Window* W) {
+    SDL_Window* Window = W;
     //Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;
     //bool IsFullscreen = SDL_GetWindowFlags(Window) & FullscreenFlag;
     SDL_SetWindowFullscreen(Window, is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
     SDL_ShowCursor(!is_fullscreen);
+
+    SDL_GetWindowSize(Window, &sizeX, &sizeY);
+    if (sizeX > sizeY){
+        CURR_SCREEN_WIDTH = sizeY - 2*CURR_STATUSBAR_HEIGHT;
+        CURR_SCREEN_HEIGHT = CURR_SCREEN_WIDTH + CURR_STATUSBAR_HEIGHT;
+    }else{
+        CURR_SCREEN_WIDTH = sizeX - 2*CURR_STATUSBAR_HEIGHT;
+        CURR_SCREEN_HEIGHT = CURR_SCREEN_WIDTH + CURR_STATUSBAR_HEIGHT;
+    }
+
+    if (!is_fullscreen){
+        CURR_SCREEN_WIDTH = SCREEN_WIDTH;
+        CURR_SCREEN_HEIGHT = SCREEN_HEIGHT;
+        CURR_STATUSBAR_HEIGHT = STATUSBAR_HEIGHT;
+        CURR_STATUSBAR_EPSILON = STATUSBAR_EPSILON;
+    }
+
+    if (glrenderer::progressbar_surf != NULL){
+        SDL_FreeSurface(glrenderer::progressbar_surf);
+        glrenderer::progressbar_surf = NULL;
+    }
+
+    if (glrenderer::surf != NULL){
+        SDL_FreeSurface(glrenderer::surf);
+        glrenderer::surf = NULL;
+    }
+
+    if( !glrenderer::initGL(CURR_SCREEN_WIDTH, CURR_SCREEN_HEIGHT) )
+    {
+        fprintf( stderr, "Unable to initialize OpenGL!\n" );
+    }
+
     old_fulscreen_status = is_fullscreen;
 }
 
@@ -443,6 +481,11 @@ SDL_Event event;
 
 
 void do_SDL_setup(){
+
+    CURR_SCREEN_WIDTH = SCREEN_WIDTH;
+    CURR_SCREEN_HEIGHT = SCREEN_HEIGHT;
+    CURR_STATUSBAR_HEIGHT = STATUSBAR_HEIGHT;
+    CURR_STATUSBAR_EPSILON = STATUSBAR_EPSILON;
 
     //Initialization flag
     bool success = true;

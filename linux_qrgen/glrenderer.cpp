@@ -21,7 +21,7 @@ void glrenderer::setup_projection(){
 	//Initialize Projection Matrix
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, SCREEN_WIDTH, 0.0f, SCREEN_HEIGHT+STATUSBAR_HEIGHT, 0.0f, 1.0f);
+    glOrtho(0.0f, CURR_SCREEN_WIDTH, 0.0f, CURR_SCREEN_HEIGHT+CURR_STATUSBAR_HEIGHT, 0.0f, 1.0f);
     //gluPerspective(90.0, 1 , 0.1, 10.0);
 
 }
@@ -65,8 +65,8 @@ bool glrenderer::initGL(int sx, int sy)
     glrenderer::surf = SDL_CreateRGBSurface(0, 512, 512, 32,
                                       rmask, gmask, bmask, amask);
 
-    glrenderer::progressbar_surf = SDL_CreateRGBSurface(0, SCREEN_WIDTH-2*STATUSBAR_EPSILON,
-                                                        STATUSBAR_HEIGHT-2*STATUSBAR_EPSILON, 32,
+    glrenderer::progressbar_surf = SDL_CreateRGBSurface(0, CURR_SCREEN_WIDTH-2*CURR_STATUSBAR_EPSILON,
+                                                        CURR_STATUSBAR_HEIGHT-2*CURR_STATUSBAR_EPSILON, 32,
                                                         rmask, gmask, bmask, amask);
 
 	glEnable(GL_DEPTH_TEST);
@@ -364,13 +364,13 @@ void glrenderer::drawbar(){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, SCREEN_WIDTH, 0.0f, SCREEN_HEIGHT+STATUSBAR_HEIGHT, 0.0f, 1.0f);
+    glOrtho(0.0f, CURR_SCREEN_WIDTH, 0.0f, CURR_SCREEN_HEIGHT+CURR_STATUSBAR_HEIGHT, 0.0f, 1.0f);
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 
     //glColor3f(1.0f, 0.0f, 0.0f);
-    float x=SCREEN_WIDTH-2*STATUSBAR_EPSILON, y=STATUSBAR_HEIGHT-2*STATUSBAR_EPSILON ;
+    float x=CURR_SCREEN_WIDTH-2*CURR_STATUSBAR_EPSILON, y=CURR_STATUSBAR_HEIGHT-2*CURR_STATUSBAR_EPSILON ;
 
     int Mode = GL_RGBA;
 
@@ -382,8 +382,8 @@ void glrenderer::drawbar(){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 
-    float yoffset = SCREEN_HEIGHT+STATUSBAR_EPSILON;
-    float xoffset = STATUSBAR_EPSILON;
+    float yoffset = CURR_SCREEN_HEIGHT+CURR_STATUSBAR_EPSILON;
+    float xoffset = CURR_STATUSBAR_EPSILON;
 
     float tex_fractw = 1.0f;
     float tex_fracth = 1.0f;
@@ -412,7 +412,7 @@ void render_subscreen()
 		
 	GLenum error = GL_NO_ERROR;
     glrenderer::setup_projection();
-    glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT+STATUSBAR_HEIGHT);
+    glViewport(0,0, CURR_SCREEN_WIDTH, CURR_SCREEN_HEIGHT+CURR_STATUSBAR_HEIGHT);
 	//Initialize Modelview Matrix
 	glMatrixMode( GL_MODELVIEW );
 
@@ -431,7 +431,7 @@ void glrenderer::renderGL(int w, int h, const char* buff)
     //draw here..
 
     float ox1= 0;
-    float oy1 = SCREEN_HEIGHT;
+    float oy1 = CURR_SCREEN_HEIGHT;
 
 
     /*
@@ -453,7 +453,7 @@ void glrenderer::renderGL(int w, int h, const char* buff)
     glEnable( GL_TEXTURE_2D );
 
     //glColor3f(1.0f, 0.0f, 0.0f);
-    float x=SCREEN_WIDTH, y=SCREEN_HEIGHT;
+    float x=CURR_SCREEN_WIDTH, y=CURR_SCREEN_HEIGHT;
 
     int Mode = GL_RGBA;
 
