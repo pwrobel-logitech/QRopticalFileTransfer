@@ -150,8 +150,9 @@ void glrenderer::drawbar(){
         std::string s = stream.str();
 
         std::string pname = getpurefilename(globals::current_filename);
-        if (pname.length()>20){
-            pname = pname.substr(0, 20);
+        int cutofflen = (int)(20.0 * ((double)CURR_SCREEN_WIDTH) / ((double)SCREEN_WIDTH));
+        if (pname.length()>cutofflen){
+            pname = pname.substr(0, cutofflen);
             pname = pname + "..";
         }
 
@@ -207,8 +208,9 @@ void glrenderer::drawbar(){
         std::string s = stream.str();
 
         std::string pname = getpurefilename(globals::current_filename);
-        if (pname.length()>20){
-            pname = pname.substr(0, 20);
+        int cutofflen = (int)(20.0 * ((double)CURR_SCREEN_WIDTH) / ((double)SCREEN_WIDTH));
+        if (pname.length()>cutofflen){
+            pname = pname.substr(0, cutofflen);
             pname = pname + "..";
         }
         std::string msg = std::string (text_startupsequence)+ pname+ " : " + s + "s";
@@ -455,6 +457,17 @@ void glrenderer::renderGL(int w, int h, const char* buff)
     //glColor3f(1.0f, 0.0f, 0.0f);
     float x=CURR_SCREEN_WIDTH, y=CURR_SCREEN_HEIGHT;
 
+    float offsx = 0.0f;
+    float offsy = 0.0f;
+
+    if (x > y) {
+        offsx = (x - y) / 2.0f;
+        x = y;
+    } else {
+        offsy = (y - x) / 2.0f;
+        y = x;
+    }
+
     int Mode = GL_RGBA;
 
     SDL_LockSurface(glrenderer::surf);
@@ -505,8 +518,8 @@ void glrenderer::renderGL(int w, int h, const char* buff)
     float tex_fracth = (float) h / (float)glrenderer::surf->h;
 
     float scrfrac = 0.7;
-    float offsetx = x*(1.0 - scrfrac) / 2.0;
-    float offsety = y*(1.0 - scrfrac) / 2.0;
+    float offsetx = x*(1.0 - scrfrac) / 2.0 + offsx;
+    float offsety = y*(1.0 - scrfrac) / 2.0 + offsy;
 
     glBegin(GL_QUADS);
         glTexCoord2f(0,tex_fracth);

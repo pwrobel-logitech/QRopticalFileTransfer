@@ -419,11 +419,11 @@ void ToggleFullscreen(SDL_Window* W) {
 
     SDL_GetWindowSize(Window, &sizeX, &sizeY);
     if (sizeX > sizeY){
-        CURR_SCREEN_WIDTH = sizeY - 2*CURR_STATUSBAR_HEIGHT;
-        CURR_SCREEN_HEIGHT = CURR_SCREEN_WIDTH + CURR_STATUSBAR_HEIGHT;
+        CURR_SCREEN_WIDTH = sizeX;
+        CURR_SCREEN_HEIGHT = sizeY - CURR_STATUSBAR_HEIGHT;
     }else{
-        CURR_SCREEN_WIDTH = sizeX - 2*CURR_STATUSBAR_HEIGHT;
-        CURR_SCREEN_HEIGHT = CURR_SCREEN_WIDTH + CURR_STATUSBAR_HEIGHT;
+        CURR_SCREEN_WIDTH = sizeX;
+        CURR_SCREEN_HEIGHT = sizeY - CURR_STATUSBAR_HEIGHT;
     }
 
     if (!is_fullscreen){
@@ -448,14 +448,15 @@ void ToggleFullscreen(SDL_Window* W) {
         fprintf( stderr, "Unable to initialize OpenGL!\n" );
     }
 
-    old_fulscreen_status = is_fullscreen;
 }
 
 int draw_frame(){
     lock_mutex();
     SDL_GetWindowSize(gWindow, &sizeX, &sizeY);
-    if (is_fullscreen != old_fulscreen_status)
+    if (is_fullscreen != old_fulscreen_status){
+        old_fulscreen_status = is_fullscreen;
         ToggleFullscreen(gWindow);
+    }
     //glrenderer::set_viewport_size(sizeX, sizeY);
     glrenderer::renderGL(QRbuffw, QRbuffh, QRbuffer);
 
