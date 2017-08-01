@@ -67,6 +67,9 @@ bool is_last_frame_for_curr_file_done = false;
 //
 
 
+bool is_looping_file = false;
+
+
 bool is_displaychange_requested = false;
 bool is_fullscreenchange_requested = false;
 bool is_requested_reread_winsize = false;
@@ -277,17 +280,22 @@ bool exit_app = false;
 
 int MyThread(void *ptr)
 {
-    double last_time = get_current_ms_time();
-
-    int cnt = 0;
-    lock_mutex();
 
     if(!init(false))
     {
         fprintf(stderr, "Failed to initialize!\n" );
     }
 
+    int cnt = 0;
+    do {
+    double last_time = get_current_ms_time();
+    cnt = 0;
 
+    lock_mutex();
+
+
+
+    is_thread_running = true;
     curr_data_frame_num = 0;
     produce_next_QR_frame_to_buffer();
     draw_frame();
@@ -299,6 +307,8 @@ int MyThread(void *ptr)
 
     while(is_thread_running) {
 
+        if (exit_app)
+            break;
 
         if (is_requested_reread_winsize)
         {
@@ -377,6 +387,11 @@ int MyThread(void *ptr)
         //}
 
     }
+    delete frame_producer;
+    frame_producer = NULL;
+    current_file_index=0;
+
+    }while (is_looping_file && !exit_app);
     lock_mutex();
     exit_app = true;
     unlock_mutex();
@@ -471,6 +486,15 @@ int draw_frame(){
 
 void close()
 {
+    if (glrenderer::surf != NULL){
+        SDL_FreeSurface(glrenderer::surf);
+        glrenderer::surf = NULL;
+    }
+    if (glrenderer::progressbar_surf != NULL){
+        SDL_FreeSurface(glrenderer::progressbar_surf);
+        glrenderer::progressbar_surf = NULL;
+    }
+
     //Destroy window
     SDL_DestroyWindow( gWindow );
     gWindow = NULL;
@@ -557,6 +581,11 @@ void do_SDL_setup(){
                             is_fullscreen = !is_fullscreen;
                             unlock_mutex();
                         }
+                        if(e.key.keysym.sym == SDLK_l){
+                            lock_mutex();
+                            is_looping_file = true;
+                            unlock_mutex();
+                        }
 
                 }
             }
@@ -622,6 +651,9 @@ void PrintEvent(const SDL_Event * event)
             break;
         case SDL_WINDOWEVENT_CLOSE:
             DLOG("Window %d closed \n", event->window.windowID);
+            lock_mutex();
+            exit_app = true;
+            unlock_mutex();
             break;
         default:
             DLOG("Window %d got unknown event %d \n",
@@ -662,7 +694,10 @@ int main(int argc, char** argv)
 
 	try {  
 
-    CmdLine cmd("Give it a file to send as a set of QR frames.", ' ', "0.0.1");
+    CmdLine cmd("Give it a file to send as a set of QR frames.\nKeyboard shortcuts for the QR sender window:\n"
+                "'f' - toggle fullscreen on/off\n"
+                "'l' - permanently enable looping for this run\n"
+                "'q', 'Esc' - quit\n ", ' ', "0.0.2");
 
     ValueArg<int> QRsizeArg("q", "qrsize", "Bytes capacity of single QR frame, range 95-1205", false, 585, "int");
     cmd.add( QRsizeArg );
@@ -675,6 +710,9 @@ int main(int argc, char** argv)
 
     ValueArg<int> QRinitTime("t", "initialframetime", "Time duration(s) of the startup sequence - range 3-10s", false, 6, "int");
     cmd.add( QRinitTime );
+
+    SwitchArg QRLoopSupport("l", "looping", "Should send the file(s) in an infinite loop - repeat transmission", false);
+    cmd.add( QRLoopSupport );
 
     //SwitchArg reverseSwitch("r","reverse","Print name backwards", false);
     //cmd.add( reverseSwitch );
@@ -694,6 +732,8 @@ int main(int argc, char** argv)
     initTime = QRinitTime.getValue();
     targetFPS = QRtargetFPS.getValue();
     maxAllowedErrorPercent = MaxErrorLevel.getValue();
+
+    is_looping_file = QRLoopSupport.getValue();
 
     qrbytesize = clamp (qrbytesize, 95, 1205);
     initTime = clamp (initTime, 3, 10);

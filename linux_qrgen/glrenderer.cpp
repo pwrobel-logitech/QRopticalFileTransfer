@@ -403,6 +403,11 @@ void glrenderer::drawbar(){
         glVertex2f(0+xoffset,y+yoffset);
     glEnd();
 
+
+    if (surfaceMessage != NULL){
+        SDL_FreeSurface(surfaceMessage);
+    }
+
     //delete []txtbuff;
 
     //SDL_BlitSurface(progressbar_surf, NULL, winsurf, NULL);
@@ -484,9 +489,9 @@ void glrenderer::renderGL(int w, int h, const char* buff)
         }
 
     SDL_UnlockSurface(glrenderer::surf);
-    SDL_Surface* tst2 = SDL_CreateRGBSurface(0, 4, 4, 32,
-                                     rmask, gmask, bmask, amask);
-    SDL_FillRect(tst2, NULL, SDL_MapRGB(tst2->format, 0, 255, 0));
+    //SDL_Surface* tst2 = SDL_CreateRGBSurface(0, 4, 4, 32,
+    //                                 rmask, gmask, bmask, amask);
+    //SDL_FillRect(tst2, NULL, SDL_MapRGB(tst2->format, 0, 255, 0));
 
 
 /*
@@ -531,7 +536,6 @@ void glrenderer::renderGL(int w, int h, const char* buff)
         glTexCoord2f(0,0);
         glVertex2f(0+offsetx,y*scrfrac+offsety);
     glEnd();
-
 
     glrenderer::drawbar();
 
