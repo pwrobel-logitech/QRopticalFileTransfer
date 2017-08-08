@@ -22,6 +22,8 @@ import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -503,45 +505,67 @@ public class QRSurface extends GLSurfaceView implements
         this.clear_ui();
     }
 
+    private void reflow_correct(Activity a){
+        View fill = a.findViewById(R.id.uplfit);
+        //fill.setBackgroundColor(Color.BLUE);
+        View upl = a.findViewById(R.id.folderfilebutton);
+        int locfld[] = new int[2];
+        upl.getLocationOnScreen(locfld);
+        ViewGroup.LayoutParams params2 = fill.getLayoutParams();
+        params2.height = locfld[1];
+        fill.setLayoutParams(params2);
+
+        Display display = a.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        if (height == 0){
+            height = 1;
+            width = 0;
+        }
+
+        float ratio = 1.0f / (((float)width) / height);
+
+        //View sqrl = a.findViewById(R.id.sqrl);
+        //ViewGroup.LayoutParams pp = QRSurface.this.getLayoutParams();
+        //int nw = (int)(width * 0.5);
+        //params2.width = nw;
+        //QRSurface.this.setLayoutParams(pp);
+
+        if (ratio < 4.0f/3.0f + 0.01 || height < 900 || width < 560){
+            View add = a.findViewById(R.id.adViewUpl);
+            if (add != null)
+                add.setVisibility(GONE);
+        }
+    };
+
     private void clear_ui(){
         final Activity a = (Activity) this.getContext();
         if (a != null)
             a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    View fill = a.findViewById(R.id.uplfit);
-                    //fill.setBackgroundColor(Color.BLUE);
-                    View upl = a.findViewById(R.id.folderfilebutton);
-                    int locfld[] = new int[2];
-                    upl.getLocationOnScreen(locfld);
-                    ViewGroup.LayoutParams params2 = fill.getLayoutParams();
-                    params2.height = locfld[1];
-                    fill.setLayoutParams(params2);
+                    reflow_correct(a);
+                    // post on timer thread to make sure the R.id.folderfilebutton is already positioned
+                    new Timer().schedule(new TimerTask()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            if (a != null)
+                            a.runOnUiThread(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                reflow_correct(a);
+                                }
+                            });
+                        }
+                    }, 500);
 
-                    Display display = a.getWindowManager().getDefaultDisplay();
-                    Point size = new Point();
-                    display.getSize(size);
-                    int width = size.x;
-                    int height = size.y;
-
-                    if (height == 0){
-                        height = 1;
-                        width = 0;
-                    }
-
-                    float ratio = 1.0f / (((float)width) / height);
-
-                    //View sqrl = a.findViewById(R.id.sqrl);
-                    //ViewGroup.LayoutParams pp = QRSurface.this.getLayoutParams();
-                    //int nw = (int)(width * 0.5);
-                    //params2.width = nw;
-                    //QRSurface.this.setLayoutParams(pp);
-
-                    if (ratio < 4.0f/3.0f + 0.01 || height < 900 || width < 560){
-                        View add = a.findViewById(R.id.adViewUpl);
-                        if (add != null)
-                            add.setVisibility(GONE);
-                    }
 
                     if(encoder_status_textfield != null) {
                         encoder_status_textfield.setText(getStringResourceByName("ask_for_new_file_selection_to_upload"));
