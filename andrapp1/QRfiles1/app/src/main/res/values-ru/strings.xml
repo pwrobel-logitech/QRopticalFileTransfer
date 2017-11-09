@@ -15,7 +15,7 @@
     <string name="draw_blink_failed_header_detection">Не удалось обнаружить фазу запуска, повторите попытку..</string>
     <string name="draw_blink_failed_data_detection">Ошибка передачи файлов: </string>
     <string name="draw_blink_succeeded_data_detection">Правильно сохранил файл: </string>
-    <string name="draw_blink_pending_async">Обработайте файл, подождите.. </string>
+    <string name="draw_blink_pending_async">Обработка данных, подождите..</string>
     <string name="draw_progress_chunk_name">Шум - кусок</string>
 
     <string name="start_sequence_string">Последовательность запуска: </string>

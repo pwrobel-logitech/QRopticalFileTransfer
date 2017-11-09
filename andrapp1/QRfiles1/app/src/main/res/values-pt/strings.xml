@@ -15,7 +15,7 @@
     <string name="draw_blink_failed_header_detection">Falha ao detectar fase de inicialização, reenvie..</string>
     <string name="draw_blink_failed_data_detection">Erro de transmissão de arquivos para : </string>
     <string name="draw_blink_succeeded_data_detection">Guardar corretamente o arquivo : </string>
-    <string name="draw_blink_pending_async">Processando o arquivo, aguarde.. </string>
+    <string name="draw_blink_pending_async">Processando dados, aguarde ... </string>
     <string name="draw_progress_chunk_name">Ruído - pedaço </string>
 
     <string name="start_sequence_string">Seqüência de inicialização : </string>
