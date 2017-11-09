@@ -369,7 +369,7 @@ This application contains links to other sites. If you click on a third-party li
 
 
     <string name="size_exceed_dialog_msg1">Unfortunately, the free version of this app does not manages
-    transfer of files of over 1MB in size :-( \n\n
+    transfer of files of over 5MB in size :-( \n\n
     See the <b><i>OpticalFileTransfer pro</i></b> on the store, where the theoretical limit for a single file is 2GB.</string>
 
     <string name="size_exceed_dialog_msg1a">К сожалению, бесплатная версия этого приложения не управляет передачей файлов размером более 1 МБ. \n\n Смотрите: \n </string>

@@ -79,7 +79,7 @@
 
 
 
-    <string name="helpd1">Use this app to receive/send small files (1MB limit per file in the free version of this app)
+    <string name="helpd1">Use this app to receive/send small files (5MB limit per file in the free version of this app)
         as the stream of QR frames
         through the phone\'s camera.\n
 
@@ -253,7 +253,7 @@ This application contains links to other sites. If you click on a third-party li
     At the moment, on the phone where the QR stream is produced, the screen is brighten up automatically - that requires
         write system settings permission.\n
         \n
-        This is the free version - it can capture files of max 1MB in size. See the <u>OpticalFileTransfer pro</u> version
+        This is the free version - it can capture files of max 5MB in size. See the <u>OpticalFileTransfer pro</u> version
         in the play store, which can theoretically handle up to 2GB - althought this would last ureasonably long.\n
 
     </string>
@@ -262,7 +262,7 @@ This application contains links to other sites. If you click on a third-party li
     At the moment, on the phone where the QR stream is produced, the screen is brighten up automatically - that requires
         write system settings permission.\n
         \n
-        This is the free version - it can capture files of max 1MB in size. See the : \n
+        This is the free version - it can capture files of max 5MB in size. See the : \n
     </string>
 
     <string name="textabout3b">
@@ -395,10 +395,10 @@ This application contains links to other sites. If you click on a third-party li
 
 
     <string name="size_exceed_dialog_msg1">Unfortunately, the free version of this app does not manages
-    transfer of files of over 1MB in size :-( \n\n
+    transfer of files of over 5MB in size :-( \n\n
     See the <b><i>OpticalFileTransfer pro</i></b> on the store, where the theoretical limit for a single file is 2GB.</string>
 
-    <string name="size_exceed_dialog_msg1a">Unfortunately, the free version of this app does not manages transfer of files of over 1MB in size. \n\n See the :\n </string>
+    <string name="size_exceed_dialog_msg1a">Unfortunately, the free version of this app does not manages transfer of files of over 5MB in size. \n\n See the :\n </string>
     <string name="size_exceed_dialog_msg1b"><b><u>OpticalFileTransfer pro</u></b></string>
     <string name="size_exceed_dialog_msg1c">\n on the store, where the theoretical limit for a single file is 2GB + it does not have advertisements and has more settings.</string>
 

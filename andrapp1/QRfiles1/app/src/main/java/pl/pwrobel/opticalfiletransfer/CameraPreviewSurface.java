@@ -72,7 +72,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
 
         //sanitize size
         int smear = Qrfiles.smearCustom(Qrfiles.limit_max_received_file_size);
-        if (smear != 1122649){
+        if (smear != 5612912){
             ((Activity)mContext).finish();
             return;
         }

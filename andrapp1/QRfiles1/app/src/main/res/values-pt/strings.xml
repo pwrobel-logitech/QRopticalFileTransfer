@@ -63,7 +63,7 @@
 
     <string name="help_donotshowagaintick">Não mostre novamente</string>
     <string name="help_title">Socorro</string>
-    <string name="helpd1">Use este aplicativo para receber/enviar pequenos arquivos (limite de 1MB por arquivo na versão gratuita deste aplicativo) como o fluxo de quadros QR através da câmera do telefone. \n Você pode gerar o fluxo de arquivos QR deste aplicativo ou também do PC de mesa - Veja programas do Windows e Linux para carregar arquivos. \n</string>
+    <string name="helpd1">Use este aplicativo para receber/enviar pequenos arquivos (limite de 5MB por arquivo na versão gratuita deste aplicativo) como o fluxo de quadros QR através da câmera do telefone. \n Você pode gerar o fluxo de arquivos QR deste aplicativo ou também do PC de mesa - Veja programas do Windows e Linux para carregar arquivos. \n</string>
 
     <string name="helpd2">
         <i>Dicas para transmissão bem-sucedida :\n</i>
@@ -221,14 +221,14 @@ This application contains links to other sites. If you click on a third-party li
     <string name="textabout3">
     No momento, no telefone onde o fluxo QR é produzido, a tela é iluminada automaticamente - isso requer permissão de configurações de sistema de gravação.\n
         \n
-        Esta é a versão gratuita - pode capturar arquivos com um máximo de 1MB de tamanho. Veja a versão <u> Optical File Transfer pro </u> na loja de reprodução, que teoricamente pode lidar com até 2GB - embora isso durasse muito tempo.\n
+        Esta é a versão gratuita - pode capturar arquivos com um máximo de 5MB de tamanho. Veja a versão <u> Optical File Transfer pro </u> na loja de reprodução, que teoricamente pode lidar com até 2GB - embora isso durasse muito tempo.\n
 
     </string>
 
     <string name="textabout3a">
     No momento, no telefone onde o fluxo QR é produzido, a tela é iluminada automaticamente - isso requer permissão de configurações de sistema de gravação.\n
         \n
-        Esta é a versão gratuita - pode capturar arquivos com um máximo de 1MB de tamanho. Veja o : \n
+        Esta é a versão gratuita - pode capturar arquivos com um máximo de 5MB de tamanho. Veja o : \n
     </string>
 
     <string name="textabout3b">
@@ -362,10 +362,10 @@ This application contains links to other sites. If you click on a third-party li
 
 
     <string name="size_exceed_dialog_msg1">Unfortunately, the free version of this app does not manages
-    transfer of files of over 1MB in size :-( \n\n
+    transfer of files of over 5MB in size :-( \n\n
     See the <b><i>OpticalFileTransfer pro</i></b> on the store, where the theoretical limit for a single file is 2GB.</string>
 
-    <string name="size_exceed_dialog_msg1a">Infelizmente, a versão gratuita deste aplicativo não gerencia a transferência de arquivos com mais de 1MB de tamanho. \n \n Veja o: \n </string>
+    <string name="size_exceed_dialog_msg1a">Infelizmente, a versão gratuita deste aplicativo não gerencia a transferência de arquivos com mais de 5MB de tamanho. \n \n Veja o: \n </string>
     <string name="size_exceed_dialog_msg1b"><b><u>Ópticos Baixar Arquivos pro</u></b></string>
     <string name="size_exceed_dialog_msg1c">\n Na loja, onde o limite teórico para um único arquivo é de 2GB + não possui anúncios e tem mais configurações.</string>
 

@@ -37,7 +37,7 @@ import java.util.TimerTask;
 public class Qrfiles extends AppCompatActivity implements TransmissionController, HelpDialogDismisser{
 
     // important for premium / free differentiation
-    public static int limit_max_received_file_size = 1024*1024+37; // ~1MB
+    public static int limit_max_received_file_size = 5*1024*1024; // ~5MB
 
     public static int smearCustom(int hashCode) {
         hashCode ^= (hashCode >>> 20) ^ (hashCode >>> 12);
@@ -175,7 +175,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
         //sanitize size
         int smear = Qrfiles.smearCustom(Qrfiles.limit_max_received_file_size);
-        if (smear != 1122649)
+        if (smear != 5612912) //5612912
             return;
 
         this.preferences = this.getPreferences(Context.MODE_PRIVATE);
@@ -347,7 +347,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.readAndSanitizePrefs();
         //sanitize size
         int smear = Qrfiles.smearCustom(Qrfiles.limit_max_received_file_size);
-        if (smear != 1122649)
+        if (smear != 5612912)
             return;
 
         File yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
