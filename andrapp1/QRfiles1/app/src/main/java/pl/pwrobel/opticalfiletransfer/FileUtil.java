@@ -24,23 +24,24 @@ public class FileUtil {
     }
 
     public static String getReadableFileSize(long size) {
-        final int BYTES_IN_KILOBYTES = 1024;
+        final double BYTES_IN_KILOBYTES = 1024;
         final DecimalFormat dec = new DecimalFormat("###.#");
+        final String BYTES = " B";
         final String KILOBYTES = " KB";
         final String MEGABYTES = " MB";
         final String GIGABYTES = " GB";
-        float fileSize = 0;
-        String suffix = KILOBYTES;
+        double fileSize = size;
+        String suffix = BYTES;
 
-        if (size > BYTES_IN_KILOBYTES) {
+        if (size >= BYTES_IN_KILOBYTES) {
+            suffix = KILOBYTES;
             fileSize = size / BYTES_IN_KILOBYTES;
-            if (fileSize > BYTES_IN_KILOBYTES) {
+            if (fileSize >= BYTES_IN_KILOBYTES) {
                 fileSize = fileSize / BYTES_IN_KILOBYTES;
-                if (fileSize > BYTES_IN_KILOBYTES) {
+                suffix = MEGABYTES;
+                if (fileSize >= BYTES_IN_KILOBYTES) {
                     fileSize = fileSize / BYTES_IN_KILOBYTES;
                     suffix = GIGABYTES;
-                } else {
-                    suffix = MEGABYTES;
                 }
             }
         }
