@@ -384,6 +384,10 @@ This application contains links to other sites. If you click on a third-party li
     This software is provided \'as-is\', without any express or implied warranty. If you have any further questions, you can ask me at <i>pawel.m.wrobel@gmail.com</i>
 </string>
 
+    <string name="textabout17">
+    Native architecture used :
+</string>
+
 
 
 

@@ -24,6 +24,8 @@ import java.util.TimerTask;
 
 public class AboutFragment extends DialogFragment {
 
+    public native String QRarch();
+
     static AboutFragment newInstance() {
         AboutFragment f = new AboutFragment();
         return f;
@@ -209,6 +211,9 @@ public class AboutFragment extends DialogFragment {
                     });
             }
         }, 1000);
+
+        final TextView textViewabout17 = (TextView) v.findViewById(R.id.textViewabout17);
+        textViewabout17.append(" "+QRarch());
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setFlags(

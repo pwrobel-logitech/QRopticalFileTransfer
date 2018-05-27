@@ -85,4 +85,7 @@ EXPRTa int get_residual_RSK();
 //or ERRONEUS_HASH_WRONG if the transmited temporary file has the wrong hash
 EXPRTa immediate_status deinitialize_decoder();
 
+//get native arch string
+EXPRTa const char *get_qrdecoderpwrobelARCH_string();
+
 }

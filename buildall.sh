@@ -3,6 +3,7 @@ make -f Makefile_x86_64 all
 make -f Makefile_x86_64_release all
 make -f Makefile_arm all
 make -f Makefile_armv7a all
+make -f Makefile_arm64 all
 
 mkdir androidarchs
 mkdir androidarchs/x86_64

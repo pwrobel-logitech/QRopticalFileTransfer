@@ -802,3 +802,7 @@ int QR_frame_decoder::get_residual_RSK(){
         return -1;
     }
 };
+
+const char* get_qrdecoderpwrobelARCH_string() {
+    return qrdecoderpwrobelARCH; //makefile defined in gcc commandline
+}

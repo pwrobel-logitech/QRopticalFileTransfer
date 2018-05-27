@@ -222,10 +222,10 @@ Java_pl_pwrobel_opticalfiletransfer_CameraWorker_applygrayscalenative(JNIEnv *en
 */
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_pl_pwrobel_opticalfiletransfer_Qrfiles_stringFromJNI(
+Java_pl_pwrobel_opticalfiletransfer_AboutFragment_QRarch(
         JNIEnv* env,
         jobject /* this */) {
-    std::string hello = "Hello from C++";
+    std::string hello(get_qrdecoderpwrobelARCH_string());
     return env->NewStringUTF(hello.c_str());
 }
 

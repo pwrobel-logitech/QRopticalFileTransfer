@@ -124,3 +124,8 @@ protected:
     static void* thrfunc(void*);
 
 };
+
+
+extern "C" const char* get_qrdecoderpwrobelARCH_string();
+
+

@@ -147,6 +147,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/textabout16"/>
 
+            <TextView
+                android:id="@+id/textViewabout17"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textabout17"/>
+
         </LinearLayout>
     </ScrollView>
 
