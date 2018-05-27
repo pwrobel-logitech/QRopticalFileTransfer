@@ -8,10 +8,12 @@ mkdir androidarchs
 mkdir androidarchs/x86_64
 mkdir androidarchs/armeabi
 mkdir androidarchs/armeabi-v7a
+mkdir androidarchs/arm64-v8a
  
 cp bin_fec_x64/*.so androidarchs/x86_64
 cp bin_fec_arm/*.so androidarchs/armeabi
 cp bin_fec_armv7a/*.so androidarchs/armeabi-v7a
+cp bin_fec_arm64/*.so androidarchs/arm64-v8a
 
 
 mkdir release_x86_64_linux_uploader/lgpl_libqrencode_wrapper
