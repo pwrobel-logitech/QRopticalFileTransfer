@@ -194,6 +194,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                     String textafter = datastring.substring(7);
                     if (textafter.length() > 0){
                         this.got_upload_request_from_intent = true;
+                        Uri uri = Uri.parse(textafter);
+                        textafter = uri.getPath(); // fix %2b %20 etc issue
                         this.upload_requested_path_by_system = textafter;
                     }
                 }
