@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URLConnection;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayDeque;
@@ -1491,6 +1493,30 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 */
     //}
 
+    private boolean notify_gallery_about_new_file_if_mimetype_justifies_that(){
+        boolean galleryupdated = false;
+        final String fpath = filedump_directory_fullpath+File.separator+
+                last_filename_detected_from_header;
+        final String mimeType = URLConnection.guessContentTypeFromName(fpath);
+        galleryupdated = (mimeType != null && (mimeType.startsWith("image") || mimeType.startsWith("video")));
+        if (galleryupdated){
+            final Activity a = (Activity) context;
+            if (a != null){
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            a.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fpath)));
+                        }catch (Exception e){
+                            Log.e("camworker", "error sending broadcast while updating gallery..");
+                        }
+                    }
+                });
+            }
+        }
+        return galleryupdated;
+    }
+
     private void deliver_filesaved_toast(){
         final Activity a = (Activity) context;
         if (a != null){
@@ -1580,6 +1606,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 should_deliver_info_file_successfully_saved_for_certain_time = true;
                 this.last_time_the_file_succ_saved = System.nanoTime()/1.0e6;
                 this.deliver_filesaved_toast();
+                this.notify_gallery_about_new_file_if_mimetype_justifies_that();
             }
 
         }
@@ -1604,7 +1631,6 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         System.gc();
     }
-
 
     private String filedump_directory_fullpath = null;
     private String filedump_directory_name = "Download";
