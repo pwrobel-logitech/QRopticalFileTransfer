@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.os.HandlerThread;
 import android.os.Process;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Display;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -705,7 +707,15 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         });
     }
 
+    private int last_initCamAsync_w;
+    private int last_initCamAsync_h;
+    private String last_initCamAsync_foldername;
+    public boolean does_not_know_optimal_index_yet = false;
+
     public void initCamAsync(final int surfacew, final int surfaceh, final String foldername){
+        this.last_initCamAsync_foldername = foldername;
+        this.last_initCamAsync_w = surfacew;
+        this.last_initCamAsync_h = surfaceh;
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -780,14 +790,20 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                         new android.hardware.Camera.CameraInfo();
                 android.hardware.Camera.getCameraInfo(0, info);
 
+                previev_list = psize;
                 int bestsizeindex = CameraWorker.this.select_best_preview_size_index(psize, sw, sh, info.orientation);
+                automatically_deducted_camera_preview_index = bestsizeindex;
+                if (does_not_know_optimal_index_yet == true) {
+                    user_selected_camera_index = automatically_deducted_camera_preview_index;
+                }
+                bestsizeindex = user_selected_camera_index;
 
                 int camwidth = psize.get(bestsizeindex).width;
                 int camheight = psize.get(bestsizeindex).height;
                 CameraWorker.this.camwidth = camwidth;
                 CameraWorker.this.camheight = camheight;
 
-                //Log.i("camworker", "Preview w "+camwidth + " h " + camheight);
+                Log.i("camworker", "QWER Preview w "+camwidth + " h " + camheight);
 
                 //YUV-NV21 needs only that much bytes
                 callbackbuffer = new byte[(int)(camheight*camwidth*1.5) + 4];
@@ -1141,8 +1157,31 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
     ;
+    public int automatically_deducted_camera_preview_index = 0;
+    public int user_selected_camera_index;
+    public List<Camera.Size> previev_list;
+    public boolean isUserPreviewSizeSet = false;
 
     public int select_best_preview_size_index(List<Camera.Size> psize, int sw, int sh, int orientation){
+        int magicbig = 640;  // threshold for choosing previev size
+
+        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+        Point size0 = new Point();
+        display.getSize(size0);
+        int scrwidth = size0.x;
+        int scrheight = size0.y;
+        int biggerscr = scrwidth;
+        if (scrheight > scrwidth)
+            biggerscr = scrheight;
+        // heurestic - the bigger the phone display is, prefer bigger preview size
+        if (biggerscr >= 1024)
+            magicbig = 720;
+        if (biggerscr > 1280)
+            magicbig = 800;
+        if (biggerscr >= 1920)
+            magicbig = 900;
+
+
         boolean is_surface_portrait = (sh > sw);
         int bestindex = 0;
         List<Camera.Size> l = new ArrayList<Camera.Size>(psize);
@@ -1198,7 +1237,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 bigger_size = size.height;
                 smaller_size = size.width;
             }
-            if (bigger_size >= 640){
+            if (bigger_size >= magicbig){
                 found_sorted_index = i;
                 break;
             }
@@ -1217,7 +1256,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     bigger_size = size.height;
                     smaller_size = size.width;
                 }
-                if (bigger_size >= 640){
+                if (bigger_size >= magicbig){
                     found_sorted_index = i;
                     break;
                 }

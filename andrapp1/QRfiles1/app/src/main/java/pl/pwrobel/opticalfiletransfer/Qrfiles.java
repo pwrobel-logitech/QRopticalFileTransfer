@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Qrfiles extends AppCompatActivity implements TransmissionController, HelpDialogDismisser{
+public class Qrfiles extends AppCompatActivity implements TransmissionController, HelpDialogDismisser, PreviewSizeController{
 
     // important for premium / free differentiation
     public static int limit_max_received_file_size = 5*1024*1024; // ~5MB
@@ -279,6 +280,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         newFragment.set_default_setup_settings(this.currFPSvalue, this.currErrorvalue,
                 this.currQrSizevalue, this.currStartSeqTime, this.currDumpPath, this.pref_is_blurshader);
         newFragment.setTransmissionContorller(this);
+        newFragment.setUserPreviewContorller(this);
         newFragment.show(ft, "dialog");
 
     }
@@ -919,6 +921,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
     boolean pref_is_dismiss_help = false;
     boolean pref_is_blurshader = false;
+    int pref_user_prev_index = 0;
 
     int currFPSvalue = 17;
     int currErrorvalue = 50;
@@ -988,6 +991,10 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     private void initall(){
         //Log.i("UIThr", "executed on the UI thread, id: " + android.os.Process.myTid());
         this.camworker = new CameraWorker("CameraDetectorThread");
+
+        this.camworker.does_not_know_optimal_index_yet = this.does_not_know_optimal_index_yet;
+
+        this.camworker.user_selected_camera_index = this.user_selected_camera_index;
         this.camworker.setContext(this);
         this.camworker.start();
         this.camworker.waitUntilReady();
@@ -1089,5 +1096,37 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     }
 
 
+    @Override
+    public List<Camera.Size> getPreviewSizes() {
+        return this.camworker.previev_list;
+    }
 
+    int user_selected_camera_index;
+    boolean does_not_know_optimal_index_yet = true;
+    @Override
+    public void setUserPreviewIndex(int index) {
+        this.does_not_know_optimal_index_yet = false;
+        this.user_selected_camera_index = index;
+        this.camworker.user_selected_camera_index = index;
+        Log.i("UserPreviewSelect", "User selected " + index + " : " + this.camworker.previev_list.get(index).width + "x" + this.camworker.previev_list.get(index).height);
+        //todo : handle gl surface resize here..
+        switch_to_detector_view();
+    }
+
+    @Override
+    public int getCurrUserPreviewIndex() {
+        return user_selected_camera_index;
+    }
+
+    @Override
+    public int getProposedDefaultOptimalPrevievIndex() {
+        return this.camworker.automatically_deducted_camera_preview_index;
+    }
+
+    public int getStartUpIndexToConstructList(){
+        if (this.does_not_know_optimal_index_yet == true) {
+            return this.camworker.automatically_deducted_camera_preview_index;
+        }
+        return user_selected_camera_index;
+    }
 }

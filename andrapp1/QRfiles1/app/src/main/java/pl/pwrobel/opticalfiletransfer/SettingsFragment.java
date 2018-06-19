@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -391,6 +394,43 @@ public class SettingsFragment extends DialogFragment {
             yourAppDir = Environment.getDataDirectory();
         }
 
+
+        RadioGroup rgp= (RadioGroup) v.findViewById(R.id.radiogroup);
+        RadioGroup.LayoutParams rprms;
+        final View vv = v;
+
+        if (this.userPreviewSizeController != null) {
+
+            int defindex = this.userPreviewSizeController.getStartUpIndexToConstructList(); //this.userPreviewSizeController.getProposedDefaultOptimalPrevievIndex();
+            int nprv = this.userPreviewSizeController.getPreviewSizes().size();
+            for(int i=0;i<nprv;i++){
+                RadioButton radioButton = new RadioButton(getActivity());
+                radioButton.setText("new "+this.userPreviewSizeController.getPreviewSizes().get(i).width + "x"+
+                        this.userPreviewSizeController.getPreviewSizes().get(i).height);
+                radioButton.setId(i);
+                if (i == defindex)
+                    radioButton.setChecked(true);
+                else
+                    radioButton.setChecked(false);
+
+                rprms= new RadioGroup.LayoutParams(AppBarLayout.LayoutParams.WRAP_CONTENT, AppBarLayout.LayoutParams.WRAP_CONTENT);
+                rgp.addView(radioButton, rprms);
+            }
+
+            rgp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+            {
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    // checkedId is the RadioButton selected
+                    RadioButton rb=(RadioButton)vv.findViewById(checkedId);
+                    if(userPreviewSizeController != null)
+                        userPreviewSizeController.setUserPreviewIndex(rb.getId());
+                }
+            });
+        }
+
+
+
+
         dumpfolderameTextView.setText(getfullpath(currFileDumpPath));
         dumpfolderameTextView.requestLayout();
 
@@ -547,6 +587,11 @@ public class SettingsFragment extends DialogFragment {
     private TransmissionController transmissionController = null;
     public void setTransmissionContorller(TransmissionController tc){
         this.transmissionController = tc;
+    }
+
+    private PreviewSizeController userPreviewSizeController = null;
+    public void setUserPreviewContorller(PreviewSizeController uc){
+        this.userPreviewSizeController = uc;
     }
 
     private void request_resetting_encoder_because_of_new_settings(){
