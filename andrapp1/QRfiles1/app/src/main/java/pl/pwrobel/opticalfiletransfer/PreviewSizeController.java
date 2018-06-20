@@ -19,4 +19,7 @@ public interface PreviewSizeController {
     int getStartUpIndexToConstructList();
 
     int getProposedDefaultOptimalPrevievIndex();
+
+    //-1 if not known
+    int getCalculatedOptimalIndex();
 }

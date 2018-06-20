@@ -316,6 +316,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         return Math.max(min, Math.min(max, val));
     }
 
+    private boolean user_pref_prev_index_loaded = false;
     private void readAndSanitizePrefs(){
         this.preferences = this.getPreferences(Context.MODE_PRIVATE);
 
@@ -327,6 +328,19 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         String fdumppath = this.preferences.getString("filedumppath", "Download");
         this.pref_is_dismiss_help = this.preferences.getBoolean("is_dismiss_help", false);
         this.pref_is_blurshader = this.preferences.getBoolean("is_blurshader", false);
+
+        int tmpindx = this.preferences.getInt("prev_index", -1);
+        Log.i("QQQVVV1", "t "+ tmpindx);
+        if (tmpindx != -1){
+            this.user_selected_camera_index = tmpindx;
+            this.user_pref_prev_index_loaded = true;
+        } else {
+            this.user_pref_prev_index_loaded = false;
+        }
+
+
+        this.slider_prev_percent = this.preferences.getInt("slider_prev_percent", 50);
+        this.slider_prev_percent = Qrfiles.clamp(this.slider_prev_percent, 0, 100);
 
         this.currFPSvalue = Qrfiles.clamp(fps, 5, 60);
         this.currErrorvalue = Qrfiles.clamp(errlev, 20, 80);
@@ -386,7 +400,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
         if (!this.got_upload_request_from_intent){
             this.is_in_qr_sender_view = false;
-            this.switch_to_detector_view();
+            this.switch_to_detector_view(false);
             this.initall();
         }else{
             this.is_in_qr_sender_view = true;
@@ -460,7 +474,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                     return;
                 }
                 if (!Qrfiles.this.is_in_decoder_view) {
-                    Qrfiles.this.switch_to_detector_view();
+                    Qrfiles.this.switch_to_detector_view(false);
                     Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.icup3);
                     Qrfiles.this.uparrowbutton.setImageBitmap(bmp);
                     Qrfiles.this.uparrowbutton.requestLayout();
@@ -548,6 +562,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         editor.putString("filedumppath", this.currDumpPath);
         editor.putBoolean("is_dismiss_help", this.pref_is_dismiss_help);
         editor.putBoolean("is_blurshader", this.pref_is_blurshader);
+        editor.putInt("prev_index", this.user_selected_camera_index);
+        editor.putInt("slider_prev_percent", this.slider_prev_percent);
         editor.commit();
 
 
@@ -577,7 +593,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
 
     private boolean is_switching_views = false;
-    private void switch_to_detector_view(){
+    private void switch_to_detector_view(boolean mute_switch_toast){
 
         if (this.fileselection_dialog_in_sender != null)
             this.fileselection_dialog_in_sender.closeit();
@@ -693,9 +709,9 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
         }
 
-
-        Toast.makeText(this, (String)this.getString(R.string.download_mode_switch_text),
-                Toast.LENGTH_SHORT).show();
+        if (mute_switch_toast == false)
+            Toast.makeText(this, (String)this.getString(R.string.download_mode_switch_text),
+                   Toast.LENGTH_SHORT).show();
 
         Runtime.getRuntime().gc();
 
@@ -1096,37 +1112,84 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     }
 
 
+    List<Camera.Size> previev_list = null;
     @Override
     public List<Camera.Size> getPreviewSizes() {
-        return this.camworker.previev_list;
+        if (this.camworker != null){
+            this.previev_list = this.camworker.previev_list;
+            return this.camworker.previev_list;
+        }
+        else{
+            return this.previev_list;
+        }
     }
 
     int user_selected_camera_index;
+    int automatically_deducted_camera_preview_index = -1;
     boolean does_not_know_optimal_index_yet = true;
     @Override
     public void setUserPreviewIndex(int index) {
+
+        if (this.camworker != null)
+            if (this.camworker.automatically_deducted_camera_preview_index != -1)
+                this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+
         this.does_not_know_optimal_index_yet = false;
         this.user_selected_camera_index = index;
-        this.camworker.user_selected_camera_index = index;
-        Log.i("UserPreviewSelect", "User selected " + index + " : " + this.camworker.previev_list.get(index).width + "x" + this.camworker.previev_list.get(index).height);
+        if (this.camworker != null)
+            this.camworker.user_selected_camera_index = index;
+        //if (this.camworker != null)
+        //    Log.i("UserPreviewSelect", "User selected " + index + " : " + this.camworker.previev_list.get(index).width + "x" + this.camworker.previev_list.get(index).height);
         //todo : handle gl surface resize here..
-        switch_to_detector_view();
+        if (is_in_decoder_view)
+            switch_to_detector_view(true);
     }
 
     @Override
     public int getCurrUserPreviewIndex() {
+        if (this.camworker != null)
+            if (this.camworker.automatically_deducted_camera_preview_index != -1)
+                this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
         return user_selected_camera_index;
     }
 
     @Override
     public int getProposedDefaultOptimalPrevievIndex() {
-        return this.camworker.automatically_deducted_camera_preview_index;
+        if (this.camworker != null) {
+            if (this.camworker.automatically_deducted_camera_preview_index != -1)
+                this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+            return this.automatically_deducted_camera_preview_index;
+        }
+        else
+            return this.automatically_deducted_camera_preview_index;
     }
 
     public int getStartUpIndexToConstructList(){
-        if (this.does_not_know_optimal_index_yet == true) {
-            return this.camworker.automatically_deducted_camera_preview_index;
+        if (this.does_not_know_optimal_index_yet == true && !user_pref_prev_index_loaded) {
+            if (this.camworker != null){
+                if (this.camworker.automatically_deducted_camera_preview_index != -1)
+                    this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+                return this.automatically_deducted_camera_preview_index;
+            }
+            else
+                return user_selected_camera_index;
         }
+
+        if (this.camworker != null)
+            if (this.camworker.automatically_deducted_camera_preview_index != -1)
+                this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+
         return user_selected_camera_index;
     }
+
+    public int getCalculatedOptimalIndex(){
+
+        if (this.camworker != null)
+            if (this.camworker.automatically_deducted_camera_preview_index != -1)
+                this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+
+        return this.automatically_deducted_camera_preview_index;
+    };
+
+    public int slider_prev_percent = 50;
 }

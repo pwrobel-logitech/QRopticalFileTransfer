@@ -150,6 +150,11 @@ public class SettingsFragment extends DialogFragment {
     TextView dumpfolderameTextView = null;
     CheckBox checkBoxblur = null;
     boolean pref_is_blurshader = true;
+
+    // for size preview
+    RadioGroup rgp = null;
+    int radiobuttprevnum = -1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -339,6 +344,80 @@ public class SettingsFragment extends DialogFragment {
                 SettingsFragment.this.request_resetting_encoder_because_of_new_settings();
                 SettingsFragment.this.setEstimatedUploadSpeedInfo();
 
+                if (userPreviewSizeController != null && SettingsFragment.this.rgp != null){
+
+
+                    //block for 2s async
+                    getActivity().runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            if (rgp == null)
+                                return;
+                            restore_default_settings_button.setEnabled(false);
+                            int count = rgp.getChildCount();
+                            for (int i=0;i<count;i++) {
+                                RadioButton o = (RadioButton) rgp.getChildAt(i);
+                                o.setEnabled(false);
+                                o.setClickable(false);
+                                o.setFocusable(false);
+                            }
+                        }
+                    });
+
+
+
+                    int def = SettingsFragment.this.userPreviewSizeController.getProposedDefaultOptimalPrevievIndex();
+                    //if (def == 0) {
+                    //    Log.i("XXXCXXXXQQQ", "wooo");
+                    //}
+                    //RadioButton rb=(RadioButton)v.findViewById(def);
+                    int count = rgp.getChildCount();
+                    RadioButton rbtocheck = null;
+                    for (int i=0;i<count;i++) {
+                        RadioButton o = (RadioButton) rgp.getChildAt(i);
+                        int ri = o.getId();
+                        if (ri == def){
+                            rbtocheck = o;
+                            o.setChecked(true);
+                        }
+                        else
+                            o.setChecked(false);
+                    }
+                    if(userPreviewSizeController != null)
+                        if (rbtocheck != null)
+                            userPreviewSizeController.setUserPreviewIndex(rbtocheck.getId());
+
+
+
+                    new Timer().schedule(new TimerTask()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            if (getActivity() != null)
+                                getActivity().runOnUiThread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        if (rgp == null)
+                                            return;
+                                        restore_default_settings_button.setEnabled(true);
+                                        int count = rgp.getChildCount();
+                                        for (int i=0;i<count;i++) {
+                                            RadioButton o = (RadioButton) rgp.getChildAt(i);
+                                            o.setEnabled(true);
+                                            o.setClickable(true);
+                                            o.setFocusable(true);
+                                        }
+                                    }
+                                });
+                        }
+                    }, 1200);
+                }
+
             }
         });
 
@@ -395,14 +474,16 @@ public class SettingsFragment extends DialogFragment {
         }
 
 
-        RadioGroup rgp= (RadioGroup) v.findViewById(R.id.radiogroup);
+        rgp= (RadioGroup) v.findViewById(R.id.radiogroup);
         RadioGroup.LayoutParams rprms;
         final View vv = v;
 
-        if (this.userPreviewSizeController != null) {
+        if (this.userPreviewSizeController != null && this.userPreviewSizeController.getPreviewSizes() != null) {
 
             int defindex = this.userPreviewSizeController.getStartUpIndexToConstructList(); //this.userPreviewSizeController.getProposedDefaultOptimalPrevievIndex();
+
             int nprv = this.userPreviewSizeController.getPreviewSizes().size();
+            radiobuttprevnum = nprv;
             for(int i=0;i<nprv;i++){
                 RadioButton radioButton = new RadioButton(getActivity());
                 radioButton.setText("new "+this.userPreviewSizeController.getPreviewSizes().get(i).width + "x"+
@@ -422,6 +503,49 @@ public class SettingsFragment extends DialogFragment {
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
                     // checkedId is the RadioButton selected
                     RadioButton rb=(RadioButton)vv.findViewById(checkedId);
+                    getActivity().runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            if (rgp == null)
+                                return;
+                            restore_default_settings_button.setEnabled(false);
+                            int count = rgp.getChildCount();
+                            for (int i=0;i<count;i++) {
+                                RadioButton o = (RadioButton) rgp.getChildAt(i);
+                                o.setEnabled(false);
+                                o.setClickable(false);
+                                o.setFocusable(false);
+                            }
+                        }
+                    });
+                    new Timer().schedule(new TimerTask()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            if (getActivity() != null)
+                                getActivity().runOnUiThread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        if (rgp == null)
+                                            return;
+                                        restore_default_settings_button.setEnabled(true);
+                                        int count = rgp.getChildCount();
+                                        for (int i=0;i<count;i++) {
+                                            RadioButton o = (RadioButton) rgp.getChildAt(i);
+                                            o.setEnabled(true);
+                                            o.setClickable(true);
+                                            o.setFocusable(true);
+                                        }
+                                    }
+                                });
+                        }
+                    }, 1200);
+
                     if(userPreviewSizeController != null)
                         userPreviewSizeController.setUserPreviewIndex(rb.getId());
                 }

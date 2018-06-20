@@ -1157,7 +1157,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
 
     ;
-    public int automatically_deducted_camera_preview_index = 0;
+    public int automatically_deducted_camera_preview_index = -1;
     public int user_selected_camera_index;
     public List<Camera.Size> previev_list;
     public boolean isUserPreviewSizeSet = false;
