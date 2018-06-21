@@ -324,6 +324,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
     }
 
+
+    private byte[] auxillary_greyscale_buff = null;
+    private int ncores = 1;
+    private int nth_every_pixel = 1; // used to scale
+
+
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         //synchronized (this){
@@ -354,7 +360,16 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
         //greyscalebuffer = data;
 
-        final int status = send_next_grayscale_buffer_to_decoder(data, camwidth, camheight);
+        if (auxillary_greyscale_buff == null)
+            auxillary_greyscale_buff = new byte[data.length];
+        if (auxillary_greyscale_buff.length != data.length)
+            auxillary_greyscale_buff = new byte[data.length];
+        if (Math.max(camwidth, camheight) > 1900.0){
+            nth_every_pixel = 2;
+        }else{
+            nth_every_pixel = 1;
+        }
+        final int status = send_next_grayscale_buffer_to_decoder(data, camwidth, camheight, ncores, auxillary_greyscale_buff, nth_every_pixel);
 
         //greyscalebuffer = null;
         int ntot = get_total_frames_of_data_that_will_be_produced();
@@ -1162,6 +1177,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     public List<Camera.Size> previev_list;
     public boolean isUserPreviewSizeSet = false;
 
+    public int index_maximum_preview_sufrace = -1; // not found
+
     public int select_best_preview_size_index(List<Camera.Size> psize, int sw, int sh, int orientation){
         int magicbig = 640;  // threshold for choosing previev size
 
@@ -1176,10 +1193,23 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         // heurestic - the bigger the phone display is, prefer bigger preview size
         if (biggerscr >= 1024)
             magicbig = 720;
-        if (biggerscr > 1280)
-            magicbig = 800;
-        if (biggerscr >= 1920)
-            magicbig = 900;
+        //if (biggerscr > 1280)
+        //    magicbig = 800;
+        //if (biggerscr >= 1920)
+        //    magicbig = 900;
+
+        /*double maxsurface = 0.0;
+        int index_maxsurface = -1;
+        int wmaxs=0, hmaxs=0;
+        for (int i = 0; i < psize.size(); i++) {
+            Camera.Size size = psize.get(i);
+            if (size.width * size.height > maxsurface) {
+                maxsurface = size.width * size.height;
+                index_maxsurface = i;
+                wmaxs = psize.get(i).width;
+                hmaxs = psize.get(i).height;
+            }
+        }*/
 
 
         boolean is_surface_portrait = (sh > sw);
@@ -1736,7 +1766,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     public static native int send_next_grayscale_buffer_to_decoder(
         byte[] grayscale_qr_data,
         int image_width,
-        int image_height);
+        int image_height,
+        int ncores,
+        byte []auxilarry,
+        int nth_every_pix);
 
     public static native int tell_decoder_no_more_qr();
 

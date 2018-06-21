@@ -152,7 +152,7 @@ public class SettingsFragment extends DialogFragment {
     boolean pref_is_blurshader = true;
 
     // for size preview
-    RadioGroup rgp = null;
+    GridButtons rgp = null;
     int radiobuttprevnum = -1;
 
     @Override
@@ -474,7 +474,7 @@ public class SettingsFragment extends DialogFragment {
         }
 
 
-        rgp= (RadioGroup) v.findViewById(R.id.radiogroup);
+        rgp= (GridButtons) v.findViewById(R.id.radiogroup);
         RadioGroup.LayoutParams rprms;
         final View vv = v;
 
@@ -486,7 +486,7 @@ public class SettingsFragment extends DialogFragment {
             radiobuttprevnum = nprv;
             for(int i=0;i<nprv;i++){
                 RadioButton radioButton = new RadioButton(getActivity());
-                radioButton.setText("new "+this.userPreviewSizeController.getPreviewSizes().get(i).width + "x"+
+                radioButton.setText(this.userPreviewSizeController.getPreviewSizes().get(i).width + "x"+
                         this.userPreviewSizeController.getPreviewSizes().get(i).height);
                 radioButton.setId(i);
                 if (i == defindex)

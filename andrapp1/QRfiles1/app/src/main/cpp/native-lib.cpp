@@ -8,6 +8,7 @@
 
 //encoder
 
+
 long upper_power_of_two(long v)
 {
     v--;
@@ -19,6 +20,7 @@ long upper_power_of_two(long v)
     v++;
     return v;
 }
+
 
 extern "C"
 JNIEXPORT jint JNICALL
@@ -167,13 +169,34 @@ Java_pl_pwrobel_opticalfiletransfer_CameraWorker_set_1decoded_1file_1path(JNIEnv
     return res;
 }
 
+void do_scaling(int ncore, int nth_every_pix, int orig_w, int orig_h, const char* origbuff, char* dst_scaled_buf){
+    int new_w = ((orig_w % nth_every_pix != 0) ? (orig_w / nth_every_pix) + 1 : (orig_w / nth_every_pix));
+    int new_h = ((orig_h % nth_every_pix != 0) ? (orig_h / nth_every_pix) + 1 : (orig_h / nth_every_pix));
+    //__android_log_print(ANDROID_LOG_INFO, "QQQQQXX", "w %d h %d", new_w, new_h);
+    for (int j = 0; j < new_h; j++)
+        for (int i = 0; i < new_w; i++) {
+            dst_scaled_buf[j*new_w + i] = origbuff[i*nth_every_pix + (j*nth_every_pix)*orig_w];
+        }
+}
+
 extern "C"
 JNIEXPORT jint JNICALL
 Java_pl_pwrobel_opticalfiletransfer_CameraWorker_send_1next_1grayscale_1buffer_1to_1decoder(
         JNIEnv *env, jclass type, jbyteArray grayscale_qr_data_, jint image_width,
-        jint image_height) {
+        jint image_height, jint ncores, jbyteArray auxbuff, jint nth_every_pix) {
     jbyte *grayscale_qr_data = env->GetByteArrayElements(grayscale_qr_data_, NULL);
-    jint status = send_next_grayscale_buffer_to_decoder((const char*)grayscale_qr_data, image_width, image_height);
+    // do scalling
+    jint  status;
+    if (nth_every_pix == 1)
+        status = send_next_grayscale_buffer_to_decoder((const char*)grayscale_qr_data, image_width, image_height);
+    else {
+        jbyte *aux_data = env->GetByteArrayElements(auxbuff, NULL);
+        do_scaling(ncores, nth_every_pix, image_width, image_height, (const char*)grayscale_qr_data, (char*)aux_data);
+        int new_w = ((image_width % nth_every_pix != 0) ? (image_width / nth_every_pix) + 1 : (image_width / nth_every_pix));
+        int new_h = ((image_height % nth_every_pix != 0) ? (image_height / nth_every_pix) + 1 : (image_height / nth_every_pix));
+        status = send_next_grayscale_buffer_to_decoder((const char*)aux_data, new_w, new_h);
+        env->ReleaseByteArrayElements(auxbuff, aux_data, 0);
+    }
     env->ReleaseByteArrayElements(grayscale_qr_data_, grayscale_qr_data, 0);
     return status;
 }
