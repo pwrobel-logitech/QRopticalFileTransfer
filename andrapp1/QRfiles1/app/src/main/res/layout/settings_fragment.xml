@@ -24,6 +24,7 @@
         android:text="@string/menu_string_settings" />
 
     <ScrollView
+        android:id="@+id/scrollv"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
@@ -40,6 +41,16 @@
     android:scrollbarAlwaysDrawVerticalTrack="true">
 
 
+            <TextView
+                android:id="@+id/textViewUploadTilte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:background="@color/greyB"
+                android:gravity="center"
+                android:padding="5dp"
+                android:typeface="serif"
+                android:text="@string/uploader_descr_section_header" />
 
             <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
@@ -245,6 +256,31 @@
                 android:layout_height="2dp"
                 android:background="#aaaaaa"/>
 
+
+
+            <Button
+                android:id="@+id/button_default_settings1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:text="@string/info_button_restore_default_settings" />
+
+            <TextView
+                android:id="@+id/textViewDownloadTilte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:background="@color/greyB"
+                android:gravity="center"
+                android:padding="5dp"
+                android:typeface="serif"
+                android:text="@string/downloader_descr_section_header" />
+
+
+
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -310,6 +346,8 @@
                 android:paddingBottom="15dp"
                 android:text="@string/chceck_blurshader" />
 
+
+
         </LinearLayout>
 
             <View
@@ -317,13 +355,105 @@
                 android:layout_height="2dp"
                 android:background="#aaaaaa"/>
 
-            <Button
-                android:id="@+id/button_default_settings1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
+
+
+
+
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/text_alignerdsrc1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginTop="15dp"
+                        android:text="@string/aligner_square_descr1"
+                        android:textSize="15dp" />
+
+
+                </LinearLayout>
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/floatingActionButtonq6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:clickable="true"
+                    app:backgroundTint="@color/greyA"
+                    android:layout_marginRight="2dp"
+                    app:fabSize="mini"
+                    app:srcCompat="@mipmap/ic_question" />
+            </FrameLayout>
+
+
+
+
+
+
+
+            <SeekBar
+                android:id="@+id/seekBar1"
                 android:layout_gravity="center"
-                android:padding="10dp"
-                android:text="@string/info_button_restore_default_settings" />
+                android:gravity="center"
+                android:paddingTop="20dp"
+                android:paddingBottom="30dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#aaaaaa"/>
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    >
+
+                    <CheckBox
+                        android:id="@+id/checkBoxallowpreviewsize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingTop="15dp"
+                        android:paddingBottom="15dp"
+                        android:checked="false"
+                        android:text="@string/chceck_prevenable" />
+
+                </LinearLayout>
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/floatingActionButtonq5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:clickable="true"
+                    app:backgroundTint="@color/greyA"
+                    android:layout_marginRight="2dp"
+                    app:fabSize="mini"
+                    app:srcCompat="@mipmap/ic_question" />
+            </FrameLayout>
+
 
 
 
@@ -333,6 +463,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:orientation="vertical" />

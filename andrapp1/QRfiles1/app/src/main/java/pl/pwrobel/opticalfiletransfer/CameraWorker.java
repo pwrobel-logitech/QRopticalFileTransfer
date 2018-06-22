@@ -1549,6 +1549,10 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.camsurf.set_is_blur(is_blur);
     }
 
+    public void set_prevsquare_size_percent(int val){
+        if (this.camsurf != null)
+            this.camsurf.set_prevsquare_size_percent(val);
+    }
     /// data as NV21 input, pixels as 8bit greyscale output
     //public static void applyGrayScale(byte [] pixels, byte [] data, int width, int height) {
     //    applygrayscalenative(pixels, data, width, height);

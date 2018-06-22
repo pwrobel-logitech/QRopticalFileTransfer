@@ -237,6 +237,11 @@ public class CameraPreviewSurface extends GLSurfaceView implements
     public synchronized void set_is_blur(boolean isbl){
         this.isblur = isbl;
     }
+
+    private double prevsquare_percent = 666;
+    public synchronized void set_prevsquare_size_percent(int val){//Log.i("QQQYYYPPP2", "got nev wal " +val);
+        this.prevsquare_percent = val;
+    }
     @Override
     public void onDrawFrame(GL10 gl) {
 
@@ -273,6 +278,7 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         int usuccratio = mOffscreenShader.getHandle("succratio");
         int usizes = mOffscreenShader.getHandle("sizeprev");
         int uisblur = mOffscreenShader.getHandle("is_blur");
+        int uprevsqr = mOffscreenShader.getHandle("prevsqr");
 
         GLES20.glUniformMatrix4fv(uTransformM, 1, false, mTransformM, 0);
         GLES20.glUniformMatrix4fv(uOrientationM, 1, false, mOrientationM, 0);
@@ -280,6 +286,8 @@ public class CameraPreviewSurface extends GLSurfaceView implements
         GLES20.glUniform2fv(usizes, 1, sizeprev, 0);
         GLES20.glUniform1f(urpevratio, m_prev_yx_ratio);
         GLES20.glUniform1f(usuccratio, (float)curr_succ_ratio_got_from_camworker);
+        float sq_num_size = (float)(0.2 + 0.3*(this.prevsquare_percent / 1000.0));
+        GLES20.glUniform1f(uprevsqr, sq_num_size);
 
         synchronized (this) {
             if (this.isblur)

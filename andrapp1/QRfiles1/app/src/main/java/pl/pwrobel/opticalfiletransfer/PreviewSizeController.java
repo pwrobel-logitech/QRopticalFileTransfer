@@ -22,4 +22,12 @@ public interface PreviewSizeController {
 
     //-1 if not known
     int getCalculatedOptimalIndex();
+
+    boolean getCheckedCustomPrev();
+
+    void setCheckedCustomPrev(boolean new_user_check);
+
+    // square aligner
+    void setUserAlignerSquarePrev(int perc);
+    int getUserAlignerSquarePrev();
 }

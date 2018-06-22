@@ -29,38 +29,48 @@ public class GridButtons extends RadioGroup {
         final Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point deviceDisplay = new Point();
         display.getSize(deviceDisplay);
-        deviceWidth = 1;//deviceDisplay.x;
+        deviceWidth = deviceDisplay.x;
     }
+
+    private double margin_factor = 0.3;
+
 
     @Override
     public void onLayout(boolean changed, int l, int t, int r, int b){
         final int count = getChildCount();
 
         int maxw = 0;
+        int maxh = 0;
         for (int i = 0; i < count; i++){
             View child = getChildAt(i);
             if (maxw < child.getMeasuredWidth())
                 maxw = child.getMeasuredWidth();
+            if (maxh < child.getMeasuredHeight())
+                maxh = child.getMeasuredHeight();
         }
 
-        if (deviceWidth > 2 * maxw) {
+
+        int tab_offx = (int)(maxw * margin_factor);
+        int tab_offy = (int)(maxh * margin_factor);
+
+        if (deviceWidth > 2 * (1.0+margin_factor)*maxw) {
 
             for (int i = 0; i < count; i++) {
                 View child = getChildAt(i);
                 if (i % 2 == 0)
-                    child.layout(0, (i/2)*child.getMeasuredHeight(),
-                            maxw, (i/2+1)*child.getMeasuredHeight());
+                    child.layout(tab_offx/2, tab_offy/2 + (int)((i/2)*(1.0+margin_factor)*maxh),
+                            (int)((1.0+margin_factor)*maxw), (int)((1.0+margin_factor)*(i/2+1)*maxh));
                 else
-                    child.layout(maxw, ((i-1)/2)*child.getMeasuredHeight(),
-                            2*maxw, ((i+1)/2)*child.getMeasuredHeight());
+                    child.layout((int)((1.0+margin_factor)*maxw+tab_offx/2), tab_offy/2+(int)(((i-1)/2)*(1.0+margin_factor)*maxh),
+                            (int)(2*(1.0+margin_factor)*maxw), (int)(((i+1)/2)*(1.0+margin_factor)*maxh));
 
             }
         } else {
             for (int i = 0; i < count; i++) {
                 View child = getChildAt(i);
 
-                child.layout(0, (i)*child.getMeasuredHeight(),
-                        maxw, (i+1)*child.getMeasuredHeight());
+                child.layout(tab_offx/2, tab_offy/2+(int)((i)*(1.0+margin_factor)*maxh),
+                        tab_offx/2+(int)((1.0+margin_factor)*maxw), (int)((i+1)*(1.0+margin_factor)*maxh));
 
 
             }
@@ -89,13 +99,13 @@ public class GridButtons extends RadioGroup {
                 maxh = child.getMeasuredHeight();
         }
 
-        if (deviceWidth > 2 * maxw){
+        if (deviceWidth > 2 * (1.0+margin_factor)*maxw){
             int ih = count/2;
             if (count % 2 == 1)
                 ih = count / 2 + 1;
-            setMeasuredDimension(2*maxw, ih * maxh);
+            setMeasuredDimension((int)(2*(1.0+margin_factor)*maxw), (int)(ih * (1.0+margin_factor)*maxh));
         } else {
-            setMeasuredDimension(maxw, count * maxh);
+            setMeasuredDimension((int)((1.0+margin_factor)*maxw), (int)((1.0+margin_factor)*count * maxh));
         }
 
 

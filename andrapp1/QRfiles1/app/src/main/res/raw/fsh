@@ -19,6 +19,7 @@ vec4 t00, t01, t10, t11;
 vec4 sumcol;
 vec4 Bmm, Bm0, Bmp, B0m, B00, B0p, Bpm, Bp0, Bpp;
 uniform vec2 sizeprev;
+uniform float prevsqr;
 float nyb;
 varying vec2 origpos;
 
@@ -26,10 +27,10 @@ void main(){
    x = vTextureCoord.x;
    y = vTextureCoord.y;
    if(prev_yx_ratio > 1.0 ){
-      boundx = 0.4;
+      boundx = prevsqr;
       boundy = boundx/prev_yx_ratio;
    }else {
-      boundy = 0.4;
+      boundy = prevsqr;
       boundx = boundy*prev_yx_ratio;
    }
    distancefactor = 1.0;

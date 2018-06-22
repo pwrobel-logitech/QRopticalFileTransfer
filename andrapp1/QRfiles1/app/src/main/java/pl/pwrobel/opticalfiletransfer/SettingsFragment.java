@@ -22,6 +22,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -146,10 +148,16 @@ public class SettingsFragment extends DialogFragment {
     FloatingActionButton floatingActionButtonq2 = null;
     FloatingActionButton floatingActionButtonq3 = null;
     FloatingActionButton floatingActionButtonq4 = null;
+    FloatingActionButton floatingActionButtonq5 = null;
+    FloatingActionButton floatingActionButtonq6 = null;
     FloatingActionButton folderselect = null;
     TextView dumpfolderameTextView = null;
     CheckBox checkBoxblur = null;
+    CheckBox checkBoxallowprevsize = null;
     boolean pref_is_blurshader = true;
+    boolean pref_is_customprevcheck = false;
+    ScrollView scrollView = null;
+    SeekBar seekBar1 = null; // square size preview
 
     // for size preview
     GridButtons rgp = null;
@@ -164,6 +172,7 @@ public class SettingsFragment extends DialogFragment {
 
         boolean ispro = false;
         ispro = getResources().getBoolean(R.bool.is_pro_version);
+        scrollView = (ScrollView) v.findViewById(R.id.scrollv);
 
         numberPickerFPS = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerFPS);
         numberPickerFPS.setMinValue(5);
@@ -418,6 +427,15 @@ public class SettingsFragment extends DialogFragment {
                     }, 1200);
                 }
 
+                checkBoxallowprevsize.setChecked(false);
+                rgp.setVisibility(View.GONE);
+                if(userPreviewSizeController != null){
+                    userPreviewSizeController.setCheckedCustomPrev(false);
+                    userPreviewSizeController.setUserPreviewIndex(userPreviewSizeController.getCalculatedOptimalIndex());
+                    userPreviewSizeController.setUserAlignerSquarePrev(666);
+                    if (seekBar1 != null)
+                        seekBar1.setProgress(666);
+                }
             }
         });
 
@@ -428,6 +446,8 @@ public class SettingsFragment extends DialogFragment {
         floatingActionButtonq2 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq2);
         floatingActionButtonq3 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq3);
         floatingActionButtonq4 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq4);
+        floatingActionButtonq5 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq5);
+        floatingActionButtonq6 = (FloatingActionButton) v.findViewById(R.id.floatingActionButtonq6);
 
         floatingActionButtonq1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -465,6 +485,24 @@ public class SettingsFragment extends DialogFragment {
             }
         });
 
+        floatingActionButtonq5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.app.FragmentManager fm = getActivity().getFragmentManager();
+                DialogQ5 q5 = new DialogQ5();
+                q5.show(fm, "dialog");
+            }
+        });
+
+        floatingActionButtonq6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.app.FragmentManager fm = getActivity().getFragmentManager();
+                DialogQ6 q6 = new DialogQ6();
+                q6.show(fm, "dialog");
+            }
+        });
+
         dumpfolderameTextView = (TextView) v.findViewById(R.id.textViewnamedumpfolder);
         File yourAppDir = null;
         if (Environment.getExternalStorageState() != null){
@@ -473,6 +511,45 @@ public class SettingsFragment extends DialogFragment {
             yourAppDir = Environment.getDataDirectory();
         }
 
+
+        checkBoxallowprevsize = (CheckBox) v.findViewById(R.id.checkBoxallowpreviewsize);
+        if (this.userPreviewSizeController != null)
+            checkBoxallowprevsize.setChecked(this.userPreviewSizeController.getCheckedCustomPrev());
+        checkBoxallowprevsize.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (userPreviewSizeController != null){
+                    userPreviewSizeController.setCheckedCustomPrev(isChecked);
+                }
+                if (isChecked == false) {
+                    rgp.setVisibility(View.GONE);
+                    if(userPreviewSizeController != null){
+                        userPreviewSizeController.setUserPreviewIndex(userPreviewSizeController.getCalculatedOptimalIndex());
+                        int count = rgp.getChildCount();
+                        for (int i=0;i<count;i++) {
+                            RadioButton o = (RadioButton) rgp.getChildAt(i);
+                            if (i == userPreviewSizeController.getCalculatedOptimalIndex())
+                                o.setChecked(true);
+                            else
+                                o.setChecked(false);
+                        }
+                    }
+
+                }else{
+                    rgp.setVisibility(View.VISIBLE);
+                    rgp.requestFocus();
+                    if (scrollView != null){
+                        scrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        //checkBoxblur.setOnCheckedChangeListener(
 
         rgp= (GridButtons) v.findViewById(R.id.radiogroup);
         RadioGroup.LayoutParams rprms;
@@ -497,6 +574,11 @@ public class SettingsFragment extends DialogFragment {
                 rprms= new RadioGroup.LayoutParams(AppBarLayout.LayoutParams.WRAP_CONTENT, AppBarLayout.LayoutParams.WRAP_CONTENT);
                 rgp.addView(radioButton, rprms);
             }
+
+            if(this.userPreviewSizeController.getCheckedCustomPrev() == false){
+                rgp.setVisibility(View.GONE);
+            }else
+                rgp.setVisibility(View.VISIBLE);
 
             rgp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
             {
@@ -552,7 +634,29 @@ public class SettingsFragment extends DialogFragment {
             });
         }
 
+        seekBar1 = (SeekBar)v.findViewById(R.id.seekBar1);
+        if (seekBar1 != null) {
+            seekBar1.setMax(1000);
+            if(userPreviewSizeController != null)
+                seekBar1.setProgress(userPreviewSizeController.getUserAlignerSquarePrev());
+            seekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(userPreviewSizeController != null)
+                        userPreviewSizeController.setUserAlignerSquarePrev(progress);
+                }
 
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+        }
 
 
         dumpfolderameTextView.setText(getfullpath(currFileDumpPath));
@@ -691,6 +795,7 @@ public class SettingsFragment extends DialogFragment {
         this.currStartSeqTime = headertimeout;
         this.currFileDumpPath = dumppath; // only last folder name of the path, actually
         this.pref_is_blurshader = blurcheck;
+
         if (dumpfolderameTextView != null){
             Activity a = getActivity();
             if (a != null){

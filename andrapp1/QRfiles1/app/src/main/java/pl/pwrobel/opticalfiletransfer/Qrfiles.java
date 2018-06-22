@@ -328,6 +328,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         String fdumppath = this.preferences.getString("filedumppath", "Download");
         this.pref_is_dismiss_help = this.preferences.getBoolean("is_dismiss_help", false);
         this.pref_is_blurshader = this.preferences.getBoolean("is_blurshader", false);
+        this.custom_prev_checked = this.preferences.getBoolean("is_customprevsizecheck", false);
 
         int tmpindx = this.preferences.getInt("prev_index", -1);
         Log.i("QQQVVV1", "t "+ tmpindx);
@@ -339,8 +340,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }
 
 
-        this.slider_prev_percent = this.preferences.getInt("slider_prev_percent", 50);
-        this.slider_prev_percent = Qrfiles.clamp(this.slider_prev_percent, 0, 100);
+        this.slider_prev_percent = this.preferences.getInt("slider_prev_percent", 666);
+        this.slider_prev_percent = Qrfiles.clamp(this.slider_prev_percent, 0, 1000);
 
         this.currFPSvalue = Qrfiles.clamp(fps, 5, 60);
         this.currErrorvalue = Qrfiles.clamp(errlev, 20, 80);
@@ -562,6 +563,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         editor.putString("filedumppath", this.currDumpPath);
         editor.putBoolean("is_dismiss_help", this.pref_is_dismiss_help);
         editor.putBoolean("is_blurshader", this.pref_is_blurshader);
+        editor.putBoolean("is_customprevsizecheck", this.custom_prev_checked);
         editor.putInt("prev_index", this.user_selected_camera_index);
         editor.putInt("slider_prev_percent", this.slider_prev_percent);
         editor.commit();
@@ -937,6 +939,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
     boolean pref_is_dismiss_help = false;
     boolean pref_is_blurshader = false;
+    boolean pref_is_prevcheck = false;
     int pref_user_prev_index = 0;
 
     int currFPSvalue = 17;
@@ -1011,6 +1014,10 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.camworker.does_not_know_optimal_index_yet = this.does_not_know_optimal_index_yet;
 
         this.camworker.user_selected_camera_index = this.user_selected_camera_index;
+        if (this.user_selected_camera_index > -1)
+            this.camworker.does_not_know_optimal_index_yet = false;
+        if(this.camworker != null)
+            this.camworker.set_prevsquare_size_percent(slider_prev_percent);
         this.camworker.setContext(this);
         this.camworker.start();
         this.camworker.waitUntilReady();
@@ -1124,7 +1131,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }
     }
 
-    int user_selected_camera_index;
+    int user_selected_camera_index = -1;
     int automatically_deducted_camera_preview_index = -1;
     boolean does_not_know_optimal_index_yet = true;
     @Override
@@ -1191,5 +1198,25 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         return this.automatically_deducted_camera_preview_index;
     };
 
-    public int slider_prev_percent = 50;
+    boolean custom_prev_checked = false;
+    public boolean getCheckedCustomPrev(){
+        return custom_prev_checked;
+    };
+
+    public void setCheckedCustomPrev(boolean new_user_check){
+        this.custom_prev_checked = new_user_check;
+    };
+
+
+    public int slider_prev_percent = 666; //promile
+
+    public void setUserAlignerSquarePrev(int perc){
+        this.slider_prev_percent = perc;
+        if(this.camworker != null)
+            this.camworker.set_prevsquare_size_percent(perc);
+    };
+
+    public int getUserAlignerSquarePrev(){
+        return this.slider_prev_percent;
+    };
 }

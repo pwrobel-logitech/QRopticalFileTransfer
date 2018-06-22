@@ -367,5 +367,11 @@ This application contains links to other sites. If you click on a third-party li
 5 02:23:33.192 10392-10392/? I/art: Late-enabling -Xcheck:jni
 
 
+
     </string>
+
+    <string name="chceck_prevenable">Custom camera resolution</string>
+    <string name="uploader_descr_section_header">Upload settings</string>
+    <string name="downloader_descr_section_header">Download settings</string>
+    <string name="aligner_square_descr1">Aligner square size</string>
 </resources>
