@@ -1211,7 +1211,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     public int slider_prev_percent = 666; //promile
 
     public void setUserAlignerSquarePrev(int perc){
-        this.slider_prev_percent = perc;
+        this.slider_prev_percent = perc;//Log.i("QQQKOP", "perd "+perc);
         if(this.camworker != null)
             this.camworker.set_prevsquare_size_percent(perc);
     };

@@ -108,6 +108,31 @@
             android:src="@drawable/ic_help_good_web" />
     </LinearLayout>
 
+
+                        <TextView
+                            android:id="@+id/textView7a"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/helpd7" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+
+                            <ImageView
+                                android:id="@+id/imageViewg3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+
+                                android:layout_weight="1"
+                                android:src="@drawable/ic_ok_too_close_web" />
+
+
+                        </LinearLayout>
+
+
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"

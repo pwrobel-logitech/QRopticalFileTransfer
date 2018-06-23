@@ -111,6 +111,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             context.notify();
         }
         //context.notifyAll();
+        if (this.camsurf != null)
+            this.camsurf.set_prevsquare_size_percent(prevsquare_size_percent);
 
         this.str_encourage_new_transmission = this.getStringResourceByName("draw_blink_encourage_new_transmission");
         this.str_started_header_detection = this.getStringResourceByName("draw_blink_started_header_detection");
@@ -1549,7 +1551,9 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             this.camsurf.set_is_blur(is_blur);
     }
 
+    private int prevsquare_size_percent = 666;
     public void set_prevsquare_size_percent(int val){
+        prevsquare_size_percent = val;
         if (this.camsurf != null)
             this.camsurf.set_prevsquare_size_percent(val);
     }
