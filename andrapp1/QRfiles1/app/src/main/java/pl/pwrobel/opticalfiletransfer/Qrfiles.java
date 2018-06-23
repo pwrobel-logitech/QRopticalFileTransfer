@@ -552,6 +552,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         }
         this.is_in_qr_sender_view = false;
         this.is_in_decoder_view = true;
+        last_encountered_uploader_path = null;
 
         this.preferences = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = this.preferences.edit();
@@ -852,6 +853,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
     }
 
+    private File last_encountered_uploader_path = null;
     private void invoke_file_window(boolean is_file_upload_selection_mode){
         if(is_file_upload_selection_mode){
 
@@ -862,16 +864,21 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                 yourAppDir = Environment.getDataDirectory();
             }
 
+            File whichpath = new File(yourAppDir.getAbsolutePath());
+            if (last_encountered_uploader_path != null)
+                whichpath = last_encountered_uploader_path;
+
             if (default_search_for_upload_homedir != null)
                 this.fileselection_dialog_in_sender = new ChooserDialog().withCustomParentDir(null).with(this)
                         .withFilter(false, false)
-                        .withStartFile(yourAppDir.getAbsolutePath())
+                        .withStartFile(whichpath.getAbsolutePath())
                         .withDateFormat("HH:mm")
                         .withResources(R.string.title_choose_filetosend, R.string.title_choose, R.string.dialog_cancel)
                         .withChosenListener(new ChooserDialog.Result() {
                         @Override
                         public void onChoosePath(String path, File pathFile) {
                             boolean canread = QRSurface.checkFileCanRead(new File(path));
+                            last_encountered_uploader_path = new File(path);
                             if (!canread){
                                 final String fname = path;
                                 final Activity a = Qrfiles.this;

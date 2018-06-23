@@ -182,6 +182,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         builder.setNegativeButton(_cancelRes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                last_encountered_path = _currentDir;
                 dialog.cancel();
             }
         });
@@ -192,6 +193,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public File last_encountered_path = null;
     public ChooserDialog show() {
         //if (_result == null)
         //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
