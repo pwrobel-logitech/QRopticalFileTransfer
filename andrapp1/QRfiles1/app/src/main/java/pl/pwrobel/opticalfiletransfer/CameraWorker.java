@@ -1193,7 +1193,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if (scrheight > scrwidth)
             biggerscr = scrheight;
         // heurestic - the bigger the phone display is, prefer bigger preview size
-        if (biggerscr >= 1024)
+        if (biggerscr >= 700)
             magicbig = 720;
         //if (biggerscr > 1280)
         //    magicbig = 800;

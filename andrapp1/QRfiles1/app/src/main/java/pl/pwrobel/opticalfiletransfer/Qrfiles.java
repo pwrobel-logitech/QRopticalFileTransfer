@@ -335,9 +335,11 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         if (tmpindx != -1){
             this.user_selected_camera_index = tmpindx;
             this.user_pref_prev_index_loaded = true;
+            this.last_userindex_dispatched_to_camera = tmpindx;
         } else {
             this.user_pref_prev_index_loaded = false;
         }
+
 
 
         this.slider_prev_percent = this.preferences.getInt("slider_prev_percent", 666);
@@ -1021,6 +1023,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
         this.camworker.does_not_know_optimal_index_yet = this.does_not_know_optimal_index_yet;
 
         this.camworker.user_selected_camera_index = this.user_selected_camera_index;
+
         if (this.user_selected_camera_index > -1)
             this.camworker.does_not_know_optimal_index_yet = false;
         if(this.camworker != null)
@@ -1054,6 +1057,13 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
         this.main_layout.setVisibility(View.VISIBLE);
         this.main_layout.requestLayout();
+
+        this.last_userindex_dispatched_to_camera = this.user_selected_camera_index;
+        if (this.camworker != null){
+            this.last_userindex_dispatched_to_camera = this.camworker.user_selected_camera_index;
+            if (this.camworker.user_selected_camera_index == -1 && this.camworker.automatically_deducted_camera_preview_index > -1)
+                this.last_userindex_dispatched_to_camera = this.camworker.automatically_deducted_camera_preview_index;
+        }
 
     }
 
@@ -1141,8 +1151,12 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     int user_selected_camera_index = -1;
     int automatically_deducted_camera_preview_index = -1;
     boolean does_not_know_optimal_index_yet = true;
+    int last_userindex_dispatched_to_camera = -1;
     @Override
     public void setUserPreviewIndex(int index) {
+        if (this.last_userindex_dispatched_to_camera == -1){
+            this.last_userindex_dispatched_to_camera = this.automatically_deducted_camera_preview_index;
+        }
 
         if (this.camworker != null)
             if (this.camworker.automatically_deducted_camera_preview_index != -1)
@@ -1154,53 +1168,90 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
             this.camworker.user_selected_camera_index = index;
         //if (this.camworker != null)
         //    Log.i("UserPreviewSelect", "User selected " + index + " : " + this.camworker.previev_list.get(index).width + "x" + this.camworker.previev_list.get(index).height);
-        //todo : handle gl surface resize here..
-        if (is_in_decoder_view)
-            switch_to_detector_view(true);
+        if (is_in_decoder_view){
+            if (this.last_userindex_dispatched_to_camera != index){
+                destroyall();Log.i("PPPPPPPPPPQQWE","wtf dangernn, camw useri "+this.user_selected_camera_index + " last "+this.last_userindex_dispatched_to_camera);
+                switch_to_detector_view(true);
+            }
+        }
+        this.last_userindex_dispatched_to_camera = index;
     }
 
     @Override
     public int getCurrUserPreviewIndex() {
+        if (this.last_userindex_dispatched_to_camera == -1){
+            this.last_userindex_dispatched_to_camera = this.automatically_deducted_camera_preview_index;
+        }
         if (this.camworker != null)
-            if (this.camworker.automatically_deducted_camera_preview_index != -1)
+            if (this.camworker.automatically_deducted_camera_preview_index != -1){
                 this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+
+            }
         return user_selected_camera_index;
     }
 
     @Override
     public int getProposedDefaultOptimalPrevievIndex() {
         if (this.camworker != null) {
-            if (this.camworker.automatically_deducted_camera_preview_index != -1)
+            if (this.camworker.automatically_deducted_camera_preview_index != -1){
                 this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+
+            }
+            if (this.last_userindex_dispatched_to_camera == -1){
+                this.last_userindex_dispatched_to_camera = this.automatically_deducted_camera_preview_index;
+            }
             return this.automatically_deducted_camera_preview_index;
         }
-        else
+        else{
+            if (this.last_userindex_dispatched_to_camera == -1){
+                this.last_userindex_dispatched_to_camera = this.automatically_deducted_camera_preview_index;
+            }
             return this.automatically_deducted_camera_preview_index;
+        }
     }
 
     public int getStartUpIndexToConstructList(){
         if (this.does_not_know_optimal_index_yet == true && !user_pref_prev_index_loaded) {
+            if (this.last_userindex_dispatched_to_camera == -1){
+                this.last_userindex_dispatched_to_camera = this.automatically_deducted_camera_preview_index;
+            }
             if (this.camworker != null){
+
                 if (this.camworker.automatically_deducted_camera_preview_index != -1)
                     this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
                 return this.automatically_deducted_camera_preview_index;
             }
-            else
+            else{
+                if (this.last_userindex_dispatched_to_camera == -1){
+                    this.last_userindex_dispatched_to_camera = this.automatically_deducted_camera_preview_index;
+                }
+
                 return user_selected_camera_index;
+            }
         }
 
-        if (this.camworker != null)
+        if (this.camworker != null){
             if (this.camworker.automatically_deducted_camera_preview_index != -1)
                 this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+
+        }
+        if (this.last_userindex_dispatched_to_camera == -1){
+            this.last_userindex_dispatched_to_camera = this.automatically_deducted_camera_preview_index;
+        }
 
         return user_selected_camera_index;
     }
 
     public int getCalculatedOptimalIndex(){
 
-        if (this.camworker != null)
+        if (this.camworker != null) {
             if (this.camworker.automatically_deducted_camera_preview_index != -1)
                 this.automatically_deducted_camera_preview_index = this.camworker.automatically_deducted_camera_preview_index;
+
+        }
+        if (this.last_userindex_dispatched_to_camera == -1){
+            this.last_userindex_dispatched_to_camera = this.automatically_deducted_camera_preview_index;
+        }
 
         return this.automatically_deducted_camera_preview_index;
     };

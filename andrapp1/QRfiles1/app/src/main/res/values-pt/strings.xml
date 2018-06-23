@@ -382,7 +382,7 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="chceck_prevenable">Resolução de câmera personalizada</string>
-    <string name="uploader_descr_section_header">Upload settings</string>
+    <string name="uploader_descr_section_header">Carregar configurações.</string>
     <string name="downloader_descr_section_header">Configurações de download</string>
     <string name="aligner_square_descr1">Tamanho do alinhador quadrado</string>
 
