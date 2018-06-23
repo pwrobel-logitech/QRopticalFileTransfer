@@ -390,24 +390,23 @@ This application contains links to other sites. If you click on a third-party li
 
     </string>
 
-    <string name="chceck_prevenable">Custom camera resolution</string>
-    <string name="uploader_descr_section_header">Upload settings</string>
-    <string name="downloader_descr_section_header">Download settings</string>
-    <string name="aligner_square_descr1">Aligner square size</string>
+    <string name="chceck_prevenable">Разрешение пользовательской камеры</string>
+    <string name="uploader_descr_section_header">настройки отправки</string>
+    <string name="downloader_descr_section_header">получение настроек</string>
+    <string name="aligner_square_descr1">Размер квадратного выравнивателя</string>
 
     <string name="text_content_q5">
-        Allow setting custom camera size that is used to detect QR frames. \n\n
-        Bigger resolution slows detection down, since it loads CPU more heavily - so it has bigger problems with more FPS.\n\n
-        Try to keep it low enough - while the QR codes are still detected.\n\n
-        It is best to experiment with different resolutions and different distances of Camera from QR stream.
-        </string>
+        Разрешить настройку настраиваемого размера камеры, который используется для обнаружения QR-кадров. \n\nБольшее разрешение замедляет обнаружение, поскольку оно больше загружает CPU, поэтому у него больше проблем с большим количеством FPS.\n\n
+        Постарайтесь держать его достаточно низким - пока QR-коды все еще обнаружены.\n\n
+        Лучше всего поэкспериментировать с различными разрешениями и различными расстояниями камеры от QR-потока.
+    </string>
 
     <string name="text_content_q6">
-        Set size of the square aligner that helps to align the qr code perpendicular to camera./n/n
-        It does not actually cut any pixels - whole camera view is used to decode QR codes - so always try different distances between camera and QR codes.
-        </string>
+        Задайте размер квадратного выравнивателя, который помогает выровнять QR-код перпендикулярно к камере.\n\n
+        Он фактически не обрезает ни одного пикселя - для декодирования QR-кодов используется весь вид камеры, поэтому всегда используйте разные расстояния между камерой и QR-кодами.
+    </string>
 
     <string name="helpd7">
-        <b>3.</b> Try to change distance of camera from the QR codes - on some cameras, QR code can even go a little outside of screen boundary - if necessary.
+        <b>3.</b> Попытайтесь изменить расстояние камеры от QR-кодов - на некоторых камерах QR-код может даже немного зайти за пределы границы экрана - при необходимости.
     </string>
 </resources>

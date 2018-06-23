@@ -411,7 +411,7 @@ This application contains links to other sites. If you click on a third-party li
     <string name="chceck_prevenable">Custom camera resolution</string>
     <string name="uploader_descr_section_header">Upload settings</string>
     <string name="downloader_descr_section_header">Download settings</string>
-    <string name="aligner_square_descr1">Aligner square size</string>
+    <string name="aligner_square_descr1">Square aligner size</string>
 
     <string name="text_content_q5">
         Allow setting custom camera size that is used to detect QR frames. \n\n
@@ -421,7 +421,7 @@ This application contains links to other sites. If you click on a third-party li
         </string>
 
     <string name="text_content_q6">
-        Set size of the square aligner that helps to align the qr code perpendicular to camera./n/n
+        Set size of the square aligner that helps to align the QR code perpendicular to camera.\n\n
         It does not actually cut any pixels - whole camera view is used to decode QR codes - so always try different distances between camera and QR codes.
         </string>
 

@@ -369,25 +369,24 @@ This application contains links to other sites. If you click on a third-party li
 
 
     </string>
-
-    <string name="chceck_prevenable">Custom camera resolution</string>
-    <string name="uploader_descr_section_header">Upload settings</string>
-    <string name="downloader_descr_section_header">Download settings</string>
-    <string name="aligner_square_descr1">Aligner square size</string>
+    <string name="chceck_prevenable">カスタムカメラ解像度</string>
+    <string name="uploader_descr_section_header">アップロード設定</string>
+    <string name="downloader_descr_section_header">設定をダウンロードする</string>
+    <string name="aligner_square_descr1">スクエアアライナサイズ</string>
 
     <string name="text_content_q5">
-        Allow setting custom camera size that is used to detect QR frames. \n\n
-        Bigger resolution slows detection down, since it loads CPU more heavily - so it has bigger problems with more FPS.\n\n
-        Try to keep it low enough - while the QR codes are still detected.\n\n
-        It is best to experiment with different resolutions and different distances of Camera from QR stream.
+        QRフレームを検出するために使用されるカスタムカメラサイズを設定できます。\n\n
+        より大きい解像度は、CPUをより重くロードするため検出が遅くなるため、より多くのFPSでより大きな問題が発生します。\n\n
+        QRコードがまだ検出されている間、十分に低く保つようにしてください。\n\n
+        QRストリームからカメラの異なる解像度と異なる距離で試すことが最善です。
         </string>
 
     <string name="text_content_q6">
-        Set size of the square aligner that helps to align the qr code perpendicular to camera./n/n
-        It does not actually cut any pixels - whole camera view is used to decode QR codes - so always try different distances between camera and QR codes.
-        </string>
+        QRコードをカメラに垂直に整列させるのに役立つ正方形アライナのサイズを設定します。\n\n
+        実際にピクセルをカットするわけではありません。カメラ全体のビューはQRコードをデコードするために使用されるため、常にカメラとQRコードの距離を変えてみてください。
+    </string>
 
     <string name="helpd7">
-        <b>3.</b> Try to change distance of camera from the QR codes - on some cameras, QR code can even go a little outside of screen boundary - if necessary.
+        <b>3.</b> QRコードからカメラの距離を変更しようとする - いくつかのカメラでは、必要に応じてQRコードを少しでも画面境界から外すことができます。
     </string>
 </resources>
