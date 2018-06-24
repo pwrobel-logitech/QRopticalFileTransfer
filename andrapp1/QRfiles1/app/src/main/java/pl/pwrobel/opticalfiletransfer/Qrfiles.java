@@ -1072,7 +1072,13 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
             public void run()
             {
                 if (camworker != null){
-                    getPreviewSizes(); // makes to load preview size on the init as well
+                    List<Camera.Size> s = getPreviewSizes(); // makes to load preview size on the init as well
+                    if (s != null)
+                        if(s.size() > 0){
+                            does_not_know_optimal_index_yet = false;
+                            camworker.does_not_know_optimal_index_yet = false;
+                            automatically_deducted_camera_preview_index = camworker.automatically_deducted_camera_preview_index;
+                        }
                 }
             }
         }, 500);
@@ -1082,7 +1088,13 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
             public void run()
             {
                 if (camworker != null){
-                    getPreviewSizes(); // makes to load preview size on the init as well
+                    List<Camera.Size> s = getPreviewSizes(); // makes to load preview size on the init as well
+                    if (s != null)
+                        if(s.size() > 0){
+                            does_not_know_optimal_index_yet = false;
+                            camworker.does_not_know_optimal_index_yet = false;
+                            automatically_deducted_camera_preview_index = camworker.automatically_deducted_camera_preview_index;
+                        }
                 }
             }
         }, 1100);
