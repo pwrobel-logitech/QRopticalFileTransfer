@@ -429,4 +429,7 @@ This application contains links to other sites. If you click on a third-party li
         <b>3.</b> Try to change distance of camera from the QR codes - on some cameras, QR code can even go a little outside of screen boundary - if necessary.
     </string>
 
+    <string name="txt_no_system_permission">
+        Brightness manipulation not allowed - enable permission for modifying system settings for this application !
+    </string>
 </resources>

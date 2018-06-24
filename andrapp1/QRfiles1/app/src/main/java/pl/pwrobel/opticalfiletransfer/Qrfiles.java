@@ -1065,6 +1065,28 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                 this.last_userindex_dispatched_to_camera = this.camworker.automatically_deducted_camera_preview_index;
         }
 
+
+        new Timer().schedule(new TimerTask()
+        { //unblock button after certain interval - hack
+            @Override
+            public void run()
+            {
+                if (camworker != null){
+                    getPreviewSizes(); // makes to load preview size on the init as well
+                }
+            }
+        }, 500);
+        new Timer().schedule(new TimerTask()
+        { //unblock button after certain interval - hack
+            @Override
+            public void run()
+            {
+                if (camworker != null){
+                    getPreviewSizes(); // makes to load preview size on the init as well
+                }
+            }
+        }, 1100);
+
     }
 
     private void destroyall(){

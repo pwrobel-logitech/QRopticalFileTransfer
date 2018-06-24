@@ -816,18 +816,32 @@ public class QRSurface extends GLSurfaceView implements
     public void setup_initial_brightness(){
         if (automax_already_set)
             return;
-        Activity aa = (Activity) getContext();
+        final Activity aa = (Activity) getContext();
         if (aa != null){
-            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
-                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-            int currbrightnessValue = Settings.System.getInt(
-                    aa.getContentResolver(),
-                    Settings.System.SCREEN_BRIGHTNESS,
-                    0
-            );
-            if (currbrightnessValue >= 0)
-                this.lastbrihtnesslevel = currbrightnessValue;
+            try {
+                Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
+                        Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                int currbrightnessValue = Settings.System.getInt(
+                        aa.getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS,
+                        0
+                );
+                if (currbrightnessValue >= 0)
+                    this.lastbrihtnesslevel = currbrightnessValue;
+            } catch (Exception e){
+                if (aa!=null){
+                    aa.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast toast = Toast.makeText(aa, (String)((Context)aa).getString(R.string.txt_no_system_permission), Toast.LENGTH_SHORT);
+                            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                            v.setTextColor(Color.rgb(255, 195, 77)); // orange
+                            toast.show();
+                        }
+                    });
+                }
 
+            }
         }
         //Log.i("QQQQQQ", "set initial brightness "+ this.lastbrihtnesslevel);
     }
@@ -835,39 +849,68 @@ public class QRSurface extends GLSurfaceView implements
     public void set_brightness_manual_max(){
         if (automax_already_set)
             return;
-        Activity aa = (Activity) getContext();
+        final Activity aa = (Activity) getContext();
         if (aa != null){
 
 
+            try {
+                Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
+                        Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
 
-            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
-                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                int currbrightnessValue = Settings.System.getInt(
+                        aa.getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS,
+                        0
+                );
 
-            int currbrightnessValue = Settings.System.getInt(
-                    aa.getContentResolver(),
-                    Settings.System.SCREEN_BRIGHTNESS,
-                    0
-            );
+                if (currbrightnessValue >= 0)
+                    this.lastbrihtnesslevel = currbrightnessValue;
 
-            if (currbrightnessValue >= 0)
-                this.lastbrihtnesslevel = currbrightnessValue;
+                android.provider.Settings.System.putInt(getContext().getContentResolver(),
+                        android.provider.Settings.System.SCREEN_BRIGHTNESS, 255);
+                this.automax_already_set = true;
+            } catch (Exception e){
+                if (aa!=null){
+                    aa.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast toast = Toast.makeText(aa, (String)((Context)aa).getString(R.string.txt_no_system_permission), Toast.LENGTH_SHORT);
+                            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                            v.setTextColor(Color.rgb(255, 195, 77)); // orange
+                            toast.show();
+                        }
+                    });
+                }
 
-            android.provider.Settings.System.putInt(getContext().getContentResolver(),
-                android.provider.Settings.System.SCREEN_BRIGHTNESS, 255);
-            this.automax_already_set = true;
+            }
         }
         //Log.i("QQQQQ", "Set bright max "+this.automax_already_set+ "  act "+aa);
     }
 
     public void set_brightness_back_to_auto(){
-        Activity aa = (Activity) getContext();
+        final Activity aa = (Activity) getContext();
         //Log.i("QQQQQQQ", "BR to auto val "+this.lastbrihtnesslevel + " activ "+aa);
         if (aa != null){
-            Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
-                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-            android.provider.Settings.System.putInt(getContext().getContentResolver(),
-                    android.provider.Settings.System.SCREEN_BRIGHTNESS, this.lastbrihtnesslevel);
-            this.automax_already_set = false;
+            try {
+                Settings.System.putInt(aa.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
+                        Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                android.provider.Settings.System.putInt(getContext().getContentResolver(),
+                        android.provider.Settings.System.SCREEN_BRIGHTNESS, this.lastbrihtnesslevel);
+                this.automax_already_set = false;
+            }catch (Exception e){
+                if (aa!=null){
+                    aa.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast toast = Toast.makeText(aa, (String)((Context)aa).getString(R.string.txt_no_system_permission), Toast.LENGTH_SHORT);
+                            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                            v.setTextColor(Color.rgb(255, 195, 77)); // orange
+                            toast.show();
+                        }
+                    });
+                }
+
+            }
         }
     }
 
