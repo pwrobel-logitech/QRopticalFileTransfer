@@ -409,4 +409,8 @@ This application contains links to other sites. If you click on a third-party li
     <string name="helpd7">
         <b>3.</b> Попытайтесь изменить расстояние камеры от QR-кодов - на некоторых камерах QR-код может даже немного зайти за пределы границы экрана - при необходимости.
     </string>
+
+    <string name="txt_no_system_permission">
+        Яркость не допускается - разрешить изменение параметров системы для этого приложения!
+    </string>
 </resources>

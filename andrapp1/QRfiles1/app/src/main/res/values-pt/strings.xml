@@ -402,4 +402,8 @@ This application contains links to other sites. If you click on a third-party li
         <b>3.</b> Tente mudar a distância da câmera dos códigos QR - em algumas câmeras, o código QR pode até ficar um pouco fora do limite da tela - se necessário.
     </string>
 
+    <string name="txt_no_system_permission">
+        Manipulação de brilho não permitida - permite a permissão para modificar as configurações do sistema para este aplicativo!
+    </string>
+
 </resources>

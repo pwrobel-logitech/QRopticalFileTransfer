@@ -389,4 +389,8 @@ This application contains links to other sites. If you click on a third-party li
     <string name="helpd7">
         <b>3.</b> QRコードからカメラの距離を変更しようとする - いくつかのカメラでは、必要に応じてQRコードを少しでも画面境界から外すことができます。
     </string>
+
+    <string name="txt_no_system_permission">
+        明るさの操作が許可されていません - このアプリケーションのシステム設定を変更する権限を有効にしてください！
+    </string>
 </resources>
