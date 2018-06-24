@@ -558,6 +558,13 @@ public class SettingsFragment extends DialogFragment {
         if (this.userPreviewSizeController != null && this.userPreviewSizeController.getPreviewSizes() != null) {
 
             int defindex = this.userPreviewSizeController.getStartUpIndexToConstructList(); //this.userPreviewSizeController.getProposedDefaultOptimalPrevievIndex();
+            if (defindex == -1){
+                if (this.userPreviewSizeController.getProposedDefaultOptimalPrevievIndex() > -1){
+                    defindex = this.userPreviewSizeController.getProposedDefaultOptimalPrevievIndex();
+                }else{
+                    defindex = 0;
+                }
+            }
 
             int nprv = this.userPreviewSizeController.getPreviewSizes().size();
             radiobuttprevnum = nprv;
@@ -628,10 +635,29 @@ public class SettingsFragment extends DialogFragment {
                         }
                     }, 1200);
 
-                    if(userPreviewSizeController != null)
-                        userPreviewSizeController.setUserPreviewIndex(rb.getId());
+                    if(userPreviewSizeController != null){
+                        if (rb.getId() > -1)
+                            userPreviewSizeController.setUserPreviewIndex(rb.getId());
+                    }
                 }
             });
+        }
+
+        if (this.userPreviewSizeController != null){
+            if (userPreviewSizeController.getPreviewSizes() != null){
+                if(userPreviewSizeController.getPreviewSizes().size() == 0){
+                    checkBoxallowprevsize.setChecked(false);
+                    checkBoxallowprevsize.setEnabled(false);
+                }else{
+                    checkBoxallowprevsize.setEnabled(true);
+                }
+            }else{
+                checkBoxallowprevsize.setChecked(false);
+                checkBoxallowprevsize.setEnabled(false);
+            }
+        }else{
+            checkBoxallowprevsize.setChecked(false);
+            checkBoxallowprevsize.setEnabled(false);
         }
 
         seekBar1 = (SeekBar)v.findViewById(R.id.seekBar1);

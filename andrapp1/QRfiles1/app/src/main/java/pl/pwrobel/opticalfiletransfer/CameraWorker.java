@@ -815,6 +815,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 }
                 bestsizeindex = user_selected_camera_index;
 
+                if (bestsizeindex  < 0){
+                    if (automatically_deducted_camera_preview_index >= 0){
+                        bestsizeindex = automatically_deducted_camera_preview_index;
+                    }else{
+                        bestsizeindex = 0;
+                    }
+                }
+
                 int camwidth = psize.get(bestsizeindex).width;
                 int camheight = psize.get(bestsizeindex).height;
                 CameraWorker.this.camwidth = camwidth;
