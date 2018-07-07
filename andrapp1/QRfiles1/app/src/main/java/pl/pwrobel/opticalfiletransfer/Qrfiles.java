@@ -81,6 +81,21 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     }
 
     public static void watchYoutubeVideo(Activity act, String id){
+        String link = id;
+        Intent webIntent2 = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(link)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (act != null)
+            act.startActivity(webIntent2);
+        try {
+            Thread.sleep(350);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return;
+
+        //old, unused - fuck YT
+        /*
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + id)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -100,7 +115,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     //used to hold main camera thread with the higher priority
@@ -235,7 +250,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                             showHelpDialog();
                         return true;
                     case R.id.menu_videolink:
-                        Qrfiles.watchYoutubeVideo(Qrfiles.this, Qrfiles.this.getString(R.string.video_id));
+                        Qrfiles.watchYoutubeVideo(Qrfiles.this, Qrfiles.this.getString(R.string.video_newlink));
                         return true;
                     case R.id.menu_about:
                         //Log.i("MENU", "about selected");

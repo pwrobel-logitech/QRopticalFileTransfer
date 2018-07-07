@@ -34,7 +34,7 @@
     <string name="menu_string_help">Socorro</string>
     <string name="menu_string_video">Instruções de vídeo</string>
     <string name="video_id">ARNiQXUREr8</string>
-
+    <string name="video_newlink">http://wrobel.wroclaw.pl/opticalfiletransfer/instruction.mp4</string>
 
 
     <string name="empty_directory">Diretório vazio</string>
@@ -197,10 +197,10 @@ This application contains links to other sites. If you click on a third-party li
     <string name="linkifyab1str1">Windows</string>
     <string name="linkifyab1str2">Linux</string>
     <string name="textabout1">
-
-        A transferência de arquivos ópticos é uma aplicação que usa transmissão de quadros QR para transferir arquivos entre telefones e PC para o telefone (consulte os aplicativos de complemento do Windows e Linux para carregar arquivos do seu computador).
-
+       Transferência óptica de arquivos é uma aplicação que usa fluxo de quadros QR para transferir arquivos entre telefones e de PC para telefone - consulte o aplicativo de upload no navegador da Web (Firefox, Chrome) ou os aplicativos complementares nativos do Windows e Linux para o upload de arquivos de desktop PC.
     </string>
+    <string name="linkifyab2str">aplicativo de upload no navegador da Web</string>
+    <string name="linkifyab2val">http://wrobel.wroclaw.pl/opticalfiletransfer/webuploaderjs.php</string>
 
 
     <string name="textabout2">
@@ -404,6 +404,18 @@ This application contains links to other sites. If you click on a third-party li
 
     <string name="txt_no_system_permission">
         Manipulação de brilho não permitida - permite a permissão para modificar as configurações do sistema para este aplicativo!
+    </string>
+
+    <string name="mischeader">
+        Miscellaneous
+    </string>
+
+    <string name="miscclick">
+        Save uploader web browser app
+    </string>
+
+    <string name="miscsave">
+        Complete desktop web app extracted and saved in :
     </string>
 
 </resources>

@@ -32,6 +32,10 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -141,6 +145,7 @@ public class SettingsFragment extends DialogFragment {
     HorizontalNumberPicker numberPickerQrsize = null;
     HorizontalNumberPicker numberPickerStartSeqTime = null;
     Button restore_default_settings_button = null;
+    Button save_webapp = null;
     private int picker_obtainedFPS = -1;
     private int picker_obtainedError = -1;
     private int picker_obtainedQrsize = -1;
@@ -162,6 +167,48 @@ public class SettingsFragment extends DialogFragment {
     // for size preview
     GridButtons rgp = null;
     int radiobuttprevnum = -1;
+
+    // Copy an InputStream to a File.
+//
+    private void copyInputStreamToFile(InputStream in, File file) {
+        OutputStream out = null;
+
+        try {
+            out = new FileOutputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while((len=in.read(buf))>0){
+                out.write(buf,0,len);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast toast = Toast.makeText(getActivity(), "Failed to store the file!", Toast.LENGTH_SHORT);
+                    TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                    v.setTextColor(Color.RED);
+                    toast.show();
+                }
+            });
+        }
+        finally {
+            // Ensure that the InputStreams are closed even if there's an exception.
+            try {
+                if ( out != null ) {
+                    out.close();
+                }
+
+                // If you want to close the "in" InputStream yourself then remove this
+                // from here but ensure that you close it yourself eventually.
+                in.close();
+            }
+            catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -221,6 +268,35 @@ public class SettingsFragment extends DialogFragment {
         });
 
 
+        save_webapp = (Button) v.findViewById(R.id.button_savewebapplocally);
+        save_webapp.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                save_webapp.setEnabled(false);
+                String str = getActivity().getString(R.string.miscsave) + " "+getfullpath(currFileDumpPath)+File.separator+"webuploaderjs.html";
+
+                InputStream is = getResources().openRawResource(R.raw.webuploaderjs);
+                File out = new File(getfullpath(currFileDumpPath)+File.separator+"webuploaderjs.html");
+                copyInputStreamToFile(is, out);
+                Toast.makeText(getActivity(), str, Toast.LENGTH_LONG).show();
+
+                new Timer().schedule(new TimerTask()
+                {
+                    @Override
+                    public void run()
+                    {
+                        ((Activity)getActivity()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                save_webapp.setEnabled(true);
+                            }
+                        });
+
+                    }
+                },1500);
+            }
+        });
 
         numberPickerError = (HorizontalNumberPicker) v.findViewById(R.id.numberPickerError);
         numberPickerError.setMinValue(20);

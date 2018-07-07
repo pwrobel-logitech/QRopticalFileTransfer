@@ -118,6 +118,8 @@ public class AboutFragment extends DialogFragment {
             HelpFragment.internaladdLinks(textViewabout6, a.getString(R.string.linkab6str2),
                     a.getString(R.string.linkab6val2));
 
+            HelpFragment.internaladdLinks(textViewabout1, a.getString(R.string.linkifyab2str),
+                    a.getString(R.string.linkifyab2val));
             HelpFragment.internaladdLinks(textViewabout1, a.getString(R.string.linkifyab1str1),
                     a.getString(R.string.link_win));
             HelpFragment.internaladdLinks(textViewabout1, a.getString(R.string.linkifyab1str2),

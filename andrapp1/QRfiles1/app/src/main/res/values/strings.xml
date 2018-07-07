@@ -36,7 +36,7 @@
     <string name="menu_string_help">Help</string>
     <string name="menu_string_video">Video instructions</string>
     <string name="video_id">ARNiQXUREr8</string>
-
+    <string name="video_newlink">http://wrobel.wroclaw.pl/opticalfiletransfer/instruction.mp4</string>
 
 
     <string name="empty_directory">Empty Directory</string>
@@ -213,13 +213,16 @@ This application contains links to other sites. If you click on a third-party li
 
     <string name="linkifyab1str1">Windows</string>
     <string name="linkifyab1str2">Linux</string>
+
     <string name="textabout1">
 
         Optical file transfer is application that uses stream of QR frames to transfer files between
-        phones and from desktop PC to phone (see the Windows and Linux complementary applications for file upload from
-        desktop PC).
+        phones and from desktop PC to phone - see the uploader in web browser(Firefox, Chrome) version, or the native Windows and Linux complementary applications for file upload from
+        desktop PC.
 
     </string>
+    <string name="linkifyab2str">uploader in web browser</string>
+    <string name="linkifyab2val">http://wrobel.wroclaw.pl/opticalfiletransfer/webuploaderjs.php</string>
 
 
     <string name="textabout2">
@@ -432,4 +435,17 @@ This application contains links to other sites. If you click on a third-party li
     <string name="txt_no_system_permission">
         Brightness manipulation not allowed - enable permission for modifying system settings for this application !
     </string>
+
+    <string name="mischeader">
+        Miscellaneous
+    </string>
+
+    <string name="miscclick">
+        Save uploader web browser app
+    </string>
+
+    <string name="miscsave">
+        Complete desktop web app extracted and saved in :
+    </string>
+
 </resources>

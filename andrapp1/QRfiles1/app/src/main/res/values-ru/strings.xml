@@ -34,7 +34,7 @@
     <string name="menu_string_help">Помогите</string>
     <string name="menu_string_video">Видео-инструкции</string>
     <string name="video_id">ARNiQXUREr8</string>
-
+    <string name="video_newlink">http://wrobel.wroclaw.pl/opticalfiletransfer/instruction.mp4</string>
 
 
     <string name="empty_directory">Пустой каталог</string>
@@ -202,11 +202,10 @@ This application contains links to other sites. If you click on a third-party li
     <string name="linkifyab1str1">Windows</string>
     <string name="linkifyab1str2">Linux</string>
     <string name="textabout1">
-
-        Оптическая передача файлов - это приложение, которое использует поток QR-кадров для передачи файлов между
-        Телефонов и от настольного ПК до телефона (см. Дополнительные приложения Windows и Linux для загрузки файлов с настольный ПК).
-
+        Оптическая передача файлов - это приложение, которое использует поток QR-кадров для передачи файлов между телефоны и с настольного ПК на телефон - см. отправителя в браузере (Firefox, Chrome) или родные дополнительные приложения Windows и Linux для загрузки файлов с настольный ПК.
     </string>
+    <string name="linkifyab2str">отправителя в браузере </string>
+    <string name="linkifyab2val">http://wrobel.wroclaw.pl/opticalfiletransfer/webuploaderjs.php</string>
 
 
     <string name="textabout2">
@@ -413,4 +412,17 @@ This application contains links to other sites. If you click on a third-party li
     <string name="txt_no_system_permission">
         Яркость не допускается - разрешить изменение параметров системы для этого приложения!
     </string>
+
+    <string name="mischeader">
+        Miscellaneous
+    </string>
+
+    <string name="miscclick">
+        Save uploader web browser app
+    </string>
+
+    <string name="miscsave">
+        Complete desktop web app extracted and saved in :
+    </string>
+
 </resources>
