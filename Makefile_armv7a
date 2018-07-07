@@ -5,7 +5,7 @@
 current_dir = $(shell pwd)
 BASE=/home/pwrobel/toolchains/arm-14
 STRIP=$(BASE)/bin/arm-linux-androideabi-strip
-CFLAGS=-I. -I$(BASE)/include/c++/4.9.x/bits/ -Wall -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -DANDROID -O3 -fvisibility=hidden
+CFLAGS=-I. -I$(BASE)/include/c++/4.9.x/bits/ -Wall -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -DANDROID -O3 -fvisibility=hidden -fpermissive
 CPP=$(BASE)/bin/arm-linux-androideabi-g++
 STRIP=$(BASE)/bin/arm-linux-androideabi-strip
 LIBQRENCODER_LIBFOLDERNAME=libqrencode

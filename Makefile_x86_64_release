@@ -5,7 +5,7 @@
 current_dir = $(shell pwd)
 LIBQRENCODER_LIBFOLDERNAME=libqrencode
 LIBZXING=zxing_lib/zxing-cpp/core/src
-CFLAGS=-Os -DRELEASE
+CFLAGS=-Os -DRELEASE -fpermissive
 
 x86_lib: open_rs_encoder.cpp qr_frame_producer.cpp fileutil/fileops.cpp libqrencode_wrapper
 	g++ -I$(current_dir) -I$(current_dir)/libqrencoder_wrapper -fPIC $(CFLAGS) -shared open_rs_encoder.cpp qr_frame_producer.cpp hash-library/sha256.cpp $(current_dir)/fileutil/fileops.cpp -o libRSencoder.so -L$(current_dir)/release_x86_64_linux_uploader -lfec -lqrencoder_wrapper -lpthread

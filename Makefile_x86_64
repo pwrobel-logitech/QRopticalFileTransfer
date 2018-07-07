@@ -5,7 +5,7 @@
 current_dir = $(shell pwd)
 LIBQRENCODER_LIBFOLDERNAME=libqrencode
 LIBZXING=zxing_lib/zxing-cpp/core/src
-CFLAGS=-O0 -g
+CFLAGS=-O0 -g -fpermissive
 ZXINGARCH=x86_64
 STRINGARCH=x86_64
 
