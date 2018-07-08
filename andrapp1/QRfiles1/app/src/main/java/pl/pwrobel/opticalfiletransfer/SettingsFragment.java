@@ -3,6 +3,8 @@ package pl.pwrobel.opticalfiletransfer;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -64,6 +66,19 @@ public class SettingsFragment extends DialogFragment {
 
 
         return f;
+    }
+
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        try {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(this, tag).addToBackStack(null);
+            ft.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Log.e("IllegalStateException", "Exception", e);
+        }
+
     }
 
 

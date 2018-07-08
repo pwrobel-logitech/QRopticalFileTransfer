@@ -3,7 +3,10 @@ package pl.pwrobel.opticalfiletransfer;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +32,18 @@ public class AboutFragment extends DialogFragment {
     static AboutFragment newInstance() {
         AboutFragment f = new AboutFragment();
         return f;
+    }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        try {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(this, tag).addToBackStack(null);
+            ft.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Log.e("IllegalStateException", "Exception", e);
+        }
+
     }
 
 
