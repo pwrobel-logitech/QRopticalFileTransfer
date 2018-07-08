@@ -444,6 +444,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         if (/*status == 6 ||*/ status == 2){
             synchronized (this){
                 this.is_header_detected = true;
+                this.last_filename_detected_from_header = get_last_recognized_file_name_str();
                 this.got_dataframe_before_header_detection = false;
                 // size restriction that the receiver can pick up
                 this.filesize_carried_in_the_detected_header = get_last_recognized_file_size();
@@ -1543,7 +1544,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
         }
         if (this.did_any_header_frame_arrived && this.is_header_detected){
             status.should_draw_status = true;
-            status.displaytext = this.str_detected_file1+" "+get_last_recognized_file_name_str();
+            status.displaytext = this.str_detected_file1+" "+this.last_filename_detected_from_header;
             status.displaytext2 = this.str_detected_file2;
             return status;
         }
