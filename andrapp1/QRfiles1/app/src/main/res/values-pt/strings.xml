@@ -63,7 +63,16 @@
 
     <string name="help_donotshowagaintick">Não mostre novamente</string>
     <string name="help_title">Socorro</string>
-    <string name="helpd1">Use este aplicativo para receber/enviar pequenos arquivos (limite de 5MB por arquivo na versão gratuita deste aplicativo) como o fluxo de quadros QR através da câmera do telefone. \n Você pode gerar o fluxo de arquivos QR deste aplicativo ou também do PC de mesa - Veja programas do Windows e Linux para carregar arquivos. \n</string>
+
+    <string name="helpd1">
+        Use este aplicativo para receber / enviar pequenos arquivos (limite de 5MB por arquivo na versão gratuita deste aplicativo) como o fluxo de quadros QR
+        através da câmera do telefone. \n
+        Você pode gerar arquivo QR stream a partir deste aplicativo ou também o
+        PC de mesa - consulte o aplicativo do navegador da Web (FF, Chrome) ou
+        Programas Windows e Linux para fazer upload de arquivos. \n
+    </string>
+    <string name="lnkweb2">consulte o aplicativo do navegador da Web</string>
+
 
     <string name="helpd2">
         <i>Dicas para transmissão bem-sucedida :\n</i>

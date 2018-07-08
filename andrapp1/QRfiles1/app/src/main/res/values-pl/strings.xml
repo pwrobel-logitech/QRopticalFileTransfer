@@ -77,16 +77,14 @@
     <string name="ask_folder_choose">Wybierz folder zapisu plików</string>
 
 
-
-
-
     <string name="helpd1">Use this app to receive/send small files (5MB limit per file in the free version of this app)
         as the stream of QR frames
         through the phone\'s camera.\n
 
         You can generate file QR stream from this app or also the
-        desktop PC - see
+        desktop PC - see web browser (FF, Chrome) app, or
     Windows and Linux programs for uploading files.\n</string>
+    <string name="lnkweb2">see web browser</string>
 
     <string name="helpd2">
         <i>Tips for successfull transmission :\n</i>

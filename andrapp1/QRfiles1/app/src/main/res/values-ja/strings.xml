@@ -65,7 +65,14 @@
 
     <string name="help_donotshowagaintick">再度表示しない</string>
     <string name="help_title">助けて</string>
-    <string name="helpd1">このアプリを使用して、小さなファイルを受信/送信する（このアプリの無料版でファイルごとに5MBの制限）QRフレームのストリームとして 電話のカメラを介して。\n あなたは、このアプリからファイルQRストリームを生成することも、デスクトップPC - 参照 ファイルをアップロードするためのWindowsおよびLinuxプログラム。\n</string>
+    <string name="helpd1">
+        QRフレームのストリームとして小さなファイルを送受信するには、このアプリを使用してください
+        電話のカメラで。\n
+        あなたは、このアプリからファイルQRストリームを生成することも、
+        デスクトップPC - ウェブブラウザ（FF、Chrome）アプリ、または
+        ファイルをアップロードするためのWindowsおよびLinuxプログラム。\n
+    </string>
+    <string name="lnkweb2">ウェブブラウザ</string>
 
     <string name="helpd2">
         <i>成功するためのヒント :\n</i>

@@ -239,6 +239,7 @@ public class HelpFragment extends DialogFragment {
         this.textViewhelpd1 = (TextView) v.findViewById(R.id.textViewhelpd1);
         internaladdLinks(this.textViewhelpd1, "Windows", ((Activity)dismisser).getString(R.string.link_win));
         internaladdLinks(this.textViewhelpd1, "Linux", ((Activity)dismisser).getString(R.string.link_lin));
+        internaladdLinks(this.textViewhelpd1, ((Activity)dismisser).getString(R.string.lnkweb2), ((Activity)dismisser).getString(R.string.linkifyab2val));
 
         this.dismissbox.setChecked(this.defaultchecked);
         this.dismissbox.requestLayout();
