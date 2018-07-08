@@ -407,15 +407,15 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="mischeader">
-        Miscellaneous
+        Diversos
     </string>
 
     <string name="miscclick">
-        Save uploader web browser app
+        Salvar o aplicativo do navegador da web do remetente
     </string>
 
     <string name="miscsave">
-        Complete desktop web app extracted and saved in :
+        Aplicativo da web completo de upload de desktop extraído e salvo em :
     </string>
 
 </resources>

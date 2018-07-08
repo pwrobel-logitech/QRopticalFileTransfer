@@ -414,15 +414,15 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="mischeader">
-        Miscellaneous
+        Разное
     </string>
 
     <string name="miscclick">
-        Save uploader web browser app
+        Сохранить приложение веб-браузера отправителя
     </string>
 
     <string name="miscsave">
-        Complete desktop web app extracted and saved in :
+        Полное веб-приложение отправителя рабочего стола, извлеченное и сохраненное в:
     </string>
 
 </resources>

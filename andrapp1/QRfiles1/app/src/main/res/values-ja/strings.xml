@@ -397,15 +397,15 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="mischeader">
-        Miscellaneous
+        雑
     </string>
 
     <string name="miscclick">
-        Save uploader web browser app
+        送信者のWebブラウザアプリを保存する
     </string>
 
     <string name="miscsave">
-        Complete desktop web app extracted and saved in :
+        完全な送信者のデスクトップWebアプリケーションを抽出して保存しました：
     </string>
 
 </resources>

@@ -269,6 +269,7 @@ public class SettingsFragment extends DialogFragment {
 
 
         save_webapp = (Button) v.findViewById(R.id.button_savewebapplocally);
+        save_webapp.setEnabled(true);
         save_webapp.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -286,7 +287,10 @@ public class SettingsFragment extends DialogFragment {
                     @Override
                     public void run()
                     {
-                        ((Activity)getActivity()).runOnUiThread(new Runnable() {
+                        Activity a = getActivity();
+                        if (a == null)
+                            return;
+                        a.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 save_webapp.setEnabled(true);
