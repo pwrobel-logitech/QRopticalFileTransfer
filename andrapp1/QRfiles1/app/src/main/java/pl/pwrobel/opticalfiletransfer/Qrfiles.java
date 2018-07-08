@@ -725,7 +725,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
                         }
                     });
                 }
-            }, 1000);
+            }, 1500);
 
         }
 

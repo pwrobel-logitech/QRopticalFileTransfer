@@ -3,6 +3,8 @@ package pl.pwrobel.opticalfiletransfer;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -12,6 +14,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +41,17 @@ public class HelpFragment extends DialogFragment {
         return f;
     }
 
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        try {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(this, tag).addToBackStack(null);
+            ft.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Log.e("IllegalStateException", "Exception", e);
+        }
+
+    }
 
     private HelpDialogDismisser dismisser = null;
     public void setHelpDialogDismisser(HelpDialogDismisser dis){
