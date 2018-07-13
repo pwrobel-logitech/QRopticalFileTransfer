@@ -92,11 +92,12 @@
    </style>
    <head>
       <meta charset="utf-8">
-      <title>Optical File Transfer Uploader JS</title>
+      <title>Optical File Transfer Uploader</title>
   
    </head>
    <body>
-      <div id="maincontrolarea" style="margin: 40 auto;">
+      <div id="maincontrolarea" style="margin: 15;">
+         <big><center style="margin:15;color:#666666;font-family:Impact, Charcoal, sans-serif;">Optical File Transfer Uploader</center></big>
          <!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file -->
          <form method="post" enctype="multipart/form-data">
             <div title="Select your files here or drag and drop them - if your file explorer supports drag and drop.">
@@ -117,7 +118,7 @@
                      <div id="chooserfps" style="float:left;margin: 10 auto;" class="margin1">FPS:</div>
                   </td>
                   <td>
-                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="1" class="center-block" id="numberfps" type="number" value="16" min="5" max="60" oninput="fpschanged()" style="width:80px;"></div>
+                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="1" class="center-block" id="numberfps" type="number" value="16" min="5" max="60" onchange="fpschanged()" style="width:80px;"></div>
                   </td>
                </tr>
                <tr>
@@ -125,7 +126,7 @@
                      <div id="chooseerrmaxerror" style="float:left;margin: 10 auto;" class="margin1">Max error(%):</div>
                   </td>
                   <td>
-                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="5" class="center-block" id="numbererr" type="number" value="50" min="20" max="80" oninput="restofinputchanged()" style="width:80px;"></div>
+                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="5" class="center-block" id="numbererr" type="number" value="50" min="20" max="80" onchange="restofinputchanged()" style="width:80px;"></div>
                   </td>
                </tr>
                <tr title="Byte capacity of single QR frame used for file upload.">
@@ -133,7 +134,7 @@
                      <div id="chooseerqrsize" style="float:left;margin: 10 auto;" class="margin1">QR size(bytes):</div>
                   </td>
                   <td>
-                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="10" class="center-block" id="numberqrsize" type="number" value="585" min="85" max="1625" oninput="restofinputchanged()" style="width:80px;"></div>
+                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="10" class="center-block" id="numberqrsize" type="number" value="585" min="85" max="1625" onchange="restofinputchanged()" style="width:80px;"></div>
                   </td>
                </tr>
                <tr title="Number of seconds that the initialization sequence will be emitted. Detector camera must detect only part of it, to setup the file transmission.">
@@ -141,7 +142,7 @@
                      <div id="chooseerstartuptime" style="float:left;margin: 10 auto;" class="margin1">Startup time(s):</div>
                   </td>
                   <td>
-                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="1" class="center-block" id="numberstartupsec" type="number" value="6" min="3" max="10" oninput="restofinputchanged()" style="width:80px;"></div>
+                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="1" class="center-block" id="numberstartupsec" type="number" value="6" min="3" max="10" onchange="restofinputchanged()" style="width:80px;"></div>
                   </td>
                </tr>
             </table>
@@ -155,6 +156,7 @@
          <center>
             <div style="width:600;float:top;margin: 20 auto;font-style: italic;line-height: 150%;">
                See the <a href="https://play.google.com/store/apps/details?id=pl.pwrobel.opticalfiletransfer">native android application</a> for download/upload. Uploader app for <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.php">Windows(GUI)</a> and <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.php">linux(CLI)</a> is also available. See sample usage <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/instruction.mp4">here</a>.
+               <br><br>Tested on Firefox and Chromium - Interet Explorer is not supported !
             </div>
          </center>
       </div>
@@ -308,7 +310,14 @@ function returnFileSize(number) {
     }
 }
 
+lastfps = 16;
+lasterr = 50;
+lastqrsize = 585;
+laststartupsec = 6;
+
 function fpschanged() {
+	if(!validate_input())
+		return;
     var numberfps = document.getElementById("numberfps");
     var nfps = Number(numberfps.value) | 0;
     fps = nfps;
@@ -335,7 +344,51 @@ function calc_uplspeed() {
     }
 }
 
+function validate_component(component_string, warn_msg, range_min, range_max, defvalue){
+	var numbercomp = document.getElementById(component_string);
+	if (numbercomp.value.trim() === "") {
+        alert(warn_msg);
+        numbercomp.focus();
+		numbercomp.value = defvalue;
+		document.getElementById("uplspeedtxt").innerHTML = "Max upload speed : <b>" + calc_uplspeed() + "</b>";
+        return false;
+    }
+    if (numbercomp.value !== "") {
+        if (! (/^\d*(?:\.\d{0,2})?$/.test(numbercomp.value))) {
+            alert(warn_msg);
+            numbercomp.focus();
+			numbercomp.value = defvalue;
+			document.getElementById("uplspeedtxt").innerHTML = "Max upload speed : <b>" + calc_uplspeed() + "</b>";
+            return false;
+        }else{
+			var nfps = Number(numbercomp.value) | 0
+			if (nfps > range_max || nfps < range_min){
+				alert(warn_msg);
+				numbercomp.focus();
+				numbercomp.value = defvalue;
+				document.getElementById("uplspeedtxt").innerHTML = "Max upload speed : <b>" + calc_uplspeed() + "</b>";
+				return false;
+			}
+		}
+    }
+    return true;  
+}
+
+function validate_input(){
+	if (!validate_component("numberfps", "Please enter a valid FPS number from 5-60 range!", 5, 60, lastfps))
+		return false;
+	if (!validate_component("numbererr", "Please enter a valid maximum error fraction from 20% to 80%", 20, 80, lasterr))
+		return false;
+	if (!validate_component("numberqrsize", "Please enter a valid single QR size in bytes from 85 to 1625", 85, 1625, lastqrsize))
+		return false;
+	if (!validate_component("numberstartupsec", "Please enter a valid time(seconds) of initializing startup sequence", 3, 10, laststartupsec))
+		return false;
+	return true;
+}
+
 function restofinputchanged() {
+	if(!validate_input())
+		return;
     should_draw_progress_bar = false;
     cancelAnimationFrame(animateid);
     if (clear_timeout_after_done_id != -1) {
@@ -452,7 +505,7 @@ function setup_layout() {
         qrarea.className = "fullsquareH";
         qrarea.style.float = "left";
         maincontrolarea.style.float = "left";
-        maincontrolarea.style.margin = "50";
+        maincontrolarea.style = "float:left;margin-right:50;margin-left:50;";
         document.getElementById("qrcanvas").style = "image-rendering: optimizeSpeed; image-rendering: -moz-crisp-edges; image-rendering: -webkit-optimize-contrast;image-rendering: -o-crisp-edges; image-rendering: pixelated; -ms-interpolation-mode: nearest-neighbor;";;
     } else {
         qrarea.className = "fullsquareW";
@@ -696,9 +749,15 @@ function load_settings() {
     } else {
         numberstartupsec.value = Number(localStorage.getItem("numberstartupsec"));
     }
+	lastfps = numberfps.value;
+	lasterr = numbererr.value;
+	lastqrsize = numberqrsize.value;
+	laststartupsec = numberstartupsec.value;
 };
 
 function save_settings() {
+	if (!validate_input())
+		return;
     var numberfps = document.getElementById("numberfps");
     var numbererr = document.getElementById("numbererr");
     var numberqrsize = document.getElementById("numberqrsize");
@@ -708,6 +767,11 @@ function save_settings() {
     var nerr = Number(numbererr.value) | 0;
     var nqr = Number(numberqrsize.value) | 0;
     var nst = Number(numberstartupsec.value) | 0;
+	
+	lastfps = nfps;
+	lasterr = nerr;
+	lastqrsize = nqr;
+	laststartupsec = nst;
 
     localStorage.setItem("numberfps", nfps);
     localStorage.setItem("numbererr", nerr);
@@ -753,7 +817,7 @@ window.onbeforeunload = function() {
     save_settings();
     return '';
 };
-//v01
+//v02
    </script>
 
 <?php
