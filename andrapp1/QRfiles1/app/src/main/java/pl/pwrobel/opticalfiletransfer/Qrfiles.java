@@ -277,7 +277,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     //private int mSettingsStackLevel = 0;
     private NumberPicker numberPickerFPS = null;
     void showSettingDialog() {
-
+        if(isDestroyed())
+            return;
         //mSettingsStackLevel++;
 
         // DialogFragment.show() will take care of adding the fragment
@@ -302,6 +303,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
     private boolean helpdialogshown = false;
     void showHelpDialog() {
+        if(isDestroyed())
+            return;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         // Create and show the dialog.
         HelpFragment newFragment = HelpFragment.newInstance();
@@ -312,6 +315,8 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     }
 
     void showAboutDialog() {
+        if(isDestroyed())
+            return;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         // Create and show the dialog.
         AboutFragment newFragment = AboutFragment.newInstance();

@@ -197,7 +197,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public ChooserDialog show() {
         //if (_result == null)
         //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
-
+        if (_context != null)
+            if (((Activity)_context).isDestroyed())
+                return this;
 
         if (_alertDialog == null || _list == null)
             throw new RuntimeException("call build() before show().");
