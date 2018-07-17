@@ -155,7 +155,7 @@
          </div>
          <center>
             <div style="width:600;float:top;margin: 20 auto;font-style: italic;line-height: 150%;">
-               See the <a href="https://play.google.com/store/apps/details?id=pl.pwrobel.opticalfiletransfer">native android application</a> for download/upload. Uploader app for <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.php">Windows(GUI)</a> and <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.php">linux(CLI)</a> is also available. See sample usage <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/instruction.mp4">here</a>.
+               See the <a href="https://play.google.com/store/apps/details?id=pl.pwrobel.opticalfiletransfer">native android application</a> for download/upload. Uploader app for <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.php">Windows(GUI)</a> and <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.php">linux(CLI)</a> is also available. See sample usage <a href="https://www.youtube.com/watch?time_continue=2&v=ARNiQXUREr8">here</a>.
                <br><br>Tested on Firefox and Chromium - Interet Explorer is not supported !
             </div>
          </center>

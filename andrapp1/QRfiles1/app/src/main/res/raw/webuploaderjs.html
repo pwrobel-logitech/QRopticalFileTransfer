@@ -1,6 +1,5 @@
-
 <html lang="en">
-<style>
+   <style>
       .fullsquareW {
       background: #ffffff;
       width: 80vw;
@@ -91,81 +90,83 @@
       margin: 10;
       }
    </style>
-<head>
-    <meta charset="utf-8">
-    <title>Optical File Transfer Uploader JS</title>
-
-</head>
-<body>
-<div id="maincontrolarea" style="margin: 40 auto;">
-    <!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file -->
-    <form method="post" enctype="multipart/form-data">
-        <div title="Select your files here or drag and drop them - if your file explorer supports drag and drop.">
-            <label for="image_uploads">Choose Files to send</label>
-            <input type="file" id="image_uploads" name="image_uploads" multiple>
-        </div>
-        <div class="preview">
-            <p>No files currently selected for upload</p>
-        </div>
-        <div>
-            <button title="Click to start file upload after selecting file/files." type="button" id="uploadbutton">   <img style="vertical-align:middle" width="41" height="41" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAApCAYAAACoYAD2AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAABcSAAAXEgFnn9JSAAAAB3RJTUUH4gcHECUpDsgfewAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAA4hSURBVFjDlZl7UNXV2sc/v8u+wEZEREIuIeL9kikqWloJeUzz0oxNMQ5TOR21Zux9tekdzfIy1diQl2NROglGkzZpmqYoKqL0RjreEtQ0Q4m8oYGAgAF7/y7r/cN+6+yNds571sxv9vwuaz3P+j6X9X2erfDn2LZtG0KIJODvwOOKosQCKoCiKPJy7jv+dnz2V8//xVyhKEqdoij/C3yemZlZJdcB2L59O0KIV4B/KIriFUJgWRaKoqCqKoqiYBgGmqbJe0eIbdvyu2ChQggAhBAh7wE0TUNRFCnDmaeqKm63G0VR/lAU5d3HH388B0DZtWsXlmX9l6IoH1qWhd/vl4KFELhcLizLwjRNuUhbWxtr166loaFBfhs8nHshhFSyU6dOvP766/h8PnRdx7ZtDMOQygshsG0b0zSJjIykS5cufiHEB2PGjFmiFBYW9hNCnDUMQ29ra0PTNLlDZ8emaSKEkPefffYZxcXF/CdDVVWGDRvG0qVL5XrBiANYlkV7ezumaRITE0NsbGwzMFFXVfW/Ab25uRlN07BtWy4ajJBj6rKyMoqLi6VZu3XrRu/evYmLi6Nr167ouo5hGDQ3N1NTU0NVVRU1NTXYtk1FRQVfffUVWVlZWJYVYmYHdU3TME2TmpoaoqOjwz0ez+u6pml/a29vDzGPqqrSDI45NU3j8uXL5OXlERUVxZNPPsnYsWNJSkqS3ziXZVlomibXrKuro6ysjP379/PNN9/Qt29fhg8fLl3Itm2pnMvlwjRNdF2noaFBT0pKekLXNC3Bgdy27RAEnd2qqkprayvr1q3j2WefZcqUKXL31dXVnD17litXrlBfX4/f78ftdhMdHU1ycjIDBw4kNTWV559/nmeeeYaDBw9SUFBAjx49iImJkTKFEOi6jmVZuFwu6bO6rkcrhw4dMpqbm/U7d+5I6FVVxTRNiYymaezevZv09HTi4uIIBAL88MMP7Nmzh99+++3f+mP37t15+umnmTBhAh6Ph5aWFvbv38/06dOlPAcQy7Kkb0ZFRZGamory/fffG01NTXpzc3NIanHQdblc1NfXExkZiaZpXLt2jY8++ojLly/zn45u3brx6quvMnr0aACuXbtGYmKidDPbtrFtWyoaERFxV8nDhw8bt2/f1hsbG6XjOtHtcrlCUtCRI0dYu3at3HXHRB8caI5g5wqO8mnTpjF79myEEJimidvtxjAM+Z1lWQghiIyMJCUlBV3TNDRN48MPP+T27dshi3Xp0oXXXnsNTdMoLS1l/fr1Icrpuk56ejrZ2dlkZmbSq1cv+b6qqoqysjK2bt3K3r17Q3Lhzp07aWpqYuHChRiGwcaNGzl58mRIwo+NjeX999+/G4AnTpww9u3bJ2JiYgQgL1VVxcKFC8XmzZvF22+/HfJOURTRt29fUVpaKoKHbdvCsixh23bIs2PHjom0tLSQNTRNE9OnTxeHDh0SX3zxhfD5fCHvk5OTxcmTJ8XVq1eF7iToYJMAjBo1irS0NJqamsjNzQ1BMDIykrlz51JdXU1VVRWKojB27Fhu377N6dOnSUpKYtCgQezZs0ceAC+//DJ1dXVcuXJFmrSwsJDBgwczatQoXnrpJT755JMQOS6XC13X/2nuYH/SdZ0ZM2ZgWRbbt2+nqalJTkxISKC+vp6dO3di2zZCCE6fPs2aNWu4cOECGzZsYObMmSiKwpw5cxg/fjyWZWHbNk1NTcTGxlJbWwtAIBBg/fr1jBw5kvHjx7NlyxZu3boVoqimaai6rqPregiKw4YNIzY2lpaWlpDj78EHHyQ3N5f4+HgOHDhAfn4++/btY/DgwTLonnjiCebNmyfzXXFxMfn5+RQVFTFkyBDmzJlDenq6XLOuro6ioiIiIiKYMmXKPRxA0zRUTdNCTK0oCmPGjEEIwXfffYdpmhLdDz74gMjISBkAvXv35ubNmyFRvmXLFrKzs3G5XPLc79u3L7W1tQgh8Pl8fPzxx1KeYRjs3r0br9fLmDFj7jG3VLLjGT1kyBBUVeXkyZPyeY8ePXjuueekiR0B0dHR2LaNrussXbqURYsWhdA0XdcJBAJ07txZni4PP/ww48aNk2v//vvvVFZWEhcXR1xc3P2RDB6JiYlERERgGAaXLl2S6Sg7O1tOvH79OqmpqfTs2ZNBgwZx9uxZhBCsWLGC3NxcvF6vPLV69uxJSkoKQ4YM4fz58zjuNWPGjBD2U1FRgdfrpV+/fiFp0LbtfwaOM+Lj4wGora0NYSqPPvqo9NcDBw7gcrkwDAMAt9tNjx49WLt2LRkZGSxfvpz4+HhKS0ul2RxukJycDBBiWtu2uXz5Mm63m4SEhBDQTNO8i2RwEo2KikIIISPaGT179gSgpqaGwsJCRowYwfr169mwYQNdunQhJiaGqVOnMmrUKIqKivD7/Xz66acUFBQwaNAghg4dSklJCRUVFSFgOG7R2NgoD5BgH/+TZOj3+GQwA3ImeDweAMLDw4mMjGTZsmX069eP1atXoygKSUlJksmnpKSgaRqpqamsXLmS9957j/z8fAoKCvD5fEyePFly0bq6Onk8Oj7oKG5Z1l0lOyLp9/tRFAW32x2y0+bmZhISEkhJSWHOnDm89dZb5OXl0dLSQkNDAzdu3KC8vJzhw4fzyiuvcPDgQd555x0iIiLQNI1169bx2GOPMXToUAlCXV1dCAhCCPx+f4ivBgKBe33SgT0mJibE3JWVlfTv359bt27x448/kpWVxb59+xg/fjyqqjJgwABKSkooLy9n586dlJSUEB0dTVpaGkePHkXTNBYsWEBaWhq2bVNZWRkSIHFxcdLswXWSRNIpGRz6BBATE4PP5+OPP/7Atm127drFtGnTOHXqFJMmTaJ3794S5evXr5OXl8fEiRNpbGykpKSEuXPn8uKLL6JpGlVVVQwePJiamhpSUlLo1KkTJSUlIUr27dsXQFJAJxdbloXa8cy+efOmRHPgwIFywo4dO2hoaJC+VllZyblz57h48SLp6elYlsXq1as5ceIEs2bNYvbs2VRXV3PhwgVUVWX79u2sXr2agoICDMOgoKBAynS73YwcORLTNPn555+l4rqu341u0zRl9eaM48ePS9LgjKamJlatWhXCFcPCwrhy5Yqs/AA2btxIbm4uJSUleL1e2traEEIwbNgwcnJymD9/Pps3bw7JwQMGDCA5OZmLFy/KrCKEIBAI3DW3YRgEAoGQICktLWXChAmkp6fLCLRtm5UrVxIWFiZ9paqqioiICElSvV4vL7zwAitWrCAsLIzy8nL69OnDmTNn8Hg8vPHGG4wePZqcnBwpz5nTkSc4fhkIBO4qGeyTTpCcO3eOAQMGkJWVJalaIBBg8eLFeL1eMjMzZeFUVVWF1+tl5syZbN++XdYutm3T1tZGVFQU8+fP55FHHmHVqlWSXDu1eEZGBlVVVRQWFoYo6KQm3TAMSSKC0dy4cSPLly8nIyODsrIymYSdNBUXF8eUKVNwu9243W5GjBhBYmIikydPJjY2VqY1XdfxeDwkJSWxaNGiEEBiY2NZtmwZLS0tbNu2Dae0DnYpwzDgwoULxt69e0XXrl1DmDEgZs2aJb799luxadMmkZCQcM/7KVOmiMOHD4v29nbR3t4u/H6/ME1TWJYlDMMQra2t4sSJEyI7O/ueuVFRUSIvL0+cP39efPnll0JRlJD3qampoqKiQhQVFQlp7o5RDlBQUECfPn3o378/7777LkuWLJHdCIDCwkIKCwtJTEwkMzOTBx98kNjYWBobG6murubo0aMyWoPN2LVrV5YuXUpGRgbV1dUsWbLkvvJVVb0bL6dOnTJ27NghoqOj79ktIDp37izWrl0r9u3bJ77++msxfPhw4XK57vvtv7s8Ho8YMGCA2LZtm7h06ZI4cuSIGDt27D3fKYoievXqJU6fPi22bt0qVNM0Q8rJjsOp6n766Sd8Ph85OTnMmzePhIQEPB4PHalex6FpGh6PhwceeIC5c+eydetWBg4cSE1NDQsXLqSsrOxfzg9JQX+lJEBzczMLFixg9uzZTJgwgYkTJ/LUU09RVlZGWVkZZ86cobW1VbqBw2DCwsJ46KGHGDduHJMmTSIqKorm5mZ++eUX3nzzTaqrq+8rzwkaJ4frpmkalmXpLpcLj8dz346tM/Lz8zl27BizZs2iX79+jB8/nokTJwJw48YN6urq8Pv9+Hw+4uLiSExMxO12y0ZUbW0tmzZtoqCgACEEERERfwlMeHi4E922cuDAgV/q6+v7HD16FFVV8fl8eL1ePB4PbrdbmtM54538lZKSQnh4uGxwOT0dVVXlZlVVxTAMvF4vQgiuXr1Ka2srYWFh0nLB84NbgU4i//XXX2/qpmkWRURE9OnevTuWZREZGYnP58Pn88ndeL1eacqOrCm4ZndaeE770EHQSey9evWS7x0e25FDOm0ev99PcXGxaZpmqWoYxieWZd1xqFJbW5s8MwOBgGzB+f1+KcBJ/sH98eA+plPc6bqO2+0O6T8GN8OcZO9Ulk6Z0d7eTnl5OXfu3Gk0DGONOnXq1EuBQOB/wsPDW+Pj44XThjMMQ3a3gpv6hmHIRqmzoGEYDs1HUZTg3iJtbW3ylNI0TfIEp2EQ3O62LIv6+nqOHz8uKisrb9u2/Y/58+cfl9GxefPml2zbzhFCRAYCAZemaWpwq9hpbHb8e8Npzsvy80/TBnd9HbSds975db53EL5z54598+ZNQwjRqKpqzoIFCz5cs2YNyubNm8nKygLg888/j1MU5e9CiEeFEN0cMwa37zq29P6/1/3mOpv+814ADYqiHLZt+/PFixdfcdjS/wEitzqZVBcoygAAAABJRU5ErkJggg=='> Upload</button>
-        </div>
-    </form>
-    <div id="tablediv" style="align-items: center; width:50%;margin: 10 auto;float:top;">
-        <table style="width:300px">
-            <tr title="Frames per second, that the uploader tries to keep. For your phone, try to start from lower value and see how far the camera can safely go.">
-                <td>
-                    <div id="chooserfps" style="float:left;margin: 10 auto;" class="margin1">FPS:</div>
-                </td>
-                <td>
-                    <div style="float:left;margin: 10 auto;" class="margin1"><input step="1" class="center-block" id="numberfps" type="number" value="16" min="5" max="60" oninput="fpschanged()" style="width:80px;"></div>
-                </td>
-            </tr>
-            <tr>
-                <td title="Maximum fraction of QR frames that can be safely lost by the decoder camera within a single chunk. Bigger number - slower transmission - but more resilient for errors.">
-                    <div id="chooseerrmaxerror" style="float:left;margin: 10 auto;" class="margin1">Max error(%):</div>
-                </td>
-                <td>
-                    <div style="float:left;margin: 10 auto;" class="margin1"><input step="5" class="center-block" id="numbererr" type="number" value="50" min="20" max="80" oninput="restofinputchanged()" style="width:80px;"></div>
-                </td>
-            </tr>
-            <tr title="Byte capacity of single QR frame used for file upload.">
-                <td>
-                    <div id="chooseerqrsize" style="float:left;margin: 10 auto;" class="margin1">QR size(bytes):</div>
-                </td>
-                <td>
-                    <div style="float:left;margin: 10 auto;" class="margin1"><input step="10" class="center-block" id="numberqrsize" type="number" value="585" min="85" max="1625" oninput="restofinputchanged()" style="width:80px;"></div>
-                </td>
-            </tr>
-            <tr title="Number of seconds that the initialization sequence will be emitted. Detector camera must detect only part of it, to setup the file transmission.">
-                <td>
-                    <div id="chooseerstartuptime" style="float:left;margin: 10 auto;" class="margin1">Startup time(s):</div>
-                </td>
-                <td>
-                    <div style="float:left;margin: 10 auto;" class="margin1"><input step="1" class="center-block" id="numberstartupsec" type="number" value="6" min="3" max="10" oninput="restofinputchanged()" style="width:80px;"></div>
-                </td>
-            </tr>
-        </table>
-        <center>
-            <div style="float:top;margin: 20 auto;" class="margin1" title="Estimated maximum upload speed based on the settings above" id="uplspeedtxt">Max upload speed : </div>
-        </center>
-        <center>
-            <div style="float:top;margin: 15 auto;" class="margin1"><button type="button" id="defsettingbutton" title="Default setting might not be the most optimal for every phone. Experiment with lower FPS first.">Reset default settings</button></div>
-        </center>
-    </div>
-    <center>
-        <div style="width:600;float:top;margin: 20 auto;font-style: italic;line-height: 150%;">
-            See the <a href="https://play.google.com/store/apps/details?id=pl.pwrobel.opticalfiletransfer">native android application</a> for download/upload. Uploader app for <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.php">Windows(GUI)</a> and <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.php">linux(CLI)</a> is also available. See sample usage <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/instruction.mp4">here</a>.
-        </div>
-    </center>
-</div>
-<div id="qrarea" class="fullsquareW" style="">
-    <canvas id="qrcanvas" width=600 height=600></canvas>
-</div>
-</body>
-
+   <head>
+      <meta charset="utf-8">
+      <title>Optical File Transfer Uploader</title>
+  
+   </head>
+   <body>
+      <div id="maincontrolarea" style="margin: 15;">
+         <big><center style="margin:15;color:#666666;font-family:Impact, Charcoal, sans-serif;">Optical File Transfer Uploader</center></big>
+         <!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file -->
+         <form method="post" enctype="multipart/form-data">
+            <div title="Select your files here or drag and drop them - if your file explorer supports drag and drop.">
+               <label for="image_uploads">Choose Files to send</label>
+               <input type="file" id="image_uploads" name="image_uploads" multiple>
+            </div>
+            <div class="preview">
+               <p>No files currently selected for upload</p>
+            </div>
+            <div>
+               <button title="Click to start file upload after selecting file/files." type="button" id="uploadbutton">   <img style="vertical-align:middle" width="41" height="41" src='data:image/png;base64,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'> Upload</button>
+            </div>
+         </form>
+         <div id="tablediv" style="align-items: center; width:50%;margin: 10 auto;float:top;">
+            <table style="width:300px">
+               <tr title="Frames per second, that the uploader tries to keep. For your phone, try to start from lower value and see how far the camera can safely go.">
+                  <td>
+                     <div id="chooserfps" style="float:left;margin: 10 auto;" class="margin1">FPS:</div>
+                  </td>
+                  <td>
+                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="1" class="center-block" id="numberfps" type="number" value="16" min="5" max="60" onchange="fpschanged()" style="width:80px;"></div>
+                  </td>
+               </tr>
+               <tr>
+                  <td title="Maximum fraction of QR frames that can be safely lost by the decoder camera within a single chunk. Bigger number - slower transmission - but more resilient for errors.">
+                     <div id="chooseerrmaxerror" style="float:left;margin: 10 auto;" class="margin1">Max error(%):</div>
+                  </td>
+                  <td>
+                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="5" class="center-block" id="numbererr" type="number" value="50" min="20" max="80" onchange="restofinputchanged()" style="width:80px;"></div>
+                  </td>
+               </tr>
+               <tr title="Byte capacity of single QR frame used for file upload.">
+                  <td>
+                     <div id="chooseerqrsize" style="float:left;margin: 10 auto;" class="margin1">QR size(bytes):</div>
+                  </td>
+                  <td>
+                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="10" class="center-block" id="numberqrsize" type="number" value="585" min="85" max="1625" onchange="restofinputchanged()" style="width:80px;"></div>
+                  </td>
+               </tr>
+               <tr title="Number of seconds that the initialization sequence will be emitted. Detector camera must detect only part of it, to setup the file transmission.">
+                  <td>
+                     <div id="chooseerstartuptime" style="float:left;margin: 10 auto;" class="margin1">Startup time(s):</div>
+                  </td>
+                  <td>
+                     <div style="float:left;margin: 10 auto;" class="margin1"><input step="1" class="center-block" id="numberstartupsec" type="number" value="6" min="3" max="10" onchange="restofinputchanged()" style="width:80px;"></div>
+                  </td>
+               </tr>
+            </table>
+            <center>
+               <div style="float:top;margin: 20 auto;" class="margin1" title="Estimated maximum upload speed based on the settings above" id="uplspeedtxt">Max upload speed : </div>
+            </center>
+            <center>
+               <div style="float:top;margin: 15 auto;" class="margin1"><button type="button" id="defsettingbutton" title="Default setting might not be the most optimal for every phone. Experiment with lower FPS first.">Reset default settings</button></div>
+            </center>
+         </div>
+         <center>
+            <div style="width:600;float:top;margin: 20 auto;font-style: italic;line-height: 150%;">
+               See the <a href="https://play.google.com/store/apps/details?id=pl.pwrobel.opticalfiletransfer">native android application</a> for download/upload. Uploader app for <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/win/index.php">Windows(GUI)</a> and <a href="http://wrobel.wroclaw.pl/opticalfiletransfer/en/lin/index.php">linux(CLI)</a> is also available. See sample usage <a href="https://www.youtube.com/watch?time_continue=2&v=ARNiQXUREr8">here</a>.
+               <br><br>Tested on Firefox and Chromium - Interet Explorer is not supported !
+            </div>
+         </center>
+      </div>
+      <div id="qrarea" class="fullsquareW" style="">
+         <canvas id="qrcanvas" width=600 height=600></canvas>
+      </div>
+   </body>
+   
 <script type="text/javascript">
-
+       
 var extra_margin = 0;
 //used to map file calls from emcc generated code to memory heap
 var GlobalFile;
@@ -206,7 +207,7 @@ function cpy_qr_pattern_to_mem(input_data_addr, input_data_len, gendata_addr, ge
     for (var i = 0; i < input_data_len; i++) {
         global_arr[i] = Module.HEAP8[input_data_addr + i];
     }
-    a = new QRCodeModel(_getTypeNumber(global_arr, 1), 1); //1 - correct level L
+    a = new QRCodeModel(_getTypeNumber(global_arr, 1), 1); //1 - correct level L 
     a.addData(global_arr);
     a.make();
     _memset(global_outqr_memchunk_addr, 255, (a.moduleCount + 2 * margin) * (a.moduleCount + 2 * margin));
@@ -284,7 +285,7 @@ function updateImageDisplay() {
             }
 
             var listItem = document.createElement('li');
-            var para = document.createElement('p');
+            var para = document.createElement('p');  
 
             para.textContent = '' + curFiles[i].name + ', size : ' + returnFileSize(curFiles[i].size) + '.';
             var namelower = (curFiles[i].name).toLowerCase();
@@ -309,7 +310,14 @@ function returnFileSize(number) {
     }
 }
 
+lastfps = 16;
+lasterr = 50;
+lastqrsize = 585;
+laststartupsec = 6;
+
 function fpschanged() {
+	if(!validate_input())
+		return;
     var numberfps = document.getElementById("numberfps");
     var nfps = Number(numberfps.value) | 0;
     fps = nfps;
@@ -336,7 +344,51 @@ function calc_uplspeed() {
     }
 }
 
+function validate_component(component_string, warn_msg, range_min, range_max, defvalue){
+	var numbercomp = document.getElementById(component_string);
+	if (numbercomp.value.trim() === "") {
+        alert(warn_msg);
+        numbercomp.focus();
+		numbercomp.value = defvalue;
+		document.getElementById("uplspeedtxt").innerHTML = "Max upload speed : <b>" + calc_uplspeed() + "</b>";
+        return false;
+    }
+    if (numbercomp.value !== "") {
+        if (! (/^\d*(?:\.\d{0,2})?$/.test(numbercomp.value))) {
+            alert(warn_msg);
+            numbercomp.focus();
+			numbercomp.value = defvalue;
+			document.getElementById("uplspeedtxt").innerHTML = "Max upload speed : <b>" + calc_uplspeed() + "</b>";
+            return false;
+        }else{
+			var nfps = Number(numbercomp.value) | 0
+			if (nfps > range_max || nfps < range_min){
+				alert(warn_msg);
+				numbercomp.focus();
+				numbercomp.value = defvalue;
+				document.getElementById("uplspeedtxt").innerHTML = "Max upload speed : <b>" + calc_uplspeed() + "</b>";
+				return false;
+			}
+		}
+    }
+    return true;  
+}
+
+function validate_input(){
+	if (!validate_component("numberfps", "Please enter a valid FPS number from 5-60 range!", 5, 60, lastfps))
+		return false;
+	if (!validate_component("numbererr", "Please enter a valid maximum error fraction from 20% to 80%", 20, 80, lasterr))
+		return false;
+	if (!validate_component("numberqrsize", "Please enter a valid single QR size in bytes from 85 to 1625", 85, 1625, lastqrsize))
+		return false;
+	if (!validate_component("numberstartupsec", "Please enter a valid time(seconds) of initializing startup sequence", 3, 10, laststartupsec))
+		return false;
+	return true;
+}
+
 function restofinputchanged() {
+	if(!validate_input())
+		return;
     should_draw_progress_bar = false;
     cancelAnimationFrame(animateid);
     if (clear_timeout_after_done_id != -1) {
@@ -453,7 +505,7 @@ function setup_layout() {
         qrarea.className = "fullsquareH";
         qrarea.style.float = "left";
         maincontrolarea.style.float = "left";
-        maincontrolarea.style.margin = "50";
+        maincontrolarea.style = "float:left;margin-right:50;margin-left:50;";
         document.getElementById("qrcanvas").style = "image-rendering: optimizeSpeed; image-rendering: -moz-crisp-edges; image-rendering: -webkit-optimize-contrast;image-rendering: -o-crisp-edges; image-rendering: pixelated; -ms-interpolation-mode: nearest-neighbor;";;
     } else {
         qrarea.className = "fullsquareW";
@@ -697,9 +749,15 @@ function load_settings() {
     } else {
         numberstartupsec.value = Number(localStorage.getItem("numberstartupsec"));
     }
+	lastfps = numberfps.value;
+	lasterr = numbererr.value;
+	lastqrsize = numberqrsize.value;
+	laststartupsec = numberstartupsec.value;
 };
 
 function save_settings() {
+	if (!validate_input())
+		return;
     var numberfps = document.getElementById("numberfps");
     var numbererr = document.getElementById("numbererr");
     var numberqrsize = document.getElementById("numberqrsize");
@@ -709,6 +767,11 @@ function save_settings() {
     var nerr = Number(numbererr.value) | 0;
     var nqr = Number(numberqrsize.value) | 0;
     var nst = Number(numberstartupsec.value) | 0;
+	
+	lastfps = nfps;
+	lasterr = nerr;
+	lastqrsize = nqr;
+	laststartupsec = nst;
 
     localStorage.setItem("numberfps", nfps);
     localStorage.setItem("numbererr", nerr);
@@ -754,6 +817,7 @@ window.onbeforeunload = function() {
     save_settings();
     return '';
 };
-//v01
+//v02
    </script>
+
 </html>
