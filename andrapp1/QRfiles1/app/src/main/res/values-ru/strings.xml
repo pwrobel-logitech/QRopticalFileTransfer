@@ -434,4 +434,8 @@ This application contains links to other sites. If you click on a third-party li
         Полное веб-приложение отправителя рабочего стола, извлеченное и сохраненное в:
     </string>
 
+    <string name="notenoughdiskspace1">
+        Not enough free storage space to save file in the current download directory - to continue, need at least :
+    </string>
+
 </resources>

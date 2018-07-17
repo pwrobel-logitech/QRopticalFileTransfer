@@ -449,4 +449,7 @@ This application contains links to other sites. If you click on a third-party li
         Complete desktop uploader web app extracted and saved in :
     </string>
 
+    <string name="notenoughdiskspace1">
+        Not enough free storage space to save file in the current download directory - to continue, need at least :
+    </string>
 </resources>
