@@ -428,7 +428,7 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="notenoughdiskspace1">
-        Not enough free storage space to save file in the current download directory - to continue, need at least :
+        Não há espaço de armazenamento livre suficiente para salvar o arquivo no diretório de download atual - para continuar, é necessário pelo menos :
     </string>
 
 </resources>

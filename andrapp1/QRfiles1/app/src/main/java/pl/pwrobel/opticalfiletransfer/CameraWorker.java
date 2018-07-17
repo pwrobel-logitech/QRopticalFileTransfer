@@ -450,6 +450,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 // size restriction that the receiver can pick up
                 this.filesize_carried_in_the_detected_header = get_last_recognized_file_size();
                 if(!this.isEnoughStorageSpaceInCurrentDir(this.filesize_carried_in_the_detected_header)){
+                    final long fsize = filesize_carried_in_the_detected_header;
                     final Activity ac0 = (Activity) context;
                     if (ac0 != null){
                             ac0.runOnUiThread(new Runnable() {
@@ -458,7 +459,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                                     if (ac0 != null){
                                         for (int i = 0; i < 2; i++){
                                             Toast d = Toast.makeText(ac0,
-                                                    ac0.getString(R.string.notenoughdiskspace1) + " " + FileUtil.getReadableFileSize(2*filesize_carried_in_the_detected_header)
+                                                    ac0.getString(R.string.notenoughdiskspace1) + " " + FileUtil.getReadableFileSize(2*fsize)
                                                     , Toast.LENGTH_LONG);
                                             TextView v = (TextView) d.getView().findViewById(android.R.id.message);
                                             v.setTextColor(Color.RED);
@@ -704,13 +705,17 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
     }
     */
 
-    private boolean isEnoughStorageSpaceInCurrentDir(long filesize){
+    private boolean isEnoughStorageSpaceInCurrentDir(double filesize){
         boolean enough = true;
         if (filedump_directory_fullpath == "")
             return true;
         StatFs stat = new StatFs(filedump_directory_fullpath);
-        long neededblocks = 2*((filesize / stat.getBlockSize())+2);
-        long hasblocks = stat.getAvailableBlocks();
+        double neededblocks = 2*(((double)filesize / (double)stat.getBlockSize())+2);
+        double hasblocks = stat.getAvailableBlocks();
+        if (android.os.Build.VERSION.SDK_INT > 17){
+            neededblocks = 2*((((double)filesize) / (double)stat.getBlockSizeLong())+2);
+            hasblocks = stat.getAvailableBlocksLong();
+        }
         enough = (neededblocks <= hasblocks);
         return enough;
     };

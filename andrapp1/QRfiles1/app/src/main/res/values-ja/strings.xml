@@ -416,6 +416,6 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="notenoughdiskspace1">
-        Not enough free storage space to save file in the current download directory - to continue, need at least :
+        現在のダウンロードディレクトリにファイルを保存するのに十分な空き容量がない - 続行するには、少なくとも次のものが必要です。:
     </string>
 </resources>
