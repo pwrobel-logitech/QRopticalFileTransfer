@@ -452,4 +452,8 @@ This application contains links to other sites. If you click on a third-party li
     <string name="notenoughdiskspace1">
         Not enough free storage space to save file in the current download directory - to continue, need at least :
     </string>
+
+    <string name="norwstoragedetected">
+        getExternalStorageState() detected SD card is not mounted in read state - try to insert SD card/mount external memory or reboot phone - and see if you can save files in the external storage space..
+    </string>
 </resources>

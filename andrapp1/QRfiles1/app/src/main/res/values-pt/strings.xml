@@ -431,4 +431,8 @@ This application contains links to other sites. If you click on a third-party li
         Não há espaço de armazenamento livre suficiente para salvar o arquivo no diretório de download atual - para continuar, é necessário pelo menos :
     </string>
 
+    <string name="norwstoragedetected">
+        getExternalStorageState () detectado cartão SD não está montado no estado de leitura - tente inserir cartão SD / montar memória externa ou reiniciar o telefone - e veja se você pode salvar arquivos no espaço de armazenamento externo..
+    </string>
+
 </resources>

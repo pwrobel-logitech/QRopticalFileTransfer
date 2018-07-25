@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -182,15 +183,45 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     }
 */
 
+    void FinishActivity(){
+        Intent homeIntent2 = new Intent(Intent.ACTION_MAIN);
+        homeIntent2.addCategory( Intent.CATEGORY_HOME );
+        homeIntent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        this.startActivity(homeIntent2);
+    }
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    boolean HandleIsSDMountedProperly(){
+        if (!this.isExternalStorageWritable()){
+            for (int i = 0; i<2; i++){
+                Toast d = Toast.makeText(this, this.getString(R.string.norwstoragedetected), Toast.LENGTH_LONG);
+                TextView v = (TextView) d.getView().findViewById(android.R.id.message);
+                v.setTextColor(Color.RED);
+                d.show();
+            }
+            return false;
+        }
+        return true;
+    }
+
     private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if(!this.HandleIsSDMountedProperly())
+            FinishActivity();
         //sanitize size
         int smear = Qrfiles.smearCustom(Qrfiles.limit_max_received_file_size);
         if (smear != 5612912) //5612912
-            return;
+            FinishActivity();
 
         this.preferences = this.getPreferences(Context.MODE_PRIVATE);
 
@@ -381,13 +412,18 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
     @Override
     public void onResume(){
         //Log.i("ACTINFO", "Activity resumed");
+        if(!this.HandleIsSDMountedProperly()){
+            FinishActivity();
+            super.onResume();
+            return;
+        }
 
 
         this.readAndSanitizePrefs();
         //sanitize size
         int smear = Qrfiles.smearCustom(Qrfiles.limit_max_received_file_size);
         if (smear != 5612912)
-            return;
+            FinishActivity();
 
         File yourAppDir = new File(CameraWorker.create_dump_directory_if_not_present(currDumpPath));
         default_search_for_upload_homedir = yourAppDir.getPath();
@@ -440,6 +476,7 @@ public class Qrfiles extends AppCompatActivity implements TransmissionController
 
 
         super.onResume();
+
     }
 
 

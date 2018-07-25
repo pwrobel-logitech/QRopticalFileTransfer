@@ -732,6 +732,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 a.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (a == null)
+                            return;
                         for (int i = 0; i < 2; i++){
                             Toast d = Toast.makeText(a,
                                     a.getString(R.string.failed_writability_test1) + " '" +
@@ -831,28 +833,68 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     return;
                 }
 
-                if (camera != null)
-                    camera.cancelAutoFocus();
-
+                List<Camera.Size> psize = null;
+                android.hardware.Camera.CameraInfo info = null;
                 Camera.Parameters param = null;
                 if (camera != null)
-                    param = camera.getParameters();
+                    try {
 
-                List<Camera.Size> psize = param.getSupportedPreviewSizes();
+                        if (camera != null)
+                            camera.cancelAutoFocus();
 
-                int []fpsrange = new int [2];
-                param.getPreviewFpsRange(fpsrange);
-                param.setPreviewFpsRange(fpsrange[0], fpsrange[1]);
+                        if (camera != null)
+                            param = camera.getParameters();
 
-                param.setPreviewFormat(ImageFormat.NV21);
+                        psize = param.getSupportedPreviewSizes();
 
-                param.set("vrmode", 1);
-                param.set("fast-fps-mode", 1);
+                        int[] fpsrange = new int[2];
+                        param.getPreviewFpsRange(fpsrange);
+                        param.setPreviewFpsRange(fpsrange[0], fpsrange[1]);
 
-                android.hardware.Camera.CameraInfo info =
-                        new android.hardware.Camera.CameraInfo();
-                android.hardware.Camera.getCameraInfo(0, info);
+                        param.setPreviewFormat(ImageFormat.NV21);
 
+                        param.set("vrmode", 1);
+                        param.set("fast-fps-mode", 1);
+
+                        info = new android.hardware.Camera.CameraInfo();
+                        android.hardware.Camera.getCameraInfo(0, info);
+                        //throw new Exception();
+                    } catch (Exception e){
+                        final Activity a = (Activity) CameraWorker.this.context;
+                        //Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                        //homeIntent.addCategory( Intent.CATEGORY_HOME );
+                        //homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        //a.startActivity(homeIntent);
+                        Log.e("Camera", "Failed to connect to camera service");
+
+                        if (a != null)
+                            a.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (a != null){
+                                        Toast d = Toast.makeText(a, a.getString(R.string.failed_init_camera), Toast.LENGTH_LONG);
+                                        TextView v = (TextView) d.getView().findViewById(android.R.id.message);
+                                        v.setTextColor(Color.RED);
+                                        d.show();
+                                    }
+                                }
+                            });
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        Intent homeIntent2 = new Intent(Intent.ACTION_MAIN);
+                        homeIntent2.addCategory( Intent.CATEGORY_HOME );
+                        homeIntent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        a.startActivity(homeIntent2);
+
+                        synchronized (CameraWorker.this) {
+                            camera_initialized = true;
+                            CameraWorker.this.notifyAll();
+                        }
+                        return;
+                    }
                 previev_list = psize;
                 int bestsizeindex = CameraWorker.this.select_best_preview_size_index(psize, sw, sh, info.orientation);
                 automatically_deducted_camera_preview_index = bestsizeindex;
@@ -1021,7 +1063,12 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     camera.setPreviewCallbackWithBuffer(null);
                     camera.cancelAutoFocus();
                     camera.setAutoFocusMoveCallback(null);
-                    camera.autoFocus(null);
+                    try{
+                        camera.autoFocus(null);
+                    }catch (Exception e){
+                        Log.e("Error", "autoFocus(null) failed in closing camera.");
+                    }
+
                 }
 
                 if(camera != null){
@@ -1117,11 +1164,14 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 //camera.setParameters(param);
                 //Log.i("Focus", "auto");
                 Camera.Parameters param = null;
+
                 if (camera != null)
                     param = camera.getParameters();
+                final Camera.Parameters paramcopy = param;
+
                 if (param != null) {
                     List<String> focusModes = param.getSupportedFocusModes();
-                    if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)){
+                    if (focusModes != null) if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)){
                         try {
                             param.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
                         } catch (Exception e){
@@ -1141,6 +1191,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                     @Override
                     public void run() {
                         if (camera != null)
+                            try {
                             camera.autoFocus(new Camera.AutoFocusCallback() {
                                 @Override
                                 public void onAutoFocus(boolean success, Camera camera2) {
@@ -1168,7 +1219,7 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                                     //param.setRecordingHint(true);
                                     if (param != null) {
                                         List<String> focusModes = param.getSupportedFocusModes();
-                                        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
+                                        if (focusModes != null) if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
                                             try {
                                                 param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
                                             } catch (Exception e){
@@ -1217,6 +1268,60 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
 
                                 }
                             });
+                        }catch (Exception e){
+                               //retry
+                                try{
+                                    if(camera != null)
+                                        camera.setParameters(paramcopy);
+                                }catch (Exception e2){
+                                    Log.e("camworker", "Error setting the parameters in initCamAsync.");
+                                }
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (camera != null)
+                                            try {
+                                                camera.autoFocus(new Camera.AutoFocusCallback() {
+                                                    @Override
+                                                    public void onAutoFocus(boolean success, Camera camera2) {
+                                                        if (camera == null)
+                                                            return;
+                                                        Log.i("Focus", "camera autofocused, success = " + success);
+
+
+                                                        Camera.Parameters param = camera.getParameters();
+
+                                                        if (param != null) {
+                                                            List<String> focusModes = param.getSupportedFocusModes();
+                                                            if (focusModes != null) if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
+                                                                try {
+                                                                    param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                                                                } catch (Exception e){
+                                                                    Log.e("camworker", "Error setting the FOCUS_MODE_CONTINUOUS_PICTURE initCamAsync.");
+                                                                }
+                                                            }
+                                                        }
+
+                                                        try{
+                                                            if(camera != null)
+                                                                camera.setParameters(param);
+                                                        }catch (Exception e){
+                                                            Log.e("camworker", "Error setting the parameters in initCamAsync.");
+                                                        }
+
+
+
+
+
+                                                    }
+                                                });
+                                            }catch (Exception e){
+                                                Log.e("Error", "Autofocus failed for the second time - abort..");
+                                            }
+                                    }
+                                },1000);
+                            }
                     }
                 },150);
 
@@ -1636,6 +1741,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
                 a.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (a == null)
+                            return;
                         try {
                             a.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fpath)));
                         }catch (Exception e){
@@ -1654,6 +1761,8 @@ public class CameraWorker extends HandlerThread implements CameraController, Cam
             a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if (a == null)
+                        return;
                     Toast d = Toast.makeText(a,
                             a.getString(R.string.textfilesaved_toast1)+" "+filedump_directory_fullpath+File.separator+
                                     last_filename_detected_from_header+" "+ a.getString(R.string.textfilesaved_toast2)

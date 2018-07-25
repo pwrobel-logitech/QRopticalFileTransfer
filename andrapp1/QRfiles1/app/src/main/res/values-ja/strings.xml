@@ -418,4 +418,8 @@ This application contains links to other sites. If you click on a third-party li
     <string name="notenoughdiskspace1">
         現在のダウンロードディレクトリにファイルを保存するのに十分な空き容量がない - 続行するには、少なくとも次のものが必要です。:
     </string>
+
+    <string name="norwstoragedetected">
+        getExternalStorageState（）が検出されましたSDカードが読み込み状態でマウントされていません -  SDカードの挿入/外部メモリのマウントや電話の再起動を試み、外部ストレージスペースにファイルを保存できるかどうかを確認してください。
+    </string>
 </resources>

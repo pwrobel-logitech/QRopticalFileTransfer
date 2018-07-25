@@ -438,4 +438,8 @@ This application contains links to other sites. If you click on a third-party li
         Недостаточно свободного места для хранения файла в текущем каталоге загрузки - для продолжения требуется, по крайней мере :
     </string>
 
+    <string name="norwstoragedetected">
+getExternalStorageState () обнаружена SD-карта не смонтирована в состоянии чтения - попробуйте вставить SD-карту / установить внешнюю память или перезагрузить телефон - и посмотреть, можете ли вы сохранить файлы во внешнем хранилище..
+    </string>
+
 </resources>

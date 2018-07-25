@@ -417,10 +417,10 @@ This application contains links to other sites. If you click on a third-party li
 
     </string>
 
-    <string name="chceck_prevenable">Custom camera resolution</string>
-    <string name="uploader_descr_section_header">Upload settings</string>
-    <string name="downloader_descr_section_header">Download settings</string>
-    <string name="aligner_square_descr1">Square aligner size</string>
+    <string name="chceck_prevenable">Ręczna rozdzielczość kamery</string>
+    <string name="uploader_descr_section_header">Ustawienia wysyłania</string>
+    <string name="downloader_descr_section_header">Ustawienia pobierania</string>
+    <string name="aligner_square_descr1">Rozmiar kwadratu wyrónującego</string>
 
     <string name="text_content_q5">
         Allow setting custom camera size that is used to detect QR frames. \n\n
@@ -443,11 +443,11 @@ This application contains links to other sites. If you click on a third-party li
     </string>
 
     <string name="mischeader">
-        Miscellaneous
+        Różne
     </string>
 
     <string name="miscclick">
-        Save uploader web browser app
+        Zapisz aplikację webową uploadera
     </string>
 
     <string name="miscsave">
@@ -456,6 +456,10 @@ This application contains links to other sites. If you click on a third-party li
 
     <string name="notenoughdiskspace1">
         Not enough free storage space to save file in the current download directory - to continue, need at least :
+    </string>
+
+    <string name="norwstoragedetected">
+        getExternalStorageState() detected SD card is not mounted in read state - try to insert SD card/mount external memory or reboot phone - and see if you can save files in the external storage space..
     </string>
 
 </resources>
